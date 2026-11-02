@@ -154,7 +154,7 @@ export function autoPickScoutingFocus(league: GmLeagueState): {
   const playerIds = ranked.slice(0, slots).map((row) => row.id);
   // Keep a long-shot on the radar. Do not read hidden development outcomes:
   // the late candidate is selected from visible amateur indicators.
-  const late = ranked.filter(row => (pool.find(p => p.id === row.id)?.consensusRank ?? 0) >= 24)
+  const late = ranked.filter(row => (pool.find(p => p.id === row.id)?.consensusRank ?? 0) >= 31)
     .sort((a,b) => draftSleeperSignals(pool.find(p=>p.id===b.id)!).score - draftSleeperSignals(pool.find(p=>p.id===a.id)!).score)[0];
   if(late && !playerIds.includes(late.id) && slots > 0) playerIds[slots - 1] = late.id;
   const positionFocus =
