@@ -19,6 +19,7 @@
     "test:franchise-badges": "tsx scripts/test-gm-badges.ts",
     "test:franchise-development": "tsx scripts/test-gm-development.ts",
     "test:franchise-dynamic-progression": "tsx scripts/test-gm-dynamic-progression.ts",
+    "test:franchise-multiseason": "tsx scripts/test-gm-multiseason-progression.ts",
     "test:franchise-calendar": "tsx scripts/test-gm-calendar.ts",
     "test:franchise-flow": "tsx scripts/test-gm-season-journey.ts",
     "test:franchise-ux": "tsx scripts/test-gm-ux-guidance.ts",
