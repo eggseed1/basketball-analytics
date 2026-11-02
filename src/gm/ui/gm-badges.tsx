@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Shield } from "lucide-react";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { ATTRIBUTE_LABEL } from "@/gm/engine/attributes";
 import { BADGES, BADGE_LEVELS, BADGE_REQUIREMENTS, BADGE_XP, badgeCap, badgeEarned, badgeLevel, badgeSkill, defaultBadgeFocus, ensureBadges } from "@/gm/engine/badges";
@@ -30,6 +31,7 @@ export function GmBadges({ roster }: { roster: GmPlayer[] }) {
       <label className="grid gap-1.5 text-sm">Player<select aria-label="Badge player" className="w-full rounded-lg border border-border bg-background px-3 py-2" value={player.id} onChange={e => setSelected(e.target.value)}>{roster.map(p => <option key={p.id} value={p.id}>{p.name} · {p.position}</option>)}</select></label>
       <label className="grid gap-1.5 text-sm">Badge emphasis<select aria-label={`Badge emphasis for ${player.name}`} className="w-full rounded-lg border border-border bg-background px-3 py-2" value={player.badgeFocus ?? ""} onChange={e => setFocus(player.id,(e.target.value || null) as GmBadgeId | null)}><option value="">Auto: follows skills and development focus</option>{BADGES.map(b => <option key={b.id} value={b.id} disabled={badgeCap(player,b.id) <= badgeEarned(player,b.id) && player.badgeFocus !== b.id}>{b.name}</option>)}</select></label>
     </div>
+    <div className="mt-3 flex items-center gap-3"><GmPlayerPortrait player={player} size="sm" /><span className="text-sm font-semibold">{player.name} · {player.position}</span></div>
     <p className="mt-3 text-xs text-muted-foreground">{player.badgeFocus && focus !== player.badgeFocus ? "The selected emphasis is at its current skill cap. Auto emphasis applies until it can grow again. " : ""}{focus ? `${BADGES.find(b => b.id === focus)!.name} earns 25% more action XP.` : "All currently eligible levels are earned."} An active mentor with a higher badge adds 10% to action XP for that skill. Each badge earns at most 24 base XP per game. Idle time and changing emphasis grant no XP.</p>
     <div className="mt-4 grid min-w-0 gap-3 md:grid-cols-2" data-testid="badge-board">{BADGES.map(b => {
       const earned = badgeEarned(player,b.id), level = badgeLevel(player,b.id), cap = badgeCap(player,b.id);
