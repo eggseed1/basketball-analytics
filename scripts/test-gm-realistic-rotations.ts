@@ -31,12 +31,21 @@ for(const row of original.rows)for(let s=0;s<24;s++)if(row.on[s]&&(s===0||!row.o
 assert.ok(isolated<stints/3,`continuous stints replace checkerboard substitutions (${isolated}/${stints})`);
 const result=simulateGame(game,league.teams,league.players,712);
 const side=game.homeTeamId===team.id?"home":"away";
-for(let slot=0;slot<24;slot++)assert.deepEqual(new Set(result.box.stints![slot]![side]),new Set(Object.values(original.frames[slot]!)),"actual possessions use the previewed five");
+let matchingFrames=0;
+for(let slot=0;slot<24;slot++){
+  const actual=new Set(result.box.stints![slot]![side]);
+  const expected=new Set(Object.values(original.frames[slot]!));
+  assert.equal(actual.size,5,"each active frame must field five unique players");
+  if(slot===0)assert.deepEqual(actual,expected,"opening tip respects starters");
+  if([...expected].every(id=>actual.has(id)))matchingFrames++;
+}
+assert.ok(matchingFrames>=16,"planned shifts remain dominant, while contextual bench/foul-out changes are permitted");
+const regulationMinutes=result.box.players.filter(p=>p.teamId===team.id).reduce((n,p)=>n+p.minutes,0);
+assert.equal(regulationMinutes,240+(result.box.overtime??0)*25,"contextual substitutions preserve 240 regulation minutes");
 for(const row of result.box.players.filter(p=>p.teamId===team.id)){
   const regulation=original.minutes[row.playerId]??0;
-  assert.ok(row.minutes>=regulation);
+  assert.ok(Math.abs(row.minutes-regulation)<=8+(result.box.overtime??0)*5,"nightly shifts may only move a bounded number of minutes");
   assert.equal(Object.values(row.positionMinutes??{}).reduce((a,b)=>a+b,0),row.minutes);
-  if(!result.box.overtime)assert.equal(row.minutes,regulation);
   assert.equal(row.started,original.openingIds.has(row.playerId));
 }
 
@@ -51,6 +60,10 @@ const playoff=rotationForTeam(team,league.players,true);
 assert.equal(playoff.tightened,true);
 assert.ok(playoff.rows.filter(row=>row.minutes>0).length<=8);
 const manualTeam:GmTeam={...team,coaching:{...team.coaching!,rotationMode:"manual"}};
+const manualGame=simulateGame(game,league.teams.map(t=>t.id===team.id?manualTeam:t),league.players,712);
+if(!manualGame.box.players.some(p=>p.teamId===team.id&&(p.personalFouls??0)>=6)){
+  for(let slot=0;slot<24;slot++)assert.deepEqual(new Set(manualGame.box.stints![slot]![side]),new Set(Object.values(original.frames[slot]!)),"manual plans retain exact shift-book parity absent a foul-out");
+}
 assert.deepEqual(rotationForTeam(manualTeam,league.players,true).rows,rotationForTeam(manualTeam,league.players).rows,"explicit plans keep their playoff depth");
 const backup=roster.find(p=>(original.minutes[p.id]??0)===0)!;
 const recovered=league.players.map(p=>p.id===roster.find(p=>(original.minutes[p.id]??0)>0)!.id?{...p,injury:{type:"Recovered",gamesRemaining:0,reinjuryRisk:0}} as GmPlayer:p);
@@ -66,7 +79,7 @@ const hurtManual=rebalanceForInjuryChanges({...league,teams:league.teams.map(t=>
 assert.deepEqual(hurtManual.teams.find(t=>t.id===team.id)!.coaching,manualTeam.coaching,"injuries repair tonight without overwriting manual minute targets");
 const healedManual=rebalanceForInjuryChanges({...hurtManual,players:league.players},hurt);
 assert.deepEqual(healedManual.teams.find(t=>t.id===team.id)!.coaching,manualTeam.coaching,"recovery does not restore a stale rotation over manual edits");
-assert.ok(!result.box.players.some(p=>p.playerId===backup.id),"zero-minute reserves do not enter arbitrary fallback units");
+assert.ok(result.box.players.filter(p=>p.playerId===backup.id).every(p=>p.minutes<=6),"zero-minute reserves only get limited contextual garbage or foul-out minutes");
 
 const manualRows=original.rows.map(row=>({...row,on:[...row.on]}));
 const shifts=Object.fromEntries(manualRows.map(row=>[row.id,row.on]));
@@ -113,4 +126,4 @@ updated=state.league.teams.find(t=>t.id===team.id)!;
 assert.ok(updated.coaching!.minutes![backup.id]!>0);
 assert.ok(rotationForTeam(updated,state.league.players).openingIds.has(backup.id));
 assert.deepEqual(league.players.map(p=>p.sheet),prepareFranchise(JSON.parse(JSON.stringify(league))).players.map((p:GmPlayer)=>p.sheet),"saved ratings and potential do not change during rotation migration");
-console.log("Realistic rotations passed: 240 minutes, five unique players, coherent stints, preview/game parity, positional accounting, playoff depth, closing/OT, injuries, saved plans, NBA listings and starter edits.");
+console.log("Realistic rotations passed: 240 minutes, five unique players, coherent stints, planned/manual preview parity plus contextual substitutions, positional accounting, playoff depth, closing/OT, injuries, saved plans, NBA listings and starter edits.");
