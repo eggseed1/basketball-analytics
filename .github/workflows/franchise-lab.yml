@@ -36,6 +36,7 @@ jobs:
       - run: npm run test:franchise-badges
       - run: npm run test:franchise-development
       - run: npm run test:franchise-dynamic-progression
+      - run: npm run test:franchise-multiseason
       - run: npm run test:franchise-calendar
       - run: npm run test:franchise-flow
       - run: npm run test:franchise-ux
