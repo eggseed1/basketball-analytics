@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
-import { assignMentor, activeMentor, mentorshipBonus, raiseCeiling, reviewPlayerCeilings, breakoutEvidence, workEthicOf } from "../src/gm/engine/development";
+import { assignMentor, activeMentor, activeMentorships, MAX_TEAM_MENTORSHIPS, pairCpuMentors, mentorshipBonus, raiseCeiling, reviewPlayerCeilings, breakoutEvidence, workEthicOf } from "../src/gm/engine/development";
 import { recordSimGame } from "../src/gm/lib/season-line";
 import { progressSheet, overallFromAttributes } from "../src/gm/engine/attributes";
 import { applyTrainingCamp, assignCamp, campSlots } from "../src/gm/engine/season-development";
@@ -31,13 +31,38 @@ assert.equal(mentorshipBonus(student(), league.players.map(p => p.id === veteran
 assert.equal(activeMentor(student(), league.players.map(p => p.id === young.id ? { ...p, position: "SG" } : p))?.id, veteran.id, "eligibility uses the supplied learner");
 assert.equal(activeMentor({ ...student(), position: "SG" }, league.players), undefined);
 assert.equal(workEthicOf(veteran), 95);
+assert.equal(MAX_TEAM_MENTORSHIPS,2);
+const secondVeteran: GmPlayer = { ...roster[3]!, age: 34, position: "PG" };
+const thirdYoung: GmPlayer = { ...roster[4]!, age: 19, position: "PG" };
+const thirdVeteran: GmPlayer = { ...roster[5]!, age: 35, position: "PG" };
+const slotLeague = { ...league, players: league.players.map(p =>
+  p.id === secondVeteran.id ? secondVeteran : p.id === thirdYoung.id ? thirdYoung : p.id === thirdVeteran.id ? thirdVeteran : p) };
+const twoPairs = assignMentor(slotLeague,other.id,secondVeteran.id);
+assert.equal(twoPairs.ok,true);
+assert.equal(activeMentorships(twoPairs.state.players,"bos").length,2);
+const blocked = assignMentor(twoPairs.state,thirdYoung.id,thirdVeteran.id);
+assert.equal(blocked.ok,false, "third young player cannot receive a mentor");
+assert.match(blocked.reason,/slots are full/i);
+assert.equal(blocked.state,twoPairs.state,"rejected action cannot mutate the save");
+const freed = assignMentor(twoPairs.state,young.id,null);
+assert.equal(activeMentorships(freed.state.players,"bos").length,1);
+assert.equal(assignMentor(freed.state,thirdYoung.id,thirdVeteran.id).ok,true,"removing a pairing opens a slot");
+const legacyExtra = { ...twoPairs.state, players: twoPairs.state.players.map(p =>
+  p.id === thirdYoung.id ? { ...p, mentorship: { mentorId: thirdVeteran.id, teamId: "bos", season: league.season, sharedGames: 0 } } : p) };
+assert.equal(activeMentorships(legacyExtra.players,"bos").length,2,"over-subscribed legacy saves never get three active bonuses");
+const normalized = pairCpuMentors(legacyExtra);
+assert.equal(normalized.players.filter(p => p.teamId === "bos" && p.mentorship).length,2,"legacy extra assignments are cleared");
+for(const team of normalized.teams) assert.ok(activeMentorships(normalized.players,team.id).length<=2,"CPU teams respect the same two-slot cap");
+
 const unmentored = progressSheet(student(), { pace: "season", speed: 0.5, minutes: 24, mentorBonus: 0 });
 const mentored = progressSheet(student(), { pace: "season", speed: 0.5, minutes: 24, mentorBonus: bonus });
 assert.ok((mentored.sheet!.developmentCarry ?? 0) > (unmentored.sheet!.developmentCarry ?? 0), "mentor work increases fractional development before a rating step");
 assert.ok(mentored.sheet!.overall >= unmentored.sheet!.overall);
-const box: GmBoxScore = { id: "mentor-box", gameId: "mentor-game", season: league.season, day: 1, homeTeamId: "bos", awayTeamId: "nyk", homeScore: 100, awayScore: 90, possessions: 100, players: [{ playerId: young.id, playerName: young.name, teamId: "bos", minutes: 28, points: 20, assists: 5, rebounds: 5, steals: 1, blocks: 0, turnovers: 2, fgm: 8, fga: 15, tpm: 2, tpa: 5, ftm: 2, fta: 2, plusMinus: 5, trueShootingPct: 0.6, usagePct: 0.2, gameScore: 18 }] };
+const box: GmBoxScore = { id: "mentor-box", gameId: "mentor-game", season: league.season, day: 1, homeTeamId: "bos", awayTeamId: "nyk", homeScore: 100, awayScore: 90, possessions: 100, players: [{ playerId: young.id, playerName: young.name, teamId: "bos", minutes: 28, points: 20, assists: 5, rebounds: 5, steals: 1, blocks: 0, turnovers: 2, fgm: 8, fga: 15, tpm: 2, tpa: 5, ftm: 2, fta: 2, plusMinus: 5, trueShootingPct: 0.6, usagePct: 0.2, gameScore: 18 }, { playerId: veteran.id, playerName: veteran.name, teamId:"bos", minutes:16, points:5, assists:2, rebounds:4, steals:0, blocks:0, turnovers:1, fgm:2, fga:5, tpm:1, tpa:2, ftm:0, fta:0, plusMinus:1, trueShootingPct:0.5, usagePct:0.1, gameScore:4 }] };
 league = { ...league, players: recordSimGame(league.players, box, []) };
 assert.equal(student().mentorship?.sharedGames, 1);
+const mentorDnp = {...box,gameId:"mentor-dnp",players:box.players.filter(row => row.playerId!==veteran.id)};
+assert.equal(recordSimGame(league.players,mentorDnp,[box]).find(p=>p.id===young.id)?.mentorship?.sharedGames,1,"mentor DNP does not count as a shared game");
 assert.equal(recordSimGame(league.players, box, [box]).find(p => p.id === young.id)?.mentorship?.sharedGames, 1);
 assert.equal(student().developmentBaseline?.overall, 70);
 const saved = parseFranchise(exportFranchise(league));
@@ -100,4 +125,4 @@ const rested = tickInjuries(fatigued, 1, { teamIds: ["bos"], before: fatigued, t
 assert.equal(rested[0]?.campFatigueGames, 1);
 assert.equal(tickInjuries(rested, 1, { teamIds: ["nyk"], before: rested, trainerByTeam: {} })[0]?.campFatigueGames, 1);
 assert.equal(tickInjuries(rested, 1, { teamIds: ["bos"], before: rested, trainerByTeam: {} })[0]?.campFatigueGames, 0);
-console.log("Development checks passed: mentorship eligibility, growth, exposure, trade/reload guards, full-season breakouts, rare annual rolls, shared +4 career cap, camp limits and workload recovery.");
+console.log("Development checks passed: two-slot limits for player/CPU teams, legacy repair, shared-game-only teaching, growth, save guards, breakout cap and camp.");
