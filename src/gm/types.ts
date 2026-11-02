@@ -788,6 +788,13 @@ export interface GmLeagueSettings {
   developmentSpeed?: number;
   tradeDifficulty?: number;
   simPace?: number;
+  /** Advanced game engine multipliers. 1.0 is the NBA-calibrated baseline. */
+  simShotAccuracy?: number;
+  simThreeRate?: number;
+  simFoulRate?: number;
+  simTurnoverRate?: number;
+  simReboundRate?: number;
+  simAssistRate?: number;
   salaryCapM: number;
   luxuryTaxM: number;
   firstApronM: number;
