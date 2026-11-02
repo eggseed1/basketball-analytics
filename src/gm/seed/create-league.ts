@@ -198,7 +198,7 @@ export function createGeneratedLeague(options?: {
     automation: {
       autoDraft: false,
       autoFreeAgency: false,
-      autoScout: false,
+      autoScout: true,
     },
     teams,
     players,
