@@ -2,6 +2,7 @@ import type { GmAmateurSeason, GmDraftRole, GmDraftScouting, GmDraftTool, GmLeag
 import { playerSheet } from "@/gm/engine/attributes";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { scoutMatchBonus } from "@/gm/seed/scouts";
+import { spendScoutingLook } from "@/gm/engine/scouting";
 
 export const DRAFT_ROLES: ReadonlyArray<{ id: GmDraftRole; label: string; description: string }> = [
   { id: "value", label: "Best value", description: "Balance readiness, room to grow and what the market expects." },
@@ -64,6 +65,42 @@ export function marketBoard(league: GmLeagueState): GmPlayer[] {
     .sort((a,b) => (a.consensusRank ?? a.scoutProfile?.boardRankHint ?? 999) - (b.consensusRank ?? b.scoutProfile?.boardRankHint ?? 999) || (b.consensus ?? -5) - (a.consensus ?? -5) || a.id.localeCompare(b.id));
 }
 
+/**
+ * A public-evidence sleeper radar. No potential, dev trait, path, ceiling or
+ * hidden roll is used here. Favor real basketball signals rather than a
+ * random "gem" badge; false positives are an important part of drafting.
+ */
+export function draftSleeperSignals(player: GmPlayer): { score: number; reasons: string[]; focus: GmDraftTool } {
+  const stats = amateurSeason(player);
+  const three = stats.threeMade / Math.max(1, stats.threeAttempts);
+  const ft = stats.ftMade / Math.max(1, stats.ftAttempts);
+  const assistRatio = stats.assists / Math.max(0.5, stats.turnovers);
+  const reasons: string[] = [];
+  if (stats.threeAttempts >= 95 && three >= 0.355) reasons.push("Shooting volume backs up the touch");
+  if (ft >= 0.78) reasons.push("Good free-throw touch");
+  if (assistRatio >= 1.7) reasons.push("Makes decisions without many turnovers");
+  if (stats.steals >= 1.55 || stats.blocks >= 1.7) reasons.push("Defensive production stands out");
+  if (player.age <= 20) reasons.push("Young enough for a longer runway");
+  const profile = player.scoutProfile;
+  if (profile?.grades.upside && ["A+","A","A-","B+"].includes(profile.grades.upside)) reasons.push("Scouts see a strong upside case");
+  const rank = player.consensusRank ?? profile?.boardRankHint ?? 30;
+  const score = reasons.length * 1.7 + (rank >= 24 ? 1 : 0) + (rank >= 31 ? 0.4 : 0)
+    + Math.min(0.8, (stats.points - 15) * 0.08);
+  const focus: GmDraftTool = assistRatio >= 1.7 ? "creation"
+    : three >= 0.355 || ft >= 0.78 ? "shooting"
+    : stats.steals >= 1.55 || stats.blocks >= 1.7 ? "defense" : "feel";
+  return { score: Math.round(score * 10) / 10, reasons: reasons.slice(0, 3), focus };
+}
+
+/** Suggest sleepers using evidence available to every club, not hidden growth rolls. */
+export function sleeperRadar(league: GmLeagueState, limit = 7): GmPlayer[] {
+  return marketBoard(league).filter(player => league.draftPool.includes(player.id)
+    && (player.consensusRank ?? 0) >= 22)
+    .sort((a,b) => draftSleeperSignals(b).score - draftSleeperSignals(a).score
+      || (a.consensusRank ?? 99) - (b.consensusRank ?? 99))
+    .slice(0, limit);
+}
+
 export type DraftRead = {
   readiness: number; readyLow: number; readyHigh: number; upsideLow: number; upsideHigh: number;
   coverage: number; score: number; marketRank: number; tools: Record<GmDraftTool, number>; strengths: string[]; risks: string[];
@@ -99,7 +136,14 @@ export function draftRead(league: GmLeagueState, player: GmPlayer, role: GmDraft
   const width = Math.max(3, Math.round(9 - coverage * 7));
   const habits = report.habits === "strong" ? 2 : report.habits === "uncertain" ? -1 : 0;
   const runway = clamp((25 - player.age) * 1.25, 1, 9);
-  const projection = clamp(readiness + runway + (tools.feel - 65) * 0.07 + habits, readiness, 94);
+  // Scouting a prospect should materially inform the decision. Before
+  // research, this is just a broad age/readiness projection; after film or a
+  // workout the upside grade provides a *noisy* independent assessment.
+  const upsideGrade = player.scoutProfile?.grades.upside;
+  const upsideIndex = upsideGrade ? ["F","D","C-","C","C+","B-","B","B+","A-","A","A+"].indexOf(upsideGrade) : -1;
+  const researched = Object.keys(report.studies).length > 0;
+  const upsideSignal = researched && upsideIndex >= 0 ? (upsideIndex - 5) * Math.min(1.1, 0.6 + coverage * 0.65) : 0;
+  const projection = clamp(readiness + runway + (tools.feel - 65) * 0.07 + habits + upsideSignal, readiness, 94);
   let score = readiness * 0.6 + projection * 0.4;
   if (role === "ready") score = readiness;
   else if (role === "upside") score = projection + Math.min(3, (23 - player.age) * 0.5);
@@ -165,7 +209,16 @@ export function studyProspect(league: GmLeagueState, playerId: string, method: G
     note = medical === "concern" ? "Availability concerns need to be weighed against the talent." : medical === "monitor" ? "Monitor workload and recovery. No medical projection is certain." : "No major availability concern in this review. Injury risk remains.";
   }
   const nextReport: GmProspectReport = { ...report, tools, readiness, habits, medical, studies: { ...report.studies, [method]: { day: league.day, focus: method === "film" || method === "workout" ? focus : undefined, note } } };
-  return { ok: true, reason: note, state: { ...league, draftScouting: { ...scouting, spent: scouting.spent + study.cost, reports: { ...scouting.reports, [playerId]: nextReport } } } };
+  // One click should reveal a meaningful new clue, not merely tick a box in
+  // a separate scouting system. "Upside" is a noisy scout grade, not truth.
+  let researched = player;
+  if (method === "film" || method === "workout") {
+    researched = spendScoutingLook(researched, scout, "upside");
+    if (method === "workout") researched = spendScoutingLook(researched, scout, focus);
+  }
+  return { ok: true, reason: note, state: { ...league,
+    players: researched === player ? league.players : league.players.map(row => row.id === playerId ? researched : row),
+    draftScouting: { ...scouting, spent: scouting.spent + study.cost, reports: { ...scouting.reports, [playerId]: nextReport } } } };
 }
 
 export function toggleDraftWatch(league: GmLeagueState, playerId: string): GmLeagueState {
