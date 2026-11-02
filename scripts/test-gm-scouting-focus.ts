@@ -26,6 +26,8 @@ function blankCount(league: ReturnType<typeof createGeneratedLeague>, id: string
 function main() {
   let league = createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 99 });
   assert.ok(league.draftPool.length >= 3, "draft class exists");
+  assert.equal(league.automation?.autoScout,true,"new franchises scout automatically instead of pausing monthly");
+  league={...league,automation:{...league.automation,autoScout:false}};
 
   // First calendar month with games.
   const withDate = league.schedule.find((game) => game.gameDate && game.day >= 10);
@@ -65,7 +67,7 @@ function main() {
   // Team-building gate blocks scouting prompt.
   let other = createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 11 });
   const dated = other.schedule.find((game) => game.gameDate && game.day >= 10)!;
-  other = { ...other, day: dated.day, teamBuildingCheckpoint: {
+  other = { ...other, day: dated.day, automation:{...other.automation,autoScout:false}, teamBuildingCheckpoint: {
     id: "trade_deadline",
     kind: "trade_deadline",
     day: other.day,
@@ -94,11 +96,12 @@ function main() {
   // Autoscout picks and applies weaker looks than manual.
   let auto = createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 44 });
   const autoDay = auto.schedule.find((game) => game.gameDate && game.day >= 10)!;
-  auto = { ...auto, day: autoDay.day };
+  auto = { ...auto, day: autoDay.day, automation:{...auto.automation,autoScout:false} };
   auto = considerScoutingFocus(auto);
   assert.ok(auto.scoutingFocusPrompt);
   const autoPick = autoPickScoutingFocus(auto);
   assert.ok(autoPick.playerIds.length >= 1 && autoPick.playerIds.length <= 3);
+  assert.ok(autoPick.playerIds.some(id=>(auto.players.find(player=>player.id===id)?.consensusRank??0)>=24),"automatic scouts should check at least one later-round possibility");
   const manualClone = { ...auto };
   const autoIds = autoPick.playerIds;
   const fogBefore = autoIds.map((id) => blankCount(auto, id));
