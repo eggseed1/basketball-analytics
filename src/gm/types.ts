@@ -257,6 +257,8 @@ export interface GmPotential {
 }
 
 export interface GmSheet {
+  /** Fractional gains/losses between visible progression steps. */
+  progressionCarry?: number;
   developmentCarry?: number;
   developmentReport?: { age: number; before: number; after: number; reasons: string[]; gains: string[] };
   /** Entry calibration retained through development and save migrations. */
@@ -309,6 +311,8 @@ export interface GmSeasonArchive {
 export type GmBadgeId = "inside_touch" | "deep_range" | "free_throw" | "floor_general" | "secure_handle" | "passing_lanes" | "rim_guardian" | "glass_cleaner" | "defensive_anchor" | "clutch_scorer";
 
 export interface GmPlayer {
+  /** One deterministic trait review per offseason; retained in saves. */
+  traitHistory?: Array<{ season: number; before: GmDevTrait; after: GmDevTrait; reason: string }>;
   badges?: { version: 1; xp: Partial<Record<GmBadgeId, number>>; season?: number; gameIds?: string[] };
   badgeFocus?: GmBadgeId;
   workEthic?: number;
@@ -983,7 +987,7 @@ export interface GmSeasonFlow {
   staffAged?: boolean;
   readyForTip?: boolean;
   returnFromMarket?: "roster_check";
-  progression?: Array<{ playerId: string; name: string; teamId: string | null; age: number; before: number; after: number }>;
+  progression?: Array<{ playerId: string; name: string; teamId: string | null; age: number; before: number; after: number; traitBefore?: GmDevTrait; traitAfter?: GmDevTrait; reason?: string }>;
   campAssignments?: Record<string, GmCampFocus>;
   campResults?: Array<{ playerId: string; name: string; before: number; after: number; focus: GmCampFocus; gains: string[]; tradeoff?: string }>;
   retiredPlayers?: Array<{ id: string; name: string; age: number; overall: number }>;
@@ -1080,7 +1084,7 @@ export interface GmLeagueState {
   /** Published contracts and future picks have been written onto this save. */
   booksBook?: number;
   /** In-season development already applied for this year. */
-  devMarks?: { season: number; january: boolean; finale: boolean };
+  devMarks?: { season: number; january: boolean; finale: boolean; quarter1?: boolean; quarter3?: boolean };
   /** Wins from the season before this one. Cup tiebreaks use these after 2026-27. */
   priorWins?: Record<string, number>;
   /** Cup rooms. Absent on 2026-27, which uses the published groups. */
