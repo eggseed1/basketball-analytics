@@ -22,9 +22,11 @@ export function GmPlayerPortrait({
   className?: string;
 }) {
   const realId = player.nbaPlayerId?.trim() || undefined;
+  // Older real-player saves may retain an ESPN id but no NBA crosswalk.
+  const entryId = player.nbaSeason && /^\d+$/.test(player.id) ? player.id : undefined;
   return (
     <PlayerHeadshot
-      playerId={realId}
+      playerId={realId ?? entryId}
       nbaId={realId}
       name={displayPlayerName(player)}
       teamKey={player.teamId}
