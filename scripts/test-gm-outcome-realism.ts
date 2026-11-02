@@ -38,7 +38,7 @@ async function main(){
       assert.equal(teamLines.reduce((a,p)=>a+p.points,0),side===box.homeTeamId?box.homeScore:box.awayScore);
       for(const p of teamLines) {
         assert.ok(p.minutes>=0&&p.minutes<=48+(box.overtime??0)*5+.001);
-        assert.ok(p.personalFouls==null||p.personalFouls<=7,"repeated fouls after disqualification");
+        assert.ok(p.personalFouls==null||p.personalFouls<=6,"no seventh foul after disqualification");
         assert.equal((p.offensiveRebounds??0)+(p.defensiveRebounds??0),p.rebounds);
         assert.ok(p.fgm<=p.fga && p.tpm<=p.tpa && p.ftm<=p.fta);
         const gs=p.points + 0.4*p.fgm - 0.7*p.fga - 0.4*(p.fta-p.ftm) + 0.7*(p.offensiveRebounds??0) + 0.3*(p.defensiveRebounds??0) + p.steals + 0.7*p.assists + 0.7*p.blocks - 0.4*(p.personalFouls??0) - p.turnovers;
