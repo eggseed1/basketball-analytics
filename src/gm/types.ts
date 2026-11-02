@@ -318,7 +318,7 @@ export interface GmPlayer {
   badges?: { version: 1 | 2; xp: Partial<Record<GmBadgeId, number>>; season?: number; gameIds?: string[] };
   badgeFocus?: GmBadgeId;
   workEthic?: number;
-  mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; lastGameId?: string };
+  mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; lastGameId?: string; slot?: 0 | 1 };
   developmentBaseline?: { season: number; overall: number };
   ceilingGrowth?: { total: number; reviewedSeason?: number; awards: Array<{ season: number; source: "mentorship" | "breakout"; gain: number; reason: string }> };
   campFatigueGames?: number;
