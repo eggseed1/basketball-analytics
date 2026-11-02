@@ -90,6 +90,8 @@ function addLine(base: GmCountingLine, box: GmBoxScore, playerId: string): GmCou
     min: base.min + line.minutes,
     pts: base.pts + line.points,
     reb: base.reb + line.rebounds,
+    orb: line.offensiveRebounds == null ? base.orb : (base.orb ?? 0) + line.offensiveRebounds,
+    drb: line.defensiveRebounds == null ? base.drb : (base.drb ?? 0) + line.defensiveRebounds,
     ast: base.ast + line.assists,
     stl: base.stl + line.steals,
     blk: base.blk + line.blocks,
