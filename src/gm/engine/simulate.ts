@@ -176,8 +176,9 @@ export function simulateGame(
     const handler = weighted(off, p => rates.get(p.id)!.fga * playerForm.get(p.id)!.volume * usageBoost(p, own.coaching) + rates.get(p.id)!.ast, rng);
     for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
     // Most NBA personal fouls do not result in immediate free throws.
-    if (rng() < 0.079 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25)) {
-      const fouler = weighted(def, p => p.sheet?.tendencies.foul ?? 55, rng);
+    const foulEligible = def.filter(p => (lines.get(p.id)?.personalFouls ?? 0) < 6);
+    if (foulEligible.length && rng() < 0.079 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25)) {
+      const fouler = weighted(foulEligible, p => p.sheet?.tendencies.foul ?? 55, rng);
       push(fouler, "foul", "personal", `${fouler.name} personal foul`);
     }
     if (rng() < turnoverChance * badges.get(handler.id)!.tov) {
@@ -219,8 +220,9 @@ export function simulateGame(
       const deficit = side === 0 ? homeScore - awayScore : awayScore - homeScore;
       const deliberate = elapsed >= regulation - 35 && elapsed < regulation && deficit >= 3 && deficit <= 9;
       const foulChance = deliberate ? 0.67 : clamp(foulRatio / (2 + foulRatio) * mods.ft * 0.958 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25), 0.025, 0.2);
-      if (rng() < foulChance) {
-        const fouler = weighted(def, p => p.sheet?.tendencies.foul ?? 55, rng);
+      const canFoul = def.filter(p => (lines.get(p.id)?.personalFouls ?? 0) < 6);
+      if (canFoul.length && rng() < foulChance) {
+        const fouler = weighted(canFoul, p => p.sheet?.tendencies.foul ?? 55, rng);
         push(fouler, "foul", deliberate ? "intentional" : "shooting", `${fouler.name} ${deliberate ? "intentional" : "shooting"} foul on ${shooter.name}`);
         let finalMade = false;
         for (let ft = 1; ft <= 2; ft++) {
