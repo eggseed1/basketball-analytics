@@ -11,6 +11,7 @@ for(let seed=1;seed<=36;seed++){
   const radar=sleeperRadar(league,7);
   assert.equal(new Set(radar.map(p=>p.id)).size,radar.length);
   assert.ok(radar.every(p=>(p.consensusRank??0)>=22));
+  assert.ok(radar.filter(p=>(p.consensusRank??0)>=31).length>=2,"radar reserves space for actual second-round picks");
   const hidden=late.filter(p=>(p.sheet?.potential.ceiling??0)>=85 && p.ratings.potential>=7.5);
   hiddenHigh+=hidden.length;
   classesWithLate+=Number(hidden.length>0);
@@ -35,7 +36,7 @@ for(let seed=1;seed<=36;seed++){
     assert.equal(studyProspect(scouted.state,candidate.id,"film",signal.focus).ok,false,"cannot re-roll scout intel");
     assert.deepEqual(scouted.state.players.find(p=>p.id===candidate.id)?.sheet,candidate.sheet,"scouting cannot create player talent");
     const autos=autoPickScoutingFocus(league);
-    assert.ok(autos.playerIds.some(id=>(league.players.find(p=>p.id===id)?.consensusRank??0)>=24),"automated scouts must evaluate late candidates");
+    assert.ok(autos.playerIds.some(id=>(league.players.find(p=>p.id===id)?.consensusRank??0)>=31),"automated scouts must evaluate second-round candidates");
     assert.equal(league.automation?.autoScout,true);
   }
 }
