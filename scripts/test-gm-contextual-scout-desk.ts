@@ -23,7 +23,7 @@ for (let seed=1;seed<=12;seed++) {
   }
   const hidden: GmLeagueState = {...league,players:league.players.map(p=>!league.draftPool.includes(p.id)?p:{
     ...p, ratings:{...p.ratings,potential:10-p.ratings.potential},
-    sheet:p.sheet?{...p.sheet,potential:{...p.sheet.potential,ceiling:99,trait:"xfactor",path:"boom"}}:p.sheet,
+    sheet:p.sheet?{...p.sheet,potential:{...p.sheet.potential,ceiling:99,trait:"xfactor" as const,path:"boom" as const}}:p.sheet,
   })};
   const projected=(state:GmLeagueState)=>{const d=buildScoutDesk(state,5);return {
     headline:d.headline,briefing:d.briefing,recommended:d.recommended,
