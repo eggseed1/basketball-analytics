@@ -12,7 +12,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: franchise-lab-${{ github.ref }}
+  group: franchise-lab-gameplay-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   simulation:
