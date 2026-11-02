@@ -1,122 +1,295 @@
-name: Franchise Lab
-on:
-  pull_request:
-    paths:
-      - 'src/gm/**'
-      - 'src/app/gm/**'
-      - 'scripts/*gm*'
-      - 'scripts/test-franchise-systems.mjs'
-      - 'package.json'
-      - '.github/workflows/franchise-lab.yml'
-  workflow_dispatch:
-permissions:
-  contents: read
-concurrency:
-  group: franchise-lab-${{ github.ref }}
-  cancel-in-progress: true
-jobs:
-  simulation:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    env:
-      NEXT_TELEMETRY_DISABLED: '1'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npx next typegen
-      - run: npm run typecheck
-      - run: npx eslint src/gm src/app/gm scripts/test-gm-franchise-upgrade.ts scripts/test-gm-calibration.ts scripts/test-franchise-systems.mjs scripts/fixture-gm-franchise.ts scripts/smoke-gm-browser.mjs scripts/test-gm-draft-overhaul.ts scripts/test-gm-draft-class.ts scripts/fixture-gm-draft-overhaul.ts scripts/smoke-gm-draft-overhaul.mjs --quiet --pass-on-unpruned-suppressions
-      - run: npm run test:franchise-rotations
-      - run: npm run test:franchise-postseason
-      - run: npm run test:franchise-calibration
-      - run: npm run test:franchise-badges
-      - run: npm run test:franchise-development
-      - run: npm run test:franchise-dynamic-progression
-      - run: npm run test:franchise-calendar
-      - run: npm run test:franchise-flow
-      - run: npm run test:franchise-ux
-      - run: npm run test:franchise-saves
-      - run: npm run test:franchise-draft
-      - run: npm run test:franchise-lab
-      - run: npm run test:franchise-systems
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: franchise-lab-calibration
-          path: |
-            /tmp/franchise-calibration
-            /tmp/franchise-draft-calibration
-          if-no-files-found: ignore
-          retention-days: 7
-  balance:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run test:franchise-multiseason
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: franchise-long-horizon-balance
-          path: /tmp/franchise-calibration/multiseason.json
-          if-no-files-found: ignore
-          retention-days: 7
-  fidelity:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 12
-    env:
-      NEXT_TELEMETRY_DISABLED: '1'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run test:franchise-possession-fidelity
-      - run: npm run test:franchise-sim-holdout
-      - run: npm run test:franchise-outcome-realism
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: franchise-possession-fidelity
-          path: /tmp/franchise-calibration/possession-fidelity.json
-          if-no-files-found: ignore
-          retention-days: 7
-  browser:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    env:
-      NEXT_TELEMETRY_DISABLED: '1'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: node scripts/smoke-react-state.mjs
-      - run: node scripts/smoke-gm-browser.mjs
-      - run: node --require ./scripts/lib/stub-server-only.cjs --import tsx scripts/smoke-gm-postseason.mjs
-      - run: node scripts/audit-gm-ux.mjs --verify
-      - run: node scripts/smoke-gm-draft-overhaul.mjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: franchise-lab-ui
-          path: |
-            /tmp/franchise-qa
-            /tmp/franchise-postseason
-            /tmp/franchise-ux
-            /tmp/franchise-draft-qa
-          retention-days: 7
+{
+  "name": "basketball-analytics",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "bake:bref-team-contracts": "node scripts/build-runtime-bref-team-contracts.mjs",
+    "import:spotrac-picks": "node scripts/import-spotrac-future-picks.mjs",
+    "build": "next build --webpack",
+    "build:turbo": "next build --turbopack",
+    "dev": "next dev",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "node scripts/run-tests.mjs",
+    "test:franchise-systems": "node scripts/test-franchise-systems.mjs",
+    "test:franchise-postseason": "tsx scripts/test-gm-postseason.ts",
+    "test:franchise-media": "tsx scripts/test-gm-player-identity.ts",
+    "test:franchise-rotations": "tsx scripts/test-gm-realistic-rotations.ts",
+    "test:franchise-badges": "tsx scripts/test-gm-badges.ts",
+    "test:franchise-development": "tsx scripts/test-gm-development.ts",
+    "test:franchise-dynamic-progression": "tsx scripts/test-gm-dynamic-progression.ts",
+    "test:franchise-multiseason": "tsx scripts/test-gm-multiseason-progression.ts",
+    "test:franchise-calendar": "tsx scripts/test-gm-calendar.ts",
+    "test:franchise-flow": "tsx scripts/test-gm-season-journey.ts",
+    "test:franchise-ux": "tsx scripts/test-gm-ux-guidance.ts",
+    "test:franchise-draft": "tsx scripts/test-gm-draft-overhaul.ts",
+    "test:franchise-saves": "node --experimental-vm-modules scripts/test-gm-save-slots.mjs",
+    "test:franchise-lab": "tsx scripts/test-gm-franchise-upgrade.ts",
+    "test:franchise-calibration": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-gm-calibration.ts",
+    "test:franchise-possession-fidelity": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-gm-possession-fidelity.ts",
+    "test:franchise-sim-holdout": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-gm-sim-holdout.ts",
+    "test:franchise-outcome-realism": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-gm-outcome-realism.ts",
+    "test:runtime-smoke-html": "node --test scripts/test-runtime-smoke-html.mjs",
+    "test:arcade": "tsx scripts/test-arcade.ts",
+    "test:one-shot": "tsx scripts/test-one-shot.ts",
+    "arcade:build": "node scripts/build-arcade-data.mjs",
+    "test:contract-value": "tsx scripts/test-contract-value.ts",
+    "test:recent-insights": "tsx scripts/test-recent-insights.ts",
+    "test:headline-words": "tsx scripts/test-headline-words.ts",
+    "test:league-moves": "tsx scripts/test-league-moves.ts",
+    "test:injury-report": "tsx scripts/test-injury-report.ts",
+    "test:season-glance": "tsx scripts/test-season-glance.ts",
+    "test:season-pulse": "tsx scripts/test-season-pulse.ts",
+    "test:season-metrics": "tsx scripts/test-season-metrics.ts",
+    "test:legend-boards": "node scripts/build-legend-boards.mjs --check",
+    "test:darko-parse": "tsx scripts/test-darko-parse.ts",
+    "bake:contract-value": "tsx scripts/build-contract-value.ts",
+    "eval:contract-value": "tsx scripts/eval-contract-value.ts",
+    "predeploy": "npm run typecheck && npm test",
+    "test:career-resume": "tsx scripts/test-career-resume.ts",
+    "test:career-freshness": "tsx scripts/test-current-career-freshness.ts",
+    "test:historical-impact": "tsx scripts/test-historical-impact.ts",
+    "test:box-score-context": "tsx scripts/test-box-score-context.ts",
+    "test:transaction-lineage": "tsx scripts/test-transaction-lineage.ts",
+    "test:player-season-compare": "tsx scripts/test-player-season-compare.ts",
+    "test:player-season-rank": "tsx scripts/test-player-season-rank.ts",
+    "test:offseason-tracker": "tsx scripts/test-offseason-tracker.ts",
+    "test:acquisition-paths": "tsx scripts/test-acquisition-paths.ts",
+    "test:draft-transactions": "tsx scripts/test-draft-transactions.ts",
+    "test:game-lab": "tsx scripts/test-game-lab.ts",
+    "test:live-insights": "tsx scripts/test-live-insights.ts",
+    "test:game-season-context": "tsx scripts/test-game-season-context.ts",
+    "test:game-matchup-theme": "tsx scripts/test-game-matchup-theme.ts",
+    "test:game-shell": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-game-shell.ts",
+    "test:ask-drbl": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-ask-drbl.ts",
+    "test:compare-drbl": "tsx scripts/test-compare-drbl.ts",
+    "test:ask-examples": "tsx scripts/test-ask-examples.ts",
+    "test:ask-recent-store": "tsx scripts/test-ask-recent-store.ts",
+    "test:site-nav": "tsx scripts/test-site-nav.ts",
+    "test:i18n": "tsx scripts/test-i18n.ts",
+    "test:player-data-health": "tsx scripts/test-player-data-health.ts",
+    "test:player-board-resilience": "tsx scripts/test-player-board-resilience.ts",
+    "test:explore-players-board": "tsx scripts/test-explore-players-board.ts",
+    "test:lib-unit": "tsx --require ./scripts/lib/stub-server-only.cjs --test src/lib/*.test.ts",
+    "test:ui-continuity": "tsx scripts/test-ui-continuity.ts",
+    "test:cross-route-continuity": "tsx scripts/test-cross-route-continuity.ts",
+    "test:progressive-destinations": "tsx scripts/test-progressive-destinations.ts",
+    "test:data-truth": "tsx scripts/test-data-truth.ts",
+    "test:advanced-stats-audit": "tsx scripts/test-advanced-stats-audit.ts",
+    "test:player-percentile-metrics": "tsx scripts/test-player-percentile-metrics.ts",
+    "test:scoreboard-resilience": "tsx scripts/test-scoreboard-resilience.ts",
+    "test:production-provider-guard": "tsx scripts/test-production-provider-guard.ts",
+    "test:pbp-capability": "tsx scripts/test-pbp-capability.ts",
+    "test:pbp-product": "tsx scripts/test-pbp-product.ts",
+    "test:possession-explorer": "tsx scripts/test-possession-explorer.ts",
+    "test:possession-calibration": "tsx scripts/test-possession-calibration.ts",
+    "audit:possession-reconstruction": "tsx scripts/audit-possession-reconstruction.ts",
+    "report:pbp-coverage": "tsx scripts/report-pbp-coverage.ts",
+    "test:player-career-explorer": "tsx scripts/test-player-career-explorer.ts",
+    "test:team-intelligence": "tsx scripts/test-team-intelligence.ts",
+    "test:team-arc": "tsx scripts/test-team-arc.ts",
+    "test:team-season-compare": "tsx scripts/test-team-season-compare.ts",
+    "test:team-season-rank": "tsx scripts/test-team-season-rank.ts",
+    "test:season-evidence": "tsx scripts/test-season-evidence.ts",
+    "test:game-status": "tsx scripts/test-game-status.ts",
+    "test:live-refresh": "tsx scripts/test-live-refresh.ts",
+    "test:learn-explanations": "tsx scripts/test-learn-explanations.ts",
+    "test:external-links": "tsx scripts/test-external-links.ts",
+    "test:team-assets": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-team-assets.ts",
+    "test:transaction-player-resolve": "tsx scripts/test-transaction-player-resolve.ts",
+    "test:team-identity": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-team-identity.ts",
+    "test:player-team-render": "tsx scripts/test-player-team-render-contract.ts",
+    "test:team-wash-gradient": "tsx scripts/test-team-wash-gradient-freeze.ts",
+    "test:team-viz": "tsx scripts/test-team-viz.ts",
+    "test:contract-surplus": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-contract-surplus.ts",
+    "test:salary-payoff": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-salary-payoff.ts",
+    "test:player-team-context": "tsx scripts/test-player-team-context.ts",
+    "test:r1-wins-sort-equivalence": "tsx scripts/test-r1-wins-sort-equivalence.ts",
+    "p17:3": "tsx scripts/p17-3-temporal-identity-audit.ts",
+    "test:game-route-contract": "tsx scripts/test-game-route-contract.ts",
+    "test:historical-team-era": "tsx scripts/test-historical-team-era.ts",
+    "test:historical-team-brand": "tsx scripts/test-historical-team-brand.ts",
+    "test:historical-team-fail-fast": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-historical-team-fail-fast.ts",
+    "test:time-machine": "tsx scripts/test-time-machine.ts",
+    "test:tone-eval": "tsx scripts/test-tone-eval.ts",
+    "test:drbl-release": "tsx scripts/test-drbl-release.ts",
+    "test:drbl-release:fixture": "tsx scripts/test-drbl-release.ts fixture",
+    "test:drbl-release:live-espn": "tsx scripts/test-drbl-release.ts live-espn",
+    "report:historical-team-identity": "tsx scripts/report-historical-team-identity.ts",
+    "test:teams-catalog-resilience": "tsx scripts/test-teams-catalog-resilience.ts",
+    "test:playoff-bracket": "tsx scripts/test-playoff-bracket.ts",
+    "test:player-identity": "tsx --test src/data/identity/__tests__/player-identity.test.ts",
+    "test:player-destination-merge": "tsx scripts/test-player-destination-merge.ts",
+    "test:learn-drbl-page": "tsx scripts/test-learn-drbl-page.ts",
+    "build:player-id-crosswalk": "tsx scripts/build-player-id-crosswalk.ts",
+    "sentiment:build": "tsx scripts/sentiment-build-snapshot.ts",
+    "sentiment:ingest:news": "tsx scripts/sentiment-ingest-news.ts",
+    "sentiment:ingest:reddit": "tsx scripts/sentiment-ingest-reddit.ts",
+    "sentiment:purge:reddit": "tsx scripts/sentiment-purge-reddit.ts",
+    "sentiment:ingest:fan-blogs": "tsx scripts/sentiment-ingest-news.ts --feeds fan-blogs --store fanblogs",
+    "sentiment:ingest:bluesky": "tsx scripts/sentiment-ingest-bluesky.ts",
+    "sentiment:ingest:youtube": "tsx scripts/sentiment-ingest-youtube.ts",
+    "sentiment:rate:headlines": "tsx scripts/sentiment-rate-headlines.ts",
+    "sentiment:ingest:fans": "npm run -s sentiment:ingest:reddit; npm run -s sentiment:ingest:fan-blogs; npm run -s sentiment:ingest:bluesky; npm run -s sentiment:ingest:youtube",
+    "sentiment:refresh": "npm run -s sentiment:ingest:news && npm run -s sentiment:ingest:fans; npm run -s sentiment:build",
+    "test:sentiment-ingest": "tsx scripts/test-sentiment-ingest.ts",
+    "test:sentiment-storylines": "tsx scripts/test-sentiment-storylines.ts",
+    "test:analytics-news": "tsx scripts/test-analytics-news.ts",
+    "sentiment:sync": "node scripts/build-runtime-sentiment-snapshot.mjs",
+    "movement:build": "tsx scripts/movement-build-snapshot.ts",
+    "movement:refresh": "npm run -s sentiment:ingest:news && npm run -s movement:build && node scripts/build-runtime-movement-snapshot.mjs",
+    "test:movement-ingest": "tsx scripts/test-movement-ingest.ts",
+    "audit:player-id-crosswalk": "tsx scripts/audit-player-id-crosswalk.ts",
+    "test:player-identity-preview": "tsx scripts/test-player-identity-preview.ts",
+    "test:leaderboard-context-panel": "tsx scripts/test-leaderboard-context-panel.ts",
+    "report:learn-coverage": "tsx scripts/report-learn-coverage.ts",
+    "report:team-identity": "tsx scripts/report-team-identity.ts",
+    "diagnose:player-data": "tsx --env-file=.env.local scripts/diagnose-player-data.ts",
+    "ingest:espn-transactions": "tsx scripts/ingest-espn-transactions.ts",
+    "report:historical-impact": "tsx scripts/report-historical-impact.ts",
+    "report:advanced-stats-coverage": "tsx --env-file=.env.local scripts/report-advanced-stats-coverage.ts",
+    "report:transaction-lineage": "tsx scripts/report-transaction-lineage.ts",
+    "smoke:nba": "tsx scripts/smoke-nba.ts",
+    "smoke:games": "tsx scripts/smoke-games.ts",
+    "smoke:historical": "tsx scripts/smoke-historical.ts",
+    "smoke:myleague": "tsx scripts/smoke-myleague.ts",
+    "smoke:real-league": "tsx scripts/smoke-real-league.ts",
+    "smoke:myleague-ingest": "tsx scripts/smoke-myleague-ingest.ts",
+    "prefetch:1960s": "tsx --env-file=.env.local scripts/prefetch-historical-games.ts --from 1960 --to 1969",
+    "prefetch:historical": "tsx --env-file=.env.local scripts/prefetch-historical-games.ts --from 1960 --to 2025",
+    "drbl:phase-a": "tsx scripts/drbl-phase-a.ts",
+    "drbl:compute": "tsx scripts/drbl-compute-season.ts",
+    "drbl:compute:current": "tsx scripts/drbl-daily-recompute.ts",
+    "drbl:epv": "tsx scripts/drbl-epv-calibrate.ts",
+    "drbl:m6": "tsx scripts/drbl-m6-validate.ts",
+    "drbl:m7-cv": "tsx scripts/drbl-m7-cv-validate.ts",
+    "drbl:post-m7": "tsx scripts/drbl-post-m7-remediate.ts",
+    "drbl:ranking-remaster": "tsx scripts/drbl-ranking-remaster.ts",
+    "drbl:sequential": "tsx scripts/drbl-sequential-reattribute.ts",
+    "drbl:war-audit": "tsx scripts/drbl-war-audit.ts",
+    "drbl:war-diagnostics": "tsx scripts/drbl-war-player-diagnostics.ts",
+    "drbl:pipeline": "tsx scripts/drbl-pipeline-remaster.ts",
+    "drbl:m16a": "tsx scripts/drbl-m16a-diagnostics.ts",
+    "drbl:m16b": "tsx scripts/drbl-m16b.ts",
+    "drbl:m16b1": "tsx scripts/drbl-m16b1.ts",
+    "drbl:m16c": "tsx scripts/drbl-m16c.ts",
+    "drbl:m16d": "tsx scripts/drbl-m16d.ts",
+    "drbl:m16e0": "tsx scripts/drbl-m16e0.ts",
+    "drbl:m16e1": "tsx scripts/drbl-m16e1.ts",
+    "drbl:war-unit-repair": "tsx scripts/drbl-war-unit-repair.ts",
+    "drbl:m16f0": "tsx scripts/drbl-m16f0.ts",
+    "drbl:ui-metric-integrity": "tsx scripts/drbl-ui-metric-integrity.ts",
+    "drbl:m16f1": "tsx scripts/drbl-m16f1.ts",
+    "drbl:m16f1b": "tsx scripts/drbl-m16f1b.ts",
+    "drbl:m16f2": "tsx scripts/drbl-m16f2.ts",
+    "drbl:m16g": "tsx scripts/drbl-m16g.ts",
+    "drbl:m16g1": "tsx scripts/drbl-m16g1.ts",
+    "drbl:m16g2": "tsx scripts/drbl-m16g2.ts",
+    "drbl:m16h": "tsx scripts/drbl-m16h.ts",
+    "drbl:m16i": "tsx scripts/drbl-m16i.ts",
+    "drbl:m16i1": "tsx scripts/drbl-m16i1.ts",
+    "drbl:m16i2": "tsx scripts/drbl-m16i2.ts",
+    "drbl:test": "tsx --test drbl/**/__tests__/**/*.test.ts",
+    "drbl:m16i3": "tsx scripts/drbl-m16i3.ts",
+    "drbl:m16i4": "tsx scripts/drbl-m16i4.ts",
+    "drbl:m16j0": "tsx scripts/drbl-m16j0.ts",
+    "drbl:m16j0_1": "tsx scripts/drbl-m16j0_1.ts",
+    "drbl:m16j": "tsx scripts/drbl-m16j.ts",
+    "drbl:m16k0": "tsx scripts/drbl-m16k0.ts",
+    "drbl:m16k0_1": "tsx scripts/drbl-m16k0_1.ts",
+    "drbl:m16k1": "tsx scripts/drbl-m16k1.ts",
+    "drbl:m16k1_1": "tsx scripts/drbl-m16k1_1.ts",
+    "drbl:m16l0": "tsx scripts/drbl-m16l0.ts",
+    "drbl:m16l0_1": "tsx scripts/drbl-m16l0_1.ts",
+    "drbl:m16l1": "tsx scripts/drbl-m16l1.ts",
+    "drbl:m16l1_1": "tsx scripts/drbl-m16l1_1.ts",
+    "drbl:m16l1_2": "tsx scripts/drbl-m16l1_2.ts",
+    "drbl:m16l2": "tsx scripts/drbl-m16l2.ts",
+    "drbl:m16l3": "tsx scripts/drbl-m16l3.ts",
+    "drbl:m17a": "tsx scripts/drbl-m17a.ts",
+    "drbl:import-historical": "tsx scripts/drbl-import-historical.ts",
+    "drbl:m17a_1": "tsx scripts/drbl-m17a_1_early.ts",
+    "drbl:m17a_1:progress": "tsx scripts/drbl-m17a_1_import_progress.ts",
+    "drbl:m17a_1:validate-season": "tsx scripts/drbl-m17a_1_season_validate.ts",
+    "drbl:m17a_1:supervisor": "tsx scripts/drbl-m17a_1_supervisor.ts",
+    "drbl:m17a_1:seal-raw": "tsx scripts/drbl-m17a_1_seal_raw_import.ts",
+    "drbl:m17a_2": "tsx scripts/drbl-m17a_2.ts",
+    "drbl:m17b": "tsx scripts/drbl-m17b.ts",
+    "drbl:m18a": "tsx scripts/drbl-m18a.ts",
+    "drbl:outcome-test": "NODE_OPTIONS=--max-old-space-size=8000 tsx scripts/drbl-outcome-test.ts",
+    "drbl:shadow-backfill": "tsx scripts/drbl-shadow-backfill.ts",
+    "drbl:box-forward-fit": "NODE_OPTIONS=--max-old-space-size=8000 tsx scripts/drbl-box-forward-fit.ts",
+    "drbl:m18b_0": "tsx scripts/drbl-m18b_0.ts",
+    "verify:cf:standings-tracker": "node scripts/verify-cf-standings-tracker.mjs",
+    "shots:sync": "node scripts/build-runtime-player-shots.mjs",
+    "gamelogs:sync": "node scripts/build-runtime-player-game-logs.mjs",
+    "insights:sync": "npx tsx scripts/build-runtime-recent-insights.mjs",
+    "runtime:daily": "node scripts/daily-runtime-sync.mjs",
+    "runtime:daily:force": "FORCE_DAILY=1 node scripts/daily-runtime-sync.mjs",
+    "test:nba-season-phase": "node scripts/test-nba-season-phase.mjs",
+    "pbp:sync": "node scripts/build-runtime-pbp-snapshot.mjs",
+    "impact:sync": "node scripts/build-runtime-impact-snapshot.mjs",
+    "portraits:sync": "node scripts/build-runtime-portrait-lookup.mjs",
+    "asset-ledger:sync": "node scripts/sync-asset-ledger.mjs",
+    "asset-ledger:bundle": "node scripts/build-runtime-asset-ledger.mjs",
+    "test:asset-ledger": "npx tsx scripts/test-asset-ledger.ts",
+    "test:player-race-tracker": "npx tsx scripts/test-player-race-tracker.ts",
+    "test:retired-jerseys-garnett": "npx tsx scripts/test-retired-jerseys-garnett.ts",
+    "test:billups-jamison-ids": "npx tsx scripts/test-billups-jamison-ids.ts",
+    "test:identity-regressions": "npm run test:retired-jerseys-garnett && npm run test:billups-jamison-ids && npm run test:player-race-tracker && npm run test:nba-season-phase",
+    "hustle:sync": "node scripts/build-runtime-hustle-snapshot.mjs",
+    "awards:sync": "${DRBL_RUNNER_VENV:-$HOME/.cache/drbl-stats-runner/venv}/bin/python scripts/build-runtime-player-awards.py",
+    "preview": "node scripts/build-runtime-game-snapshot.mjs && node scripts/build-runtime-drbl-overlay.mjs && node scripts/build-runtime-impact-snapshot.mjs && node scripts/build-runtime-hustle-snapshot.mjs && node scripts/build-runtime-current-roster.mjs && npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-player-bio-snapshot.mjs && node scripts/build-runtime-draft-year-snapshot.mjs && node scripts/build-runtime-draft-history-snapshot.mjs && node scripts/build-runtime-bref-team-contracts.mjs && npx tsx scripts/build-contract-value.ts && node scripts/build-runtime-transactions-snapshot.mjs && node scripts/sync-asset-ledger.mjs && node scripts/build-runtime-asset-ledger.mjs && node scripts/build-runtime-front-office-snapshot.mjs && node scripts/build-runtime-movement-snapshot.mjs && node scripts/build-runtime-team-board-snapshot.mjs && node scripts/build-runtime-standings-snapshot.mjs && node scripts/build-runtime-sentiment-snapshot.mjs && node scripts/build-runtime-player-shots.mjs && node scripts/build-runtime-player-game-logs.mjs && npx tsx scripts/build-runtime-recent-insights.mjs && node scripts/build-runtime-pbp-snapshot.mjs && npx tsx scripts/build-stat-detective-windows.ts && node scripts/build-runtime-cf-assets.mjs && node scripts/copy-runtime-json-assets.mjs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "node scripts/build-runtime-game-snapshot.mjs && node scripts/build-runtime-drbl-overlay.mjs && node scripts/build-runtime-impact-snapshot.mjs && node scripts/build-runtime-hustle-snapshot.mjs && node scripts/build-runtime-current-roster.mjs && npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-player-bio-snapshot.mjs && node scripts/build-runtime-draft-year-snapshot.mjs && node scripts/build-runtime-draft-history-snapshot.mjs && node scripts/build-runtime-bref-team-contracts.mjs && npx tsx scripts/build-contract-value.ts && node scripts/build-runtime-transactions-snapshot.mjs && node scripts/sync-asset-ledger.mjs && node scripts/build-runtime-asset-ledger.mjs && node scripts/build-runtime-front-office-snapshot.mjs && node scripts/build-runtime-movement-snapshot.mjs && node scripts/build-runtime-team-board-snapshot.mjs && node scripts/build-runtime-standings-snapshot.mjs && node scripts/build-runtime-sentiment-snapshot.mjs && node scripts/build-runtime-player-shots.mjs && node scripts/build-runtime-player-game-logs.mjs && npx tsx scripts/build-runtime-recent-insights.mjs && node scripts/build-runtime-pbp-snapshot.mjs && npx tsx scripts/build-stat-detective-windows.ts && node scripts/build-runtime-cf-assets.mjs && node scripts/copy-runtime-json-assets.mjs && opennextjs-cloudflare build && bash scripts/deploy-cf-workers.sh && node scripts/verify-cf-standings-tracker.mjs",
+    "upload": "node scripts/build-runtime-game-snapshot.mjs && node scripts/build-runtime-drbl-overlay.mjs && node scripts/build-runtime-impact-snapshot.mjs && node scripts/build-runtime-hustle-snapshot.mjs && node scripts/build-runtime-current-roster.mjs && npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-player-bio-snapshot.mjs && node scripts/build-runtime-draft-year-snapshot.mjs && node scripts/build-runtime-draft-history-snapshot.mjs && node scripts/build-runtime-bref-team-contracts.mjs && npx tsx scripts/build-contract-value.ts && node scripts/build-runtime-transactions-snapshot.mjs && node scripts/sync-asset-ledger.mjs && node scripts/build-runtime-asset-ledger.mjs && node scripts/build-runtime-front-office-snapshot.mjs && node scripts/build-runtime-movement-snapshot.mjs && node scripts/build-runtime-team-board-snapshot.mjs && node scripts/build-runtime-standings-snapshot.mjs && node scripts/build-runtime-sentiment-snapshot.mjs && node scripts/build-runtime-player-shots.mjs && node scripts/build-runtime-player-game-logs.mjs && npx tsx scripts/build-runtime-recent-insights.mjs && node scripts/build-runtime-pbp-snapshot.mjs && npx tsx scripts/build-stat-detective-windows.ts && node scripts/build-runtime-cf-assets.mjs && node scripts/copy-runtime-json-assets.mjs && opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "roster:sync": "node scripts/build-runtime-current-roster.mjs",
+    "front-office:sync": "npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-front-office-snapshot.mjs",
+    "drbl:season-readiness": "tsx scripts/drbl-season-readiness.ts",
+    "test:home-season-moment": "tsx scripts/test-home-season-moment.ts",
+    "test:on-off": "tsx scripts/test-on-off.ts",
+    "test:score-delay": "tsx scripts/test-score-delay.ts",
+    "copy:runtime-json": "node scripts/copy-runtime-json-assets.mjs"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.7.0",
+    "@formatjs/intl-localematcher": "^0.9.0",
+    "@opennextjs/cloudflare": "^1.20.2",
+    "@swc/helpers": "0.5.23",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "html-to-image": "^1.11.13",
+    "idb-keyval": "^6.3.0",
+    "lucide-react": "^1.31.0",
+    "negotiator": "^1.1.0",
+    "next": "16.3.0",
+    "next-intl": "^4.14.9",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-liquid-glass-svg": "^1.0.5",
+    "recharts": "^3.10.1",
+    "server-only": "^0.0.1",
+    "shadcn": "^4.16.2",
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/negotiator": "^0.6.5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "afinn-165": "^2.0.2",
+    "esbuild": "^0.28.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.0",
+    "playwright": "^1.62.1",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.12",
+    "typescript": "^5",
+    "wrangler": "^4.125.0"
+  }
+}
+
