@@ -184,7 +184,7 @@ export function buildScoutDesk(league: GmLeagueState, limit = 4): ScoutDesk {
   }
   const boards=(["sleepers","ready","fit","upside"] as const).map(id=>boardsById.get(id)!);
   const goalText = contender ? "We are trying to win now" : rebuilding ? "We can afford to develop a project" : "We want both dependable depth and growth";
-  const lens = scout ? `${expertiseLabel(scout.expertise).toLowerCase()} specialist · ${ensureScoutKnack(scout).knack.replaceAll("_"," ")}` : "general staff recommendations";
+  const lens = scout ? `${expertiseLabel(scout.expertise).toLowerCase()} specialist · ${ensureScoutKnack(scout).knack?.replaceAll("_"," ") ?? "general"}` : "general staff recommendations";
   const firstName = scout?.name ?? "Scouting department";
   return {
     scoutName:firstName,
