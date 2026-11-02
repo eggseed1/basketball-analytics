@@ -284,10 +284,11 @@ export function simulateGame(
         const restoreStarter = !manual && lateClose && bench;
         // One shift may move by 2 minutes, without changing the coach's plan
         // wholesale. Manual minutes are respected except on foul-outs.
-        const routine = !manual && !blowout && !lateClose && slot < 22 && frameRng() < 0.035;
+        const routine = !manual && !blowout && !lateClose && bench && slot > 0 && slot < 22 && frameRng() < 0.05;
         if (!fouledOut && !shouldRest && !restoreStarter && !routine) continue;
         const candidates = b.roster.filter(p => !floorIds.has(p.id) && (lines.get(p.id)?.personalFouls ?? 0) < 6
-          && (!shouldRest || !b.openingIds.has(p.id)) && (!restoreStarter || b.openingIds.has(p.id)));
+          && (!shouldRest || !b.openingIds.has(p.id)) && (!restoreStarter || b.openingIds.has(p.id))
+          && (fouledOut || shouldRest || (b.minutes[p.id] ?? 0) > 0));
         if (!candidates.length) continue;
         const position = pos as GmPlayer["position"];
         candidates.sort((a, b) => roleFit(b, position) - roleFit(a, position)
