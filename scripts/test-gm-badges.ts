@@ -24,6 +24,10 @@ for (const p of seed.players.filter(p => p.sheet)) assert.deepEqual(league.playe
 const rookie = ensureBadges({ ...player, badges: undefined });
 assert.ok(Object.values(rookie.badges!.xp).length <= 1);
 assert.ok(Object.values(rookie.badges!.xp).every(xp => xp <= 120));
+const prodigy = ensureBadges({ ...player, age: 21, badges: undefined, sheet: { ...player.sheet!, overall: 96 } });
+assert.ok(Object.keys(prodigy.badges!.xp).length >= 4, "exceptional young superstars already possess several matching badges");
+assert.ok(BADGES.filter(b => badgeLevel(prodigy,b.id) >= 4).length >= 3, "elite rookie strengths can earn high-level badges");
+
 const veteran = ensureBadges({ ...player, age: 30, badges: undefined });
 assert.ok(Object.keys(veteran.badges!.xp).length >= Object.keys(rookie.badges!.xp).length);
 const star = ensureBadges({ ...player, age: 33, badges: undefined, sheet: { ...player.sheet!, overall: 96 } });
