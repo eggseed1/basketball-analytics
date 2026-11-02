@@ -334,6 +334,30 @@ try {
       await page.getByRole("heading", { name: "League settings", exact: true }).waitFor();
       await page.getByRole("button", { name: "Export this franchise", exact: true }).waitFor();
     }
+    for (const width of [390,1440]) {
+      await page.setViewportSize({width,height:900});
+      await load("regular","/gm/lineup");
+      await page.getByRole("heading",{name:"Tonight's rotation",exact:true}).waitFor();
+      assert.equal(await page.locator(".gm-rot__mins .gm-chart__cell.is-on").count(),120,"rotation chart contains 240 actual minutes");
+      for (const row of await page.locator(".gm-pos-mins__row").all()) {
+        const totals=await row.locator(".tabular-nums").allTextContents();
+        assert.equal(totals.reduce((n,v)=>n+Number(v),0),48,"position bars use actual stints");
+      }
+      const closing=page.getByLabel("Closing PG",{exact:true});
+      const previous=await closing.inputValue();
+      const choices=await closing.locator("option:not([disabled])").evaluateAll(options=>options.filter(o=>/\b(PG|SG)$/.test(o.textContent??"")).map(o=>o.value));
+      const next=choices.find(id=>id!==previous);
+      await closing.selectOption(next);
+      const saved=await exportedLeague();
+      const club=saved.teams.find(t=>t.id===saved.userTeamId);
+      assert.equal(club.coaching.closingLineup[0],next);
+      assert.equal(new Set(club.coaching.closingLineup).size,5);
+      await page.reload({waitUntil:"domcontentloaded"});
+      await page.getByRole("heading",{name:"Tonight's rotation",exact:true}).waitFor();
+      assert.equal(await closing.inputValue(),next);
+      await capture(`rotation-${width}`);
+    }
+    report.tasks.push("Rotations: 240 preview minutes, 48 per position, unique closing five and reload at phone/desktop widths");
     await page.setViewportSize({ width: 390, height: 900 });
     await load("camp", "/gm/development");
     const campSave = JSON.parse(readFileSync(`${dir}/camp.json`, "utf8")).league;

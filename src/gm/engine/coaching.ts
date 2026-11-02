@@ -12,12 +12,15 @@ import {
   clampRotationDepth,
   DEFAULT_ROTATION_DEPTH,
   positionalMinutePlan,
-  positionalMinuteTargets,
   rotationQuality,
   rotationTarget,
 } from "@/gm/engine/lineup";
 import type { GmPosition } from "@/gm/types";
 import { clamp } from "@/gm/engine/rng";
+import { assignFive, roleFit } from "@/gm/engine/rotation-roles";
+import { paintShifts, type ChartRow } from "@/gm/engine/rotation-pattern";
+export { paintShifts } from "@/gm/engine/rotation-pattern";
+export type { ChartRow } from "@/gm/engine/rotation-pattern";
 
 export {
   clampRotationDepth,
@@ -33,12 +36,12 @@ export const ROTATION_DEPTH_OPTIONS: Array<{
   label: string;
   detail: string;
 }> = [
-  { id: 6, label: "6-man", detail: "Death lineup. One bench seat shares the scraps." },
+  { id: 6, label: "6-man", detail: "Very short rotation. Heavy workloads for the core." },
   { id: 7, label: "7-man", detail: "Starters eat the night. Thin bench." },
   { id: 8, label: "8-man", detail: "Tight book. Five starters and three backups." },
   { id: 9, label: "9-man", detail: "One extra body. A ninth eats short minutes." },
-  { id: 10, label: "10-man", detail: "Full dress. Minutes spread a little thinner." },
-  { id: 11, label: "11-man", detail: "Typical NBA night. Five starters and a deep bench." },
+  { id: 10, label: "10-man", detail: "Regular-season depth. Spread the bench minutes." },
+  { id: 11, label: "11-man", detail: "Deep bench. More short shifts for reserves." },
   { id: 12, label: "12-man", detail: "Development night. Almost everyone touches the ball." },
   { id: 13, label: "13-man", detail: "Everyone dresses. Stars still lead; crumbs for the end." },
 ];
@@ -119,76 +122,6 @@ export const TEMPO_OPTIONS: Array<{ id: GmTempo; label: string }> = [
 export const SHIFT_SLOTS = 24;
 function countOn(on: boolean[]): number { return on.filter(Boolean).length * 2; }
 
-export type ChartRow = { id: string; on: boolean[]; minutes: number };
-
-type ShiftPlayer = {
-  id: string;
-  minutes: number;
-  starter: boolean;
-  position?: GmPlayer["position"];
-};
-
-export function paintShifts(input: {
-  players: ShiftPlayer[];
-  coaching?: GmCoaching;
-}): ChartRow[] {
-  const active = input.players.filter(p => p.minutes > 0);
-  const rows = input.players.map(p => ({ id: p.id, on: Array<boolean>(SHIFT_SLOTS).fill(false), minutes: 0 }));
-  if (active.length < 5) return rows;
-  const sum = active.reduce((n, p) => n + p.minutes, 0);
-  const target = new Map(active.map(p => [p.id, Math.min(24, p.minutes / sum * 120)]));
-  const remaining = new Map(active.map(p => [p.id, Math.floor(target.get(p.id)!)]));
-  let left = 120 - [...remaining.values()].reduce((n, v) => n + v, 0);
-  while (left > 0) {
-    const candidate = [...active].filter(p => remaining.get(p.id)! < 24).sort((a, b) =>
-      (target.get(b.id)! - remaining.get(b.id)!) - (target.get(a.id)! - remaining.get(a.id)!) || a.id.localeCompare(b.id))[0];
-    if (!candidate) break;
-    remaining.set(candidate.id, remaining.get(candidate.id)! + 1); left--;
-  }
-  const byId = new Map(rows.map(row => [row.id, row]));
-  const consecutive = new Map<string, number>();
-  const creators = new Set((input.coaching?.playThrough ?? []).filter((id): id is string => Boolean(id)));
-  if (!creators.size) active.filter(p => p.position === "PG" || p.position === "SG").sort((a, b) => b.minutes - a.minutes).slice(0, 2).forEach(p => creators.add(p.id));
-  const closing = (input.coaching?.closingLineup ?? []).filter(id => active.some(p => p.id === id));
-  for (let slot = 0; slot < SHIFT_SLOTS; slot++) {
-    const slotsLeft = SHIFT_SLOTS - slot;
-    const mandatory = active.filter(p => remaining.get(p.id)! >= slotsLeft);
-    const selected = [...mandatory];
-    for (const position of ["C", "PG", "SG", "SF", "PF"] as const) {
-      const pool = active.filter(p => p.position === position && remaining.get(p.id)! > 0);
-      if (selected.length < 5 && !selected.some(p => p.position === position) && pool.reduce((n, p) => n + remaining.get(p.id)!, 0) >= slotsLeft) {
-        const next = pool.sort((a, b) => remaining.get(b.id)! - remaining.get(a.id)! || Number(b.starter) - Number(a.starter))[0];
-        if (next) selected.push(next);
-      }
-    }
-    const score = (p: ShiftPlayer) => {
-      const rem = remaining.get(p.id)!;
-      const reserve = closing.includes(p.id) && slot < 22 ? Math.min(2, rem) : 0;
-      if (rem <= reserve) return -10000;
-      const run = consecutive.get(p.id) ?? 0;
-      const atPosition = active.filter(q => q.position === p.position).reduce((n, q) => n + remaining.get(q.id)!, 0);
-      const repeatsSeat = p.position && selected.some(q => q.position === p.position) && atPosition <= slotsLeft;
-      return rem / slotsLeft * 32 + (p.starter && (slot < 3 || slot >= 21) ? 4 : 0)
-        - (repeatsSeat ? 1000 : 0)
-        + (run > 0 && run < 4 ? 2 : -Math.max(0, run - 3) * 2)
-        + (slot >= 22 && closing.includes(p.id) ? 100 : 0)
-        + (creators.has(p.id) && !selected.some(q => creators.has(q.id)) ? 6 : 0);
-    };
-    while (selected.length < 5) {
-      const next = active.filter(p => remaining.get(p.id)! > 0 && !selected.some(q => q.id === p.id))
-        .sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id))[0];
-      if (!next) break;
-      selected.push(next);
-    }
-    for (const p of active) {
-      const plays = selected.some(q => q.id === p.id);
-      if (plays) { byId.get(p.id)!.on[slot] = true; remaining.set(p.id, remaining.get(p.id)! - 1); }
-      consecutive.set(p.id, plays ? (consecutive.get(p.id) ?? 0) + 1 : 0);
-    }
-  }
-  return rows.map(row => ({ ...row, minutes: countOn(row.on) }));
-}
-
 /**
  * Sit or insert one player for a single two-minute block.
  * The floor stays at five. Sitting brings in the next man. Inserting sits the smallest minute load.
@@ -248,35 +181,12 @@ export function schemeHeadline(coaching?: GmCoaching): string | null {
 /** The shift plan a team would send out tonight, from saved minutes or the default chart. */
 export function shiftSnapshot(
   team: GmTeam,
-  players: GmPlayer[]
+  players: GmPlayer[],
+  playoff = false
 ): Array<{ playerId: string; playerName: string; on: boolean[] }> {
-  const roster = players.filter(
-    (player) =>
-      player.teamId === team.id && (!player.injury || player.injury.gamesRemaining <= 0)
-  );
-  const saved = team.coaching?.minutes;
-  const starterIds = new Set(
-    Object.values(team.starters).filter((id): id is string => !!id)
-  );
-  const targets = positionalMinuteTargets(roster, team.starters);
-  const cover = team.coaching?.coverSlot;
-  const painted = validShiftPlan(team.coaching?.shifts, roster.map(p => p.id)) ?? rotationChart(
-    roster.map((player) => ({
-      id: player.id,
-      minutes: saved ? (saved[player.id] ?? 0) : (targets[player.id] ?? rotationTarget(player)),
-      starter: starterIds.has(player.id),
-      position: cover?.[player.id] ?? player.position,
-    })),
-    coachingOf(team)
-  );
-  const names = new Map(roster.map((player) => [player.id, player.name]));
-  return painted
-    .filter((row) => row.minutes > 0)
-    .map((row) => ({
-      playerId: row.id,
-      playerName: names.get(row.id) ?? row.id,
-      on: row.on,
-    }));
+  const compiled = rotationForTeam(team,players,playoff);
+  const names = new Map(players.map(p=>[p.id,p.name]));
+  return compiled.rows.filter(row=>row.minutes>0).map(row=>({playerId:row.id,playerName:names.get(row.id)??row.id,on:[...row.on]}));
 }
 
 export function coachingOf(team: GmTeam): GmCoaching {
@@ -422,6 +332,7 @@ export function rebalanceForInjuryChanges<
       const roster = league.players.filter(p => p.teamId === team.id);
       const injured = roster.some(outFlag);
       const backup = team.injuryRotationBackup;
+      if(team.coaching?.rotationMode==="manual" || (!team.coaching?.rotationMode && team.coaching?.minutes && !backup))return {...team,injuryRotationBackup:undefined};
       if (!injured && backup) {
         const rosterIds = new Set(roster.map(p => p.id));
         if (Object.values(backup.starters).every(id => !id || rosterIds.has(id))) {
@@ -551,4 +462,59 @@ export function validShiftPlan(shifts: GmCoaching["shifts"], available: string[]
   if (rows.some(row => row.on.length !== SHIFT_SLOTS || row.on.some(v => typeof v !== "boolean"))) return null;
   for (let slot = 0; slot < SHIFT_SLOTS; slot++) if (rows.filter(row => row.on[slot]).length !== 5) return null;
   return rows;
+}
+
+/** Shared by the coaching preview, box-score rotation snapshot and simulation. */
+export function rotationForTeam(team:GmTeam,players:GmPlayer[],playoff=false){
+  const roster=players.filter(p=>p.teamId===team.id&&!injured(p));
+  const coaching=coachingOf(team);
+  const tighten=playoff&&coaching.rotationMode==="auto"&&coaching.rotationDepth!>8;
+  const suggested=positionalMinutePlan(roster,{starters:team.starters,depth:tighten?8:coaching.rotationDepth});
+  let requested:Record<string,number>={...(tighten? suggested.minutes :coaching.minutes??suggested.minutes)};
+  const warnings:string[]=[];
+  if(roster.length<5)warnings.push("Five healthy players are required to simulate a game.");
+  if(roster.filter(p=>(requested[p.id]??0)>0).length<Math.min(5,roster.length)){
+    requested={...suggested.minutes};warnings.push("The available minute targets cannot field five players. Healthy replacements cover tonight's rotation.");
+  }
+  const manual=validShiftPlan(coaching.shifts,roster.map(p=>p.id));
+  const active=roster.filter(p=>manual?manual.some(row=>row.id===p.id&&row.minutes>0):(requested[p.id]??0)>0);
+  const starters:GmTeam["starters"]={PG:null,SG:null,SF:null,PF:null,C:null};
+  const used=new Set<string>();
+  const spots=["PG","SG","SF","PF","C"] as const;
+  for(const spot of spots){const id=team.starters[spot];if(id&&active.some(p=>p.id===id)&&!used.has(id)){starters[spot]=id;used.add(id);}}
+  for(const spot of spots)if(!starters[spot]){
+    const replacement=active.filter(p=>!used.has(p.id)).sort((a,b)=>(roleFit(b,spot)-roleFit(a,spot))*100+(b.sheet?.overall??70)-(a.sheet?.overall??70))[0];
+    if(replacement){starters[spot]=replacement.id;used.add(replacement.id);}
+  }
+  if(Object.values(starters).some((id,index)=>id!==team.starters[spots[index]!]))warnings.push("Unavailable, duplicate or zero-minute starters were replaced for tonight. Review the starting five to save new choices.");
+  const closing=coaching.closingLineup;
+  const validClose=closing?.length===5&&new Set(closing).size===5&&closing.every(id=>active.some(p=>p.id===id));
+  if(closing&&!validClose)warnings.push("The closing unit has unavailable players; tonight uses the healthy starting group.");
+  const close:string[]=validClose?closing!:Object.values(starters).filter((id):id is string=>Boolean(id));
+  if(coaching.shifts&&!manual)warnings.push("Saved shift blocks contain unavailable players or an incomplete unit; tonight uses a repaired plan.");
+  const rows=manual??paintShifts({players:roster.map(p=>({id:p.id,minutes:requested[p.id]??0,starter:used.has(p.id),position:p.position,secondaryPosition:p.secondaryPosition,fit:spots.map(spot=>roleFit(p,spot))})),coaching:{...coaching,closingLineup:close}});
+  if(validClose&&rows.filter(row=>row.on[23]).some(row=>!close.includes(row.id)))warnings.push("These minute targets cannot also fit the selected closing five. Adjust the targets or choose an automatic closing unit.");
+  const byId=new Map(roster.map(p=>[p.id,p]));
+  const minutes:Record<string,number>=Object.fromEntries(rows.map(row=>[row.id,row.minutes]));
+  const positionMinutes:Record<string,Partial<Record<GmPosition,number>>>={};
+  const frames=Array.from({length:24},(_,slot)=>{
+    const floor=rows.filter(row=>row.on[slot]).map(row=>byId.get(row.id)!);
+    const desired=Object.fromEntries(floor.map(p=>[p.id,Object.fromEntries(spots.map(spot=>[spot,Math.max(0,(coaching.positionMinutes?.[p.id]?.[spot]??(coaching.coverSlot?.[p.id]===spot?requested[p.id]??0:0))-(positionMinutes[p.id]?.[spot]??0))]))]));
+    const declaredStart=(slot===0||slot===12)&&floor.length===5&&floor.every(p=>used.has(p.id));
+    const declaredClosing=validClose&&slot>=22&&floor.length===5&&floor.every(p=>close.includes(p.id));
+    const cover=floor.map(p=>coaching.coverSlot?.[p.id]);
+    const declaredCover=floor.length===5&&cover.every(spot=>spot&&spots.includes(spot))&&new Set(cover).size===5;
+    const coverSeats=declaredCover?Object.fromEntries(floor.map((p,index)=>[cover[index]!,p.id])) as GmTeam["starters"]:null;
+    const seats=declaredStart?{...starters}:declaredClosing?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:coverSeats??assignFive(floor,desired).starters;
+    for(const spot of spots){const id=seats[spot];if(id)positionMinutes[id]={...positionMinutes[id],[spot]:(positionMinutes[id]?.[spot]??0)+2};}
+    return seats;
+  });
+  const actualIds=new Set(rows.filter(row=>row.on[0]).map(row=>row.id));
+  const stretched=frames.filter(frame=>spots.some(spot=>{const p=byId.get(frame[spot]??"");return p&&roleFit(p,spot)<0.8;})).length*2;
+  if(stretched)warnings.push(`${stretched} minutes need emergency position coverage. Add a handler, wing or big, or adjust the minute targets.`);
+  if(manual)warnings.push("Saved shift blocks set the actual minutes and opening unit.");
+  if(!manual&&roster.some(p=>Math.abs((requested[p.id]??0)-(minutes[p.id]??0))>1.01))warnings.push("Minute targets are fitted to five players per block and 240 total minutes. Tonight's minutes are shown below.");
+  const closingFrame=validClose?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:manual?frames[23]!:assignFive(roster.filter(p=>close.includes(p.id))).starters;
+  const fitScore=frames.reduce((n,frame)=>n+spots.reduce((sum,spot)=>{const p=byId.get(frame[spot]??" ");return sum+(p?roleFit(p,spot):0);},0),0)/120;
+  return {roster,rows,frames,minutes,requested,positionMinutes,fitScore,starters:frames[0]!,openingIds:actualIds,closing:close,closingFrame,warnings,tightened:tighten};
 }

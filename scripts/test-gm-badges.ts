@@ -1,3 +1,4 @@
+import { shiftSnapshot } from "../src/gm/engine/coaching";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { stripTypeScriptTypes } from "node:module";
@@ -101,7 +102,7 @@ let ids=0;
 const actions = vm.runInNewContext(js,{
   get:()=>storeState,set:(partial:{league:GmLeagueState})=>{storeState.league=partial.league;},
   myLeagueAllowsSim:()=>true,withUpdate:(state:GmLeagueState)=>state,syncMyLeague:()=>{},
-  playInOpenGames,playInDone,applyPlayInResult,simulateGame,compactSimBox,recordBadgeBox,
+  playInOpenGames,playInDone,applyPlayInResult,simulateGame,compactSimBox,recordBadgeBox,shiftSnapshot,
   uid:(prefix:string)=>`${prefix}-badge-${ids++}`,teamName:(_teams:unknown,id:string)=>id,
 });
 for(let night=0;night<3&&!playInDone(storeState.league.playIn!);night++){

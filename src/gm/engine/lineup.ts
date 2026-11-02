@@ -329,7 +329,7 @@ export function ensureTeamPositionCoverage(players: GmPlayer[]): GmPlayer[] {
   for (const roster of byTeam.values()) {
     if (!roster.some((player) => player.position === "PG")) {
       const guard = [...roster]
-        .filter((player) => player.position === "SG")
+        .filter((player) => player.position === "SG" && !player.listedPosition)
         .sort(
           (a, b) =>
             b.ratings.playmaking - a.ratings.playmaking || a.heightIn - b.heightIn
@@ -338,7 +338,7 @@ export function ensureTeamPositionCoverage(players: GmPlayer[]): GmPlayer[] {
     }
     if (!roster.some((player) => player.position === "PF")) {
       const forward = [...roster]
-        .filter((player) => player.position === "SF")
+        .filter((player) => player.position === "SF" && !player.listedPosition)
         .sort(
           (a, b) =>
             b.heightIn - a.heightIn || b.ratings.rebounding - a.ratings.rebounding
@@ -591,8 +591,8 @@ export const MAX_PLAYER_MINUTES = 44;
 /** Shallow books need a higher individual cap so 240 can still close. */
 export function maxMinutesForDepth(depth?: number | null): number {
   const pool = clampRotationDepth(depth);
-  if (pool <= 6) return 40;
-  if (pool === 7) return 39;
+  if (pool <= 6) return 44;
+  if (pool === 7) return 44;
   return MAX_PLAYER_MINUTES;
 }
 
@@ -771,13 +771,13 @@ function depthCaps(depth: number): {
 } {
   const pool = clampRotationDepth(depth);
   if (pool === 6) {
-    return { pool, starterMin: 32, starterMax: 40, backupMin: 16, backupMax: 28, thirdMax: 8 };
+    return { pool, starterMin: 32, starterMax: 44, backupMin: 16, backupMax: 28, thirdMax: 8 };
   }
   if (pool === 7) {
-    return { pool, starterMin: 30, starterMax: 38, backupMin: 14, backupMax: 24, thirdMax: 10 };
+    return { pool, starterMin: 30, starterMax: 41, backupMin: 14, backupMax: 24, thirdMax: 10 };
   }
   if (pool === 8) {
-    return { pool, starterMin: 28, starterMax: 36, backupMin: 12, backupMax: 22, thirdMax: 12 };
+    return { pool, starterMin: 28, starterMax: 40, backupMin: 12, backupMax: 22, thirdMax: 12 };
   }
   if (pool === 9) {
     return { pool, starterMin: 27, starterMax: 38, backupMin: 8, backupMax: 24, thirdMax: 12 };
@@ -1207,6 +1207,7 @@ export function autoSetLineup(team: GmTeam, players: GmPlayer[]): GmTeam {
       tempo: team.coaching?.tempo ?? "normal",
       playThrough: team.coaching?.playThrough ?? [null, null],
       ...team.coaching,
+      rotationMode: "auto",
       shifts: undefined,
       positionMinutes: undefined,
       minutes,

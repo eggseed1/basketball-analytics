@@ -1,3 +1,4 @@
+import { splitPositionListing } from "@/gm/engine/position-listings";
 import { initialDraftPicks } from "@/gm/engine/draft-order";
 /**
  * Map real PlayerSeason rows → Franchise Lab GmPlayer / league.
@@ -299,8 +300,11 @@ export function playerSeasonToGmPlayer(
   for (const key of ["gamesPlayed", "gamesStarted", "minutes", "points", "assists", "rebounds", "steals", "blocks", "turnovers", "fieldGoalsMade", "fieldGoalsAttempted", "threePointersMade", "threePointersAttempted", "freeThrowsMade", "freeThrowsAttempted", "offensiveRebounds", "defensiveRebounds"] as const) {
     if (!Number.isFinite(row[key])) row[key] = 0;
   }
-  const position = mapPosition(row.position);
   const bio = getBundledPlayerBio(row.playerId);
+  const seasonListing = splitPositionListing(row.position);
+  const bioListing = splitPositionListing(bio?.position);
+  const listing = seasonListing.length ? seasonListing : bioListing;
+  const position = listing[0] ?? mapPosition(row.position ?? bio?.position);
   const birth = bio?.birthDate ? new Date(bio.birthDate) : null;
   const seasonalAge = birth && Number.isFinite(birth.getTime()) ? Math.floor((Date.UTC(seasonEndYear, 1, 1) - birth.getTime()) / (365.2425 * 86400000)) : null;
   const age = typeof row.age === "number" && row.age > 0 ? Math.round(row.age) : seasonalAge != null && seasonalAge >= 17 && seasonalAge <= 48 ? seasonalAge : 26;
@@ -361,8 +365,8 @@ export function playerSeasonToGmPlayer(
     astPct: percentPoints(row.assistPct),
   };
   const player: GmPlayer = {
-    listedPosition: POSITIONS.includes(row.position?.toUpperCase().split(/[-/]/)[0] as GmPosition) ? position : undefined,
-    secondaryPosition: POSITIONS.includes(row.position?.toUpperCase().split(/[-/]/)[1] as GmPosition) ? row.position!.toUpperCase().split(/[-/]/)[1] as GmPosition : undefined,
+    listedPosition: listing[0],
+    secondaryPosition: listing[1],
     realRole: { season: seasonEndYear, teamId, starts: row.gamesStarted ?? 0, games: row.gamesPlayed, mpg: row.minutes / Math.max(1, row.gamesPlayed) },
     id: row.playerId,
     name: row.playerName,

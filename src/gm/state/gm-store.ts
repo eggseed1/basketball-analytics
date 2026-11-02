@@ -1,4 +1,7 @@
 "use client";
+import { listedPositionCorrections } from "@/gm/engine/position-listings";
+import { assignFive } from "@/gm/engine/rotation-roles";
+import { POSITIONS } from "@/gm/engine/lineup";
 
 import { BADGES, recordBadgeBox } from "@/gm/engine/badges";
 
@@ -119,6 +122,7 @@ import { claimOpeningRosters } from "@/gm/seed/opening-roster";
 import {
   autoBalanceRotation as buildBalancedMinutes,
   coachingOf,
+  shiftSnapshot,
   rebalanceForInjuryChanges,
   resetBalancedRotation,
 } from "@/gm/engine/coaching";
@@ -274,6 +278,7 @@ interface GmStore {
   deleteSave: (id: string) => Promise<void>;
   /** @deprecated Prefer leaveToHub / deleteSave. */
   resetLeague: () => void;
+  restoreListedPositions: () => void;
   setStarter: (position: GmPosition, playerId: string | null) => void;
   /** Relist a rostered player. Overall follows the new position weights. */
   setPlayerPosition: (playerId: string, position: GmPosition) => void;
@@ -717,21 +722,37 @@ export const useGmStore = create<GmStore>()(
         void get().leaveToHub();
       },
 
+      restoreListedPositions: () => {
+        const league=get().league;if(!league)return;
+        const changes=listedPositionCorrections(league.players.filter(p=>p.teamId===league.userTeamId));
+        const players=league.players.map(p=>{const change=changes.find(c=>c.playerId===p.id);return change?{...p,position:change.to,listedPosition:change.to,secondaryPosition:change.secondary??p.position}:p;});
+        const teams=league.teams.map(team=>{
+          if(team.id!==league.userTeamId)return team;
+          const unit=players.filter(p=>Object.values(team.starters).includes(p.id));
+          return {...team,starters:assignFive(unit).starters,coaching:{...coachingOf(team),rotationMode:"manual" as const,shifts:undefined,positionMinutes:undefined,coverSlot:{...team.coaching?.coverSlot,...Object.fromEntries(changes.map(c=>[c.playerId,c.to]))}}};
+        });
+        set({league:withUpdate({...league,players,teams})});
+      },
       setStarter: (position, playerId) => {
         const league = get().league;
-        if (!league) return;
+        if (!league || !POSITIONS.includes(position) || (playerId && !league.players.some(p=>p.id===playerId&&p.teamId===league.userTeamId&&(!p.injury||p.injury.gamesRemaining<=0)))) return;
         const teams = league.teams.map((t) => {
           if (t.id !== league.userTeamId) return t;
           const starters = { ...t.starters, [position]: playerId };
+          const other = POSITIONS.find(spot=>spot!==position&&t.starters[spot]===playerId);
+          if(playerId&&other)starters[other]=t.starters[position]??null;
           let benchOrder = t.benchOrder.filter((id) => id !== playerId);
           // demote previous starter to bench
           const prev = t.starters[position];
           if (prev && prev !== playerId) benchOrder = [prev, ...benchOrder];
+          benchOrder = [...new Set(benchOrder)].filter(id=>!Object.values(starters).includes(id));
           const nextTeam = { ...t, starters, benchOrder };
           // Keep cover slots aligned with the new starter map.
           // Do not seed a minutes book here — persisting one turns on the
           // coaching ORtg nudge for the user only, and CPU clubs stay at 1.0.
           const book = buildBalancedMinutes(nextTeam, league.players);
+          const promotedMinutes = t.coaching?.minutes && playerId && !(t.coaching.minutes[playerId]!>0)
+            ? {...t.coaching.minutes,[playerId]:prev?(t.coaching.minutes[prev]??book.minutes[playerId]??24):(book.minutes[playerId]??24),...(prev?{[prev]:0}:{})} : t.coaching?.minutes;
           const coverSlot = {
             ...(t.coaching?.coverSlot ?? book.coverSlot),
             ...(playerId ? { [playerId]: position } : {}),
@@ -740,7 +761,11 @@ export const useGmStore = create<GmStore>()(
             ...nextTeam,
             coaching: {
               ...coachingOf(t),
+              rotationMode: "manual" as const,
               coverSlot,
+              minutes: promotedMinutes,
+              shifts: undefined,
+              positionMinutes: undefined,
             },
           };
         });
@@ -754,7 +779,7 @@ export const useGmStore = create<GmStore>()(
           if (player.id !== playerId || player.teamId !== league.userTeamId) {
             return player;
           }
-          return reassignPosition(player, position);
+          return { ...reassignPosition(player, position), listedPosition: position };
         });
         const teams = league.teams.map((t) => {
           if (t.id !== league.userTeamId) return t;
@@ -776,13 +801,16 @@ export const useGmStore = create<GmStore>()(
             starters[slot] = null;
           }
           // Prefer him in the matching starter hole when empty.
-          if (!starters[position]) starters[position] = playerId;
+          if (!starters[position] && !Object.values(starters).includes(playerId)) starters[position] = playerId;
           const nextTeam = { ...t, starters };
           const book = buildBalancedMinutes(nextTeam, players);
           return {
             ...nextTeam,
             coaching: {
               ...coachingOf(t),
+              rotationMode: "manual" as const,
+              shifts: undefined,
+              positionMinutes: undefined,
               coverSlot: {
                 ...(t.coaching?.coverSlot ?? book.coverSlot),
                 [playerId]: position,
@@ -812,6 +840,9 @@ export const useGmStore = create<GmStore>()(
             ...t,
             coaching: {
               ...coachingOf(t),
+              rotationMode: "manual" as const,
+              shifts: undefined,
+              positionMinutes: undefined,
               coverSlot: book.coverSlot,
             },
           };
@@ -839,7 +870,8 @@ export const useGmStore = create<GmStore>()(
             coaching: {
               ...current,
               ...patch,
-              shifts: patch.shifts ?? (patch.minutes ? undefined : current.shifts),
+              shifts: "shifts" in patch ? patch.shifts : patch.minutes || "closingLineup" in patch ? undefined : current.shifts,
+              rotationMode: patch.rotationMode ?? (patch.minutes || patch.shifts || "closingLineup" in patch ? "manual" : current.rotationMode),
               playThrough: patch.playThrough ?? current.playThrough,
             },
           };
@@ -856,7 +888,7 @@ export const useGmStore = create<GmStore>()(
         const base = team.coaching?.minutes ?? book.minutes;
         const minutesPlan = {
           ...base,
-          [playerId]: clamp(Math.round(minutes), 0, 40),
+          [playerId]: clamp(Math.round(minutes), 0, 48),
         };
         const player = league.players.find((entry) => entry.id === playerId);
         const coverSlot = {
@@ -893,6 +925,9 @@ export const useGmStore = create<GmStore>()(
               rotationDepth: depth,
               minutes,
               coverSlot,
+              rotationMode: "manual" as const,
+              shifts: undefined,
+              positionMinutes: undefined,
             },
           };
         });
@@ -911,6 +946,9 @@ export const useGmStore = create<GmStore>()(
               ...coachingOf(team),
               minutes,
               coverSlot,
+              rotationMode: "manual" as const,
+              shifts: undefined,
+              positionMinutes: undefined,
             },
           };
         });
@@ -1532,6 +1570,7 @@ export const useGmStore = create<GmStore>()(
         for (const game of games) {
           const tip = {
             id: uid("pi"),
+            postseason: "play_in" as const,
             season: league.season,
             day: league.day,
             homeTeamId: game.homeId,
@@ -1541,6 +1580,8 @@ export const useGmStore = create<GmStore>()(
           const result = simulateGame(tip, league.teams, players, undefined, league.schedule, league.settings);
           result.game.postseason = "play_in";
           result.box.postseason = "play_in";
+          const myTeam=league.teams.find(t=>t.id===league.userTeamId);
+          if(myTeam&&[tip.homeTeamId,tip.awayTeamId].includes(myTeam.id))result.box.shiftPlan=shiftSnapshot(myTeam,players,true);
           players = recordBadgeBox(players, result.box);
           schedule.push(result.game);
           boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
@@ -1750,6 +1791,8 @@ export const useGmStore = create<GmStore>()(
           };
           const result = simulateGame(game, league.teams, players, undefined, league.schedule, league.settings);
           result.box.postseason = "playoffs";
+          const myTeam=league.teams.find(t=>t.id===league.userTeamId);
+          if(myTeam&&[game.homeTeamId,game.awayTeamId].includes(myTeam.id))result.box.shiftPlan=shiftSnapshot(myTeam,players,true);
           players = recordBadgeBox(players, result.box);
           schedule.push(result.game);
           boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);

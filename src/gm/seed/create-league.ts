@@ -82,11 +82,14 @@ function makePlayer(
   teamId: string | null,
   scoutLevel: number,
   starChance: number,
-  season: number
+  season: number,
+  forcedPosition?: GmPosition
 ): GmPlayer {
   const ratings = makeRatings(rng, starChance);
   const age = randInt(rng, 19, 36);
-  const pos = pick(rng, POSITIONS);
+  const rolledPosition = pick(rng, POSITIONS);
+  const pos = forcedPosition ?? rolledPosition;
+  const body = {PG:[72,79,170,220],SG:[75,81,185,230],SF:[77,83,200,245],PF:[79,84,215,265],C:[82,87,230,290]}[pos]!;
   const salary = clamp(
     1.2 + Math.max(0, ratings.impact) * 5.5 + (age < 25 ? 1 : 0),
     1.0,
@@ -98,8 +101,8 @@ function makePlayer(
     teamId,
     position: pos,
     age,
-    heightIn: pos === "C" ? randInt(rng, 82, 87) : randInt(rng, 72, 84),
-    weightLbs: randInt(rng, 180, 280),
+    heightIn: randInt(rng, body[0]!, body[1]!),
+    weightLbs: randInt(rng, body[2]!, body[3]!),
     ratings,
     scouted: scoutView(ratings, scoutLevel, rng),
     contract: teamId
@@ -158,7 +161,7 @@ export function createGeneratedLeague(options?: {
     const starChance = team.ownerGoal === "contend" ? 0.18 : 0.08;
     for (let i = 0; i < 15; i++) {
       players.push(
-        makePlayer(rng, team.id, team.staff.scoutLevel, starChance, season)
+        makePlayer(rng, team.id, team.staff.scoutLevel, starChance, season, i < 10 ? POSITIONS[i % 5] : undefined)
       );
     }
   }

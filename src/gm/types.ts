@@ -502,6 +502,8 @@ export type GmTempo = "slow" | "normal" | "fast";
 export type GmRotationDepth = 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
 export interface GmCoaching {
+  /** Automatic books may tighten for playoffs; explicit user plans remain authoritative. */
+  rotationMode?: "auto" | "manual";
   /** Explicit block-by-block plan. Each block is two regulation minutes. */
   shifts?: Record<string, boolean[]>;
   closingLineup?: string[];

@@ -9,6 +9,7 @@ import { playerSheet, progressSheet } from "../src/gm/engine/attributes";
 import {
   autoBalanceRotation,
   coachingBoost,
+  rotationForTeam,
 } from "../src/gm/engine/coaching";
 import {
   discourseTraitHint,
@@ -250,6 +251,10 @@ const natural = {
   ...homeBalanced,
   coaching: { ...homeBalanced.coaching!, coverSlot: naturalCover },
 };
+const oopPlan=rotationForTeam(stretched,allPlayers);
+assert.ok(oopPlan.frames.some(frame=>homePlayers.find(p=>p.id===frame.PG)?.position==="C"),"cover requests change actual on-court assignments");
+const oopBox=simulateGame(game,[stretched,away],allPlayers,3).box;
+assert.ok(oopBox.players.some(p=>p.teamId==="home"&&homePlayers.find(player=>player.id===p.playerId)?.position==="C"&&(p.positionMinutes?.PG??0)>0),"box position minutes record the actual stretch");
 let natPts = 0;
 let oopPts = 0;
 for (let seed = 1; seed <= 24; seed++) {
@@ -287,3 +292,4 @@ console.log("systems pass ok", {
   deadlineDeals: afterDeadline.tradeLog.length - league.tradeLog.length,
   sampleTrait: playerDevTrait(jokicLike),
 });
+
