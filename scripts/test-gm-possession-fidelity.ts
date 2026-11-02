@@ -110,9 +110,12 @@ async function main(){
   const active=data.filter(p=>p.minutes>1200).map(p=>{
     const q=shooting.get(String(p.playerId));
     if(!q||q.minutes<90)return null;
-    return {id:String(p.playerId),name:p.playerName,realFga36:p.fieldGoalsAttempted/p.minutes*36,simFga36:q.fga/q.minutes*36};
+    return {id:String(p.playerId),name:p.playerName,realFga36:p.fieldGoalsAttempted/p.minutes*36,simFga36:q.fga/q.minutes*36,realPts36:p.points/p.minutes*36,simPts36:q.pts/q.minutes*36,realAst36:p.assists/p.minutes*36,simAst36:q.ast/q.minutes*36};
   }).filter((x):x is NonNullable<typeof x>=>Boolean(x));
-  console.log("GM player rate diagnostic "+JSON.stringify({count:active.length, meanAbsFga36:active.length?active.reduce((n,x)=>n+Math.abs(x.realFga36-x.simFga36),0)/active.length:null}));
+  const mae=(a:"realFga36"|"realPts36"|"realAst36",b:"simFga36"|"simPts36"|"simAst36")=>active.length?active.reduce((n,x)=>n+Math.abs(x[a]-x[b]),0)/active.length:Infinity;
+  const playerRateErrors={count:active.length,meanAbsFga36:mae("realFga36","simFga36"),meanAbsPts36:mae("realPts36","simPts36"),meanAbsAst36:mae("realAst36","simAst36")};
+  console.log("GM player rate diagnostic "+JSON.stringify(playerRateErrors));
+  assert.ok(playerRateErrors.count>=150 && playerRateErrors.meanAbsFga36<3.5 && playerRateErrors.meanAbsPts36<8 && playerRateErrors.meanAbsAst36<3.2,"player-by-player box-score rates should match original season skill and usage");
   console.log("GM possession/PBP and broad box benchmark passed.");
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});
