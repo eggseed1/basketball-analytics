@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { ClubMark } from "@/gm/ui/club-mark";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -87,6 +89,7 @@ export function GmDraftResults({ league }: { league: GmLeagueState }) {
                   <span className="w-10 shrink-0 text-[13px] font-semibold tabular-nums text-muted-foreground">
                     #{row.pick}
                   </span>
+                  <GmPlayerPortrait player={row.player} size="sm" />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[15px] font-semibold tracking-tight">
                       {displayPlayerName(row.player)}
@@ -133,14 +136,8 @@ export function GmDraftResults({ league }: { league: GmLeagueState }) {
                   <span className="w-8 shrink-0 text-[12px] font-semibold tabular-nums text-muted-foreground">
                     #{row.pick}
                   </span>
-                  <span
-                    className={cn(
-                      "w-10 shrink-0 text-[12px] font-bold",
-                      yoursPick && "text-foreground"
-                    )}
-                  >
-                    {teamAbbr(league, row.teamId)}
-                  </span>
+                  <span className="inline-flex w-20 shrink-0 items-center gap-1 text-[12px] font-bold"><ClubMark teamId={row.teamId} label={teamAbbr(league, row.teamId)} /></span>
+                  <GmPlayerPortrait player={row.player} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[14px] font-semibold">
                       {displayPlayerName(row.player)}
