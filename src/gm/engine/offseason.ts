@@ -239,7 +239,9 @@ export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
     coachByTeam,
     playoffGamesByPlayer(drafted),
     developerByTeam,
-    drafted.settings.developmentSpeed ?? 1
+    drafted.settings.developmentSpeed ?? 1,
+    true,
+    drafted
   ).map((player) =>
     restoreRookieYear(releaseExpiredWithoutOption(player), drafted.season)
   );
