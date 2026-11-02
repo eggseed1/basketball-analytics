@@ -55,7 +55,6 @@ export function GmIncomingOfferBanner() {
           <p className="font-semibold">
             {caller} sent a trade offer
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">{offer.note}</p>
           <div className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
             <p>
               <span className="font-semibold">You get </span>
@@ -70,8 +69,7 @@ export function GmIncomingOfferBanner() {
             {fair.ok
               ? "They will do this deal as written."
               : fair.reason}
-            {" "}
-            The sim stays paused until you answer.
+
           </p>
           {message ? <p className="mt-1 text-sm">{message}</p> : null}
         </div>
