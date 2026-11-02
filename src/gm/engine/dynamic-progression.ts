@@ -155,7 +155,7 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const headroom = Math.max(0, sheet.potential.ceiling - baseline);
   const rng = createRng(developmentSeed(player.id + ":" + context.league.season + ":" + context.checkpoint));
   const peak = sheet.potential.peakStart || (player.position === "C" ? 29 : 27);
-  const age = isSummer ? player.age + 1 : player.age;
+  const age = player.age; // Callers of summer progression already apply the birthday once.
   const ageDelta = age <= 21 ? 2.4 : age <= 23 ? 2.05 : age <= 25 ? 1.5
     : age <= 27 ? 0.95 : age <= peak + 1 ? 0.3
     : age <= 31 ? -0.35 : age <= 33 ? -1.05 : age <= 35 ? -1.7 : -2.35;
@@ -163,9 +163,12 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const path = sheet.potential.path === "boom" ? 1.13 : sheet.potential.path === "bust" ? 0.72 : 1;
   const play = withSheet.seasonLine;
   const availability = play && play.gp >= 12 ? clamp(play.gp / 65, 0.35, 1) : 0.86;
-  const activity = play && play.gp >= 12 ? clamp(play.min / play.gp / 25, 0.65, 1.12) : 0.85;
+  let activity = play && play.gp >= 12 ? clamp(play.min / play.gp / 25, 0.65, 1.12) : 0.85;
+  if (withSheet.developmentPlan === "practice") activity = Math.max(activity, 0.93);
+  if (withSheet.developmentPlan === "rotation" && play && play.gp >= 12) activity *= play.min / play.gp >= 18 ? 1.07 : 0.75;
+  if (withSheet.injury) activity *= 0.78;
   const professionalism = 0.9 + workEthicOf(withSheet) / 1000;
-  const staff = clamp(1 + (context.coach ?? 0) * 0.07 + (context.staff ?? 1 - 1) * 0.12 + (context.mentor ?? 0), 0.85, 1.4);
+  const staff = clamp(1 + (context.coach ?? 0) * 0.07 + ((context.staff ?? 1) - 1) * 0.12 + (context.mentor ?? 0), 0.85, 1.4);
   const positive = ageDelta > 0 ? ageDelta * bonus * path * activity * availability * professionalism * staff : ageDelta;
   const performance = signal * (isSummer ? 1.1 : 0.52);
   const awardsBonus = isSummer ? Math.min(1.15, accolade * 0.12) : 0;
@@ -174,7 +177,7 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   if (yearly > 0) yearly = Math.min(yearly, headroom, age <= 25 ? 5 : 3);
   if (yearly < 0 && age < 30 && signal > 0.2) yearly *= 0.4;
   const speed = clamp(context.league.settings.developmentSpeed ?? 1, 0.5, 2);
-  const fraction = isSummer ? 0.72 : 0.07;
+  const fraction = isSummer ? 0.78 : 0.14;
   const total = yearly * fraction * speed + (sheet.progressionCarry ?? 0);
   let steps = isSummer ? Math.round(total) : Math.trunc(total);
   steps = clamp(steps, -4, Math.min(headroom, isSummer ? 5 : 1));
