@@ -14,6 +14,7 @@ import {
   type DraftNightOffer,
 } from "@/gm/engine/draft-room";
 import { playerSheet } from "@/gm/engine/attributes";
+import { sleeperRadar, draftSleeperSignals } from "@/gm/engine/draft-intel";
 import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import {
   formatHeight,
@@ -233,6 +234,19 @@ export function GmDraftNight() {
         </div>
       ) : null}
 
+      {yourTurn ? <section className="rounded-xl border border-border bg-card px-4 py-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your quick-pick shortlist</p>
+        <p className="mt-1 text-sm text-muted-foreground">Choose a favorite to inspect, then confirm the pick in the report. Later picks can be worthwhile gambles.</p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          {[...new Map([...board.slice(0, pickNum>=18?2:3), ...(pickNum>=18?sleeperRadar(league,1):[])].map(p=>[p.id,p])).values()].map(player=>{
+            const clue=draftSleeperSignals(player);
+            return <button key={player.id} type="button" className={"rounded-lg border px-3 py-3 text-left hover:bg-secondary "+(selected?.id===player.id?"border-foreground/60 bg-secondary/60":"border-border")} onClick={()=>setSelectedId(player.id)}>
+              <span className="block text-sm font-semibold">{displayPlayerName(player)}</span>
+              <span className="mt-1 block text-xs text-muted-foreground">{player.position} · mock #{player.consensusRank??"?"} · {clue.reasons[0]??"Scout for more clues"}</span>
+            </button>;
+          })}
+        </div>
+      </section>:null}
       {offers.length ? (
         <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
