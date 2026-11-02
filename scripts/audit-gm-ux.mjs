@@ -372,6 +372,7 @@ try {
     await campDialog.getByText(/fatigue/).waitFor();
     await campDialog.getByRole("button", { name: "Cancel", exact: true }).click();
     assert.equal((await exportedLeague()).seasonFlow.campResults, undefined, "canceling camp preserves the saved season");
+    await page.locator("summary").filter({ hasText: "Training camp" }).click();
     await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
     await campDialog.getByRole("button", { name: "Run camp", exact: true }).click();
     await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
