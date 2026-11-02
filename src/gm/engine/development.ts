@@ -23,6 +23,50 @@ export function activeMentor(player: GmPlayer, players: GmPlayer[]): GmPlayer | 
   const veteran = players.find(row => row.id === player.mentorship?.mentorId);
   return veteran && player.mentorship?.teamId === player.teamId && mentorEligible(player, veteran) ? veteran : undefined;
 }
+/** Stable two-card view for the user's mentorship pairings. Old saves receive a deterministic slot. */
+export function mentorshipSlots(league: GmLeagueState): [GmPlayer | null, GmPlayer | null] {
+  const active = league.players
+    .filter(player => player.teamId === league.userTeamId && activeMentor(player, league.players))
+    .sort((a, b) => a.id.localeCompare(b.id));
+  const slots: [GmPlayer | null, GmPlayer | null] = [null, null];
+  for (const player of active) {
+    const index = player.mentorship?.slot;
+    if ((index === 0 || index === 1) && !slots[index]) slots[index] = player;
+  }
+  for (const player of active) {
+    if (slots.some(assigned => assigned?.id === player.id)) continue;
+    const free = slots.findIndex(assigned => !assigned);
+    if (free >= 0) slots[free as 0 | 1] = player;
+  }
+  return slots;
+}
+
+/** Replace a card's pairing atomically; never temporarily exceed the two-pair cap. */
+export function assignMentorshipSlot(league: GmLeagueState, slot: 0 | 1, menteeId: string | null, mentorId: string | null) {
+  const slots = mentorshipSlots(league);
+  const current = slots[slot];
+  const other = slots[slot === 0 ? 1 : 0];
+  if (!menteeId || !mentorId) {
+    return current ? assignMentor(league, current.id, null)
+      : { ok: true, state: league, reason: "This mentorship slot is empty." };
+  }
+  if (other?.id === menteeId) return { ok: false, state: league, reason: "This player is already in the other mentorship slot." };
+  if (other?.mentorship?.mentorId === mentorId) return { ok: false, state: league, reason: "This veteran is already mentoring in the other slot." };
+  if (current?.id === menteeId && current.mentorship?.mentorId === mentorId && current.mentorship?.slot === slot) {
+    return { ok: true, state: league, reason: "This mentorship is already active." };
+  }
+  const cleared = current && (current.id !== menteeId || current.mentorship?.mentorId !== mentorId)
+    ? assignMentor(league, current.id, null).state : league;
+  const assigned = assignMentor(cleared, menteeId, mentorId);
+  if (!assigned.ok) return { ...assigned, state: league };
+  return {
+    ...assigned,
+    state: { ...assigned.state, players: assigned.state.players.map(player =>
+      player.id === menteeId && player.mentorship
+        ? { ...player, mentorship: { ...player.mentorship, slot } } : player) },
+  };
+}
+
 export function mentorshipQuality(veteran: GmPlayer): number {
   return clamp(((veteran.sheet?.overall ?? 60) - 55) / 40, 0, 1) * workEthicOf(veteran) / 100;
 }
