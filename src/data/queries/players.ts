@@ -764,6 +764,21 @@ export async function getPlayerCareerSeasons(
 
   seasons = await repairSyntheticCareerPlayerNames(playerId, seasons);
 
+  // Keep Compare, career analysis and APIs in step with the Overview loader.
+  // The underlying provider career cache may be older than the live season.
+  const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
+  if (seasons.some((row) => row.season === currentSeason && row.gamesPlayed > 0)) {
+    const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+    if (identity?.espnId) {
+      const { refreshCurrentCareerFromEspn } = await import(
+        "@/data/queries/refresh-current-career"
+      );
+      seasons = await refreshCurrentCareerFromEspn(
+        seasons, identity.espnId, identity.displayName
+      );
+    }
+  }
+
   // Per-season bundled/live attach — not getDarkoRatings(), which is a
   // current-season snapshot and left every historical year blank.
   let enriched = seasons;
