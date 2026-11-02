@@ -24,7 +24,7 @@ try{
     await page.evaluate(()=>scrollTo(0,0));const width=await page.evaluate(()=>({viewport:innerWidth,content:document.documentElement.scrollWidth}));assert.ok(width.content<=width.viewport+2,name+" overflows");await page.screenshot({path:dir+"/"+name+".png",fullPage:true,animations:"disabled"});writeFileSync(dir+"/"+name+".html",await page.content());report.screens.push({name,...width});
   }
   await load("prep");await page.getByTestId("draft-war-room").waitFor();
-  await page.getByRole("heading",{name:"Your scouting department"}).waitFor();
+  await page.getByRole("heading",{name:"Your scout’s picks"}).waitFor();
   await page.getByRole("button",{name:/Polished & playable/}).click();
   await page.getByRole("button",{name:/Open scout recommendation for/}).first().click();
   await page.getByRole("region",{name:/Prospect file for/}).waitFor();
