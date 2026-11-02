@@ -14,7 +14,7 @@ fixture.playIn = createPlayInBoard(fixture);
 fixture.settings.injuryFrequency = 0;
 fixture.homeFlow = { awardsSeen: true };
 const base = process.env.DRBL_VERIFY_BASE_URL ?? "http://127.0.0.1:3109";
-let server, browser;
+let server, browser, activePage;
 const report = { base, revision: process.env.GITHUB_SHA, widths: [], errors: [] };
 if (!process.env.DRBL_VERIFY_BASE_URL) {
   const log = createWriteStream(`${dir}/next.log`);
@@ -31,6 +31,7 @@ try {
   browser = await chromium.launch({ headless: true });
   for (const width of [390, 1440]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
+    activePage = page;
     await page.emulateMedia({ reducedMotion: "reduce" });
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
@@ -48,6 +49,8 @@ try {
     await page.screenshot({ path: `${dir}/play-in-${width}.png`, fullPage: true });
     await page.getByRole("button", { name: /^Watch:/ }).first().click();
     await page.waitForURL("**/gm/game/**?watch=1");
+    // Reduced motion skips automatic chart playback; explicit Replay remains available.
+    await page.getByRole("button", { name: "Replay", exact: true }).click();
     await page.getByRole("button", { name: "Pause", exact: true }).waitFor({ timeout: 30000 });
     await page.getByTestId("gm-game-score").waitFor();
     const watchPath = new URL(page.url()).pathname;
@@ -55,6 +58,10 @@ try {
     const pausedScore = await page.getByTestId("gm-game-score").innerText();
     await page.waitForTimeout(300);
     assert.equal(await page.getByTestId("gm-game-score").innerText(), pausedScore, "watch mode pauses its scoreboard");
+    await page.getByRole("button", { name: "Play", exact: true }).click();
+    await page.waitForTimeout(500);
+    await page.getByRole("button", { name: "Pause", exact: true }).click();
+    assert.ok(Number(await page.getByRole("slider", { name: "Game time", exact: true }).inputValue()) > 0, "playback resumes and advances the game clock");
     await page.screenshot({ path: `${dir}/watch-${width}.png`, fullPage: true });
     await page.getByRole("link", { name: "View final box score", exact: true }).click();
     await page.waitForURL(url => url.pathname === watchPath && !url.search);
@@ -63,6 +70,9 @@ try {
     await page.waitForTimeout(300);
     assert.equal(await page.getByTestId("gm-game-score").innerText(), finalScore, "box-score stats stay final while the chart previews");
     assert.equal(await page.locator(".gm-club-panel tbody tr").count() >= 10, true);
+    const points = [];
+    for (const panel of await page.locator(".gm-club-panel").all()) points.push((await panel.locator("tbody tr td:nth-child(3)").allTextContents()).reduce((sum, value) => sum + Number(value), 0));
+    assert.deepEqual(points, [...finalScore.matchAll(/\d+/g)].map(match => Number(match[0])), "individual final statistics add up to each final score");
     await page.getByRole("link", { name: "Back to postseason", exact: true }).click();
     await page.getByRole("button", { name: "Finish the play-in", exact: true }).click();
     await page.getByRole("heading", { name: "Playoff bracket", exact: true }).waitFor();
@@ -75,9 +85,11 @@ try {
     await page.getByRole("button", { name: "West", exact: true }).click();
     await page.getByRole("region", { name: /^West playoff bracket/ }).waitFor();
     const detail = page.getByTestId("postseason-series-details");
+    await page.emulateMedia({ reducedMotion: "no-preference" });
     await detail.getByRole("button", { name: /^Watch:/ }).click();
     await page.waitForURL("**/gm/game/**?watch=1");
     await page.getByRole("button", { name: "Pause", exact: true }).waitFor();
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.getByRole("link", { name: "Back to postseason", exact: true }).click();
     await page.getByRole("button", { name: "West", exact: true }).click();
     const gameLink = detail.getByRole("link", { name: /^Box score:/ });
@@ -107,6 +119,10 @@ try {
   }
   console.log("Postseason browser passed at 390px and 1440px: play-in clicks, reload, connected bracket, individual game stats/watch, pause, retained results, official feeds and Finals.");
 } catch (error) {
+  if (activePage && !activePage.isClosed()) {
+    await activePage.screenshot({ path: `${dir}/failure.png`, fullPage: true }).catch(() => {});
+    writeFileSync(`${dir}/failure.html`, await activePage.content());
+  }
   report.errors.push(String(error));
   writeFileSync(`${dir}/report.json`, JSON.stringify(report, null, 2));
   throw error;

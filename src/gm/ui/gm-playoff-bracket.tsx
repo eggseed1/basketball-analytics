@@ -52,7 +52,7 @@ export function GmPlayoffBracket({ league, controls = false }: { league: GmLeagu
         setConference(conf);
         setSelectedId(series.find(s => s.conf === conf && !s.done)?.id ?? series.find(s => s.conf === conf)?.id ?? null);
       }}>{conf}</Button>)}
-      <p className="text-xs text-muted-foreground">Best of seven · Select any matchup</p>
+      <p className="text-xs text-muted-foreground">Best of seven · Select any matchup · Scroll across rounds</p>
     </div>
     <div className="gm-bracket-scroll" role="region" aria-label={`${conference} playoff bracket, scroll horizontally for later rounds`} tabIndex={0}>
       <div className="gm-bracket-tree" data-testid="playoff-bracket-tree">
@@ -79,7 +79,7 @@ export function GmPlayoffBracket({ league, controls = false }: { league: GmLeagu
     </div>
     {selected ? <div ref={details} className="gm-series-details" data-testid="postseason-series-details">
       <h3 className="text-lg font-semibold">{abbr(league, selected.teamAId)} vs {abbr(league, selected.teamBId)}</h3>
-      <p className="text-sm text-muted-foreground">{selected.conf === "Finals" ? "NBA Finals" : `${selected.conf} · ${ROUNDS[selected.round - 1]}`} · {selected.winsA}–{selected.winsB}{selected.done ? ` · ${abbr(league, selected.winnerId)} advances` : ""}</p>
+      <p className="text-sm text-muted-foreground">{selected.conf === "Finals" ? "NBA Finals" : `${selected.conf} · ${ROUNDS[selected.round - 1]}`} · {selected.winsA}–{selected.winsB}{selected.done ? ` · ${abbr(league, selected.winnerId)} ${selected.conf === "Finals" ? "wins the title" : "advances"}` : ""}</p>
       <ol className="gm-series-games">
         {(selected.games ?? []).map((game, index) => <li key={game.gameId ?? index}>
           <div><p className="font-semibold">Game {index + 1}</p><p className="text-sm tabular-nums">{abbr(league, game.awayTeamId)} {game.awayScore} at {abbr(league, game.homeTeamId)} {game.homeScore}</p></div>
@@ -106,6 +106,6 @@ function SeriesCard({ series, league, selected, pending, onSelect }: {
       <TeamLogo teamKey={id} size="xs" /><span className="font-semibold">{abbr(league, id)}{id === league.userTeamId ? " · You" : ""}</span>
       <span className="ml-auto font-bold tabular-nums">{index === 0 ? series.winsA : series.winsB}</span>
     </span>)}
-    <span className="mt-1 block text-xs text-muted-foreground">{series.done ? `${abbr(league, series.winnerId)} advances` : `${(series.games?.length ?? 0) ? `Game ${(series.games?.length ?? 0) + 1}` : "Series not started"} · View series`}</span>
+    <span className="mt-1 block text-xs text-muted-foreground">{series.done ? `${abbr(league, series.winnerId)} ${series.conf === "Finals" ? "wins the title" : "advances"}` : `${(series.games?.length ?? 0) ? `Game ${(series.games?.length ?? 0) + 1}` : "Series not started"} · View series`}</span>
   </button>;
 }
