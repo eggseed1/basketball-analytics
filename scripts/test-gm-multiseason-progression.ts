@@ -144,4 +144,22 @@ for(let yr=0;yr<YEARS;yr++){
     "demotions",avg(batch,"demotions").toFixed(1),"XFactor",mean(batch.map(x=>x.traits.xfactor??0)).toFixed(1)].join(" "));
 }
 assert.equal(rows.length,YEARS*SEEDS.length);
-console.log("10-year progression calibration complete: "+rows.length+" league-seasons, "+(rows.length*ROSTER)+" player-season observations.");
+const first=rows.filter(x=>x.season===START);
+const last=rows.filter(x=>x.season===START+YEARS-1);
+const total=(key:"promotions"|"demotions")=>rows.reduce((n,x)=>n+x[key],0);
+// Loose guardrails, not a forced target: the source season is a generated
+// fictional DRBL cohort, not the exact 2K launch roster. Reject substantial
+// long-run talent inflation, implausible aging and inert development traits.
+assert.ok(Math.abs(avg(last,"mean")-avg(first,"mean"))<1.5,"league average OVR must not inflate over a decade");
+assert.ok(avg(last,"high80")-avg(first,"high80")<20,"85+ talent tier should not swell significantly");
+assert.ok(Math.abs(avg(last,"elite90")-avg(first,"elite90"))<12,"the 90+ elite tier should stay scarce and stable");
+assert.ok(total("promotions")>=25&&total("demotions")>=20,"awards, performance and aging should evolve trait tiers");
+for(const row of rows){
+  assert.equal(row.count,ROSTER);
+  assert.ok(row.elite90<=40&&row.elite95<=9,"elite OVR inflation");
+  assert.ok(row.movingPct>=52,"most players should change OVR each season");
+  assert.ok(row.youngMean>=0.5&&row.youngMean<=4,"young players should improve but not leap unrealistically");
+  assert.ok(row.seniorMean<=-0.8&&row.seniorMean>=-4,"older veterans should regress at a measured pace");
+  assert.ok((row.traits.xfactor??0)<=20,"top development trait cannot become commonplace");
+}
+console.log("10-year progression calibration complete: "+rows.length+" league-seasons, "+(rows.length*ROSTER)+" player-season observations. All long-horizon guardrails passed.");
