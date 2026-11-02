@@ -1,6 +1,7 @@
 "use client";
 
 import type { GmLeagueState } from "@/gm/types";
+import { ClubMark } from "@/gm/ui/club-mark";
 import { cupTables, tagGroupGames } from "@/gm/engine/cup";
 
 function label(league: GmLeagueState, id: string): string {
@@ -45,7 +46,7 @@ export function GmCupBoard({ league }: { league: GmLeagueState }) {
               {table.rows.map((row, index) => (
                 <li key={row.id} className="flex items-center justify-between px-3 py-1.5">
                   <span>
-                    {index + 1}. {label(league, row.id)}
+                    {index + 1}. <ClubMark teamId={row.id} label={label(league, row.id)} />
                   </span>
                   <span className="tabular-nums text-muted-foreground">
                     {row.wins}-{row.losses}
@@ -65,7 +66,7 @@ export function GmCupBoard({ league }: { league: GmLeagueState }) {
               </span>
               <span className="tabular-nums">{game.gameDate}</span>
               <span>
-                {label(league, game.awayTeamId)} at {label(league, game.homeTeamId)}
+                <ClubMark teamId={game.awayTeamId} label={label(league, game.awayTeamId)} /> at <ClubMark teamId={game.homeTeamId} label={label(league, game.homeTeamId)} />
                 {game.neutral ? ", neutral site" : ""}
                 {score(game) ? `, ${score(game)}` : ""}
               </span>
