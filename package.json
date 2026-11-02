@@ -42,6 +42,7 @@
     "eval:contract-value": "tsx scripts/eval-contract-value.ts",
     "predeploy": "npm run typecheck && npm test",
     "test:career-resume": "tsx scripts/test-career-resume.ts",
+    "test:career-freshness": "tsx scripts/test-current-career-freshness.ts",
     "test:historical-impact": "tsx scripts/test-historical-impact.ts",
     "test:box-score-context": "tsx scripts/test-box-score-context.ts",
     "test:transaction-lineage": "tsx scripts/test-transaction-lineage.ts",
