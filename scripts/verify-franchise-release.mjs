@@ -40,6 +40,34 @@ try {
     await page.reload({waitUntil:"domcontentloaded"});
     assert.equal(await page.getByLabel("Closing PG",{exact:true}).inputValue(),newClosingPG);
     assert.equal(await page.getByLabel("Closing SG",{exact:true}).inputValue(),oldClosingPG,"closing choices swap rather than duplicate a player");
+    // Entry motion intentionally holds offscreen sections. Inspect actual
+    // scrolling before capturing a full-page image, which does not scroll.
+    const visualTargets = [
+      ["navigation", ".gm-desk-nav"],
+      ["positions", ".gm-pos-mins"],
+      ["first-chart", ".gm-rot__mins .gm-chart"],
+    ];
+    for(const [label,selector] of visualTargets){
+      const target=page.locator(selector).first();
+      await target.scrollIntoViewIfNeeded();
+      await page.waitForFunction(selector=>{
+        let node=document.querySelector(selector);
+        if(!node||!node.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}))return false;
+        while(node){
+          if(Number(getComputedStyle(node).opacity)<0.99)return false;
+          node=node.parentElement;
+        }
+        return true;
+      },selector,{timeout:15000});
+      await page.screenshot({path:`${dir}/rotation-${label}-${width}.png`});
+    }
+    const scrollHeight=await page.evaluate(()=>document.documentElement.scrollHeight);
+    for(let y=0;y<scrollHeight;y+=600){
+      await page.evaluate(y=>window.scrollTo(0,y),y);
+      await page.waitForTimeout(650);
+    }
+    await page.evaluate(()=>window.scrollTo(0,0));
+    await page.waitForTimeout(650);
     await page.screenshot({path:`${dir}/rotation-${width}.png`,fullPage:true});
     await page.goto(base+"/gm/development",{waitUntil:"domcontentloaded",timeout:120000});
     await page.getByRole("heading",{name:"Development",exact:true}).waitFor();
