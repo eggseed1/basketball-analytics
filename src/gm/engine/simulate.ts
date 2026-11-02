@@ -344,7 +344,8 @@ export function simulateGame(
     line.started = (team.id === home.id ? homeBook : awayBook).openingIds.has(line.playerId);
     line.trueShootingPct = line.points / Math.max(1, 2 * (line.fga + 0.44 * line.fta));
     line.usagePct = (line.fga + 0.44 * line.fta + line.turnovers) / Math.max(1, usedOnCourt.get(line.playerId) ?? 1);
-    line.gameScore = Math.round((line.points + 0.4 * line.fgm - 0.7 * line.fga - 0.4 * (line.fta - line.ftm) + 0.5 * line.rebounds + line.steals + 0.7 * line.assists + 0.7 * line.blocks - line.turnovers) * 10) / 10;
+    // Hollinger Game Score: use actual offensive/defensive boards and foul penalty.
+    line.gameScore = Math.round((line.points + 0.4 * line.fgm - 0.7 * line.fga - 0.4 * (line.fta - line.ftm) + 0.7 * (line.offensiveRebounds ?? 0) + 0.3 * (line.defensiveRebounds ?? 0) + line.steals + 0.7 * line.assists + 0.7 * line.blocks - 0.4 * (line.personalFouls ?? 0) - line.turnovers) * 10) / 10;
   }
   const box: GmBoxScore = { id: `box_${game.id}_${actualSeed}`, gameId: game.id, season: game.season, day: game.day, homeTeamId: home.id, awayTeamId: away.id,
     homeScore, awayScore, possessions: Math.round(totalPossessions / actionSequenceFactor), players: played, events, stints, overtime, postseason: game.postseason,
