@@ -23,7 +23,16 @@ export function applySeasonProgression(league: GmLeagueState): GmLeagueState {
   const developers = Object.fromEntries(league.teams.map(team => [team.id, team.staff.developer ? { knack: team.staff.developer.knack, touch: team.staff.developer.touch } : null]));
   const players = developPlayers(league.players, false, coaches, playoffGamesByPlayer(league), developers, league.settings.developmentSpeed ?? 1, false, league);
   const previous = new Map(league.players.map(player => [player.id, player]));
-  return { ...league, players, seasonFlow: { ...flow, progressionApplied: true, progression: players.filter(player => player.teamId != null).map(player => ({ playerId: player.id, name: player.name, teamId: player.teamId, age: player.age, before: overallOf(previous.get(player.id)!), after: overallOf(player) })) } };
+  return { ...league, players, seasonFlow: { ...flow, progressionApplied: true, progression: players.filter(player => player.teamId != null).map(player => {
+    const original = previous.get(player.id)!;
+    const trait = player.traitHistory?.find(entry => entry.season === league.season);
+    return { playerId: player.id, name: player.name, teamId: player.teamId, age: player.age,
+      before: overallOf(original), after: overallOf(player),
+      traitBefore: trait?.before ?? original.sheet?.potential.trait,
+      traitAfter: trait?.after ?? player.sheet?.potential.trait,
+      reason: trait?.before !== trait?.after ? trait?.reason : undefined,
+    };
+  }) } };
 }
 
 export function campSorenessRisk(league: GmLeagueState): number {
