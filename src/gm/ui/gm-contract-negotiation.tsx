@@ -113,7 +113,7 @@ export function GmContractNegotiation({
             <div><p className="text-xs text-muted-foreground">Minutes</p><strong className="tabular-nums">{line && line.gp > 0 ? (line.min / line.gp).toFixed(1) + " MPG" : "—"}</strong></div>
           </div>
           <div className="mt-4 space-y-3 text-sm">
-            <div className="flex justify-between gap-2"><span className="text-muted-foreground">Agent's annual ask</span><strong className="tabular-nums">{formatM(asking)}</strong></div>
+            <div className="flex justify-between gap-2"><span className="text-muted-foreground">Agent&apos;s annual ask</span><strong className="tabular-nums">{formatM(asking)}</strong></div>
             <div className="flex justify-between gap-2"><span className="text-muted-foreground">Preferred term</span><strong>{preferredYears} years</strong></div>
             <div className="flex justify-between gap-2"><span className="text-muted-foreground">Salary cap room</span><strong className="tabular-nums">{formatM(cap.capRoomM)}</strong></div>
             <div className="flex justify-between gap-2"><span className="text-muted-foreground">Pending offer reservations</span><strong className="tabular-nums">{formatM((league.faMarket?.reservations ?? []).filter(v => v.teamId === league.userTeamId).reduce((sum,v) => sum + v.salaryM, 0))}</strong></div>
@@ -144,7 +144,7 @@ export function GmContractNegotiation({
               <div className="h-full rounded-full bg-[var(--team-primary)] transition-[width]" style={{ width: interest + "%" }} />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">{agentRead}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Team outlook / role / loyalty also affect the player's decision. This meter is an estimate, not a guarantee.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Team outlook / role / loyalty also affect the player&apos;s decision. This meter is an estimate, not a guarantee.</p>
             {mode === "free-agency" ? <p className="mt-2 text-xs text-muted-foreground">Fit {Math.round(utility.fit)} · Role {Math.round(utility.role)} · Winning {Math.round(utility.winning)} · Loyalty {Math.round(utility.continuity)}</p> : null}
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 rounded-lg border border-border p-3 text-sm">
@@ -153,7 +153,7 @@ export function GmContractNegotiation({
           </div>
           {legalMessage ? <p role="status" className="mt-3 text-xs font-medium text-destructive">{legalMessage}</p> : null}
           <button type="submit" disabled={!canSubmit} className="mt-4 min-h-11 w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50">{submitLabel}</button>
-          <p className="mt-2 text-center text-xs text-muted-foreground">Offers are subject to cap rules and the player's competing options. No signing is guaranteed.</p>
+          <p className="mt-2 text-center text-xs text-muted-foreground">Offers are subject to cap rules and the player&apos;s competing options. No signing is guaranteed.</p>
         </form>
       </div>
     </section>
