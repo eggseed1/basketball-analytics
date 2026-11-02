@@ -171,6 +171,8 @@ export interface GmCountingLine {
   stl: number;
   blk: number;
   tov: number;
+  /** Total personal fouls, available from simulated games. */
+  pf?: number;
   fgm: number;
   fga: number;
   tpm: number;
