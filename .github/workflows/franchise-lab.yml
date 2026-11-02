@@ -70,6 +70,26 @@ jobs:
           path: /tmp/franchise-calibration/multiseason.json
           if-no-files-found: ignore
           retention-days: 7
+  fidelity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:franchise-possession-fidelity
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: franchise-possession-fidelity
+          path: /tmp/franchise-calibration/possession-fidelity.json
+          if-no-files-found: ignore
+          retention-days: 7
   browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
