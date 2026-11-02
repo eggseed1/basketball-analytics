@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-01",
+    "snapshotDate": "2026-11-02",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-01T20:34:33.703Z",
-    "rosterPlayerCount": 488,
-    "headlinesScanned": 9237,
-    "latestHeadlineAt": "2026-11-01T20:28:45.000Z",
+    "builtAt": "2026-11-02T20:33:11.967Z",
+    "rosterPlayerCount": 503,
+    "headlinesScanned": 9592,
+    "latestHeadlineAt": "2026-11-02T20:26:50.000Z",
     "latestTransactionDate": "2026-11-01",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -217,6 +217,10 @@
     "reporter:chris-mannix": {
       "label": "Chris Mannix (Sports Illustrated)",
       "credibility": 22
+    },
+    "reporter:tim-macmahon": {
+      "label": "Tim MacMahon (ESPN)",
+      "credibility": 18
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -667,26 +671,31 @@
         "mv-706e3cdaf4e089f6",
         "mv-7248f87b80f9265a",
         "mv-c57c58509587f900",
+        "mv-ab883049bd65376e",
         "mv-ea51cad762ca0b44",
         "mv-4f75cdb692bd6484",
         "mv-5b7af0fcb67de169",
-        "mv-8db2809ab941176b"
+        "mv-8db2809ab941176b",
+        "mv-82c4d074f1eb0943",
+        "mv-4b2754d7aad75d47"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-01T18:08:49.000Z",
+      "lastMeaningfulAt": "2026-11-02T18:29:50.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
-        "5041939"
+        "5041939",
+        "5105817"
       ],
       "linkedTeamIds": [
         "6",
         "18",
         "8",
         "14",
-        "27"
+        "27",
+        "29"
       ]
     },
     {
@@ -820,12 +829,14 @@
         "mv-5f9a351f84c20877",
         "mv-af7dc5b81d2d9491",
         "mv-de8eebd6bae76b39",
-        "mv-eb8ee940c8d36723"
+        "mv-eb8ee940c8d36723",
+        "mv-5fac0351ab73c138",
+        "mv-1b28e4e9318fa264"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-10-30T15:32:10.000Z",
+      "lastMeaningfulAt": "2026-11-02T18:52:24.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774"
@@ -1550,12 +1561,14 @@
         "mv-97d2c16c92e4a54d",
         "mv-f6d1cae2ed0c3389",
         "mv-0808f2364afafa98",
-        "mv-e3ac87411d8d9d38"
+        "mv-e3ac87411d8d9d38",
+        "mv-f0294f7e0e3b3dcc",
+        "mv-99b84137d89490c3"
       ],
       "evidenceClass": "reported",
-      "state": "denied",
+      "state": "unresolved",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-10-29T16:05:08.000Z",
+      "lastMeaningfulAt": "2026-11-02T13:27:35.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
@@ -1644,7 +1657,7 @@
     },
     {
       "id": "mv-trade-5060631-20261025",
-      "headline": "Adou Thiero: trade talk",
+      "headline": "Adou Thiero and Cameron Carr: trade talk",
       "primaryClaimId": "mv-18920474a8170e5d",
       "claimIds": [
         "mv-18920474a8170e5d"
@@ -1654,7 +1667,8 @@
       "firstSeenAt": "2026-10-25T16:28:12.000Z",
       "lastMeaningfulAt": "2026-10-25T16:28:12.000Z",
       "linkedPlayerIds": [
-        "5060631"
+        "5060631",
+        "5113969"
       ],
       "linkedTeamIds": [
         "13"
@@ -1841,24 +1855,63 @@
     },
     {
       "id": "mv-trade-2595516-20261101",
-      "headline": "Norman Powell and Lauri Markkanen: trade talk",
+      "headline": "Norman Powell, Lauri Markkanen and others: trade talk",
       "primaryClaimId": "mv-53c734b5259d58ad",
       "claimIds": [
-        "mv-53c734b5259d58ad"
+        "mv-53c734b5259d58ad",
+        "mv-17c1f682c46b7cf5"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-01T13:58:47.000Z",
-      "lastMeaningfulAt": "2026-11-01T13:58:47.000Z",
+      "lastMeaningfulAt": "2026-11-02T12:30:00.000Z",
       "linkedPlayerIds": [
         "2595516",
-        "4066336"
+        "4066336",
+        "3102531"
       ],
       "linkedTeamIds": [
         "17",
         "23",
+        "9",
         "4",
         "26"
+      ]
+    },
+    {
+      "id": "mv-contract-4683778-20261102",
+      "headline": "Jared McCain: contract future with the Thunder",
+      "primaryClaimId": "mv-130390198085c018",
+      "claimIds": [
+        "mv-130390198085c018"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-02T01:24:16.000Z",
+      "lastMeaningfulAt": "2026-11-02T01:24:16.000Z",
+      "linkedPlayerIds": [
+        "4683778"
+      ],
+      "linkedTeamIds": [
+        "25"
+      ]
+    },
+    {
+      "id": "mv-trade-4683778-20261102",
+      "headline": "Jared McCain: trade talk",
+      "primaryClaimId": "mv-a44707019f5d7c18",
+      "claimIds": [
+        "mv-a44707019f5d7c18"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-02T10:08:24.000Z",
+      "lastMeaningfulAt": "2026-11-02T10:08:24.000Z",
+      "linkedPlayerIds": [
+        "4683778"
+      ],
+      "linkedTeamIds": [
+        "25"
       ]
     },
     {
@@ -6273,7 +6326,8 @@
       "sourceUrl": "https://clutchpoints.com/nba/dallas-mavericks/nba-rumors-mavericks-rivals-keep-trying-to-push-kyrie-irving-trade-narrative-but-hes-just-ready-to-mentor-cooper-flagg",
       "playerIds": [
         "6442",
-        "5041939"
+        "5041939",
+        "5105817"
       ],
       "teamIds": [
         "6"
@@ -8362,7 +8416,8 @@
       "reporterLabel": "Jovan Buha",
       "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/los-angeles-lakers/lakers-insider-suggests-trading-cameron-carr-and-adou-thiero-for-immediate-help",
       "playerIds": [
-        "5060631"
+        "5060631",
+        "5113969"
       ],
       "teamIds": [
         "13"
@@ -9539,6 +9594,25 @@
       "isOriginal": true
     },
     {
+      "id": "mv-ab883049bd65376e",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving Reportedly Among Most In-Demand NBA Stars Ahead Of Trade Deadline",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-01T16:16:32.000Z",
+      "sourceId": "reporter:chris-mannix",
+      "sourceLabel": "Fadeaway World, citing Chris Mannix (Sports Illustrated)",
+      "reporterLabel": "Chris Mannix",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/dallas-mavericks/kyrie-irving-reportedly-among-most-in-demand-nba-stars-ahead-of-trade-deadline",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
       "id": "mv-ea51cad762ca0b44",
       "clusterId": "mv-trade-6442-20261001",
       "summary": "Detroit Pistons ‘Salivating’ Over Kyrie Irving Amid Trade Rumors",
@@ -9592,7 +9666,8 @@
       "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-pistons-reportedly-interested-in-kyrie-irving-while-cooper-flaggs-mavs-confession-resurfaces/",
       "playerIds": [
         "6442",
-        "5041939"
+        "5041939",
+        "5105817"
       ],
       "teamIds": [
         "6",
@@ -9621,6 +9696,195 @@
         "8"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-130390198085c018",
+      "clusterId": "mv-contract-4683778-20261102",
+      "summary": "Thunder announce big contract decisions on Jared McCain, Thomas Sorber",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "original_report",
+      "publishedAt": "2026-11-02T01:24:16.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://clutchpoints.com/nba/oklahoma-city-thunder/thunder-news-okc-contract-decisions-jared-mccain-thomas-sorber",
+      "playerIds": [
+        "4683778"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-f0294f7e0e3b3dcc",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jayson Tatum Regretted Not Supporting Jaylen Brown Amid Celtics Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-02T03:45:48.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/boston-celtics/jayson-tatum-regretted-not-supporting-jaylen-brown-amid-celtics-trade-rumors",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a44707019f5d7c18",
+      "clusterId": "mv-trade-4683778-20261102",
+      "summary": "OKC Thunder Set For Jared McCain-Like Trade, Insider Says",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-02T10:08:24.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/oklahoma-city-thunder/jared-mccain-like-trade-this-season/",
+      "playerIds": [
+        "4683778"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-17c1f682c46b7cf5",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Warriors Reportedly Revisit Long-Standing Interest in Lauri Markkanen Amid Kristaps Porzingis Trade Talk",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-02T12:30:00.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-golden-state-warriors-reportedly-revisit-long-standing-interest-in-lauri-markkanen-amid-kristaps-porzingis-trade-talk/",
+      "playerIds": [
+        "3102531",
+        "4066336"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-99b84137d89490c3",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Celtics' Jayson Tatum reportedly has major regret over 76ers' Jaylen Brown trade controversy",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-02T13:27:35.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/boston-celtics/news/celtics-jayson-tatum-reportedly-has-major-regret-over-76ers-jaylen-brown-trade-controversy/e786dfb4152fb83141a1b2a6%3E",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [
+        "2",
+        "20"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-82c4d074f1eb0943",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Mavericks rumors: Kyrie Irving trade suitors won’t like this ‘very, very happy’ update",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-02T16:32:44.000Z",
+      "sourceId": "reporter:tim-macmahon",
+      "sourceLabel": "ClutchPoints, citing Tim MacMahon (ESPN)",
+      "reporterLabel": "Tim MacMahon",
+      "sourceUrl": "https://clutchpoints.com/nba/dallas-mavericks/mavericks-rumors-kyrie-irving-trade-suitors-wont-like-update",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5fac0351ab73c138",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Domantas Sabonis wants out as Kings’ season unravels",
+      "claimType": "trade_request",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-02T17:29:14.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "TalkBasket, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://www.talkbasket.net/225999-domantas-sabonis-wants-out-as-kings-season-unravels",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-4b2754d7aad75d47",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Insider Reveals Personal Chat With Kyrie Irving as Trade Rumors Take a New Turn",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-02T18:29:50.000Z",
+      "sourceId": "reporter:tim-macmahon",
+      "sourceLabel": "Basketball News, citing Tim MacMahon (ESPN)",
+      "reporterLabel": "Tim MacMahon",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-insider-tim-macmahon-reveals-personal-chat-with-kyrie-irving-as-trade-rumors-take-a-new-turn/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-1b28e4e9318fa264",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Kings rumors: Domantas Sabonis trade talk should surprise absolutely nobody as frustrations mount",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-02T18:52:24.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "ClutchPoints, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst, Tim Bontemps",
+      "sourceUrl": "https://clutchpoints.com/nba/sacramento-kings/kings-rumors-domantas-sabonis-trade-talk-should-surprise-nobody",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",

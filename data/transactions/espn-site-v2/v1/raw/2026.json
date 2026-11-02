@@ -2,7 +2,7 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-01T20:32:55.086Z",
+  "fetchedAt": "2026-11-02T20:32:04.668Z",
   "apiCount": 428,
   "rows": [
     {
@@ -1103,6 +1103,17 @@
         "displayName": "Denver Nuggets",
         "location": "Denver",
         "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-09-22T07:00Z",
+      "description": "Waived F Solomon Washington.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
       }
     },
     {
