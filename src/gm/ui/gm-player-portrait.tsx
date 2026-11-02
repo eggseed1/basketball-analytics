@@ -2,6 +2,7 @@
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { displayPlayerName } from "@/gm/lib/selectors";
+import { gmPlayerPortraitIds } from "@/gm/lib/player-portrait-ids";
 import type { GmPlayer } from "@/gm/types";
 
 /**
@@ -21,13 +22,11 @@ export function GmPlayerPortrait({
   priority?: boolean;
   className?: string;
 }) {
-  const realId = player.nbaPlayerId?.trim() || undefined;
-  // Older real-player saves may retain an ESPN id but no NBA crosswalk.
-  const entryId = player.nbaSeason && /^\d+$/.test(player.id) ? player.id : undefined;
+  const ids = gmPlayerPortraitIds(player);
   return (
     <PlayerHeadshot
-      playerId={realId ?? entryId}
-      nbaId={realId}
+      playerId={ids.playerId}
+      nbaId={ids.nbaId}
       name={displayPlayerName(player)}
       teamKey={player.teamId}
       size={size}
