@@ -14,6 +14,7 @@
     "test": "node scripts/run-tests.mjs",
     "test:franchise-systems": "node scripts/test-franchise-systems.mjs",
     "test:franchise-postseason": "tsx scripts/test-gm-postseason.ts",
+    "test:franchise-media": "tsx scripts/test-gm-player-identity.ts",
     "test:franchise-rotations": "tsx scripts/test-gm-realistic-rotations.ts",
     "test:franchise-badges": "tsx scripts/test-gm-badges.ts",
     "test:franchise-development": "tsx scripts/test-gm-development.ts",
