@@ -10,11 +10,12 @@ import {
 } from "@/components/games/game-shot-chart";
 import { GmShell } from "@/gm/ui/gm-shell";
 import { ClubMark } from "@/gm/ui/club-mark";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { teamColorStyle } from "@/gm/ui/team-colors";
 import { schemeHeadline } from "@/gm/engine/coaching";
 import { boxToPlayByPlay, linesAtCutoff } from "@/gm/engine/play-by-play";
 import { useGmStore } from "@/gm/state/gm-store";
-import type { GmBoxPlayerLine } from "@/gm/types";
+import type { GmBoxPlayerLine, GmPlayer } from "@/gm/types";
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
@@ -173,10 +174,10 @@ function GameDetails({ gameId, watch }: { gameId: string; watch: boolean }) {
       {watch ? null : chart}
       {box.shiftPlan && box.shiftPlan.length > 0 ? <ShiftPlan rows={box.shiftPlan} played={yours} /> : null}
       <div style={teamColorStyle(box.awayTeamId)}>
-        <TeamTable teamId={box.awayTeamId} rows={away} live={ticking} />
+        <TeamTable teamId={box.awayTeamId} rows={away} players={league.players} live={ticking} />
       </div>
       <div style={teamColorStyle(box.homeTeamId)}>
-        <TeamTable teamId={box.homeTeamId} rows={home} live={ticking} />
+        <TeamTable teamId={box.homeTeamId} rows={home} players={league.players} live={ticking} />
       </div>
       <Link
         href="/gm"
@@ -250,10 +251,12 @@ function ShiftPlan({
 function TeamTable({
   teamId,
   rows,
+  players,
   live,
 }: {
   teamId: string;
   rows: GmBoxPlayerLine[];
+  players: GmPlayer[];
   live: boolean;
 }) {
   const t = useTranslations("GmUi");
@@ -282,7 +285,7 @@ function TeamTable({
           <tbody className="divide-y divide-border">
             {rows.map((p) => (
               <tr key={p.playerId} className="gm-club-row">
-                <td className="px-2 py-1.5 font-medium">{p.playerName}</td>
+                <td className="px-2 py-1.5 font-medium"><span className="flex items-center gap-2">{players.find(player => player.id === p.playerId) ? <GmPlayerPortrait player={players.find(player => player.id === p.playerId)!} /> : null}<span>{p.playerName}</span></span></td>
                 <td className="px-2 py-1.5 tabular-nums">
                   {formatNumber(p.minutes, 1)}
                 </td>
