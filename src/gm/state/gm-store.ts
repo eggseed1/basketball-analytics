@@ -252,7 +252,7 @@ interface GmStore {
   activeSaveId: string | null;
   importSave: (text: string) => Promise<void>;
   updateFranchise: (patch: Partial<import("@/gm/types").GmFranchisePlan>) => void;
-  updateSimulationSettings: (patch: Partial<Pick<import("@/gm/types").GmLeagueSettings, "injuryFrequency" | "developmentSpeed" | "tradeDifficulty" | "simPace">>) => void;
+  updateSimulationSettings: (patch: Partial<Pick<import("@/gm/types").GmLeagueSettings, "injuryFrequency" | "developmentSpeed" | "tradeDifficulty" | "simPace" | "simShotAccuracy" | "simThreeRate" | "simFoulRate" | "simTurnoverRate" | "simReboundRate" | "simAssistRate">>) => void;
   setDevelopmentFocus: (playerId: string, focus: NonNullable<import("@/gm/types").GmPlayer["developmentFocus"]>) => void;
   promiseMinutes: (playerId: string, minutes: number) => void;
   editAttribute: (playerId: string, attribute: keyof import("@/gm/types").GmAttributes, value: number) => void;
@@ -550,7 +550,11 @@ export const useGmStore = create<GmStore>()(
         const league = get().league; if (!league) return;
         const settings = { ...league.settings };
         for (const key of ["injuryFrequency", "developmentSpeed", "tradeDifficulty", "simPace"] as const) {
-          const v = patch[key]; if (typeof v === "number" && Number.isFinite(v)) settings[key] = clamp(v, key === "injuryFrequency" ? 0 : 0.5, key === "simPace" ? 1.2 : 2);
+          const v = patch[key]; if (typeof v === "number" && Number.isFinite(v)) settings[key] = clamp(v, key === "injuryFrequency" ? 0 : key === "simPace" ? 0.8 : 0.5, key === "simPace" ? 1.2 : 2);
+        }
+        for (const key of ["simShotAccuracy", "simThreeRate", "simFoulRate", "simTurnoverRate", "simReboundRate", "simAssistRate"] as const) {
+          const v = patch[key];
+          if (typeof v === "number" && Number.isFinite(v)) settings[key] = clamp(v, 0.75, 1.25);
         }
         set({ league: withUpdate({ ...league, settings }) });
       },
