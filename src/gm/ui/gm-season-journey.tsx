@@ -8,18 +8,17 @@ import { seasonJourney } from "@/gm/lib/season-journey";
 export function GmSeasonJourney() {
   const league = useGmStore(state => state.league);
   const pathname = usePathname();
-  if (!league || pathname === "/gm/offseason" || (pathname === "/gm" && league.seasonFlow?.stage)) return null;
+  if (!league || pathname === "/gm/offseason" || league.teamBuildingCheckpoint || league.scoutingFocusPrompt) return null;
   const journey = seasonJourney(league);
   const attention = journey.tasks.find(task => task.required);
+  if (!attention || (pathname === "/gm" && league.seasonFlow?.stage)) return null;
   return <aside aria-label="Current season stage" className="gm-stage-rail">
     <div className="min-w-0">
-      <p className="gm-stage-rail__eyebrow">Front office · current priority</p>
-      <p className="gm-stage-rail__title">{journey.title}</p>
-      <p className="gm-stage-rail__next">{attention?.label ?? journey.description}</p>
+      <p className="gm-stage-rail__eyebrow">Action needed</p>
+      <p className="gm-stage-rail__title">{attention.label}</p>
     </div>
     <div className="flex flex-wrap items-center gap-3">
-      <span className="gm-stage-rail__next">Next: {journey.next}</span>
-      <Link href="/gm/offseason" className="gm-stage-rail__action">Open season hub <ArrowUpRight aria-hidden="true" size={15}/></Link>
+      <Link href={attention.href || "/gm/offseason"} className="gm-stage-rail__action">Review <ArrowUpRight aria-hidden="true" size={15}/></Link>
     </div>
   </aside>;
 }
