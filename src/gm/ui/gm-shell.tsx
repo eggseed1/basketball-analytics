@@ -444,7 +444,6 @@ export function GmShell({
           </button>
         </div>
       </header>
-      <p className="gm-disclaimer">{t("fictionNote")}</p>
       {leagueHasRealPlayers(league) ? null : (
         <div className="sports-card flex flex-wrap items-center justify-between gap-3 p-4">
           <p className="text-sm">Demo league with generated players. You can keep this save and start a franchise with real NBA rosters.</p>
