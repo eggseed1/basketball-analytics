@@ -44,11 +44,11 @@ export function ensureBadges(player: GmPlayer): GmPlayer {
   if (player.badges?.version === 2) return player;
   const overall = player.sheet?.overall ?? 60;
   const rookie = player.age <= 22 || (!player.contract && player.age <= 23);
-  const slots = rookie ? (overall >= 85 ? 2 : 1)
+  const slots = rookie ? (overall >= 92 ? 5 : overall >= 85 ? 3 : 1)
     : (overall >= 95 ? 8 : overall >= 90 ? 7 : overall >= 85 ? 5
       : overall >= 80 ? 4 : overall >= 75 ? 3 : overall >= 70 ? 2 : 1)
       + (player.age >= 29 ? 1 : 0);
-  const experienceLimit = player.age <= 22 ? (overall >= 90 ? 2 : 1)
+  const experienceLimit = player.age <= 22 ? (overall >= 92 ? 4 : overall >= 85 ? 3 : 1)
     : player.age <= 24 ? 3 : player.age <= 27 ? 4 : 5;
   const qualityLimit = overall >= 90 ? 5 : overall >= 84 ? 4 : overall >= 76 ? 3 : overall >= 70 ? 2 : 1;
   const signatures = BADGES.filter(b => badgeCap(player, b.id) > 0)
