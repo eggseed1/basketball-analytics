@@ -43,8 +43,8 @@ export function badgeLevel(player: GmPlayer, id: GmBadgeId): number {
 export function ensureBadges(player: GmPlayer): GmPlayer {
   if (player.badges?.version === 2) return player;
   const overall = player.sheet?.overall ?? 60;
-  const rookie = player.age <= 22 || !player.contract;
-  const slots = !player.contract ? 1 : rookie ? (overall >= 85 ? 2 : 1)
+  const rookie = player.age <= 22 || (!player.contract && player.age <= 23);
+  const slots = rookie ? (overall >= 85 ? 2 : 1)
     : (overall >= 95 ? 8 : overall >= 90 ? 7 : overall >= 85 ? 5
       : overall >= 80 ? 4 : overall >= 75 ? 3 : overall >= 70 ? 2 : 1)
       + (player.age >= 29 ? 1 : 0);
