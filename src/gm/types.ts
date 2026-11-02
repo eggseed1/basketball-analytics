@@ -315,7 +315,7 @@ export type GmBadgeId = "inside_touch" | "deep_range" | "free_throw" | "floor_ge
 export interface GmPlayer {
   /** One deterministic trait review per offseason; retained in saves. */
   traitHistory?: Array<{ season: number; before: GmDevTrait; after: GmDevTrait; reason: string }>;
-  badges?: { version: 1; xp: Partial<Record<GmBadgeId, number>>; season?: number; gameIds?: string[] };
+  badges?: { version: 1 | 2; xp: Partial<Record<GmBadgeId, number>>; season?: number; gameIds?: string[] };
   badgeFocus?: GmBadgeId;
   workEthic?: number;
   mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; lastGameId?: string };
