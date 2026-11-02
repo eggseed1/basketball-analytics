@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { SectionFrame } from "@/components/layout/section-frame";
+import { GmBadgeSummary } from "@/gm/ui/gm-badges";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -282,6 +284,7 @@ export function GmPlayerCard({
         </div>
       </section>
 
+      {!inDraft ? <SectionFrame title="Skill badges"><GmBadgeSummary player={player} />{onRoster ? <Link href="/gm/development#development-badges" className="mt-3 inline-block text-sm font-semibold underline underline-offset-4">Review badge progress and emphasis</Link> : null}</SectionFrame> : null}
       <section className="sports-card p-4">
         <h3 className="font-semibold">{inDraft ? "Scout report" : "Ratings"}</h3>
         {inDraft ? (

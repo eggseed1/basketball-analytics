@@ -1,3 +1,4 @@
+import { recordBadgeBox } from "@/gm/engine/badges";
 /**
  * One regular-season day, plus the short recap shown after a skip.
  * Skipping should feel like a week of basketball, not an empty spinner.
@@ -67,6 +68,7 @@ export function stepDay(league: GmLeagueState): {
       if (team) result.box.shiftPlan = shiftSnapshot(team, players);
     }
     schedule = schedule.map((x) => (x.id === g.id ? result.game : x));
+    if (!g.exhibition) players = recordBadgeBox(players, result.box);
     if (gameCounts(g)) {
       players = recordSimGame(players, result.box, boxScores);
       standings = applyGameToStandings(

@@ -1,5 +1,7 @@
 "use client";
 
+import { BADGES, recordBadgeBox } from "@/gm/engine/badges";
+
 import { assignMentor } from "@/gm/engine/development";
 
 import { DRAFT_ROLES, draftScoutingOf, studyProspect, toggleDraftWatch } from "@/gm/engine/draft-intel";
@@ -231,6 +233,7 @@ interface GmStore {
   setDraftStrategy: (strategy:GmDraftRole)=>void;
   toggleDraftWatch: (playerId:string)=>void;
   makeDraftTrade: (proposal:DraftTradeProposal)=>{ok:boolean;reason:string};
+  setBadgeFocus: (playerId: string, focus: import("@/gm/types").GmBadgeId | null) => void;
   setDevelopmentPlan: (playerId:string,plan:NonNullable<GmPlayer["developmentPlan"]>)=>void;
   lastJourneyNote: string | null;
   advanceSeasonJourney: () => void;
@@ -1505,6 +1508,11 @@ export const useGmStore = create<GmStore>()(
         if(result.ok)syncMyLeague(result.state);
         return {ok:result.ok,reason:result.reason};
       },
+      setBadgeFocus: (playerId,focus) => {
+        const league=get().league;
+        if (!league || (focus != null && !BADGES.some(b => b.id === focus))) return;
+        set({league:withUpdate({...league,players:league.players.map(p => p.id === playerId && p.teamId === league.userTeamId ? {...p,badgeFocus:focus ?? undefined} : p)})});
+      },
       setDevelopmentPlan: (playerId,plan) => {
         const league=get().league;if(!league||!["balanced","practice","rotation"].includes(plan))return;
         set({league:withUpdate({...league,players:league.players.map(player=>player.id===playerId&&player.teamId===league.userTeamId?{...player,developmentPlan:plan}:player)})});
@@ -1519,7 +1527,7 @@ export const useGmStore = create<GmStore>()(
         if (games.length === 0) return;
         const schedule = [...league.schedule];
         let boxScores = [...league.boxScores];
-        const players = [...league.players];
+        let players = [...league.players];
         const notes: string[] = [];
         for (const game of games) {
           const tip = {
@@ -1533,6 +1541,7 @@ export const useGmStore = create<GmStore>()(
           const result = simulateGame(tip, league.teams, players, undefined, league.schedule, league.settings);
           result.game.postseason = "play_in";
           result.box.postseason = "play_in";
+          players = recordBadgeBox(players, result.box);
           schedule.push(result.game);
           boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
           const homeWon = (result.game.homeScore ?? 0) > (result.game.awayScore ?? 0);
@@ -1741,6 +1750,7 @@ export const useGmStore = create<GmStore>()(
           };
           const result = simulateGame(game, league.teams, players, undefined, league.schedule, league.settings);
           result.box.postseason = "playoffs";
+          players = recordBadgeBox(players, result.box);
           schedule.push(result.game);
           boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
           players = rollGameInjuries(

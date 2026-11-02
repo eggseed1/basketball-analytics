@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit -p .",
     "test": "node scripts/run-tests.mjs",
     "test:franchise-systems": "node scripts/test-franchise-systems.mjs",
+    "test:franchise-badges": "tsx scripts/test-gm-badges.ts",
     "test:franchise-development": "tsx scripts/test-gm-development.ts",
     "test:franchise-calendar": "tsx scripts/test-gm-calendar.ts",
     "test:franchise-flow": "tsx scripts/test-gm-season-journey.ts",

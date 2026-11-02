@@ -1,4 +1,5 @@
 import { pairCpuMentors } from "@/gm/engine/development";
+import { ensureBadges } from "@/gm/engine/badges";
 import { ensureDraftPickHorizon } from "@/gm/engine/draft-order";
 import type { GmFranchisePlan, GmLeagueState, GmPlayer, GmSeasonArchive } from "@/gm/types";
 import { sealProspect, staffScoutContext } from "@/gm/engine/scouting";
@@ -23,7 +24,7 @@ export function franchisePlan(league: GmLeagueState): GmFranchisePlan {
 
 /** Additive migration. Existing identities, attributes, rotations and results remain authoritative. */
 export function prepareFranchise(league: GmLeagueState): GmLeagueState {
-  const players = league.players.map(p => { const player=ensureSimProfile(ensurePlayerSheet(p)); const index=league.draftPool.indexOf(p.id); return index>=0&&player.consensusRank==null?{...player,consensusRank:index+1}:player; });
+  const players = league.players.map(p => { const player=ensureBadges(ensureSimProfile(ensurePlayerSheet(p))); const index=league.draftPool.indexOf(p.id); return index>=0&&player.consensusRank==null?{...player,consensusRank:index+1}:player; });
   const prepared = pairCpuMentors(normalizeSeasonFlow(ensureDraftPickHorizon({ ...league, players, simulationBook: 1, franchise: franchisePlan({ ...league, players }), history: league.history ?? [] })));
   const flow = prepared.seasonFlow;
   if (flow?.stage === "training_camp" && !flow.campResults && Object.keys(flow.campAssignments ?? {}).length > 2) {
