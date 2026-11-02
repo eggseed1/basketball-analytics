@@ -6,8 +6,8 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
 import { useGmStore } from "@/gm/state/gm-store";
-import { activeMentor, breakoutEvidence, CAREER_CEILING_LIMIT, mentorEligible, mentorshipBonus, mentorshipQuality, workEthicOf } from "@/gm/engine/development";
-import { CAMP_FOCUSES, campSkillChanges, campSlots, campSorenessRisk } from "@/gm/engine/season-development";
+import { activeMentor, mentorEligible, mentorshipBonus, mentorshipQuality, workEthicOf } from "@/gm/engine/development";
+import { CAMP_FOCUSES, campSkillChanges, campSlots } from "@/gm/engine/season-development";
 import { ATTRIBUTE_LABEL } from "@/gm/engine/attributes";
 import { flowOf } from "@/gm/engine/season-flow-state";
 import { traitLabel } from "@/gm/engine/dev-traits";
@@ -73,8 +73,6 @@ export function GmDevelopment() {
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">{roster.map(player => {
         const mentor = activeMentor(player, league.players);
         const mentors = roster.filter(vet => mentorEligible(player, vet));
-        const growth = player.ceilingGrowth?.total ?? 0;
-        const evidence = breakoutEvidence(player, league.season);
         return <article key={player.id} className="min-w-0 rounded-xl border border-border bg-background/40 p-4" data-testid={"development-player-" + player.id}>
           <div className="flex items-start justify-between gap-3"><div className="flex min-w-0 items-center gap-3"><GmPlayerPortrait player={player} size="sm" /><div className="min-w-0"><Link href={"/gm/player/" + player.id} className="font-semibold hover:underline">{player.name}</Link><p className="mt-1 text-xs text-muted-foreground">{player.position} · age {player.age} · OVR {Math.round(player.sheet?.overall ?? 0)} </p></div></div></div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="grid gap-1.5 text-sm">Skill focus<select aria-label={`Development focus for ${player.name}`} className={control} value={player.developmentFocus ?? "balanced"} onChange={e => setFocus(player.id, e.target.value as NonNullable<GmPlayer["developmentFocus"]>)}>{focusChoices.map(focus => <option key={focus} value={focus}>{focus[0]!.toUpperCase() + focus.slice(1)}</option>)}</select></label><label className="grid gap-1.5 text-sm">Development plan<select aria-label={`Development plan for ${player.name}`} className={control} value={player.developmentPlan ?? "balanced"} onChange={e => setPlan(player.id, e.target.value as NonNullable<GmPlayer["developmentPlan"]>)}><option value="balanced">Balanced reps</option><option value="practice">Skills work</option><option value="rotation">Rotation reps</option></select></label></div>
