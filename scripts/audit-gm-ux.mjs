@@ -213,17 +213,17 @@ try {
   await capture("mobile-own-negotiations");
   if (verify) {
     await page.getByRole("button", { name: `Review offer for ${manifest.ownPlayerName}`, exact: true }).click();
-    await page.getByRole("region", { name: `Offer terms for ${manifest.ownPlayerName}`, exact: true }).waitFor();
+    await page.getByRole("region", { name: `Contract negotiation for ${manifest.ownPlayerName}`, exact: true }).waitFor();
     const nameAction = page.getByRole("button", { name: `Review terms for ${manifest.ownPlayerName}`, exact: true });
     assert.ok(await nameAction.evaluate(node => node.getBoundingClientRect().left < innerWidth), "the player-name offer action must be reachable without horizontal table searching");
-    await page.getByText(/M total over \d+ season/).waitFor();
+    await page.getByText("Total guarantee", { exact: true }).waitFor();
     const before = await exportedLeague();
     assert.equal(before.players.find(player => player.id === manifest.ownPlayerId).teamId, null);
     assert.equal(before.faMarket.agreements.length, 0, "reviewing terms must not submit an offer");
     // Reloading closes the local draft; reopen the same named offer before submission.
     await page.getByRole("button", { name: `Review offer for ${manifest.ownPlayerName}`, exact: true }).click();
     await capture("mobile-offer-terms");
-    await page.getByRole("button", { name: "Request verbal agreement", exact: true }).click();
+    await page.getByRole("button", { name: "Request verbal commitment", exact: true }).click();
     await page.getByRole("status").filter({ hasText: "Verbal agreement with" }).waitFor();
     const agreed = await exportedLeague();
     assert.equal(agreed.players.find(player => player.id === manifest.ownPlayerId).teamId, null);

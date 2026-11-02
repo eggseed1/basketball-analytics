@@ -18,7 +18,7 @@ import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { createRng, uid } from "@/gm/engine/rng";
 import { cbaSeason, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 import type { CBARules } from "@/gm/myleague/types";
-import { askingSalary, askingYears } from "@/gm/engine/free-agency-ask";
+import { askingSalary, askingYears, minimumAcceptableSalary } from "@/gm/engine/free-agency-ask";
 import {
   defaultFaConfig,
   emptyFaMarket,
@@ -162,13 +162,15 @@ function bestLegalBid(
   rules: CBARules,
   aggressiveness: number
 ): { salaryM: number; years: number; via: GmSignVia } | null {
-  const ask = askingSalary(player, rules);
-  const years = askingYears(player, rules);
+  const ask = askingSalary(player, state);
+  const years = askingYears(player, state);
+  const reserveMinimum = minimumAcceptableSalary(player, state, state.faMarket?.stage === "fill");
   const own = player.rightsTeamId === team.id;
   const tries = own
     ? [ask, ask * 0.95, ask * 0.88, ask * 0.8]
     : [ask * aggressiveness, ask * 0.9, ask * 0.75, ask * 0.6, rules.minSalaryM || 1];
   for (const raw of tries) {
+    if (raw + 0.05 < reserveMinimum) continue;
     const salaryM = Math.round(Math.max(rules.minSalaryM || 1, raw) * 100) / 100;
     const verdict = evaluateSigning(state, team.id, player, salaryM, years);
     if (verdict.ok) return { salaryM, years, via: verdict.via };
@@ -177,7 +179,7 @@ function bestLegalBid(
   }
   const min = Math.max(rules.minSalaryM || 1, state.settings.salaryCapM * (2.087 / 140.588));
   const floor = evaluateSigning(state, team.id, player, min, 1);
-  if (floor.ok) return { salaryM: min, years: 1, via: floor.via };
+  if (min + 0.05 >= minimumAcceptableSalary(player, state, true) && floor.ok) return { salaryM: min, years: 1, via: floor.via };
   return null;
 }
 
@@ -393,7 +395,10 @@ function resolvePlayers(
         continue;
       }
     }
+    const late = market.stage === "fill";
+    const reserve = minimumAcceptableSalary(player, next, late);
     const ranked = offers
+      .filter((offer) => offer.salaryM + 0.05 >= reserve)
       .map((offer) => {
         const team = next.teams.find((row) => row.id === offer.teamId);
         if (!team) return null;
@@ -511,6 +516,9 @@ function fillMinimums(
       guard += 1;
       const pool = next.players
         .filter((player) => player.teamId == null)
+        // Emergency minimum deals are for replacement-level players.
+        // Never auto-sign a stranded star at a minimum merely to fill 14 spots.
+        .filter((player) => minimumAcceptableSalary(player, next, true) <= min + 0.05)
         .sort((a, b) => {
           const na = a.position === needs[0] ? 12 : a.position === needs[1] ? 5 : 0;
           const nb = b.position === needs[0] ? 12 : b.position === needs[1] ? 5 : 0;
@@ -852,6 +860,8 @@ export function userOfferFreeAgent(
   }
   const verdict = evaluateSigning(state, state.userTeamId, player, salaryM, years);
   if (!verdict.ok) return verdict;
+  const floor = minimumAcceptableSalary(player, state, market.stage === "fill");
+  if (salaryM + 0.05 < floor) return { ok: false, reason: player.name + " will not consider $" + salaryM.toFixed(1) + "M. His agent needs at least $" + floor.toFixed(1) + "M per year." };
   const team = state.teams.find((row) => row.id === state.userTeamId)!;
   const rules = getCbaRules(cbaSeason(state));
   const utility = evaluateOfferUtility(state, player, team, salaryM, years);

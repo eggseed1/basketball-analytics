@@ -1,7 +1,6 @@
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
 import { exceptionAmounts, maxSalaryForAge } from "@/gm/engine/cap";
-import { askingSalary } from "@/gm/engine/free-agency-ask";
-import { getCbaRules } from "@/gm/myleague/cba-registry";
+import { askingSalary, askingYears, minimumAcceptableSalary } from "@/gm/engine/free-agency-ask";
 import { cbaSeason } from "@/gm/engine/season-flow-state";
 
 export type ExtensionQuote = { eligible: boolean; reason: string; kind: "rookie" | "veteran"; startsSeason: number; maxYears: number; maxSalaryM: number; askingSalaryM: number };
@@ -12,13 +11,18 @@ export function extensionQuote(league: GmLeagueState, player: GmPlayer): Extensi
   const season = cbaSeason(league), contract = player.contract;
   const rookie = player.draftYear != null && (player.draftPick ?? 99) <= 30 && season - player.draftYear <= 4 && (player.serviceYears ?? 0) <= 4;
   const last = contract?.years?.at(-1);
-  const ceiling = round(Math.min(maxSalaryForAge(player.age, league.settings), rookie ? Infinity : (last?.salaryM ?? contract?.annualSalaryM ?? 0) * (season >= 2024 ? 1.4 : 1.2)));
-  const ask = round(Math.max(exceptionAmounts(league.settings).minimumM, askingSalary(player, getCbaRules(season)) * (player.morale >= 70 ? 0.95 : player.morale < 45 ? 1.08 : 1) * (player.rolePromise?.status === "unmet" ? 1.08 : 1)));
+  const lastSalary = last?.salaryM ?? contract?.annualSalaryM ?? 0;
+  // Current CBA: veteran extension first year may reach 140% of the GREATER
+  // of the final existing salary or estimated average NBA player salary.
+  const estimatedAverageSalaryM = league.settings.salaryCapM * 0.082;
+  const ceiling = round(Math.min(maxSalaryForAge(player.age, league.settings), rookie ? Infinity : Math.max(lastSalary, estimatedAverageSalaryM) * (season >= 2024 ? 1.4 : 1.2)));
+  const ask = round(Math.max(exceptionAmounts(league.settings).minimumM, askingSalary(player, league) * (player.morale >= 70 ? 0.95 : player.morale < 45 ? 1.08 : 1) * (player.rolePromise?.status === "unmet" ? 1.08 : 1)));
   const quote: ExtensionQuote = { eligible: true, reason: "Adds future years. This season's salary stays in place.", kind: rookie ? "rookie" : "veteran", startsSeason: (last?.season ?? season + (contract?.yearsRemaining ?? 1) - 1) + 1, maxYears: rookie && season >= 2024 ? 5 : 4, maxSalaryM: ceiling, askingSalaryM: ask };
   const no = (reason: string): ExtensionQuote => ({ ...quote, eligible: false, reason });
   if (player.teamId !== league.userTeamId || !contract) return no("Only players under contract to your club can extend.");
   if (contract.extension) return no("An extension is already signed.");
-  if (contract.yearsRemaining !== 1) return no("This desk handles the final year of a contract.");
+  if (contract.yearsRemaining > 2 || contract.yearsRemaining < 1) return no("Veteran extensions can begin with one or two seasons remaining, subject to anniversary rules.");
+  if (contract.yearsRemaining === 2 && (rookie || league.phase === "regular")) return no("This early extension window is available in the offseason after the contract anniversary.");
   if (contract.option) return no("Resolve the contract option in summer before negotiating.");
   if (!["regular", "free_agency", "offseason"].includes(league.phase)) return no("Extensions reopen after the Finals.");
   if (league.phase === "free_agency" && !["open", "fill"].includes(league.faMarket?.stage ?? "")) return no("Extensions can sign when the free-agency signing window opens.");
@@ -38,7 +42,10 @@ export function offerExtension(league: GmLeagueState, playerId: string, salaryM:
   const quote = extensionQuote(league, player);
   if (!quote.eligible) return fail(quote.reason);
   if (!Number.isInteger(years) || years < 1 || years > quote.maxYears) return fail("Choose between 1 and " + quote.maxYears + " added years.");
-  if (!Number.isFinite(salaryM) || salaryM < quote.askingSalaryM - 0.05) return fail("He is asking for $" + quote.askingSalaryM.toFixed(1) + "M per year.");
+  const minimum = minimumAcceptableSalary(player, league);
+  const preferredYears = askingYears(player, league);
+  const annualFloor = Math.min(quote.maxSalaryM, Math.max(minimum, quote.askingSalaryM * (years < Math.min(preferredYears, quote.maxYears) ? 0.98 : 0.90)));
+  if (!Number.isFinite(salaryM) || salaryM + 0.05 < annualFloor) return fail("Agent counter: $" + annualFloor.toFixed(1) + "M annually for " + years + " year(s); preferred term " + Math.min(preferredYears, quote.maxYears) + ".");
   if (salaryM > quote.maxSalaryM + 0.05) return fail("The extension ceiling is $" + quote.maxSalaryM.toFixed(1) + "M.");
   const contract = player.contract!;
   const existing = contract.years?.length ? [...contract.years] : Array.from({ length: contract.yearsRemaining }, (_, index) => ({ season: cbaSeason(league) + index, salaryM: contract.annualSalaryM }));

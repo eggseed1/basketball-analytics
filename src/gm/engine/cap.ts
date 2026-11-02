@@ -230,6 +230,10 @@ export function evaluateSigning(
   if (years > 5) {
     return { ok: false, reason: "Deals run at most 5 years." };
   }
+  // Only the player's prior team can offer the fifth guaranteed year.
+  if (years === 5 && player.rightsTeamId !== teamId) {
+    return { ok: false, reason: "Five-year deals require Bird / prior-team signing rights." };
+  }
   if (!Number.isFinite(salaryM) || !(salaryM > 0)) {
     return { ok: false, reason: "Salary has to be above zero." };
   }
