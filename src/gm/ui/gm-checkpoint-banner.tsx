@@ -20,14 +20,8 @@ export function GmCheckpointBanner() {
         <div className="min-w-0 flex-1">
           <p className="font-semibold">{checkpoint.title}</p>
           <p className="mt-1 text-sm text-muted-foreground">{checkpoint.body}</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            The sim stays paused until you stay and manage, or continue.
-          </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
-          <Button size="sm" onClick={() => pauseForTeamBuilding()}>
-            Stay and manage
-          </Button>
           <Link
             href={checkpoint.primaryHref}
             onClick={() => pauseForTeamBuilding()}
@@ -45,7 +39,7 @@ export function GmCheckpointBanner() {
             </Link>
           ) : null}
           <Button size="sm" variant="outline" onClick={() => continuePastCheckpoint()}>
-            Continue
+            Skip for now
           </Button>
         </div>
       </div>
