@@ -16,7 +16,7 @@ export function createSimProfile(player: GmPlayer): GmSimProfile {
   const orb = line?.orb ?? (line?.reb ?? 0) * (big ? 0.28 : 0.15);
   const use = clamp(0.15 + player.ratings.offense * 0.012 + (attr("ballHandle") - 65) * 0.001, 0.1, 0.36);
   return {
-    version: 1,
+    version: 2,
     season: line?.season,
     confidence: real ? clamp(min / (min + 800), 0.1, 0.96) : 0.15,
     source: real ? "nba" : "estimated",
@@ -53,12 +53,36 @@ export function createSimProfile(player: GmPlayer): GmSimProfile {
   };
 }
 
+/**
+ * Upgrade legacy saved rate profiles without resetting acquired ratings.
+ * NBA profiles are evidence-based and retain their observed season priors.
+ * Estimated profiles rebuild only their entry rates from the stored *entry*
+ * attributes and impact, leaving the original baseline in place. Subsequent
+ * growth still flows through simulationRates() exactly once.
+ */
 export function ensureSimProfile(player: GmPlayer): GmPlayer {
-  return player.simProfile?.version === 1 ? player : { ...player, simProfile: createSimProfile(player) };
+  const previous = player.simProfile;
+  if (previous?.version === 2) return player;
+  if (!previous) return { ...player, simProfile: createSimProfile(player) };
+  if (previous.source === "nba") return { ...player, simProfile: { ...previous, version: 2 } };
+  const entry = {
+    ...player,
+    ratings: {
+      ...player.ratings,
+      impact: previous.impact,
+      offense: previous.offense ?? player.ratings.offense,
+    },
+    sheet: player.sheet ? {
+      ...player.sheet,
+      attributes: { ...player.sheet.attributes, ...previous.baseline },
+    } : undefined,
+  };
+  const refreshed = createSimProfile(entry);
+  return { ...player, simProfile: { ...previous, version: 2, rates: refreshed.rates } };
 }
 
 export function simulationRates(player: GmPlayer): GmSimProfile["rates"] {
-  const profile = player.simProfile ?? createSimProfile(player);
+  const profile = ensureSimProfile(player).simProfile!;
   const rates = { ...profile.rates };
   const attrs = player.sheet?.attributes;
   const delta = (key: keyof GmAttributes) => (attrs?.[key] ?? 65) - (profile.baseline[key] ?? attrs?.[key] ?? 65);
