@@ -177,7 +177,7 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   if (yearly > 0) yearly = Math.min(yearly, headroom, age <= 25 ? 5 : 3);
   if (yearly < 0 && age < 30 && signal > 0.2) yearly *= 0.4;
   const speed = clamp(context.league.settings.developmentSpeed ?? 1, 0.5, 2);
-  const fraction = isSummer ? 0.78 : 0.14;
+  const fraction = isSummer ? 1.0 : 0.14;
   const total = yearly * fraction * speed + (sheet.progressionCarry ?? 0);
   let steps = isSummer ? Math.round(total) : Math.trunc(total);
   steps = clamp(steps, -4, Math.min(headroom, isSummer ? 5 : 1));
