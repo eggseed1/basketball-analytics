@@ -95,7 +95,7 @@ assert.equal(allstar.players.some(p=>p.badges?.gameIds?.includes(exhibition.id))
 // Run the actual store action with real game and play-in engines. This covers
 // persistence of returned player objects, not just the standalone XP helper.
 const store = readFileSync("src/gm/state/gm-store.ts","utf8");
-const action = store.slice(store.indexOf("      simPlayInNight: () => {"),store.indexOf("\n      finishPlayIn:",store.indexOf("      simPlayInNight: () => {")));
+const action = store.slice(store.indexOf("      simPlayInNight: (match) => {"),store.indexOf("\n      finishPlayIn:",store.indexOf("      simPlayInNight: (match) => {")));
 const js = stripTypeScriptTypes(`const actions = {${action}}; actions;`,{mode:"transform"});
 const storeState: {league:GmLeagueState;advanceToPlayoffs:()=>void} = {league:{...league,phase:"play_in",playIn:createPlayInBoard(league)},advanceToPlayoffs:()=>{}};
 let ids=0;

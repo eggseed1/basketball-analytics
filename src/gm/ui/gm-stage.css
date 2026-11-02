@@ -1777,3 +1777,36 @@ html [data-gm] .gm-confirm::backdrop { background: rgb(0 0 0 / 0.45); }
   html [data-gm] .gm-desk-nav__link { font-size: 13px; }
   html [data-gm] .gm-desk-nav__menu { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+/* Connected postseason paths keep their own horizontal scroll on small screens. */
+html [data-gm] .gm-bracket-scroll { overflow-x: auto; min-width: 0; padding: 4px 2px 12px; }
+html [data-gm] .gm-bracket-tree { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; min-width: 760px; }
+html [data-gm] .gm-bracket-round > h3 { min-height: 36px; font-size: 12px; font-weight: 700; }
+html [data-gm] .gm-bracket-slots { display: grid; grid-template-rows: repeat(8, 74px); }
+html [data-gm] .gm-bracket-node { position: relative; display: flex; align-items: center; min-width: 0; }
+html [data-gm] .gm-bracket-slots--1 > * { grid-row: span 2; }
+html [data-gm] .gm-bracket-slots--2 > * { grid-row: span 4; }
+html [data-gm] .gm-bracket-slots--3 > * { grid-row: span 8; }
+html [data-gm] .gm-bracket-node.has-next::after { content: ""; position: absolute; left: 100%; top: 50%; width: 20px; border-top: 2px solid var(--border); pointer-events: none; }
+html [data-gm] .gm-bracket-node.has-next:nth-child(odd)::after { height: 100%; border-right: 2px solid var(--border); }
+html [data-gm] .gm-bracket-round:not(:first-child) .gm-bracket-node::before { content: ""; position: absolute; right: 100%; top: 50%; width: 20px; border-top: 2px solid var(--border); pointer-events: none; }
+html [data-gm] .gm-bracket-card, html [data-gm] .gm-postseason-card { border: 1px solid var(--border); border-radius: 12px; background: var(--card); padding: 12px; }
+html [data-gm] .gm-bracket-card { display: block; position: relative; z-index: 1; width: 100%; min-height: 116px; text-align: left; }
+html [data-gm] .gm-bracket-card.is-pending { display: flex; align-items: center; border-style: dashed; }
+html [data-gm] .gm-bracket-card.is-yours { border-color: var(--team-primary); }
+html [data-gm] .gm-bracket-card.is-selected { outline: 2px solid var(--team-primary); outline-offset: 2px; }
+html [data-gm] .gm-bracket-card:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+html [data-gm] .gm-bracket-team { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 4px 0; font-size: 13px; }
+html [data-gm] .gm-postseason-links { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 8px; font-size: 13px; font-weight: 600; }
+html [data-gm] .gm-postseason-links a { text-decoration: underline; text-underline-offset: 3px; padding-block: 6px; }
+html [data-gm] .gm-finals-path { display: grid; grid-template-columns: 1fr; gap: 28px; max-width: 760px; width: 100%; margin: 16px auto; }
+html [data-gm] .gm-finals-feeders { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; position: relative; }
+html [data-gm] .gm-finals-feeders::after { content: ""; position: absolute; top: 100%; left: 25%; width: 50%; height: 14px; border: 2px solid var(--border); border-top: 0; }
+html [data-gm] .gm-finals-match { position: relative; }
+html [data-gm] .gm-finals-match::before { content: ""; position: absolute; bottom: 100%; left: 50%; height: 14px; border-left: 2px solid var(--border); }
+html [data-gm] .gm-series-details { scroll-margin-top: 140px; display: flex; flex-direction: column; gap: 8px; }
+html [data-gm] .gm-series-games { display: flex; flex-direction: column; gap: 8px; }
+html [data-gm] .gm-series-games > li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
+html [data-gm] .gm-playin-conference { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+html [data-gm] .gm-playin-path { display: flex; flex-direction: column; gap: 20px; }
+html [data-gm] .gm-playin-path > li { position: relative; }
+html [data-gm] .gm-playin-path > li:last-child::before { content: ""; position: absolute; bottom: 100%; left: 50%; height: 20px; border-left: 2px solid var(--border); }

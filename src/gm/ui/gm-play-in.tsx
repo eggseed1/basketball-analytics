@@ -1,110 +1,73 @@
 "use client";
 
+import { useState } from "react";
+import { SectionFrame } from "@/components/layout/section-frame";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { Button } from "@/components/ui/button";
 import { useGmStore } from "@/gm/state/gm-store";
+import { createPlayInBoard, playInDone, playInOpenGames } from "@/gm/engine/play-in";
+import { postseasonBox } from "@/gm/engine/postseason";
+import { GmPostseasonGameLinks } from "@/gm/ui/gm-postseason-game-links";
 import type { GmLeagueState, GmPlayInConference } from "@/gm/types";
 
-function abbr(league: GmLeagueState, id: string): string {
-  return league.teams.find((team) => team.id === id)?.abbr ?? id.toUpperCase();
+function abbr(league: GmLeagueState, id: string) {
+  return league.teams.find(team => team.id === id)?.abbr ?? id.toUpperCase();
 }
 
 export function GmPlayInSchedule({ league }: { league: GmLeagueState }) {
-  const board = league.playIn;
-  const simPlayInNight = useGmStore((state) => state.simPlayInNight);
-  const finishPlayIn = useGmStore((state) => state.finishPlayIn);
+  const board = league.playIn ?? (league.phase === "play_in" ? createPlayInBoard(league) : null);
+  const sim = useGmStore(state => state.simPlayInNight);
+  const finish = useGmStore(state => state.finishPlayIn);
+  const [error, setError] = useState<string | null>(null);
   if (!board) return null;
-
-  return (
-    <section className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-2">
-        <Button onClick={() => simPlayInNight()}>Sim tonight</Button>
-        <Button variant="outline" onClick={() => finishPlayIn()}>
-          Finish the play-in
-        </Button>
-      </div>
-      <div className="grid gap-3 md:grid-cols-2">
-        {board.conferences.map((conf) => (
-          <Conference key={conf.conf} league={league} conf={conf} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Conference({ league, conf }: { league: GmLeagueState; conf: GmPlayInConference }) {
-  const results = conf.results ?? [];
-  return (
-    <div className="rounded-xl border border-border">
-      <p className="border-b border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground">{conf.conf}</p>
-      <ul className="flex flex-col gap-2 px-3 py-2 text-sm">
-        <Match
-          league={league}
-          homeId={conf.sevenId}
-          awayId={conf.eightId}
-          label="7 vs 8"
-          winnerId={conf.sevenSeedId}
-          result={results.find((game) => game.slot === "seven")}
-        />
-        <Match
-          league={league}
-          homeId={conf.nineId}
-          awayId={conf.tenId}
-          label="9 vs 10"
-          winnerId={conf.nineWinnerId}
-          result={results.find((game) => game.slot === "nine")}
-        />
-        <Match
-          league={league}
-          homeId={conf.sevenLoserId}
-          awayId={conf.nineWinnerId}
-          label="8 seed"
-          winnerId={conf.eightSeedId}
-          result={results.find((game) => game.slot === "eight")}
-        />
-      </ul>
-    </div>
-  );
-}
-
-function Match({
-  league,
-  homeId,
-  awayId,
-  label,
-  winnerId,
-  result,
-}: {
-  league: GmLeagueState;
-  homeId?: string;
-  awayId?: string;
-  label: string;
-  winnerId?: string;
-  result?: { homeScore: number; awayScore: number; homeId: string; awayId: string };
-}) {
-  if (!homeId || !awayId) {
-    return (
-      <li className="text-muted-foreground">
-        {label}: —
-      </li>
-    );
+  const live = league.phase === "play_in";
+  const complete = playInDone(board);
+  const open = playInOpenGames(board);
+  function run(all: boolean) {
+    setError(null);
+    try { if (all) finish(); else sim(); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to simulate. Review your healthy rotation and try again."); }
   }
-  const score =
-    result && result.homeId === homeId
-      ? `${result.awayScore}-${result.homeScore}`
-      : result
-        ? `${result.homeScore}-${result.awayScore}`
-        : "";
-  return (
-    <li className="flex flex-wrap items-center gap-2">
-      <span className="w-14 text-xs text-muted-foreground">{label}</span>
-      <TeamLogo teamKey={awayId} size="xs" />
-      <span className={winnerId === awayId ? "font-semibold" : undefined}>{abbr(league, awayId)}</span>
-      <span className="text-muted-foreground">at</span>
-      <TeamLogo teamKey={homeId} size="xs" />
-      <span className={winnerId === homeId ? "font-semibold" : undefined}>{abbr(league, homeId)}</span>
-      {score ? <span className="tabular-nums text-muted-foreground">{score}</span> : null}
-      {winnerId ? <span className="text-xs text-muted-foreground">{abbr(league, winnerId)} advances</span> : null}
-    </li>
-  );
+  return <SectionFrame title="Play-in tournament" description="The 7–8 winner takes the seventh seed. The loser hosts the 9–10 winner for the final playoff spot.">
+    {live ? <div className="flex flex-wrap gap-2">
+      <Button onClick={() => run(false)}>{complete ? "Open the playoffs" : "Sim tonight"}</Button>
+      {!complete ? <Button variant="outline" onClick={() => run(true)}>Finish the play-in</Button> : null}
+    </div> : null}
+    {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
+    <div className="grid gap-4 lg:grid-cols-2">
+      {board.conferences.map(conf => <section key={conf.conf} aria-label={`${conf.conf} play-in`} className="gm-playin-conference">
+        <h3 className="font-semibold">{conf.conf}</h3>
+        <ol className="gm-playin-path">
+          {(["seven", "nine", "eight"] as const).map(slot => {
+            const result = conf.results?.find(game => game.slot === slot);
+            const homeId = slot === "seven" ? conf.sevenId : slot === "nine" ? conf.nineId : conf.sevenLoserId;
+            const awayId = slot === "seven" ? conf.eightId : slot === "nine" ? conf.tenId : conf.nineWinnerId;
+            const winnerId = slot === "seven" ? conf.sevenSeedId : slot === "nine" ? conf.nineWinnerId : conf.eightSeedId;
+            return <Match key={slot} league={league} homeId={homeId} awayId={awayId} winnerId={winnerId}
+              label={slot === "seven" ? "7 vs 8 · Seventh seed" : slot === "nine" ? "9 vs 10 · Elimination" : "Final · Eighth seed"}
+              pending={slot === "eight" ? "7–8 loser vs 9–10 winner" : "Matchup pending"}
+              result={result} available={live && open.some(game => game.homeId === homeId && game.awayId === awayId)} />;
+          })}
+        </ol>
+      </section>)}
+    </div>
+  </SectionFrame>;
+}
+
+function Match({ league, homeId, awayId, winnerId, label, pending, result, available }: {
+  league: GmLeagueState; homeId?: string; awayId?: string; winnerId?: string;
+  label: string; pending: string; result?: NonNullable<GmPlayInConference["results"]>[number]; available: boolean;
+}) {
+  const box = result ? postseasonBox(league, { ...result, homeTeamId: result.homeId, awayTeamId: result.awayId }, "play_in") : undefined;
+  return <li className="gm-postseason-card">
+    <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+    {homeId && awayId ? <>
+      {[awayId, homeId].map(id => <div key={id} className="gm-bracket-team">
+        <TeamLogo teamKey={id} size="xs" /><span className={winnerId === id ? "font-bold" : undefined}>{abbr(league, id)}{id === league.userTeamId ? " · You" : ""}</span>
+        <span className="ml-auto tabular-nums">{result ? id === result.homeId ? result.homeScore : result.awayScore : id === homeId ? "Home" : "Away"}</span>
+      </div>)}
+      {result ? <GmPostseasonGameLinks boxId={box?.id} label={`${abbr(league, awayId)} at ${abbr(league, homeId)}`} /> : available ? <GmPostseasonGameLinks match={{ homeId, awayId }} label={`${abbr(league, awayId)} at ${abbr(league, homeId)}`} /> : <p className="text-xs text-muted-foreground">Waiting for the first night to finish.</p>}
+    </> : <p className="text-sm text-muted-foreground">{pending}</p>}
+    {winnerId ? <p className="text-xs font-semibold">{abbr(league, winnerId)} {label.startsWith("9") ? "advances to the final" : "clinches the seed"}</p> : null}
+  </li>;
 }

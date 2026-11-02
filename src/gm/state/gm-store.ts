@@ -23,7 +23,7 @@ import type {
   GmTradeAsset,
 } from "@/gm/types";
 import { createGeneratedLeague } from "@/gm/seed/create-league";
-import { simulateGame, compactSimBox } from "@/gm/engine/simulate";
+import { simulateGame } from "@/gm/engine/simulate";
 import { ensurePlayerSheet } from "@/gm/engine/attributes";
 import { applyRookieRatings } from "@/gm/engine/rookie-ratings";
 import { applyRealBooks } from "@/gm/seed/real-books";
@@ -312,7 +312,7 @@ interface GmStore {
   };
   finishPlayoffRound: () => void;
   simRestOfPlayoffs: () => void;
-  simPlayInNight: () => void;
+  simPlayInNight: (match?: { homeId: string; awayId: string }) => string | null;
   finishPlayIn: () => void;
   acceptIncomingOffer: (
     fromAssets: GmTradeAsset[],
@@ -360,7 +360,7 @@ interface GmStore {
   ackAwardsShow: () => void;
   /** Leave the champion splash and open season review. */
   ackChampionSplash: () => void;
-  simPlayoffDay: () => void;
+  simPlayoffDay: (seriesId?: string) => string | null;
   /** Advance one guided summer step. Kept for existing callers. */
   runOffseason: () => void;
   openFreeAgency: () => void;
@@ -1556,13 +1556,16 @@ export const useGmStore = create<GmStore>()(
         set({league:withUpdate({...league,players:league.players.map(player=>player.id===playerId&&player.teamId===league.userTeamId?{...player,developmentPlan:plan}:player)})});
       },
 
-      simPlayInNight: () => {
+      simPlayInNight: (match) => {
         const league = get().league;
-        if (!league?.playIn || league.phase !== "play_in") return;
-        if (!myLeagueAllowsSim(league)) return;
-        let board = league.playIn;
-        const games = playInOpenGames(board);
-        if (games.length === 0) return;
+        if (!league || league.phase !== "play_in") return null;
+        let board = league.playIn ?? createPlayInBoard(league);
+        if (!board) return null;
+        if (playInDone(board)) { get().advanceToPlayoffs(); return null; }
+        const open = playInOpenGames(board);
+        const games = match ? open.filter(game => game.homeId === match.homeId && game.awayId === match.awayId) : open;
+        if (games.length === 0) return null;
+        let watchedBox: string | null = null;
         const schedule = [...league.schedule];
         let boxScores = [...league.boxScores];
         let players = [...league.players];
@@ -1584,7 +1587,8 @@ export const useGmStore = create<GmStore>()(
           if(myTeam&&[tip.homeTeamId,tip.awayTeamId].includes(myTeam.id))result.box.shiftPlan=shiftSnapshot(myTeam,players,true);
           players = recordBadgeBox(players, result.box);
           schedule.push(result.game);
-          boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
+          boxScores = [result.box, ...boxScores].slice(0, 400);
+          watchedBox = result.box.id;
           const homeWon = (result.game.homeScore ?? 0) > (result.game.awayScore ?? 0);
           board = applyPlayInResult(board, game, homeWon);
           if (result.game.homeScore != null && result.game.awayScore != null) {
@@ -1601,6 +1605,8 @@ export const useGmStore = create<GmStore>()(
                         ...(conf.results ?? []),
                         {
                           slot,
+                          gameId: result.game.id,
+                          boxScoreId: result.box.id,
                           homeId: game.homeId,
                           awayId: game.awayId,
                           homeScore: result.game.homeScore!,
@@ -1626,7 +1632,7 @@ export const useGmStore = create<GmStore>()(
         const done = playInDone(board);
         const next = withUpdate({
           ...league,
-          day: league.day + 1,
+          day: match && playInOpenGames(board).some(game => game.slot === games[0]!.slot) ? league.day : league.day + 1,
           playIn: board,
           schedule,
           boxScores,
@@ -1646,12 +1652,15 @@ export const useGmStore = create<GmStore>()(
         set({ league: next });
         syncMyLeague(next);
         if (done) get().advanceToPlayoffs();
+        return watchedBox;
       },
 
       finishPlayIn: () => {
         let guard = 0;
         while (get().league?.phase === "play_in" && guard < 6) {
+          const before = get().league;
           get().simPlayInNight();
+          if (get().league === before) break;
           guard += 1;
         }
       },
@@ -1723,7 +1732,7 @@ export const useGmStore = create<GmStore>()(
         const next = withUpdate({
           ...league,
           phase: "playoffs",
-          playIn: undefined,
+          playIn: league.playIn,
           playoffBracket: bracket,
           lotteryOrder,
           draftPickIndex: 0,
@@ -1762,12 +1771,16 @@ export const useGmStore = create<GmStore>()(
         syncMyLeague(next);
       },
 
-      simPlayoffDay: () => {
+      simPlayoffDay: (seriesId) => {
         const league = get().league;
-        if (!league?.playoffBracket) return;
+        if (league?.phase !== "playoffs" || !league.playoffBracket) return null;
         // Finals splash waits on home before the draft desk opens.
-        if (league.champion && !league.homeFlow?.championSeen) return;
+        if (league.champion && !league.homeFlow?.championSeen) return null;
         const bracket = league.playoffBracket.map((s) => ({ ...s }));
+        const seedFor = (teamId: string) => {
+          const first = bracket.find(s => s.round === 1 && (s.teamAId === teamId || s.teamBId === teamId));
+          return first?.teamAId === teamId ? first.seedA : first?.seedB;
+        };
         const schedule = [...league.schedule];
         let boxScores = [...league.boxScores];
         let players = league.players;
@@ -1776,8 +1789,10 @@ export const useGmStore = create<GmStore>()(
         const openRound = Math.min(...bracket.filter((series) => !series.done).map((series) => series.round));
         const open = bracket.filter((series) => !series.done && series.round === openRound);
         const tonight = open.filter(
-          (_, index) => open.length <= 2 || index % 2 === league.day % 2
+          (series, index) => seriesId ? series.id === seriesId : open.length <= 2 || index % 2 === league.day % 2
         );
+        if (!tonight.length) return null;
+        let watchedBox: string | null = null;
         for (const series of tonight) {
           const court = seriesHosts(series);
           const game = {
@@ -1795,7 +1810,8 @@ export const useGmStore = create<GmStore>()(
           if(myTeam&&[game.homeTeamId,game.awayTeamId].includes(myTeam.id))result.box.shiftPlan=shiftSnapshot(myTeam,players,true);
           players = recordBadgeBox(players, result.box);
           schedule.push(result.game);
-          boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
+          boxScores = [result.box, ...boxScores].slice(0, 400);
+          watchedBox = result.box.id;
           players = rollGameInjuries(
             { ...league, players },
             result.box.players.map((line) => line.playerId),
@@ -1805,6 +1821,8 @@ export const useGmStore = create<GmStore>()(
             series.games = [
               ...(series.games ?? []),
               {
+                gameId: result.game.id,
+                boxScoreId: result.box.id,
                 homeTeamId: result.game.homeTeamId,
                 awayTeamId: result.game.awayTeamId,
                 homeScore: result.game.homeScore,
@@ -1858,8 +1876,8 @@ export const useGmStore = create<GmStore>()(
                     conf,
                     teamAId: home,
                     teamBId: away,
-                    seedA: 1,
-                    seedB: 2,
+                    seedA: seedFor(home),
+                    seedB: seedFor(away),
                     winsA: 0,
                     winsB: 0,
                     done: false,
@@ -1882,8 +1900,8 @@ export const useGmStore = create<GmStore>()(
                   conf,
                   teamAId: home,
                   teamBId: away,
-                  seedA: 1,
-                  seedB: 2,
+                  seedA: seedFor(home),
+                  seedB: seedFor(away),
                   winsA: 0,
                   winsB: 0,
                   done: false,
@@ -1907,8 +1925,8 @@ export const useGmStore = create<GmStore>()(
                 conf: "Finals",
                 teamAId: home,
                 teamBId: away,
-                seedA: 1,
-                seedB: 2,
+                seedA: seedFor(home),
+                seedB: seedFor(away),
                 winsA: 0,
                 winsB: 0,
                 done: false,
@@ -1955,7 +1973,7 @@ export const useGmStore = create<GmStore>()(
             );
             set({ league: crowned });
             syncMyLeague(crowned);
-            return;
+            return watchedBox;
           }
           void winners;
         }
@@ -1973,6 +1991,7 @@ export const useGmStore = create<GmStore>()(
         );
         set({ league: playoffState });
         syncMyLeague(playoffState);
+        return watchedBox;
       },
 
       finishPlayoffRound: () => {

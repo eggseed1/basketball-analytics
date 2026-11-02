@@ -60,7 +60,7 @@ export function playInOpenGames(board: GmPlayInBoard): PlayInGame[] {
       });
     }
   }
-  return games;
+  return games.some(game => game.slot === "first") ? games.filter(game => game.slot === "first") : games;
 }
 
 export function applyPlayInResult(
@@ -114,3 +114,4 @@ export function teamName(teams: GmTeam[], id: string): string {
   const team = teams.find((entry) => entry.id === id);
   return team ? team.abbr : id.toUpperCase();
 }
+

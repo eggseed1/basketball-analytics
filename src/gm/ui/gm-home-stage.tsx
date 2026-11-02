@@ -156,7 +156,7 @@ export function GmHomeStage({ league }: { league: GmLeagueState }) {
           <h1 className="text-[28px] font-bold tracking-tight">{t("pagePlayInTitle")}</h1>
           <p className="text-[15px] text-muted-foreground">{t("pagePlayInBlurb")}</p>
         </header>
-        {league.playIn ? <GmPlayInSchedule league={league} /> : null}
+        <GmPlayInSchedule league={league} />
         <GmGamePlan league={league} />
         <Briefings league={league} />
       </div>

@@ -1132,6 +1132,8 @@ export interface GmPlayInConference {
   eightSeedId?: string;
   results?: Array<{
     slot: "seven" | "nine" | "eight";
+    gameId?: string;
+    boxScoreId?: string;
     homeId: string;
     awayId: string;
     homeScore: number;
@@ -1144,6 +1146,8 @@ export interface GmPlayInBoard {
 }
 
 export interface GmPlayoffGame {
+  gameId?: string;
+  boxScoreId?: string;
   homeTeamId: string;
   awayTeamId: string;
   homeScore: number;

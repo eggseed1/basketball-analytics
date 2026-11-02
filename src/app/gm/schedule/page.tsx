@@ -35,8 +35,12 @@ function ScheduleBody() {
         </h1>
         <p className="text-[16px] text-muted-foreground">{t(`page${pageKey}Blurb`)}</p>
       </header>
-      {league.phase === "play_in" && league.playIn ? <GmPlayInSchedule league={league} /> : null}
+      {league.phase === "play_in" ? <GmPlayInSchedule league={league} /> : null}
       {league.playoffBracket?.length ? <GmPlayoffBracket league={league} controls /> : null}
+      {league.playIn && league.phase !== "play_in" ? <details className="rounded-xl border border-border p-3">
+        <summary className="cursor-pointer text-sm font-semibold">Play-in results</summary>
+        <div className="mt-4"><GmPlayInSchedule league={league} /></div>
+      </details> : null}
       {postseason ? null : (
         <>
           <GmSeasonCalendar league={league} />
@@ -47,3 +51,4 @@ function ScheduleBody() {
     </div>
   );
 }
+

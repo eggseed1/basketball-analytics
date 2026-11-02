@@ -29,11 +29,15 @@ export default function GmGamePage() {
 }
 
 function GameBody() {
-  const t = useTranslations("GmUi");
   const params = useParams<{ gameId: string }>();
   const watch = useSearchParams().get("watch") === "1";
+  return <GameDetails key={`${params.gameId}:${watch}`} gameId={params.gameId} watch={watch} />;
+}
+
+function GameDetails({ gameId, watch }: { gameId: string; watch: boolean }) {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
-  const box = league?.boxScores.find((b) => b.id === params.gameId) ?? null;
+  const box = league?.boxScores.find((b) => b.id === gameId) ?? null;
   const tape = useMemo(() => (box ? boxToPlayByPlay(box) : []), [box]);
   const [progress, setProgress] = useState<ShotChartReplayProgress | null>(null);
   const onReplayProgress = useCallback((next: ShotChartReplayProgress) => {
@@ -42,11 +46,13 @@ function GameBody() {
 
   const liveBox = useMemo(() => {
     if (!box) return null;
+    if (!watch) return box.players;
+    if (watch && !progress) return linesAtCutoff(box, tape, 0);
     if (!progress || (progress.cutoff == null && !progress.playing)) {
       return box.players;
     }
     return linesAtCutoff(box, tape, progress.cutoff);
-  }, [box, tape, progress]);
+  }, [box, tape, progress, watch]);
 
   if (!league) return null;
   if (!box || !liveBox) {
@@ -60,7 +66,7 @@ function GameBody() {
     );
   }
 
-  const ticking = Boolean(progress?.playing || progress?.cutoff != null);
+  const ticking = watch && Boolean(!progress || progress.playing || progress.cutoff != null);
   const awayScore = ticking ? (progress?.awayScore ?? 0) : box.awayScore;
   const homeScore = ticking ? (progress?.homeScore ?? 0) : box.homeScore;
 
@@ -107,7 +113,7 @@ function GameBody() {
         homeTeamKey={box.homeTeamId}
         awayTeamKey={box.awayTeamId}
         autoPlay={watch}
-        onReplayProgress={onReplayProgress}
+        onReplayProgress={watch ? onReplayProgress : undefined}
         players={box.players.map((line) => ({
           playerId: line.playerId,
           name: line.playerName,
@@ -123,7 +129,7 @@ function GameBody() {
           <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
             {t("gameStepResults")}
           </p>
-          <h2 className="text-[24px] font-bold tracking-tight tabular-nums">
+          <h2 data-testid="gm-game-score" className="text-[24px] font-bold tracking-tight tabular-nums">
             <ClubMark teamId={box.awayTeamId} label={box.awayTeamId.toUpperCase()} />
             {` ${awayScore} @ `}
             <ClubMark teamId={box.homeTeamId} label={box.homeTeamId.toUpperCase()} />
@@ -157,6 +163,11 @@ function GameBody() {
     <div className="flex flex-col gap-4">
       <h1 className="sr-only">{t("pageGameTitle")}</h1>
       <p className="sr-only">{t("pageGameBlurb")}</p>
+      {box.postseason ? <div className="flex flex-wrap gap-4 text-sm font-semibold">
+        <Link href="/gm/schedule" className="underline">Back to postseason</Link>
+        {watch ? <Link href={`/gm/game/${encodeURIComponent(box.id)}`} className="underline">View final box score</Link> : null}
+        {!box.events ? <p className="font-normal text-muted-foreground">This older save has no play log. The replay is reconstructed from its box score.</p> : null}
+      </div> : null}
       {watch ? chart : null}
       {header}
       {watch ? null : chart}
@@ -306,3 +317,4 @@ function TeamTable({
     </section>
   );
 }
+
