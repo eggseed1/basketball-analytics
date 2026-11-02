@@ -290,8 +290,15 @@ try {
   if (verify) {
     const snapshot = JSON.parse(readFileSync(`${dir}/regular.json`, "utf8"));
     const club = snapshot.league.players.filter(p => p.teamId === snapshot.league.userTeamId && p.contract);
-    const pupil = club[0], veteran = club[1];
-    snapshot.league.players = snapshot.league.players.map(p => p.id === pupil.id ? { ...p, age: 21, position: "PG", mentorship: undefined } : p.id === veteran.id ? { ...p, age: 32, position: "PG", workEthic: 90 } : p);
+    const pupil = club[0], veteran = club[1], secondPupil = club[2], secondVeteran = club[3];
+    snapshot.league.players = snapshot.league.players.map(p => {
+      const cleared = p.teamId === snapshot.league.userTeamId ? { ...p, mentorship: undefined } : p;
+      if (p.id === pupil.id) return { ...cleared, age: 21, position: "PG" };
+      if (p.id === veteran.id) return { ...cleared, age: 32, position: "PG", workEthic: 90 };
+      if (p.id === secondPupil.id) return { ...cleared, age: 22, position: "SG" };
+      if (p.id === secondVeteran.id) return { ...cleared, age: 34, position: "SG", workEthic: 88 };
+      return cleared;
+    });
     writeFileSync(`${dir}/development-ui.json`, JSON.stringify(snapshot));
     for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 900 });
@@ -300,9 +307,19 @@ try {
       const firstLink = page.locator(".gm-desk-nav__primary > a").first();
       assert.equal(await firstLink.getAttribute("href"), "/gm", "Home is the leftmost navigation destination");
       assert.equal((await page.getByRole("link", { name: "Franchise desk", exact: true }).count()), 0);
+      assert.equal(await page.getByTestId("mentorship-cards").locator("article").count(), 2, "exactly two mentorship cards");
+      assert.equal(await page.getByTestId("mentorship-cards").locator("select").count(), 4, "each card has only mentee and mentor dropdowns");
+      assert.equal(await page.locator('[data-testid^="development-player-"]').count(), 0, "no individual player cards crowd the screen");
+      await page.getByLabel("Mentorship 1 mentee", { exact: true }).selectOption(pupil.id);
+      await page.getByLabel("Mentorship 1 mentor", { exact: true }).selectOption(veteran.id);
+      await page.getByLabel("Mentorship 2 mentee", { exact: true }).selectOption(secondPupil.id);
+      await page.getByLabel("Mentorship 2 mentor", { exact: true }).selectOption(secondVeteran.id);
+      assert.equal(await page.getByLabel("Mentorship 2 mentee", { exact: true }).inputValue(), secondPupil.id);
+      assert.equal(await page.getByLabel("Mentorship 2 mentor", { exact: true }).inputValue(), secondVeteran.id);
+      await page.locator("summary").filter({ hasText: "Individual training" }).click();
+      await page.getByLabel("Training player", { exact: true }).selectOption(pupil.id);
       await page.getByLabel(`Development focus for ${pupil.name}`, { exact: true }).selectOption("defense");
       await page.getByLabel(`Development plan for ${pupil.name}`, { exact: true }).selectOption("practice");
-      await page.getByLabel(`Mentor for ${pupil.name}`, { exact: true }).selectOption(veteran.id);
       await page.locator("summary").filter({ hasText: "Skill badges" }).click();
       await page.getByLabel("Badge player", { exact: true }).selectOption(pupil.id);
       const emphasis = page.getByLabel(`Badge emphasis for ${pupil.name}`, { exact: true });
@@ -317,11 +334,18 @@ try {
       assert.equal(learner.developmentFocus, "defense");
       assert.equal(learner.developmentPlan, "practice");
       assert.equal(learner.mentorship.mentorId, veteran.id);
+      assert.equal(learner.mentorship.slot, 0);
+      const secondLearner = persisted.players.find(p => p.id === secondPupil.id);
+      assert.equal(secondLearner.mentorship.mentorId, secondVeteran.id);
+      assert.equal(secondLearner.mentorship.slot, 1);
       assert.equal(learner.badgeFocus, available[0]);
       assert.ok([1, 2].includes(learner.badges.version), "badge profile survives save reload");
       await page.reload({ waitUntil: "domcontentloaded" });
       await page.getByRole("heading", { name: "Development", exact: true }).waitFor();
-      assert.equal(await page.getByLabel(`Mentor for ${pupil.name}`, { exact: true }).inputValue(), veteran.id);
+      assert.equal(await page.getByLabel("Mentorship 1 mentee", { exact: true }).inputValue(), pupil.id);
+      assert.equal(await page.getByLabel("Mentorship 1 mentor", { exact: true }).inputValue(), veteran.id);
+      assert.equal(await page.getByLabel("Mentorship 2 mentee", { exact: true }).inputValue(), secondPupil.id);
+      assert.equal(await page.getByLabel("Mentorship 2 mentor", { exact: true }).inputValue(), secondVeteran.id);
       await page.locator("summary").filter({ hasText: "Skill badges" }).click();
       await page.getByLabel("Badge player", { exact: true }).selectOption(pupil.id);
       assert.equal(await page.getByLabel(`Badge emphasis for ${pupil.name}`, { exact: true }).inputValue(),available[0]);
