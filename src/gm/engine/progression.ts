@@ -16,6 +16,7 @@ import { coachEffect } from "@/gm/engine/staff";
 import { regularSeasonComplete } from "@/gm/engine/schedule";
 import { advanceContractYear } from "@/gm/seed/real-books";
 import { devKnackGrowthMul } from "@/gm/seed/staff-knacks";
+import { advanceDynamicProgression, reviewDevelopmentTrait, type DevelopmentCheckpoint } from "@/gm/engine/dynamic-progression";
 
 export { aiSelectProspect, ensureDraftOrder, pickOwnerAt, draftSlotCount };
 
@@ -94,7 +95,8 @@ export function developPlayers(
   playoffGames?: Record<string, number>,
   developerByTeam?: Record<string, { knack: import("@/gm/seed/staff-knacks").DevKnackId; touch: number } | null>,
   developmentSpeed = 1,
-  contractTick = true
+  contractTick = true,
+  league?: GmLeagueState
 ): GmPlayer[] {
   return players.map((p) => {
     const age = seasonAgeBump ? p.age + 1 : p.age;
@@ -106,7 +108,7 @@ export function developPlayers(
     const knackMul = developer
       ? devKnackGrowthMul(developer.knack, aged, growing) * touch
       : 1;
-    const grown = progressSheet(aged, {
+    const grown = league ? advanceDynamicProgression(aged, { league, checkpoint: "summer", coach, staff: knackMul, mentor: mentorshipBonus(p, players), playoffGames: playoffGames?.[p.id] ?? 0 }) : progressSheet(aged, {
       coach,
       minutes: p.seasonLine && p.seasonLine.gp > 0 ? p.seasonLine.min / p.seasonLine.gp : p.draftModel === 2 || p.developmentPlan ? 0 : p.minutesPreference,
       pace: "summer",
@@ -115,8 +117,9 @@ export function developPlayers(
       devStaff: knackMul,
       mentorBonus: mentorshipBonus(p, players),
     });
+    const reviewed = league ? reviewDevelopmentTrait(league, grown) : grown;
     return {
-      ...grown,
+      ...reviewed,
       age,
       contract: p.contract && contractTick ? advanceContractYear(p.contract) : p.contract,
     };
@@ -127,15 +130,6 @@ export function developPlayers(
 function agingBaseHint(age: number, big: boolean): boolean {
   const a = big ? age - 1 : age;
   return a <= 27;
-}
-
-function formBump(player: GmPlayer): number {
-  const line = player.seasonLine;
-  const overall = player.sheet?.overall;
-  if (!line || line.gp < 12 || overall == null) return 0;
-  const production = (line.pts + line.reb * 0.7 + line.ast) / line.gp;
-  const expected = Math.max(4, (overall - 62) * 0.55);
-  return clamp((production - expected) / 40, -0.04, 0.06);
 }
 
 function developmentNews(
@@ -175,30 +169,21 @@ function developmentNews(
   };
 }
 
-function growOnce(league: GmLeagueState, pace: "season"): { players: GmPlayer[]; note: GmNewsItem | null } {
+function growOnce(league: GmLeagueState, checkpoint: DevelopmentCheckpoint): { players: GmPlayer[]; note: GmNewsItem | null } {
   const coachByTeam = Object.fromEntries(
     league.teams.map((team) => [team.id, coachEffect(team).development])
   );
   const players = league.players.map((player) => {
     if (!player.teamId || league.draftPool.includes(player.id)) return player;
-    const minutes =
-      player.seasonLine && player.seasonLine.gp >= 8
-        ? player.seasonLine.min / player.seasonLine.gp
-        : player.draftModel === 2 || player.developmentPlan ? 0 : player.minutesPreference;
     const developer = league.teams.find((t) => t.id === player.teamId)?.staff.developer;
     const growing = true;
     const touch = developer ? 1 + (developer.touch - 3) * 0.02 : 1;
     const knackMul = developer
       ? devKnackGrowthMul(developer.knack, player, growing) * touch
       : 1;
-    return progressSheet(player, {
-      pace,
-      speed: league.settings.developmentSpeed ?? 1,
-      coach: coachByTeam[player.teamId] ?? 0,
-      minutes,
-      form: formBump(player),
-      devStaff: knackMul,
-      mentorBonus: mentorshipBonus(player, league.players),
+    return advanceDynamicProgression(player, {
+      league, checkpoint, coach: coachByTeam[player.teamId] ?? 0,
+      staff: knackMul, mentor: mentorshipBonus(player, league.players),
     });
   });
   return {
@@ -213,40 +198,37 @@ function growOnce(league: GmLeagueState, pace: "season"): { players: GmPlayer[];
  */
 export function maybeGrowInSeason(league: GmLeagueState): GmLeagueState {
   if (league.phase !== "regular") return league;
-  const playedDates = league.schedule
-    .filter((game) => game.played && game.gameDate && game.exhibition !== "allstar")
-    .map((game) => game.gameDate!)
-    .sort();
-  const latest = playedDates[playedDates.length - 1];
-  const marks =
-    league.devMarks?.season === league.season
-      ? league.devMarks
-      : { season: league.season, january: false, finale: false };
-  let players = league.players;
+  const completed = league.schedule.filter(game =>
+    game.played && !game.postseason && !game.exhibition &&
+    (game.homeTeamId === league.userTeamId || game.awayTeamId === league.userTeamId));
+  const played = completed.length;
+  const mostRecent = completed.map(game => game.gameDate ?? "").sort().at(-1);
+  const length = Math.max(12, league.settings.seasonLength ?? 82);
+  const old = league.devMarks?.season === league.season ? league.devMarks
+    : { season: league.season, january: false, finale: false };
+  let marks = { ...old };
+  let next = league;
   const notes: GmNewsItem[] = [];
-  let january = marks.january;
-  let finale = marks.finale;
-  if (!january && latest && latest >= `${league.season}-01-01`) {
-    const grown = growOnce({ ...league, players }, "season");
-    players = grown.players;
-    if (grown.note) notes.push({ ...grown.note, headline: "January check-in" });
-    january = true;
+  const steps: Array<{ id: "quarter1" | "january" | "quarter3" | "finale"; reached: boolean; title: string }> = [
+    { id: "quarter1", reached: played >= Math.ceil(length * 0.25), title: "Early-season development" },
+    { id: "january", reached: played >= Math.ceil(length * 0.4) || Boolean(mostRecent && mostRecent >= `${league.season}-01-01` && played >= 10), title: "Midseason development" },
+    { id: "quarter3", reached: played >= Math.ceil(length * 0.75), title: "Late-season development" },
+    { id: "finale", reached: regularSeasonComplete(league.schedule), title: "End-of-season development" },
+  ];
+  for (const step of steps) {
+    if (!step.reached || marks[step.id]) continue;
+    if (step.id === "finale") {
+      const reviewed = reviewPlayerCeilings(next);
+      notes.push(...reviewed.news.filter(row => !next.news.some(previous => previous.id === row.id)));
+      next = reviewed;
+    }
+    const grown = growOnce(next, step.id);
+    next = { ...next, players: grown.players };
+    if (grown.note) notes.push({ ...grown.note, headline: step.title });
+    marks = { ...marks, [step.id]: true };
   }
-  if (!finale && regularSeasonComplete(league.schedule)) {
-    const reviewed = reviewPlayerCeilings({ ...league, players });
-    notes.push(...reviewed.news.filter(note => !league.news.some(previous => previous.id === note.id)));
-    const grown = growOnce(reviewed, "season");
-    players = grown.players;
-    if (grown.note) notes.push({ ...grown.note, headline: "End of the regular season" });
-    finale = true;
-  }
-  if (january === marks.january && finale === marks.finale && players === league.players) return league;
-  return {
-    ...league,
-    players,
-    devMarks: { season: league.season, january, finale },
-    news: [...notes, ...league.news].slice(0, 50),
-  };
+  if (steps.every(step => !marks[step.id] || Boolean(old[step.id])) && next === league) return league;
+  return { ...next, devMarks: marks, news: [...notes, ...next.news].slice(0, 50) };
 }
 
 export function playoffGamesByPlayer(league: GmLeagueState): Record<string, number> {
