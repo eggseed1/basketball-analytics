@@ -10,6 +10,7 @@ import { gapBefore } from "@/gm/engine/schedule";
 import { coachEffect } from "@/gm/engine/staff";
 import { badgeEffects, ensureBadges } from "@/gm/engine/badges";
 import { chooseSimShot } from "@/gm/engine/shot-selection";
+import { frameActionTimes, playerNightForm, teamMatchForm } from "@/gm/engine/game-context";
 
 export function lineupPlayers(team: GmTeam, players: GmPlayer[], max = 10): GmPlayer[] {
   const starters = new Set(Object.values(team.starters));
@@ -61,6 +62,8 @@ export function simulateGame(
 ): { game: GmScheduleGame; box: GmBoxScore } {
   const actualSeed = seed ?? hash(`${game.id}:${game.season}:${game.day}`);
   const rng = createRng(actualSeed);
+  const clockRng = createRng((actualSeed ^ 0x70611cfa) >>> 0);
+  const teamForm = [teamMatchForm(actualSeed, 0), teamMatchForm(actualSeed, 1)];
   let home = teams.find(t => t.id === game.homeTeamId);
   let away = teams.find(t => t.id === game.awayTeamId);
   if (game.exhibition === "allstar" && game.squad) {
@@ -76,6 +79,7 @@ export function simulateGame(
   const byId = new Map(players.map(p => [p.id, p]));
   const lines = new Map([...homeBook.roster, ...awayBook.roster].map(p => [p.id, emptyLine(p)]));
   const badges = new Map(players.map(p => [p.id, badgeEffects(p)]));
+  const playerForm = new Map(players.map(p => [p.id, playerNightForm(actualSeed, p.id)]));
   const rates = new Map(players.map(p => {
     const r = simulationRates(p), b = badges.get(p.id)!;
     return [p.id, { ...r, twoPct: r.twoPct+b.two, threePct: r.threePct+b.three, ftPct: clamp(r.ftPct+b.ft-0.010,0,0.98), ast: r.ast*b.ast, stl: r.stl*b.stl, blk: r.blk*b.blk, orb: r.orb*b.reb, drb: r.drb*b.reb }];
@@ -99,13 +103,15 @@ export function simulateGame(
   // + TOV - OREB estimator is ~3.8% above published pace in 2025-26.
   // Use an action-sequence count for events but report true pace in the box.
   const actionSequenceFactor = 1.046;
-  const possessionsPerSide = Math.max(1, Math.round(pace * span * actionSequenceFactor + (rng() - 0.5) * 6));
+  const possessionsPerSide = Math.max(1, Math.round((pace + (teamForm[0]!.tempo + teamForm[1]!.tempo) / 2) * span * actionSequenceFactor + (rng() - 0.5) * 8));
   const gap = [schedule ? gapBefore(schedule, home.id, game.gameDate) : null, schedule ? gapBefore(schedule, away.id, game.gameDate) : null];
   const coach = [coachEffect(home), coachEffect(away)];
   let elapsed = 0;
   let overtime = 0;
   let totalPossessions = 0;
   let transitionForSide: 0 | 1 | null = null;
+  const actualShiftSlots = new Map<string, boolean[]>([...homeBook.roster, ...awayBook.roster].map(p => [p.id, Array(24).fill(false)]));
+  const homeStarts = clockRng() < 0.5;
 
   function push(player: GmPlayer, actionType: string, subType: string, description: string, points = 0, fieldGoal = false, made: boolean | null = null, second?: GmPlayer, location?: { x: number; y: number }) {
     const period = elapsed < 2880 ? Math.floor(elapsed / 720) + 1 : 5 + Math.floor((elapsed - 2880) / 300);
@@ -167,7 +173,7 @@ export function simulateGame(
     const freeThrows = off.reduce((n, p) => n + rates.get(p.id)!.fga * rates.get(p.id)!.ftPerFga, 0);
     const offensiveRebounds = off.reduce((n, p) => n + rates.get(p.id)!.orb, 0);
     const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers - offensiveRebounds) * mods.tov * 1.055 * clamp(settings?.simTurnoverRate ?? 1, 0.75, 1.25), 0.065, 0.24);
-    const handler = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching) + rates.get(p.id)!.ast, rng);
+    const handler = weighted(off, p => rates.get(p.id)!.fga * playerForm.get(p.id)!.volume * usageBoost(p, own.coaching) + rates.get(p.id)!.ast, rng);
     for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
     // Most NBA personal fouls do not result in immediate free throws.
     if (rng() < 0.079 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25)) {
@@ -205,15 +211,17 @@ export function simulateGame(
     const fit = lineupBalance(off) * 0.002 - off.reduce((n, p) => n + (1 - roleFit(p, courtSpots.get(p.id) ?? p.position)) * 0.015, 0);
     for (let attempt = 0; attempt < 5; attempt++) {
       if (attempt > 0) for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
-      const shooter = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching), rng);
+      const shooter = weighted(off, p => rates.get(p.id)!.fga * playerForm.get(p.id)!.volume * usageBoost(p, own.coaching), rng);
       const r = rates.get(shooter.id)!;
       const line = lines.get(shooter.id)!;
       const tired = ((shooter.campFatigueGames ?? 0) > 0 ? 0.98 : 1) * secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70) * clamp(1-Math.max(0,(stintMinutes.get(shooter.id)??0)-8)*0.003,0.95,1);
       const foulRatio = freeThrows / Math.max(0.1, volume);
-      const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft * 0.958 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25), 0.025, 0.2);
+      const deficit = side === 0 ? homeScore - awayScore : awayScore - homeScore;
+      const deliberate = elapsed >= regulation - 35 && elapsed < regulation && deficit >= 3 && deficit <= 9;
+      const foulChance = deliberate ? 0.67 : clamp(foulRatio / (2 + foulRatio) * mods.ft * 0.958 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25), 0.025, 0.2);
       if (rng() < foulChance) {
         const fouler = weighted(def, p => p.sheet?.tendencies.foul ?? 55, rng);
-        push(fouler, "foul", "shooting", `${fouler.name} shooting foul on ${shooter.name}`);
+        push(fouler, "foul", deliberate ? "intentional" : "shooting", `${fouler.name} ${deliberate ? "intentional" : "shooting"} foul on ${shooter.name}`);
         let finalMade = false;
         for (let ft = 1; ft <= 2; ft++) {
           line.fta++; finalMade = rng() < r.ftPct;
@@ -223,16 +231,19 @@ export function simulateGame(
         if (finalMade || !rebound(off, def, false)) return;
         continue;
       }
-      const three = rng() < clamp(r.threeShare * mods.three * 1.04 * clamp(settings?.simThreeRate ?? 1, 0.75, 1.25), 0, 0.88);
+      // Trailing clubs hunt threes rather than trading slow twos in the final minute.
+      const lateDeficit = side === 0 ? awayScore - homeScore : homeScore - awayScore;
+      const lateThree = elapsed >= regulation - 45 && elapsed < regulation && lateDeficit >= 3 && lateDeficit <= 12 ? 1.30 : 1;
+      const three = rng() < clamp(r.threeShare * mods.three * 1.04 * lateThree * clamp(settings?.simThreeRate ?? 1, 0.75, 1.25), 0, 0.88);
       const shot = chooseSimShot(shooter, three, rng, attempt > 0, transition);
       const blockWeight = three ? 0.3 : 0.95;
       const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * blockWeight / averageBlockWeight * 0.98 * defensiveMods.blk, 0.005, 0.2);
       const blocker = blocked ? weighted(def, p => rates.get(p.id)!.blk, rng) : undefined;
-      const homeAdvantage = side === 0 && !game.neutral ? 0.004 : 0;
+      const homeAdvantage = side === 0 && !game.neutral ? 0.009 : 0;
       const passing = off.filter(p => p.id !== shooter.id).reduce((n,p) => n+badges.get(p.id)!.passing,0) / Math.max(1,off.length-1);
       const badgeDefense = def.reduce((n,p) => n+badges.get(p.id)!.defense,0) / Math.max(1,def.length);
       const closeLate = (elapsed >= 2640) && Math.abs(homeScore-awayScore) <= 10;
-      const pct = (three ? r.threePct - 0.005 : r.twoPct * mods.two + shot.twoDelta - 0.008) * tired + (clamp(settings?.simShotAccuracy ?? 1, 0.75, 1.25) - 1) * 0.11 + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + (closeLate ? badges.get(shooter.id)!.clutch : 0);
+      const pct = (three ? r.threePct - 0.005 : r.twoPct * mods.two + shot.twoDelta - 0.008) * tired + playerForm.get(shooter.id)!.shot + teamForm[side]!.shot + (clamp(settings?.simShotAccuracy ?? 1, 0.75, 1.25) - 1) * 0.11 + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + (closeLate ? badges.get(shooter.id)!.clutch : 0);
       // Observed shooting percentages already include average blocked attempts.
       // Convert to an unblocked attempt probability; opponent block skill can then vary.
       const observedBlockShare = clamp(leagueBlockRate * blockWeight / averageBlockWeight, 0, 0.2);
@@ -248,22 +259,53 @@ export function simulateGame(
     }
   }
   function runFrame(start: number, duration: number, slot: number, possessions: number, extra = false) {
-    function floor(b: ReturnType<typeof book>): GmPlayer[] {
-      const ids = Object.values(extra ? b.closingFrame : b.frames[slot]!);
-      return ids.map(id=>byId.get(id??"" )).filter((p):p is GmPlayer=>Boolean(p&&p.teamId===b.roster[0]!.teamId&&(!p.injury||p.injury.gamesRemaining<=0)));
-
+    function selectFloor(b: ReturnType<typeof book>, side: number) {
+      const seats = { ...(extra ? b.closingFrame : b.frames[slot]!) };
+      const floorIds = new Set(Object.values(seats).filter((id): id is string => Boolean(id)));
+      const spread = Math.abs(homeScore - awayScore);
+      const blowout = !extra && start >= regulation - 360 && spread >= 22;
+      const lateClose = !extra && start >= regulation - 240 && spread <= 8;
+      const manual = b.coaching.rotationMode === "manual";
+      const frameRng = createRng((actualSeed ^ hash(b.roster[0]!.teamId! + ":" + slot)) >>> 0);
+      for (const [pos, id] of Object.entries(seats)) {
+        if (!id) continue;
+        const fouledOut = (lines.get(id)?.personalFouls ?? 0) >= 6;
+        const bench = !b.openingIds.has(id);
+        const shouldRest = !manual && blowout && b.openingIds.has(id) && frameRng() < 0.70;
+        const restoreStarter = !manual && lateClose && bench;
+        // One shift may move by 2 minutes, without changing the coach's plan
+        // wholesale. Manual minutes are respected except on foul-outs.
+        const routine = !manual && !blowout && !lateClose && slot < 22 && frameRng() < 0.035;
+        if (!fouledOut && !shouldRest && !restoreStarter && !routine) continue;
+        const candidates = b.roster.filter(p => !floorIds.has(p.id) && (lines.get(p.id)?.personalFouls ?? 0) < 6
+          && (!shouldRest || !b.openingIds.has(p.id)) && (!restoreStarter || b.openingIds.has(p.id)));
+        if (!candidates.length) continue;
+        const position = pos as GmPlayer["position"];
+        candidates.sort((a, b) => roleFit(b, position) - roleFit(a, position)
+          || (shouldRest ? (a.minutesPreference - b.minutesPreference) : (b.minutesPreference - a.minutesPreference))
+          || a.id.localeCompare(b.id));
+        const replacement = candidates[0]!;
+        floorIds.delete(id);
+        floorIds.add(replacement.id);
+        seats[position] = replacement.id;
+      }
+      const group = Object.values(seats).map(id => byId.get(id ?? ""))
+        .filter((p): p is GmPlayer => Boolean(p && p.teamId === b.roster[0]!.teamId && (!p.injury || p.injury.gamesRemaining <= 0)));
+      if (group.length !== 5 || new Set(group.map(p => p.id)).size !== 5) throw new Error("Live game substitutions must field five distinct players.");
+      return { group, seats, side };
     }
-    const previousFloor = [...homeFloor,...awayFloor];
-    homeFloor = floor(homeBook); awayFloor = floor(awayBook);
-    for(const p of previousFloor)if(![...homeFloor,...awayFloor].some(q=>q.id===p.id))stintMinutes.set(p.id,0);
+    const previousFloor = [...homeFloor, ...awayFloor];
+    const homeNow = selectFloor(homeBook, 0);
+    const awayNow = selectFloor(awayBook, 1);
+    homeFloor = homeNow.group;
+    awayFloor = awayNow.group;
+    for (const p of previousFloor) if (![...homeFloor, ...awayFloor].some(q => q.id === p.id)) stintMinutes.set(p.id, 0);
     stints.push({ start, end: start + duration, home: homeFloor.map(p => p.id), away: awayFloor.map(p => p.id) });
-    for (const group of [homeFloor, awayFloor]) {
-      const compiled = group === homeFloor ? homeBook : awayBook;
-      const seats = extra ? compiled.closingFrame : compiled.frames[slot]!;
-      for(const [spot,id] of Object.entries(seats))if(id)courtSpots.set(id,spot as GmPlayer["position"]);
-      for(const p of group)stintMinutes.set(p.id,(slot%6===0&&!extra?0:stintMinutes.get(p.id)??0)+duration/60);
-
+    for (const { group, seats } of [homeNow, awayNow]) {
+      for (const [spot, id] of Object.entries(seats)) if (id) courtSpots.set(id, spot as GmPlayer["position"]);
+      for (const p of group) stintMinutes.set(p.id, (slot % 6 === 0 && !extra ? 0 : stintMinutes.get(p.id) ?? 0) + duration / 60);
       for (const p of group) {
+        if (!extra && slot < 24) actualShiftSlots.get(p.id)![slot] = true;
         const line = lines.get(p.id)!;
         line.minutes += duration / 60;
         for (const [position, id] of Object.entries(seats)) if (id === p.id) {
@@ -272,11 +314,15 @@ export function simulateGame(
         }
       }
     }
-    for (let i = 0; i < possessions; i++) {
-      elapsed = start + (i + 0.25) * duration / Math.max(1, possessions);
-      possession(homeFloor, awayFloor, 0);
-      elapsed = start + (i + 0.75) * duration / Math.max(1, possessions);
-      possession(awayFloor, homeFloor, 1);
+    // Randomized real-time event spacing replaces two hard-coded timestamps
+    // per paired possession. Separate clock RNG preserves shooter outcomes.
+    const moments = frameActionTimes(start, duration, possessions * 2, clockRng);
+    const firstSide = (homeStarts ? 0 : 1) ^ (slot & 1);
+    for (let i = 0; i < moments.length; i++) {
+      const side = (firstSide + i) % 2;
+      elapsed = moments[i]!;
+      if (side === 0) possession(homeFloor, awayFloor, 0);
+      else possession(awayFloor, homeFloor, 1);
     }
     totalPossessions += possessions;
   }
@@ -300,7 +346,7 @@ export function simulateGame(
   }
   const box: GmBoxScore = { id: `box_${game.id}_${actualSeed}`, gameId: game.id, season: game.season, day: game.day, homeTeamId: home.id, awayTeamId: away.id,
     homeScore, awayScore, possessions: Math.round(totalPossessions / actionSequenceFactor), players: played, events, stints, overtime, postseason: game.postseason,
-    shiftPlan: homeBook.rows.map(row => ({ playerId: row.id, playerName: byId.get(row.id)!.name, on: row.on })) };
+    shiftPlan: homeBook.rows.map(row => ({ playerId: row.id, playerName: byId.get(row.id)!.name, on: actualShiftSlots.get(row.id) ?? row.on })) };
   return { game: { ...game, played: true, homeScore, awayScore, boxScoreId: box.id }, box };
 }
 
