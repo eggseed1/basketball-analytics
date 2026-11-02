@@ -23,7 +23,7 @@ function CapStrip({ league }: { league: GmLeagueState }) {
   const record = userRecord(league);
   const cap = userCap(league);
   return (
-    <section className="grid gap-3 sm:grid-cols-2">
+    <section className="gm-home-kpis">
       <div className="sports-card p-4">
         <p className="text-[14px] font-semibold text-muted-foreground">{t("homeCapRoom")}</p>
         <p className="score-num mt-1 text-[2.5rem]">${formatNumber(cap.capRoomM, 1)}M</p>
@@ -55,25 +55,16 @@ function Briefings({ league }: { league: GmLeagueState }) {
   const news = league.news.slice(0, 5);
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="text-[16px] font-bold">{t("homeBriefings")}</h2>
-      <ul className="sports-card divide-y divide-black/5">
+      <h2 className="text-[18px] font-bold tracking-tight">{t("homeBriefings")}</h2>
+      <ul className="sports-card divide-y divide-border">
         {news.length === 0 ? (
           <li className="px-4 py-3 text-[14px] text-muted-foreground">{t("homeNoNews")}</li>
         ) : (
           news.map((item) => (
             <li
               key={item.id}
-              className="border-l-4 px-4 py-3"
-              style={{
-                borderLeftColor:
-                  item.tone === "good"
-                    ? "#5ee0a0"
-                    : item.tone === "bad"
-                      ? "#ff6b6b"
-                      : item.tone === "trade"
-                        ? "#8eb6ff"
-                        : "var(--team-primary)",
-              }}
+              className="border-l-2 px-4 py-3"
+              style={{ borderLeftColor: "var(--team-primary)" }}
             >
               <p className="font-semibold">{item.headline}</p>
               <p className="text-[14px] text-muted-foreground">{item.body}</p>
@@ -132,7 +123,7 @@ export function GmHomeStage({ league }: { league: GmLeagueState }) {
 
   if (stage === "awards") {
     return (
-      <div className="flex flex-col gap-4">
+      <div className="gm-front-page">
         <StageChip league={league} />
         <GmAwardsShow league={league} onContinue={() => ackAwards()} />
       </div>
