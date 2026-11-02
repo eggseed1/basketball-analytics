@@ -6,6 +6,7 @@ import vm from "node:vm";
 // Exercise the real slot adapter with a delayed database write. The fake only
 // replaces IndexedDB I/O so a switch can happen while an autosave is pending.
 const bytes = new Map();
+const writeCounts = new Map();
 let heldKey, started, release;
 const hold = key => {
   heldKey = key;
@@ -21,6 +22,7 @@ let sequence = 0;
 const database = new vm.SyntheticModule(["get", "set", "del"], function () {
   this.setExport("get", async key => bytes.get(key));
   this.setExport("set", async (key, value) => {
+    writeCounts.set(key, (writeCounts.get(key) ?? 0) + 1);
     if (key === heldKey) { held.markStarted(); await held.gate; }
     bytes.set(key, value);
   });
@@ -91,3 +93,16 @@ release();
 await Promise.all([earlier, later]);
 assert.equal(JSON.parse(await saves.readLayerARaw(first)).state.league.day, 11);
 console.log("Same-slot autosaves retain the latest simulation day.");
+
+// A full playoff sim may update the same save 80+ times before IDB finishes.
+// Persist the newest completed state, not every intermediate box-score snapshot.
+held = hold(saves.layerAKey(first));
+const beforeBulk = writeCounts.get(saves.layerAKey(first)) ?? 0;
+const bulk = [a.setItem("ignored", encode({ ...league("bos", 2028), day: 20 }))];
+await started;
+for (let day = 21; day <= 100; day++) bulk.push(a.setItem("ignored", encode({ ...league("bos", 2028), day })));
+release();
+await Promise.all(bulk);
+assert.equal(JSON.parse(await saves.readLayerARaw(first)).state.league.day, 100);
+assert.ok((writeCounts.get(saves.layerAKey(first)) ?? 0) - beforeBulk <= 2, "bulk sim must coalesce 81 updates into at most two writes");
+console.log("Bulk franchise autosaves coalesce intermediate days without losing the final result.");
