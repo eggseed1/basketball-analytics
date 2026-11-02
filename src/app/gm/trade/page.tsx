@@ -16,6 +16,7 @@ import {
 } from "@/gm/engine/trades";
 import { Button } from "@/components/ui/button";
 import { ClubMark } from "@/gm/ui/club-mark";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { teamColorStyle } from "@/gm/ui/team-colors";
 import { formatNumber, UNAVAILABLE_STAT_LABEL } from "@/lib/format";
 import { StarValue } from "@/gm/ui/star-value";
@@ -250,7 +251,7 @@ function TradePlayerPeek({
           <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             Player file
           </p>
-          <h3 className="mt-1 text-[1.2rem] font-bold tracking-tight">{player.name}</h3>
+          <h3 className="mt-1 flex items-center gap-3 text-[1.2rem] font-bold tracking-tight"><GmPlayerPortrait player={player} size="md" />{player.name}</h3>
           <p className="mt-0.5 text-sm text-muted-foreground">
             {player.position} · Age {player.age} · OVR {sheet.overall}
             {player.contract
@@ -524,6 +525,7 @@ function OfferSide({
                 checked={hasAsset(selected, player.id)}
                 onChange={() => onToggle({ type: "player", id: player.id })}
               />
+              <GmPlayerPortrait player={player} />
               <span className="min-w-0 flex-1 truncate">
                 {player.name}
                 <span className="text-muted-foreground">
@@ -890,6 +892,7 @@ function PlayerList({
                 checked={hasAsset(selected, player.id)}
                 onChange={() => onToggle(player)}
               />
+              <GmPlayerPortrait player={player} />
               <span className="min-w-0 flex-1 truncate">
                 {player.name}
                 {" · "}
