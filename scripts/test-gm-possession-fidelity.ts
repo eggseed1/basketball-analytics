@@ -52,6 +52,8 @@ async function main(){
     assert.equal(events.filter(e=>e.shotResult==="Made"&&e.isFieldGoal).length,tally.fgm);
     assert.equal(events.filter(e=>e.actionType==="turnover").length,tally.tov);
     assert.equal(events.filter(e=>e.actionType==="rebound"&&e.playerId).length,tally.reb);
+    assert.equal(box.players.reduce((n,p)=>n+(p.offensiveRebounds??0),0),events.filter(e=>e.actionType==="rebound"&&e.subType==="offensive").length,"offensive rebound split must match live play log");
+    assert.equal(box.players.reduce((n,p)=>n+(p.personalFouls??0),0),events.filter(e=>e.actionType==="foul").length,"player PF must match PBP fouls");
     assert.equal(events.filter(e=>e.description.includes(" assists)")).length,tally.ast);
     assert.equal(events.filter(e=>e.description.includes(" blocks)")).length,tally.blk);
     const court=buildCourtEvents(events,box.homeTeamId.toUpperCase(),box.awayTeamId.toUpperCase());
