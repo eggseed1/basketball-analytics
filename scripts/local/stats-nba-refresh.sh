@@ -21,6 +21,8 @@ FILES=(
   src/data/runtime/league-season-averages.json
   src/data/runtime/league-pace.json
   src/data/runtime/season-tables-snapshot.json
+  src/data/runtime/season-tables-meta.json
+  public/runtime/season-tables-meta.json
   src/data/runtime/nba-espn-player-ids.json
   src/data/runtime/historical-team-season-records.json
   data/ops/seasonal-upkeep.json
@@ -69,6 +71,14 @@ if [ "$REFRESH" = "1" ] || [ "${FORCE:-0}" = "1" ]; then
   "; then
     log "season-tables still missing $SEASON; Explore will keep prior-year boards until this lands"
   fi
+  node --input-type=module -e "
+    import fs from 'node:fs';
+    const t = JSON.parse(fs.readFileSync('src/data/runtime/season-tables-snapshot.json','utf8'));
+    const body = JSON.stringify({ generatedAt: t.generatedAt ?? null, source: t.source ?? 'stats.nba.com' }) + '\n';
+    fs.writeFileSync('src/data/runtime/season-tables-meta.json', body);
+    fs.mkdirSync('public/runtime', { recursive: true });
+    fs.writeFileSync('public/runtime/season-tables-meta.json', body);
+  " || log "season-tables meta failed"
   "$VENV/bin/python" scripts/build-historical-team-season-records.py || log "historical team records failed; keeping the last bake"
 else
   log "no games in this phase; skipping the nightly bakes"
@@ -76,7 +86,12 @@ fi
 
 node scripts/check-seasonal-upkeep.mjs || log "seasonal upkeep check failed"
 
-git add -- "${FILES[@]}"
+# One missing path makes git add stage nothing, so only pass files that exist.
+PRESENT=()
+for f in "${FILES[@]}"; do
+  [ -e "$f" ] && PRESENT+=("$f")
+done
+git add -- "${PRESENT[@]}" || log "git add failed"
 if git diff --cached --quiet; then
   log "no data changes"
   exit 0
@@ -91,6 +106,12 @@ git commit --quiet -m "Local stats.nba.com refresh ($SEASON) [skip ci]"
 for attempt in 1 2 3; do
   if git pull --quiet --rebase origin main && git push --quiet origin HEAD:main; then
     log "pushed $(git rev-parse --short HEAD)"
+    # Data commits skip CI; deploy-site syncs these snapshots from main and rebuilds Explore's first page.
+    if command -v gh >/dev/null 2>&1; then
+      gh workflow run deploy-site.yml --ref main \
+        && log "triggered deploy-site on main" \
+        || log "could not trigger deploy-site; the next nightly will ship it"
+    fi
     exit 0
   fi
   sleep $((attempt * 15))
