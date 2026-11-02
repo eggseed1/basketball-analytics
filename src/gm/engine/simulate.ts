@@ -9,6 +9,7 @@ import { allStarSquadTeam } from "@/gm/engine/allstar";
 import { gapBefore } from "@/gm/engine/schedule";
 import { coachEffect } from "@/gm/engine/staff";
 import { badgeEffects, ensureBadges } from "@/gm/engine/badges";
+import { chooseSimShot } from "@/gm/engine/shot-selection";
 
 export function lineupPlayers(team: GmTeam, players: GmPlayer[], max = 10): GmPlayer[] {
   const starters = new Set(Object.values(team.starters));
@@ -77,11 +78,11 @@ export function simulateGame(
   const badges = new Map(players.map(p => [p.id, badgeEffects(p)]));
   const rates = new Map(players.map(p => {
     const r = simulationRates(p), b = badges.get(p.id)!;
-    return [p.id, { ...r, twoPct: r.twoPct+b.two, threePct: r.threePct+b.three, ftPct: clamp(r.ftPct+b.ft,0,0.98), ast: r.ast*b.ast, stl: r.stl*b.stl, blk: r.blk*b.blk, orb: r.orb*b.reb, drb: r.drb*b.reb }];
+    return [p.id, { ...r, twoPct: r.twoPct+b.two, threePct: r.threePct+b.three, ftPct: clamp(r.ftPct+b.ft-0.010,0,0.98), ast: r.ast*b.ast, stl: r.stl*b.stl, blk: r.blk*b.blk, orb: r.orb*b.reb, drb: r.drb*b.reb }];
   }));
   const entryTotals = players.filter(p => p.teamId && p.simProfile?.source === "nba" && p.nbaSeason).reduce((n, p) => ({ fga: n.fga + p.nbaSeason!.fga, tpa: n.tpa + p.nbaSeason!.tpa, blk: n.blk + p.nbaSeason!.blk }), { fga: 0, tpa: 0, blk: 0 });
   const leagueBlockRate = entryTotals.fga > 0 ? entryTotals.blk / entryTotals.fga : 0.055;
-  const leagueThreeShare = entryTotals.fga > 0 ? entryTotals.tpa / entryTotals.fga : 0.38;
+  const leagueThreeShare = entryTotals.fga > 0 ? entryTotals.tpa / entryTotals.fga : 0.415;
   const averageBlockWeight = 0.95 * (1 - leagueThreeShare) + 0.3 * leagueThreeShare;
   const usedOnCourt = new Map<string, number>();
   const events: PlayByPlayEvent[] = [];
@@ -101,20 +102,18 @@ export function simulateGame(
   let overtime = 0;
   let totalPossessions = 0;
 
-  function push(player: GmPlayer, actionType: string, subType: string, description: string, points = 0, fieldGoal = false, made: boolean | null = null, second?: GmPlayer, three = false) {
+  function push(player: GmPlayer, actionType: string, subType: string, description: string, points = 0, fieldGoal = false, made: boolean | null = null, second?: GmPlayer, location?: { x: number; y: number }) {
     const period = elapsed < 2880 ? Math.floor(elapsed / 720) + 1 : 5 + Math.floor((elapsed - 2880) / 300);
     const length = period <= 4 ? 720 : 300;
     const start = period <= 4 ? (period - 1) * 720 : 2880 + (period - 5) * 300;
     const seconds = clamp(length - Math.floor(elapsed - start), 0, length);
     const n = events.length + 1;
-    const angle = rng() * Math.PI;
-    const radius = three ? 24.2 + rng() * 3 : subType === "layup" ? 1 + rng() * 4 : 5 + rng() * 16;
     events.push({ id: `${game.id}:${actualSeed}:${n}`, gameId: game.id, actionNumber: n, orderNumber: n,
       period, clockSeconds: seconds, clock: `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`,
       actionType, subType, description, teamId: player.teamId!.toUpperCase(), teamTricode: player.teamId!.toUpperCase(),
       playerId: player.id, playerName: player.name, secondPlayerId: second?.id ?? null,
       scoreHome: homeScore, scoreAway: awayScore, shotResult: made == null ? null : made ? "Made" : "Missed",
-      isFieldGoal: fieldGoal, points, locX: fieldGoal ? Math.cos(angle) * radius : null, locY: fieldGoal ? Math.sin(angle) * radius : null, wallMs: null });
+      isFieldGoal: fieldGoal, points, locX: fieldGoal ? location?.x ?? null : null, locY: fieldGoal ? location?.y ?? null : null, wallMs: null });
   }
   function score(player: GmPlayer, points: number) {
     lines.get(player.id)!.points += points;
@@ -150,12 +149,12 @@ export function simulateGame(
     const turnovers = off.reduce((n, p) => n + rates.get(p.id)!.tov, 0);
     const freeThrows = off.reduce((n, p) => n + rates.get(p.id)!.fga * rates.get(p.id)!.ftPerFga, 0);
     const offensiveRebounds = off.reduce((n, p) => n + rates.get(p.id)!.orb, 0);
-    const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers - offensiveRebounds) * mods.tov, 0.065, 0.24);
+    const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers - offensiveRebounds) * mods.tov * 1.035, 0.065, 0.24);
     const handler = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching) + rates.get(p.id)!.ast, rng);
     for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
     if (rng() < turnoverChance * badges.get(handler.id)!.tov) {
       lines.get(handler.id)!.turnovers++;
-      const stealShare = clamp(def.reduce((n, p) => n + rates.get(p.id)!.stl, 0) / Math.max(0.01, turnovers), 0.2, 0.9);
+      const stealShare = clamp(def.reduce((n, p) => n + rates.get(p.id)!.stl, 0) / Math.max(0.01, turnovers) * 1.07, 0.2, 0.9);
       const steal = rng() < stealShare ? weighted(def, p => rates.get(p.id)!.stl, rng) : undefined;
       if (steal) lines.get(steal.id)!.steals++;
       push(handler, "turnover", steal ? "steal" : "bad pass", `${handler.name} turnover${steal ? ` (${steal.name} steals)` : ""}`, 0, false, null, steal);
@@ -186,8 +185,10 @@ export function simulateGame(
       const line = lines.get(shooter.id)!;
       const tired = ((shooter.campFatigueGames ?? 0) > 0 ? 0.98 : 1) * secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70) * clamp(1-Math.max(0,(stintMinutes.get(shooter.id)??0)-8)*0.003,0.95,1);
       const foulRatio = freeThrows / Math.max(0.1, volume);
-      const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft, 0.025, 0.2);
+      const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft * 1.045, 0.025, 0.2);
       if (rng() < foulChance) {
+        const fouler = weighted(def, p => p.sheet?.tendencies.foul ?? 55, rng);
+        push(fouler, "foul", "shooting", `${fouler.name} shooting foul on ${shooter.name}`);
         let finalMade = false;
         for (let ft = 1; ft <= 2; ft++) {
           line.fta++; finalMade = rng() < r.ftPct;
@@ -197,7 +198,8 @@ export function simulateGame(
         if (finalMade || !rebound(off, def, false)) return;
         continue;
       }
-      const three = rng() < clamp(r.threeShare * mods.three, 0, 0.88);
+      const three = rng() < clamp(r.threeShare * mods.three * 1.04, 0, 0.88);
+      const shot = chooseSimShot(shooter, three, rng, attempt > 0);
       const blockWeight = three ? 0.3 : 0.95;
       const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * blockWeight / averageBlockWeight, 0.005, 0.2);
       const blocker = blocked ? weighted(def, p => rates.get(p.id)!.blk, rng) : undefined;
@@ -205,7 +207,7 @@ export function simulateGame(
       const passing = off.filter(p => p.id !== shooter.id).reduce((n,p) => n+badges.get(p.id)!.passing,0) / Math.max(1,off.length-1);
       const badgeDefense = def.reduce((n,p) => n+badges.get(p.id)!.defense,0) / Math.max(1,def.length);
       const closeLate = (elapsed >= 2640) && Math.abs(homeScore-awayScore) <= 10;
-      const pct = (three ? r.threePct : r.twoPct * mods.two) * tired + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + (closeLate ? badges.get(shooter.id)!.clutch : 0);
+      const pct = (three ? r.threePct - 0.011 : r.twoPct * mods.two + shot.twoDelta - 0.008) * tired + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + (closeLate ? badges.get(shooter.id)!.clutch : 0);
       // Observed shooting percentages already include average blocked attempts.
       // Convert to an unblocked attempt probability; opponent block skill can then vary.
       const observedBlockShare = clamp(leagueBlockRate * blockWeight / averageBlockWeight, 0, 0.2);
@@ -216,8 +218,7 @@ export function simulateGame(
       if (made) { line.fgm++; if (three) line.tpm++; score(shooter, three ? 3 : 2); }
       if (passer) lines.get(passer.id)!.assists++;
       if (blocker) lines.get(blocker.id)!.blocks++;
-      const layup = !three && rng() < clamp(r.twoPct - 0.1, 0.2, 0.7);
-      push(shooter, three ? "3pt" : "2pt", layup ? "layup" : "jump shot", `${shooter.name} ${made ? "makes" : "misses"} ${three ? "three pointer" : layup ? "layup" : "jump shot"}${passer ? ` (${passer.name} assists)` : blocker ? ` (${blocker.name} blocks)` : ""}`, made ? three ? 3 : 2 : 0, true, made, passer ?? blocker, three);
+      push(shooter, three ? "3pt" : "2pt", shot.subType, `${shooter.name} ${made ? "makes" : "misses"} ${shot.label}${passer ? ` (${passer.name} assists)` : blocker ? ` (${blocker.name} blocks)` : ""}`, made ? three ? 3 : 2 : 0, true, made, passer ?? blocker, shot);
       if (made || !rebound(off, def, three)) return;
     }
   }
