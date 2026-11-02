@@ -62,12 +62,20 @@ export async function refreshCurrentCareerFromEspn(
         grouped.set(game.teamId, group);
       }
       const name = fallbackName || rows[0]?.playerName || espnId;
-      const live = [...grouped.values()]
-        .map((group) => aggregatePlayerSeasonFromGames(group, name))
+      const live = [...grouped.entries()]
+        .map(([teamId, group]) => {
+          const row = aggregatePlayerSeasonFromGames(group, name);
+          const teamAbbreviation = baked.find(
+            (game) => game.teamNbaId === teamId
+          )?.teamAbbr;
+          return row
+            ? { ...row, teamAbbreviation, teamName: teamAbbreviation || row.teamName }
+            : null;
+        })
         .filter((row): row is PlayerSeason => row != null);
       if (grouped.size > 1) {
         const total = aggregatePlayerSeasonFromGames(games, name, "Multiple Teams");
-        if (total) live.push({ ...total, teamId: "TOT" });
+        if (total) live.push({ ...total, teamId: "TOT", teamAbbreviation: "TOT" });
       }
       best = preferFreshCurrentCareerRows(best, live, season);
     }
