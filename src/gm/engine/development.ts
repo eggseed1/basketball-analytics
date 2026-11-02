@@ -3,6 +3,10 @@ import { clamp, createRng } from "@/gm/engine/rng";
 import { regularSeasonComplete } from "@/gm/engine/schedule";
 
 export const CAREER_CEILING_LIMIT = 4;
+export const MAX_TEAM_MENTORSHIPS = 2;
+export function activeTeamMentorships(teamId: string, players: GmPlayer[]): number {
+  return players.filter(row => row.teamId === teamId && activeMentor(row, players)).length;
+}
 export function developmentSeed(key: string): number {
   let hash = 2166136261;
   for (const char of key) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
@@ -34,6 +38,7 @@ export function assignMentor(league: GmLeagueState, playerId: string, mentorId: 
   if (mentorId && (!veteran || !mentorEligible(player, veteran))) return fail("Choose a same-position teammate aged 28 or older, at least five years older than the young player.");
   if (mentorId && league.players.some(row => row.id !== playerId && row.mentorship?.mentorId === mentorId && activeMentor(row, league.players))) return fail("That veteran already mentors a teammate.");
   if (player.mentorship?.mentorId === mentorId && player.mentorship?.teamId === player.teamId) return { ok: true, state: league, reason: "This mentorship is already active." };
+  if (mentorId && activeTeamMentorships(player.teamId!, league.players) >= MAX_TEAM_MENTORSHIPS && !activeMentor(player, league.players)) return fail("Only two mentorships can be active at once. End an existing pairing first.");
   const mentorship = mentorId ? { mentorId, teamId: player.teamId!, season: league.season, sharedGames: 0 } : undefined;
   return { ok: true, reason: veteran ? `${veteran.name} will mentor ${player.name}.` : "Mentorship cleared.", state: { ...league, players: league.players.map(row => row.id === playerId ? { ...row, mentorship, developmentPlan: row.developmentPlan ?? "balanced" } : row) } };
 }
@@ -92,6 +97,7 @@ export function pairCpuMentors(league: GmLeagueState): GmLeagueState {
     const roster = players.filter(row => row.teamId === team.id && row.contract);
     for (const young of roster.filter(row => row.age <= 25).sort((a,b) => a.age - b.age || a.id.localeCompare(b.id))) {
       if (activeMentor(young, players)) continue;
+      if (activeTeamMentorships(team.id, players) >= MAX_TEAM_MENTORSHIPS) break;
       const veteran = roster.filter(row => mentorEligible(young, row) && !players.some(other => other.mentorship?.mentorId === row.id && activeMentor(other, players)))
         .sort((a,b) => mentorshipQuality(b) - mentorshipQuality(a) || a.id.localeCompare(b.id))[0];
       if (veteran) players[players.findIndex(row => row.id === young.id)] = { ...young, developmentPlan: young.developmentPlan ?? "balanced", mentorship: { mentorId: veteran.id, teamId: team.id, season: league.season, sharedGames: 0 } };
