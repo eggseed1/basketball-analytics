@@ -516,6 +516,9 @@ function fillMinimums(
       guard += 1;
       const pool = next.players
         .filter((player) => player.teamId == null)
+        // Emergency minimum deals are for replacement-level players.
+        // Never auto-sign a stranded star at a minimum merely to fill 14 spots.
+        .filter((player) => minimumAcceptableSalary(player, next, true) <= min + 0.05)
         .sort((a, b) => {
           const na = a.position === needs[0] ? 12 : a.position === needs[1] ? 5 : 0;
           const nb = b.position === needs[0] ? 12 : b.position === needs[1] ? 5 : 0;
