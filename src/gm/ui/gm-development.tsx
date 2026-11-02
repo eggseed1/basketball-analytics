@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
+import { BADGES, BADGE_LEVELS, badgeLevel, ensureBadges } from "@/gm/engine/badges";
 import { GmBadges } from "@/gm/ui/gm-badges";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
 import { useGmStore } from "@/gm/state/gm-store";
-import { activeMentor, mentorEligible, mentorshipBonus, mentorshipQuality, workEthicOf } from "@/gm/engine/development";
+import { activeMentor, activeTeamMentorships, MAX_TEAM_MENTORSHIPS, mentorEligible, mentorshipBonus, mentorshipQuality, workEthicOf } from "@/gm/engine/development";
 import { CAMP_FOCUSES, campSkillChanges, campSlots } from "@/gm/engine/season-development";
 import { ATTRIBUTE_LABEL } from "@/gm/engine/attributes";
 import { flowOf } from "@/gm/engine/season-flow-state";
@@ -25,6 +26,7 @@ export function GmDevelopment() {
   const note = useGmStore(s => s.lastDevelopmentNote);
   if (!league) return null;
   const roster = league.players.filter(p => p.teamId === league.userTeamId && p.contract).sort((a,b) => a.age - b.age || a.name.localeCompare(b.name));
+  const activePairs = activeTeamMentorships(league.userTeamId, league.players);
   const flow = flowOf(league);
   const currentChecks = league.devMarks?.season === league.season ? league.devMarks : undefined;
   const checkpoints = [
@@ -69,14 +71,14 @@ export function GmDevelopment() {
         <p className="mt-3 text-xs text-muted-foreground">Development traits may change in the offseason following breakout seasons and major accolades. The +4 cap on mentorship and breakout potential increases remains separate from trait evolution.</p>
       </SectionFrame>
     </div></details>
-    <div id="development-focuses" className="scroll-mt-32"><SectionFrame title="Player plans">
+    <div id="development-focuses" className="scroll-mt-32"><SectionFrame title="Player plans" description={`Mentorships ${activePairs}/${MAX_TEAM_MENTORSHIPS}. Young players can learn their veteran\x27s eligible badges in games together.`}>
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">{roster.map(player => {
         const mentor = activeMentor(player, league.players);
         const mentors = roster.filter(vet => mentorEligible(player, vet));
         return <article key={player.id} className="min-w-0 rounded-xl border border-border bg-background/40 p-4" data-testid={"development-player-" + player.id}>
           <div className="flex items-start justify-between gap-3"><div className="flex min-w-0 items-center gap-3"><GmPlayerPortrait player={player} size="sm" /><div className="min-w-0"><Link href={"/gm/player/" + player.id} className="font-semibold hover:underline">{player.name}</Link><p className="mt-1 text-xs text-muted-foreground">{player.position} · age {player.age} · OVR {Math.round(player.sheet?.overall ?? 0)} </p></div></div></div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="grid gap-1.5 text-sm">Skill focus<select aria-label={`Development focus for ${player.name}`} className={control} value={player.developmentFocus ?? "balanced"} onChange={e => setFocus(player.id, e.target.value as NonNullable<GmPlayer["developmentFocus"]>)}>{focusChoices.map(focus => <option key={focus} value={focus}>{focus[0]!.toUpperCase() + focus.slice(1)}</option>)}</select></label><label className="grid gap-1.5 text-sm">Development plan<select aria-label={`Development plan for ${player.name}`} className={control} value={player.developmentPlan ?? "balanced"} onChange={e => setPlan(player.id, e.target.value as NonNullable<GmPlayer["developmentPlan"]>)}><option value="balanced">Balanced reps</option><option value="practice">Skills work</option><option value="rotation">Rotation reps</option></select></label></div>
-          {player.age <= 25 ? <div className="mt-4"><label className="grid gap-1.5 text-sm">Veteran mentor<select aria-label={`Mentor for ${player.name}`} className={control} value={mentor?.id ?? ""} onChange={e => pair(player.id, e.target.value || null)}><option value="">No active mentor</option>{mentors.map(vet => { const used = league.players.some(other => other.id !== player.id && activeMentor(other, league.players)?.id === vet.id); return <option key={vet.id} value={vet.id} disabled={used}>{vet.name} · OVR {Math.round(vet.sheet?.overall ?? 0)} · Work {workEthicOf(vet)}{used ? " · Already mentoring" : ""}</option>; })}</select></label><p className="mt-2 text-xs text-muted-foreground">{mentor ? `${mentor.name}: +${Math.round(mentorshipBonus(player, league.players) * 100)}% development. ${player.mentorship?.season === league.season ? player.mentorship.sharedGames : 0}/20 shared games toward a ${Math.round((0.03 + mentorshipQuality(mentor) * 0.09) * 100)}% season-end ceiling chance.` : player.mentorship ? "The previous pairing is inactive because the players are no longer eligible teammates." : mentors.length ? "A stronger veteran with better work habits gives a larger bonus." : "No eligible same-position veteran is on this roster."}</p></div> : null}
+          {player.age <= 25 ? <div className="mt-4"><label className="grid gap-1.5 text-sm">Veteran mentor<select aria-label={`Mentor for ${player.name}`} className={control} value={mentor?.id ?? ""} onChange={e => pair(player.id, e.target.value || null)}><option value="">No active mentor</option>{mentors.map(vet => { const used = league.players.some(other => other.id !== player.id && activeMentor(other, league.players)?.id === vet.id); return <option key={vet.id} value={vet.id} disabled={used || (activePairs >= MAX_TEAM_MENTORSHIPS && !mentor)}>{vet.name} · OVR {Math.round(vet.sheet?.overall ?? 0)} · Work {workEthicOf(vet)}{used ? " · Already mentoring" : ""}</option>; })}</select></label>{mentor ? <div className="mt-2 flex flex-wrap gap-1.5">{BADGES.filter(b => badgeLevel(ensureBadges(mentor),b.id) >= 2 && badgeLevel(ensureBadges(mentor),b.id) > badgeLevel(ensureBadges(player),b.id) && badgeLevel(ensureBadges(player),b.id) < 5).slice(0,4).map(b => <span key={b.id} className="rounded-md border border-border px-2 py-1 text-[11px]">{b.name} · {BADGE_LEVELS[badgeLevel(ensureBadges(mentor),b.id)]}</span>)}</div> : null}<p className="mt-2 text-xs text-muted-foreground">{mentor ? `${mentor.name}: +${Math.round(mentorshipBonus(player, league.players) * 100)}% development. ${player.mentorship?.season === league.season ? player.mentorship.sharedGames : 0}/20 shared games toward a ${Math.round((0.03 + mentorshipQuality(mentor) * 0.09) * 100)}% season-end ceiling chance.` : player.mentorship ? "The previous pairing is inactive because the players are no longer eligible teammates." : mentors.length ? "A stronger veteran with better work habits gives a larger bonus." : "No eligible same-position veteran is on this roster."}</p></div> : null}
           {player.sheet?.developmentReport ? <details className="mt-3 border-t border-border pt-2 text-xs text-muted-foreground"><summary className="cursor-pointer">Latest progress</summary><p className="mt-1">{player.sheet.developmentReport.gains.join(", ")} · {player.sheet.developmentReport.reasons.join(". ")}</p></details> : null}
         </article>;
       })}</div>
