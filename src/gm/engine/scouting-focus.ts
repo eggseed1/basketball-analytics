@@ -7,6 +7,7 @@
  */
 
 import { rosterNeeds } from "@/gm/engine/draft-room";
+import { draftSleeperSignals } from "@/gm/engine/draft-intel";
 import { automationOf } from "@/gm/engine/offseason";
 import {
   gradeSortValue,
@@ -143,13 +144,19 @@ export function autoPickScoutingFocus(league: GmLeagueState): {
       const knackW = scoutKnackAutofocusWeight(withKnack?.knack, player);
       // Autoscout leans on specialty and obvious holes; misses some sleepers.
       const score =
-        fog * 1.1 - need * 2.6 + Math.max(upside, 0) * 0.25 + match * 8 + knackW;
+        fog * 1.1 - need * 2.6 + Math.max(upside, 0) * 0.25 + match * 8 + knackW
+        + ((player.consensusRank ?? 0) >= 23 ? draftSleeperSignals(player).score * 1.4 : 0);
       return { id: player.id, position: player.position, score };
     })
     .sort((a, b) => b.score - a.score);
 
   const slots = SCOUTING_FOCUS_SLOTS;
   const playerIds = ranked.slice(0, slots).map((row) => row.id);
+  // Keep a long-shot on the radar. Do not read hidden development outcomes:
+  // the late candidate is selected from visible amateur indicators.
+  const late = ranked.filter(row => (pool.find(p => p.id === row.id)?.consensusRank ?? 0) >= 24)
+    .sort((a,b) => draftSleeperSignals(pool.find(p=>p.id===b.id)!).score - draftSleeperSignals(pool.find(p=>p.id===a.id)!).score)[0];
+  if(late && !playerIds.includes(late.id) && slots > 0) playerIds[slots - 1] = late.id;
   const positionFocus =
     needs[0] && ranked.some((row) => row.position === needs[0])
       ? needs[0]!
