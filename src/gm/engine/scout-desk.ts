@@ -81,7 +81,7 @@ function pickNote(category: ScoutDeskCategory, player: GmPlayer, league: GmLeagu
   if (category === "sleepers") {
     note = [specialist, concrete || "Interesting but incomplete tape", "still on the later board"].join(" · ");
   } else if (category === "ready") {
-    note = (player.age >= 22 ? "Experienced prospect" : "Rotation-ready indicators") +
+    note = (playerPipeline(player) === "international" && player.age>=21 ? "Professional-league experience" : player.age >= 22 ? "Experienced prospect" : "Rotation-ready indicators") +
       " · " + (concrete || `${stats.points.toFixed(1)} PPG in amateur play`) +
       ` · scout projects ${read.readyLow}–${read.readyHigh} readiness`;
   } else if (category === "fit") {
@@ -108,7 +108,7 @@ function deskTitle(scout: GmScout | null | undefined, category: ScoutDeskCategor
       : scout?.expertise === "defense" ? "Defensive sleepers"
       : scout?.expertise === "offense" ? "Hidden offensive sparks" : "The overlooked files";
   }
-  if (category === "ready") return "Can help us now";
+  if (category === "ready") return "Polished & playable";
   if (category === "fit") return "Built for our roster";
   return scout?.expertise === "international" ? "International projects" : "Swing for the ceiling";
 }
@@ -142,11 +142,16 @@ export function buildScoutDesk(league: GmLeagueState, limit = 4): ScoutDesk {
     const senior = player.age>=22?4:player.age===21?2:0;
     const young = player.age<=19?5:player.age===20?3:player.age===21?1:0;
     const experience = Math.min(3,stats.games/12);
+    const shootingTouch = stats.ftMade/Math.max(1,stats.ftAttempts);
+    const shootingVolume = stats.threeMade/Math.max(1,stats.threeAttempts);
+    const passSafety = stats.assists/Math.max(0.5,stats.turnovers);
+    const polish = (shootingTouch>=.78?3:0) + (shootingVolume>=.35 && stats.threeAttempts>=95?2:0)
+      + (passSafety>=1.8?2:0) + (playerPipeline(player)==="international" && player.age>=21?1:0);
     return {
       player,market,ready,value,future,signals,
       sleeper: (market>=22 ? 8 : -100) + signals.score*2.1 + edge*1.1 + (market>=31?3:0)
         + (market>=45?1:0) + Math.max(0,future.upsideHigh-ready.readyHigh)*0.28,
-      readyScore: ready.readiness*1.6 + senior + experience + edge*.6
+      readyScore: ready.readiness*1.25 + senior*2.2 + experience*1.2 + polish*2 + edge*.6
         + (contender?need*0.65:need*.25) - (ready.readyHigh-ready.readyLow)*.32,
       fitScore: value.score*1.35 + need*3 + edge + (contender?senior:young)*0.5,
       upsideScore: future.score*1.5 + young*2 + edge*.85
@@ -172,7 +177,7 @@ export function buildScoutDesk(league: GmLeagueState, limit = 4): ScoutDesk {
           readyRange:`${x.ready.readyLow}–${x.ready.readyHigh}`,...details};
       });
     const summary = category==="sleepers" ? `${prefix} found reasons to revisit players other teams may pass over. A hunch isn't a guarantee.`
-      : category==="ready" ? `For ${contender?"our playoff rotation":"early NBA minutes"}, ${prefix} favors experience and skills that can translate quickly.`
+      : category==="ready" ? `For ${contender?"our playoff rotation":"early NBA minutes"}, ${prefix} favors experienced prospects with usable shooting, sound decisions and a shorter development runway.`
       : category==="fit" ? `Our thin spots are ${needs.slice(0,2).join(" and ")||"balanced"}. ${prefix} prioritizes the jobs we need filled.`
       : `${prefix} is looking for the long runway and development flashes. This is the riskier board.`;
     boardsById.set(category,{id:category,title:deskTitle(scout,category),summary,picks});
