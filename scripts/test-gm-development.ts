@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
-import { assignMentor, activeMentor, activeTeamMentorships, MAX_TEAM_MENTORSHIPS, mentorshipBonus, raiseCeiling, reviewPlayerCeilings, breakoutEvidence, workEthicOf } from "../src/gm/engine/development";
+import { assignMentor, assignMentorshipSlot, mentorshipSlots, activeMentor, activeTeamMentorships, MAX_TEAM_MENTORSHIPS, mentorshipBonus, raiseCeiling, reviewPlayerCeilings, breakoutEvidence, workEthicOf } from "../src/gm/engine/development";
 import { recordSimGame } from "../src/gm/lib/season-line";
 import { progressSheet, overallFromAttributes } from "../src/gm/engine/attributes";
 import { applyTrainingCamp, assignCamp, campSlots } from "../src/gm/engine/season-development";
@@ -31,6 +31,26 @@ assert.equal(activeTeamMentorships("bos", limited.players), MAX_TEAM_MENTORSHIPS
 assert.equal(assignMentor(limited, extraLearners[1]!.id, extraVeterans[1]!.id).ok, false, "third pairing blocked");
 limited = assignMentor(limited, young.id, null).state;
 assert.equal(assignMentor(limited, extraLearners[1]!.id, extraVeterans[1]!.id).ok, true, "clearing one slot allows another");
+
+let cards = assignMentorshipSlot(league, 0, young.id, veteran.id).state;
+assert.equal(mentorshipSlots(cards)[0]?.id, young.id, "existing pairing adopts first card");
+cards = { ...cards, players: [...cards.players, ...extraVeterans, ...extraLearners] };
+cards = assignMentorshipSlot(cards, 1, extraLearners[0]!.id, extraVeterans[0]!.id).state;
+assert.equal(mentorshipSlots(cards)[1]?.id, extraLearners[0]!.id, "second card persists its mentee");
+assert.equal(assignMentorshipSlot(cards, 0, extraLearners[0]!.id, extraVeterans[0]!.id).ok, false, "cannot duplicate pairing across cards");
+const unchanged = assignMentorshipSlot(cards, 1, extraLearners[0]!.id, extraVeterans[0]!.id);
+assert.equal(unchanged.state, cards, "reselecting card preserves mentor exposure");
+cards = assignMentorshipSlot(cards, 0, extraLearners[1]!.id, extraVeterans[1]!.id).state;
+assert.equal(mentorshipSlots(cards)[0]?.id, extraLearners[1]!.id, "replacing first card is atomic");
+assert.equal(mentorshipSlots(cards)[1]?.id, extraLearners[0]!.id, "replacing first card leaves second untouched");
+assert.equal(activeMentor(cards.players.find(p => p.id === young.id)!, cards.players), undefined, "replaced mentee is unpaired");
+const restoredCards = parseFranchise(exportFranchise(cards));
+assert.equal(mentorshipSlots(restoredCards)[0]?.id, extraLearners[1]!.id, "first card survives save and reload");
+assert.equal(mentorshipSlots(restoredCards)[1]?.id, extraLearners[0]!.id, "second card survives save and reload");
+cards = assignMentorshipSlot(cards, 1, null, null).state;
+assert.equal(mentorshipSlots(cards)[1], null, "clearing a card releases its mentorship");
+assert.equal(activeTeamMentorships("bos", cards.players), 1);
+
 
 const bonus = mentorshipBonus(student(), league.players);
 assert.ok(bonus > 0 && bonus <= 0.18);
