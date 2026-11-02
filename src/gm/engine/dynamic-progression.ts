@@ -81,14 +81,19 @@ export function annualTraitDecision(league: GmLeagueState, player: GmPlayer): Tr
   const rng = createRng(developmentSeed(player.id + ":trait:" + league.season));
   const ovr = player.sheet?.overall ?? 70;
   const youth = player.age <= 28;
+  const productivePrime = player.age <= 32;
   const confidence = (enough ? Math.max(0, performance) * 0.3 : 0) + awards.score * 0.095;
   let promotion = 0;
   let demotion = 0;
-  if (youth && enough && performance >= 0.28) {
-    promotion = current === "bust" ? 0.4 : current === "normal" ? 0.24 : current === "star" ? 0.09 : 0.01;
-    promotion += confidence;
+  if (productivePrime && enough && performance >= 0.24) {
+    promotion = current === "bust" ? 0.45 : current === "normal" ? 0.28 : current === "star" ? 0.12 : 0.015;
+    promotion = (promotion + confidence) * (youth ? 1 : 0.56);
   }
-  if (awards.score >= 2 && youth) promotion = Math.max(promotion, 0.17 + awards.score * 0.075);
+  // True late bloomers can still upgrade a trait, but there is an age
+  // discount and elite-tier promotions need extraordinary evidence.
+  if (awards.score >= 2 && player.age <= 34) {
+    promotion = Math.max(promotion, (0.16 + awards.score * 0.075) * (youth ? 1 : 0.62));
+  }
   if (current === "superstar" && awards.score < 4) promotion *= 0.25;
   if (current === "star" && ovr < 77 && awards.score < 2) promotion *= 0.45;
   if (current === "xfactor") promotion = 0;
@@ -158,7 +163,7 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const age = player.age; // Callers of summer progression already apply the birthday once.
   const ageDelta = age <= 21 ? 2.4 : age <= 23 ? 2.05 : age <= 25 ? 1.5
     : age <= 27 ? 0.95 : age <= peak + 1 ? 0.3
-    : age <= 31 ? -0.35 : age <= 33 ? -1.05 : age <= 35 ? -1.7 : -2.35;
+    : age <= 31 ? -0.30 : age <= 33 ? -0.82 : age <= 35 ? -1.36 : -1.90;
   const bonus = trait === "xfactor" ? 1.24 : trait === "superstar" ? 1.18 : trait === "star" ? 1.1 : trait === "bust" ? 0.55 : 1;
   const path = sheet.potential.path === "boom" ? 1.13 : sheet.potential.path === "bust" ? 0.72 : 1;
   const play = withSheet.seasonLine;
