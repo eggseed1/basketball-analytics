@@ -26,6 +26,7 @@ try{
   await load("prep");await page.getByTestId("draft-war-room").waitFor();await capture("mobile-draft-preparation");
   await page.getByLabel("Draft strategy",{exact:true}).selectOption("shooting");
   await page.getByRole("button",{name:"Open report for "+manifest.targetName,exact:true}).click();
+  await page.getByText("Advanced scouting tools (optional)",{exact:true}).click();
   await page.getByLabel("Scouting skill focus",{exact:true}).selectOption("shooting");
   await page.getByRole("button",{name:"Watch film for "+manifest.targetName,exact:true}).click();
   assert.equal(await page.getByRole("button",{name:"Watch film for "+manifest.targetName,exact:true}).isDisabled(),true);
@@ -33,8 +34,8 @@ try{
   await page.getByRole("button",{name:"Private workout for "+manifest.targetName,exact:true}).click();
   await page.getByRole("button",{name:"Add to watchlist",exact:true}).click();await capture("mobile-prospect-research");
   let saved=await exported();assert.equal(saved.draftScouting.spent,4);assert.equal(saved.draftScouting.strategy,"shooting");assert.ok(saved.draftScouting.watchlist.includes(manifest.targetId));
-  await page.getByRole("button",{name:"Open report for "+manifest.targetName,exact:true}).click();assert.equal(await page.getByRole("button",{name:"Watch film for "+manifest.targetName,exact:true}).isDisabled(),true);
-  await page.goto("http://127.0.0.1:3109/gm/player/"+encodeURIComponent(manifest.targetId),{waitUntil:"domcontentloaded"});await page.getByRole("region",{name:"Prospect file for "+manifest.targetName,exact:true}).waitFor();assert.equal(await page.getByRole("button",{name:"Watch film for "+manifest.targetName,exact:true}).isDisabled(),true);await page.getByRole("link",{name:"Back to draft board",exact:true}).click();
+  await page.getByRole("button",{name:"Open report for "+manifest.targetName,exact:true}).click();await page.getByText("Advanced scouting tools (optional)",{exact:true}).click();assert.equal(await page.getByRole("button",{name:"Watch film for "+manifest.targetName,exact:true}).isDisabled(),true);
+  await page.goto("http://127.0.0.1:3109/gm/player/"+encodeURIComponent(manifest.targetId),{waitUntil:"domcontentloaded"});await page.getByRole("region",{name:"Prospect file for "+manifest.targetName,exact:true}).waitFor();await page.getByText("Advanced scouting tools (optional)",{exact:true}).click();assert.equal(await page.getByRole("button",{name:"Watch film for "+manifest.targetName,exact:true}).isDisabled(),true);await page.getByRole("link",{name:"Back to draft board",exact:true}).click();
   const compare=page.getByRole("button",{name:/^Compare /});await compare.nth(0).click();await compare.nth(1).click();await page.getByRole("region",{name:"Prospect comparison",exact:true}).waitFor();await capture("mobile-prospect-comparison");report.tasks.push("Research, budget, watchlist, distinct strategy, comparison and reload");
   await load("night");await page.getByRole("heading",{name:"Draft night",exact:true}).waitFor();await page.getByRole("button",{name:"Trade picks",exact:true}).click();
   await page.getByLabel("Target draft pick",{exact:true}).selectOption(String(manifest.tradeSlot));await page.getByRole("button",{name:"Suggest a package",exact:true}).click();
