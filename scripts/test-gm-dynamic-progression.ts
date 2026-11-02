@@ -48,7 +48,7 @@ assert.equal(traitRow.traitHistory?.length, 1);
 assert.equal(playerDevTrait(traitRow), traitRow.traitHistory?.[0]?.after, "earned reviewed trait is authoritative");
 assert.equal(applySeasonProgression(evolved), evolved, "trait changes cannot reroll");
 
-let progressing = { ...full, players: tuned, draftPool: [], phase: "regular" as const,
+let progressing: GmLeagueState = { ...full, players: tuned, draftPool: [], phase: "regular",
   devMarks: { season: 2027, january: false, finale: false }, schedule: full.schedule.map(game => ({ ...game, played: false })) };
 const relevant = progressing.schedule.flatMap((g,i) => g.homeTeamId === "bos" || g.awayTeamId === "bos" ? [i] : []);
 assert.ok(relevant.length >= 60);
