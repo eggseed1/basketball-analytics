@@ -64,12 +64,14 @@ function financialUtility(
 ): number {
   const ask = askingSalary(player, league);
   const askY = askingYears(player, league);
-  const firstYear = clamp((salaryM / Math.max(0.5, ask)) * 55, 0, 100);
-  const term = clamp((years / Math.max(1, askY)) * 35, 0, 55);
-  const guarantee = clamp(years * 8, 0, 40);
-  // Longer deals are not automatically better than a strong short deal.
-  const stretchPenalty = years > askY + 1 ? (years - askY) * 4 : 0;
-  return clamp(firstYear * 0.55 + term * 0.25 + guarantee * 0.2 - stretchPenalty, 0, 100);
+  // A contract at 80% of market value should be far less appealing than
+  // one at full value. Compare guarantees as well as first-year money.
+  const ratio = salaryM / Math.max(0.5, ask);
+  const moneyScore = clamp(52 + (ratio - 1) * 130, 0, 100);
+  const security = clamp(50 + (years - askY) * 13, 8, 95);
+  const termValue = clamp(30 + years * 12, 0, 95);
+  const stretchPenalty = years > askY + 1 ? (years - askY - 1) * 3 : 0;
+  return clamp(moneyScore * 0.68 + security * 0.2 + termValue * 0.12 - stretchPenalty, 0, 100);
 }
 
 function winningUtility(league: GmLeagueState, teamId: string): number {
