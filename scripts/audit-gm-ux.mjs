@@ -302,6 +302,7 @@ try {
       await page.getByLabel(`Development focus for ${pupil.name}`, { exact: true }).selectOption("defense");
       await page.getByLabel(`Development plan for ${pupil.name}`, { exact: true }).selectOption("practice");
       await page.getByLabel(`Mentor for ${pupil.name}`, { exact: true }).selectOption(veteran.id);
+      await page.locator("summary").filter({ hasText: "Skill badges" }).click();
       await page.getByLabel("Badge player", { exact: true }).selectOption(pupil.id);
       const emphasis = page.getByLabel(`Badge emphasis for ${pupil.name}`, { exact: true });
       const available = await emphasis.locator("option:not([disabled])").evaluateAll(options => options.map(o=>o.value).filter(Boolean));
@@ -320,6 +321,7 @@ try {
       await page.reload({ waitUntil: "domcontentloaded" });
       await page.getByRole("heading", { name: "Development", exact: true }).waitFor();
       assert.equal(await page.getByLabel(`Mentor for ${pupil.name}`, { exact: true }).inputValue(), veteran.id);
+      await page.locator("summary").filter({ hasText: "Skill badges" }).click();
       await page.getByLabel("Badge player", { exact: true }).selectOption(pupil.id);
       assert.equal(await page.getByLabel(`Badge emphasis for ${pupil.name}`, { exact: true }).inputValue(),available[0]);
       await page.getByRole("link", {name:`Open ${pupil.name}'s player card`,exact:true}).click();
@@ -362,6 +364,7 @@ try {
     await load("camp", "/gm/development");
     const campSave = JSON.parse(readFileSync(`${dir}/camp.json`, "utf8")).league;
     const campers = campSave.players.filter(p => p.teamId === campSave.userTeamId && p.contract && !p.injury).slice(0, 2);
+    await page.locator("summary").filter({ hasText: "Training camp" }).click();
     for (const camper of campers) await page.getByLabel(`Camp focus for ${camper.name}`, { exact: true }).selectOption("shooting");
     await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
     const campDialog = page.getByRole("dialog", { name: "Confirm training camp", exact: true });
@@ -374,6 +377,7 @@ try {
     const afterCamp = await exportedLeague();
     assert.equal(afterCamp.seasonFlow.campResults.filter(row => campers.some(p => p.id === row.playerId)).length, 2);
     await page.reload({ waitUntil: "domcontentloaded" });
+    await page.locator("summary").filter({ hasText: "Training camp" }).click();
     await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
     assert.deepEqual((await exportedLeague()).seasonFlow.campResults, afterCamp.seasonFlow.campResults, "reloading preserves camp results without rerolling risk");
     assert.equal(await page.getByRole("button", { name: "Run individual camp", exact: true }).count(), 0);
