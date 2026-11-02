@@ -1,5 +1,5 @@
 import type { GmAttributes, GmBadgeId, GmBoxScore, GmPlayer } from "@/gm/types";
-import { activeMentor } from "@/gm/engine/development";
+import { activeMentor, mentorshipQuality } from "@/gm/engine/development";
 
 export const BADGE_LEVELS = ["Locked", "Bronze", "Silver", "Gold", "Hall of Fame", "Legend"] as const;
 export const BADGE_XP = [0, 120, 360, 900, 1800, 3200] as const;
@@ -37,14 +37,29 @@ export function badgeLevel(player: GmPlayer, id: GmBadgeId): number {
   return Math.min(badgeEarned(player, id), badgeCap(player, id));
 }
 
-/** Seed a few signature skills once. Never reads hidden potential or rewrites ratings. */
+/** Age and established on-court ability shape a player's initial badge portfolio.
+ * V2 only supplements a legacy V1 portfolio; it never resets earned game XP, ratings or game IDs.
+ */
 export function ensureBadges(player: GmPlayer): GmPlayer {
-  if (player.badges?.version === 1) return player;
+  if (player.badges?.version === 2) return player;
+  const overall = player.sheet?.overall ?? 60;
   const rookie = player.age <= 22 || !player.contract;
-  const signatures = BADGES.filter(b => badgeSkill(player, b.id) >= 75)
-    .sort((a,b) => badgeSkill(player,b.id) - badgeSkill(player,a.id) || a.id.localeCompare(b.id)).slice(0, rookie ? 1 : 3);
-  const xp = Object.fromEntries(signatures.map(b => [b.id, BADGE_XP[Math.max(1, Math.min(rookie ? 1 : 3, badgeCap(player,b.id) - 1))]! ]));
-  return { ...player, badges: { version: 1, xp } };
+  const slots = !player.contract ? 1 : rookie ? (overall >= 85 ? 2 : 1)
+    : (overall >= 95 ? 8 : overall >= 90 ? 7 : overall >= 85 ? 5
+      : overall >= 80 ? 4 : overall >= 75 ? 3 : overall >= 70 ? 2 : 1)
+      + (player.age >= 29 ? 1 : 0);
+  const experienceLimit = player.age <= 22 ? (overall >= 90 ? 2 : 1)
+    : player.age <= 24 ? 3 : player.age <= 27 ? 4 : 5;
+  const qualityLimit = overall >= 90 ? 5 : overall >= 84 ? 4 : overall >= 76 ? 3 : overall >= 70 ? 2 : 1;
+  const signatures = BADGES.filter(b => badgeCap(player, b.id) > 0)
+    .sort((a,b) => badgeSkill(player,b.id) - badgeSkill(player,a.id) || a.id.localeCompare(b.id))
+    .slice(0,slots);
+  const xp = { ...player.badges?.xp };
+  for (const badge of signatures) {
+    const rank = Math.min(badgeCap(player,badge.id),experienceLimit,qualityLimit);
+    xp[badge.id] = Math.max(xp[badge.id] ?? 0,BADGE_XP[rank]!);
+  }
+  return { ...player, badges: { ...player.badges, version: 2, xp } };
 }
 
 export function defaultBadgeFocus(player: GmPlayer): GmBadgeId | undefined {
@@ -76,17 +91,36 @@ export function recordBadgeGame(player: GmPlayer, box: GmBoxScore, players: GmPl
   };
   const focus = defaultBadgeFocus(player);
   const mentor = activeMentor(player,players);
+  // Teaching requires both players on the official game sheet. Sitting on the bench
+  // or assigning a mentor without shared games cannot farm badges.
+  const together = mentor && box.players.some(row => row.playerId === mentor.id && row.teamId === line.teamId && row.minutes > 0);
+  const teachable = together ? BADGES.filter(b => {
+    const mentorLevel = badgeLevel(ensureBadges(mentor),b.id);
+    return mentorLevel > badgeLevel(player,b.id) && badgeCap(player,b.id) > 0;
+  }).sort((a,b) =>
+    Number(b.category === player.developmentFocus) - Number(a.category === player.developmentFocus)
+    || badgeLevel(ensureBadges(mentor),b.id) - badgeLevel(ensureBadges(mentor),a.id)
+    || badgeSkill(player,b.id) - badgeSkill(player,a.id)
+    || a.id.localeCompare(b.id)).slice(0,2) : [];
+  const taught = new Set(teachable.map(b => b.id));
+  const mentoredXp = { ...book.mentoredXp };
   const xp = { ...book.xp };
   for (const b of BADGES) {
     const cap = badgeCap(player,b.id);
     const current = xp[b.id] ?? 0;
-    // No banking above current eligibility; a later skill gain needs fresh court evidence.
+    // Existing XP above the current skill cap is preserved, but cannot grow further.
     if (cap === 0 || current >= BADGE_XP[cap]!) continue;
-    const mentorBonus = mentor && badgeLevel(ensureBadges(mentor),b.id) > badgeLevel(player,b.id) ? 0.1 : 0;
-    const gain = Math.min(24,Math.max(0,raw[b.id])) * (1 + (focus === b.id ? 0.25 : 0) + mentorBonus);
-    xp[b.id] = Math.min(BADGE_XP[cap]!, Math.round((current + gain)*10)/10);
+    const mentorLevel = together ? badgeLevel(ensureBadges(mentor),b.id) : 0;
+    const mentorBonus = mentorLevel > badgeLevel(player,b.id) ? 0.1 : 0;
+    const earned = Math.min(24,Math.max(0,raw[b.id])) * (1 + (focus === b.id ? 0.25 : 0) + mentorBonus);
+    const taughtXp = taught.has(b.id) ? Math.max(0,Math.min(
+      4 + mentorLevel * 1.3 + mentorshipQuality(mentor!) * 2,
+      BADGE_XP[Math.min(cap,mentorLevel)]! - current - earned
+    )) : 0;
+    if (taughtXp > 0) mentoredXp[b.id] = Math.round(((mentoredXp[b.id] ?? 0) + taughtXp)*10)/10;
+    if (earned > 0 || taughtXp > 0) xp[b.id] = Math.min(BADGE_XP[cap]!,Math.round((current + earned + taughtXp)*10)/10);
   }
-  return { ...player, badges: { ...book, xp, season: box.season, gameIds: [...(book.season === box.season ? book.gameIds ?? [] : []),box.gameId] } };
+  return { ...player, badges: { ...book, xp, mentoredXp, season: box.season, gameIds: [...(book.season === box.season ? book.gameIds ?? [] : []),box.gameId] } };
 }
 
 /** Pure bounded effects used by the possession engine and inspected by regression tests. */
