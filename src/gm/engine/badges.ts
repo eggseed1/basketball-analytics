@@ -40,7 +40,7 @@ export function badgeLevel(player: GmPlayer, id: GmBadgeId): number {
 /** Seed a few signature skills once. Never reads hidden potential or rewrites ratings. */
 /** Experience influences signature distribution; attributes control every active level. */
 export function ensureBadges(player: GmPlayer): GmPlayer {
-  if (player.badges?.version === 2) return player;
+  if (player.badges?.version === 2 || (player.badges?.version === 1 && !Object.keys(player.badges.xp).length)) return player;
   const rookie = player.age <= 22 || !player.contract;
   const overall = player.sheet?.overall ?? 65;
   const experience = Math.max(0, player.age - 22);
