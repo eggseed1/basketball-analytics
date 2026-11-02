@@ -14,7 +14,7 @@ import {
   type DraftNightOffer,
 } from "@/gm/engine/draft-room";
 import { playerSheet } from "@/gm/engine/attributes";
-import { sleeperRadar, draftSleeperSignals } from "@/gm/engine/draft-intel";
+import { buildScoutDesk } from "@/gm/engine/scout-desk";
 import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import {
   formatHeight,
@@ -63,6 +63,7 @@ export function GmDraftNight() {
   const falling = useMemo(() => (league ? fallingProspects(league) : []), [league]);
   const offers = useMemo(() => (league ? draftNightOffers(league) : []), [league]);
   const mock = useMemo(() => (league ? classMockBoard(league) : []), [league]);
+  const desk = useMemo(() => (league ? buildScoutDesk(league, 4) : null), [league]);
 
   useEffect(() => {
     if (!board.length) {
@@ -234,15 +235,20 @@ export function GmDraftNight() {
         </div>
       ) : null}
 
-      {yourTurn ? <section className="rounded-xl border border-border bg-card px-4 py-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your quick-pick shortlist</p>
-        <p className="mt-1 text-sm text-muted-foreground">Choose a favorite to inspect, then confirm the pick in the report. Later picks can be worthwhile gambles.</p>
+      {yourTurn && desk ? <section className="rounded-xl border border-border bg-card px-4 py-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{desk.scoutName}&apos;s picks for this moment</p>
+        <p className="mt-1 text-sm text-muted-foreground">Your head scout has a few different ways to use this pick. These are opinions, not revealed ratings.</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
-          {[...new Map<string,GmPlayer>([...board.slice(0, pickNum>=18?2:3), ...(pickNum>=18?sleeperRadar(league,1):[])].map(p=>[p.id,p] as const)).values()].map(player=>{
-            const clue=draftSleeperSignals(player);
+          {[...new Map(desk.boards.flatMap(group=>group.picks.slice(0,2).map(pick=>[pick.player.id,{pick,group}] as const))).values()]
+            .sort((a,b)=>{
+              const priority=(id:string)=>id===(pickNum>=25?"sleepers":desk.recommended)?0:id==="ready"?1:2;
+              return priority(a.group.id)-priority(b.group.id);
+            }).slice(0,3).map(({pick,group})=>{
+            const player=pick.player;
             return <button key={player.id} type="button" className={"rounded-lg border px-3 py-3 text-left hover:bg-secondary "+(selected?.id===player.id?"border-foreground/60 bg-secondary/60":"border-border")} onClick={()=>setSelectedId(player.id)}>
-              <span className="block text-sm font-semibold">{displayPlayerName(player)}</span>
-              <span className="mt-1 block text-xs text-muted-foreground">{player.position} · mock #{player.consensusRank??"?"} · {clue.reasons[0]??"Scout for more clues"}</span>
+              <span className="block text-xs font-semibold text-muted-foreground">{group.title}</span>
+              <span className="mt-1 block text-sm font-semibold">{displayPlayerName(player)}</span>
+              <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{player.position} · mock #{player.consensusRank??"?"} · {pick.note}</span>
             </button>;
           })}
         </div>
