@@ -104,7 +104,7 @@ export function GmScoutingFocusBanner() {
               <span className="font-medium text-foreground">Auto scout</span>
               <span className="mt-0.5 block">
                 {scout
-                  ? `Off by default. Opt in and ${scout.name.split(" ")[0]} handles this month and later ones.`
+                  ? `Your scout can handle each month automatically; turn this off when you want to choose the focus yourself.`
                   : "Hire a scout on Staff to enable."}
               </span>
             </span>
@@ -299,7 +299,7 @@ export function GmScoutingFocusBanner() {
             onClick={() => autoScoutingFocus()}
           >
             {scout
-              ? `Let ${scout.name.split(" ")[0]} decide once`
+              ? "Use scout recommendations and continue"
               : "Hire a scout first"}
           </Button>
           <Button size="sm" variant="outline" onClick={() => skipScoutingFocus()}>
