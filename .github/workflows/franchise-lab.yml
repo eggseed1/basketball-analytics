@@ -42,6 +42,7 @@ jobs:
       - run: npm run test:franchise-saves
       - run: npm run test:franchise-draft
       - run: npm run test:franchise-draft-accessibility
+      - run: npm run test:franchise-scout-desk
       - run: npm run test:franchise-lab
       - run: npm run test:franchise-systems
       - uses: actions/upload-artifact@v4
