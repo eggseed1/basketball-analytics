@@ -110,7 +110,31 @@ export const getPlayerSeasonCached = cache(
       runtimeTimeoutMs(6_000, 3_000),
       null as PlayerSeason | null
     );
-    return result.value;
+    const row = result.value;
+    const current = canonicalSeasonFromStartYear(currentNbaStartYear());
+    if (
+      !row ||
+      row.season !== current ||
+      season !== current ||
+      (statsSeason && statsSeason !== season) ||
+      row.gamesPlayed <= 0
+    ) return row;
+
+    // The core player stat cards and the career table must not disagree about
+    // 2026-27 GP when the provider's cached ESPN career trails nightly logs.
+    const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+    if (!identity?.espnId) return row;
+    const { refreshCurrentCareerFromEspn } = await import(
+      "@/data/queries/refresh-current-career"
+    );
+    const fresh = await refreshCurrentCareerFromEspn(
+      [row], identity.espnId, identity.displayName
+    );
+    return fresh.find((candidate) => candidate.teamId === "TOT") ??
+      fresh.reduce((best, candidate) =>
+        candidate.gamesPlayed > best.gamesPlayed ? candidate : best,
+        row
+      );
   }
 );
 
