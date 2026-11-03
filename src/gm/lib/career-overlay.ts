@@ -111,10 +111,13 @@ export function overlaySimCareerSeasons(
 
   if (player.priorLine && player.priorLine.gp > 0) {
     const priorYear = endYearFromSeasonLabel(player.priorLine.season);
-    if (priorYear != null && priorYear !== league.season) {
+    // The archived season is authoritative: unlike priorLine it records
+    // the team at the time. A subsequent trade must not relabel that season
+    // with the player's present-day team.
+    if (priorYear != null && priorYear !== league.season && !overlays.has(priorYear)) {
       overlays.set(
         priorYear,
-        lineToCareerRow(player.priorLine, priorYear, player.teamId)
+        lineToCareerRow(player.priorLine, priorYear, player.priorLine.team)
       );
     }
   }
