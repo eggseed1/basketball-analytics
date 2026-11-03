@@ -8,6 +8,7 @@ on:
       - 'scripts/audit-gm-production-standings.ts'
       - 'src/gm/engine/progression.ts'
       - 'src/gm/engine/pace.ts'
+      - 'src/gm/engine/simulate.ts'
       - '.github/workflows/franchise-production-standings.yml'
 
 permissions:
