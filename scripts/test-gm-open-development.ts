@@ -68,6 +68,8 @@ assert.deepEqual(advanceDynamicProgression(rookie, {
 }), grown, "season growth is stable for the same player and checkpoint");
 assert.ok((grown.sheet?.attributes.threePoint ?? 0) > (rookie.sheet?.attributes.threePoint ?? 0),
   "shooting focus must improve an actual basketball skill");
+assert.ok(grown.sheet?.developmentReport?.gains.some(row => row.startsWith("Three +")),
+  "the development report must make the user's chosen skill gains visible");
 assert.deepEqual(grown.developmentProfile, strong,
   "hidden player profile persists through individual skill progression");
 assert.ok(simulationRates(grown).threeShare > simulationRates(rookie).threeShare,
@@ -82,6 +84,9 @@ assert.ok(defenseSkills.some(key => defended.sheet!.attributes[key] > defender.s
   "defensive development must improve position-appropriate defensive skills");
 assert.equal(defended.sheet?.attributes.threePoint, defender.sheet?.attributes.threePoint,
   "focused defensive work does not silently grant the same shooting gains");
+assert.ok(defended.sheet?.developmentReport?.gains.some(row =>
+  /^(Perimeter|Interior|Block|Steal|Agility) \+/.test(row)),
+  "defensive training should report the actual affected defensive skill");
 const shootingOffShare = (grown.ratings.offense - rookie.ratings.offense) /
   Math.max(0.01, grown.ratings.impact - rookie.ratings.impact);
 const defenseOffShare = (defended.ratings.offense - defender.ratings.offense) /
