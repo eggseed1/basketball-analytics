@@ -305,6 +305,7 @@ export function verifiedNbaPrimary(player: GmPlayer): GmPosition | null {
 
 /** Apply five-spot listing + sibling secondary. Rebuilds overall when primary moves. */
 export function withListedPositions(player: GmPlayer): GmPlayer {
+  if (player.manualPosition && player.listedPosition) return { ...player, position: player.listedPosition };
   const verified = verifiedNbaPrimary(player);
   if (verified && player.position !== verified) {
     const moved = reassignPosition(player, verified);
