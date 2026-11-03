@@ -66,6 +66,13 @@ async function main(){
   }
   mkdirSync("artifacts",{recursive:true});
   writeFileSync("artifacts/franchise-production-standings.json",JSON.stringify({method:"Real stepDay progression with internally generated injuries, static 2025-26 real-season ending rosters",runs:rows},null,2));
+  const averageRank=mean(rows.map(r=>r.rankCorrelation));
+  const averageMae=mean(rows.map(r=>r.mae));
+  const averageWinSd=mean(rows.map(r=>r.sd));
+  assert.ok(averageRank>=0.70,"real Franchise Lab season standings ranking regressed");
+  assert.ok(averageMae<=8,"real Franchise Lab season team-win error regressed");
+  assert.ok(averageWinSd>=9.5&&averageWinSd<=16,
+    "real Franchise Lab season parity outside NBA-like band");
   const summary=rows.map(x=>"| "+x.seed+" | "+x.rankCorrelation+" | "+x.mae+" | "+x.realSd+" | "+x.sd+" | "+x.minWins+" | "+x.maxWins+" | "+x.injuryEvents+" | "+x.histGp.toFixed(1)+" | "+x.simulatedGp.toFixed(1)+" |").join("\n");
   writeFileSync("artifacts/franchise-production-standings.md","# Full Franchise Lab season simulation\n\n| Seed | Rank correlation | Win MAE | Real wins SD | Sim wins SD | Fewest wins | Most wins | Injury events | Historical GP | Simulated GP |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n"+summary+"\n");
 }
