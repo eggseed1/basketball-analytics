@@ -11,6 +11,7 @@ import { DEFAULT_SETTINGS } from "@/gm/types";
 import { FRANCHISES, emptyStarters } from "@/gm/seed/franchises";
 import { createRng, pick, randInt, uid, clamp } from "@/gm/engine/rng";
 import { generateSchedule } from "@/gm/engine/schedule";
+import { drawCupGroups } from "@/gm/engine/cup";
 import { emptyStandings } from "@/gm/engine/standings";
 import { applyBalancedRotations } from "@/gm/engine/coaching";
 import { coachForTeam, openCoachMarket, trainerForLevel } from "@/gm/seed/coaches";
@@ -234,6 +235,13 @@ export function createGeneratedLeague(options?: {
     updatedAt: new Date().toISOString(),
   };
 
-  state.schedule = generateSchedule(state.teams, season, seed);
+  if (season > 2027) {
+    // Standalone generated leagues need the same Cup groups used when their
+    // new opponent matrix is built, not the previous year's static groups.
+    state.cupGroups = drawCupGroups(state.teams, Object.fromEntries(
+      state.teams.map(team => [team.id, team.ownerGoal === "contend" ? 55 : team.ownerGoal === "retool" ? 41 : 26])
+    ));
+  }
+  state.schedule = generateSchedule(state.teams, season, seed, state.cupGroups);
   return applyBalancedRotations(state);
 }
