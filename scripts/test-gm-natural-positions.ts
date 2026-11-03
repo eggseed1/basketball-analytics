@@ -11,6 +11,7 @@ import {
   withListedPositions,
 } from "../src/gm/engine/lineup";
 import { createRealSeasonLeague } from "../src/gm/seed/create-real-season-league";
+import auditedRoles2026 from "../src/gm/seed/nba-player-position-book-2026.json";
 import type { GmPlayer, GmPosition } from "../src/gm/types";
 
 function stub(
@@ -166,7 +167,7 @@ function bestSpot(player: GmPlayer): GmPosition {
 
 async function realLeagueChecks() {
   const { league } = await createRealSeasonLeague({ userTeamId: "bos" });
-  assert.equal(league.positionBook, 5);
+  assert.equal(league.positionBook, 6);
 
   const expect: Record<string, GmPosition> = {
     "Jayson Tatum": "PF",
@@ -178,9 +179,9 @@ async function realLeagueChecks() {
     "Stephen Curry": "PG",
     "Shai Gilgeous-Alexander": "PG",
     "Anthony Edwards": "SG",
-    "LeBron James": "PF",
+    "LeBron James": "SF",
     "Paolo Banchero": "PF",
-    "Kevin Durant": "PF",
+    "Kevin Durant": "SF",
   };
 
   // Listed position is the contract; "best at" can tie a sibling within 1 OVR.
@@ -190,9 +191,7 @@ async function realLeagueChecks() {
     "Nikola Jokic",
     "Stephen Curry",
     "Anthony Edwards",
-    "LeBron James",
     "Paolo Banchero",
-    "Kevin Durant",
   ]);
 
   for (const [name, want] of Object.entries(expect)) {
@@ -211,6 +210,26 @@ async function realLeagueChecks() {
       );
     }
   }
+
+  // Cross-source player-ID book covers every actual 2026-27 NBA player.
+  const realPlayers = league.players.filter(p => p.nbaPlayerId &&
+    p.realRole?.season === 2027 && !league.draftPool.includes(p.id));
+  const roleBook = auditedRoles2026 as Record<string, {
+    position: GmPosition; secondaryPosition: GmPosition | null;
+  }>;
+  assert.ok(realPlayers.length >= 500, "full real NBA roster was not loaded");
+  for(const player of realPlayers) {
+    const role = roleBook[player.nbaPlayerId!];
+    assert.ok(role, "missing NBA position source: " + player.name);
+    assert.equal(player.position,role.position,"primary position: "+player.name);
+    assert.equal(player.secondaryPosition??null,role.secondaryPosition??null,"secondary role: "+player.name);
+  }
+  const boston=realPlayers.filter(p=>p.teamId==="bos");
+  assert.ok(boston.filter(p=>p.position==="PG").length>=2,"Celtics PG listing missing");
+  assert.ok(boston.filter(p=>p.position==="PF").length>=2,"Celtics PF listing missing");
+  const white=realPlayers.find(p=>p.name==="Derrick White")!;
+  assert.equal(withListedPositions({...white,position:"SF",listedPosition:"SF",manualPosition:true}).position,"SF",
+    "user manual positions must not be overwritten");
 
   // Guards under 6'4" should not list as forwards.
   const shortForwards = league.players.filter(

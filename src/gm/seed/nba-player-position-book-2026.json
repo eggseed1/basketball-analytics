@@ -1,0 +1,3649 @@
+{
+  "2544": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "LeBron James",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "6583": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Anthony Davis",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "201142": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Kevin Durant",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "201143": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Al Horford",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "201144": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Mike Conley",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "201572": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Brook Lopez",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "201599": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "DeAndre Jordan",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "201935": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "James Harden",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "201939": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Stephen Curry",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "201942": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "DeMar DeRozan",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "201950": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jrue Holiday",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "202331": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Paul George",
+    "source": "reviewed NBA primary role (both historical and current usage)",
+    "confidence": "high"
+  },
+  "202681": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Kyrie Irving",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "202691": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Klay Thompson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "202695": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Kawhi Leonard",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "202696": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Nikola Vucevic",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "202699": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Tobias Harris",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "202710": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jimmy Butler III",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203078": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Bradley Beal",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "203081": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Damian Lillard",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "203083": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Andre Drummond",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203084": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Harrison Barnes",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203110": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Draymond Green",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203114": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Khris Middleton",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "203468": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "CJ McCollum",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203484": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Kentavious Caldwell-Pope",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203497": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Rudy Gobert",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203500": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Steven Adams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203501": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Tim Hardaway Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203507": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Giannis Antetokounmpo",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203897": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Zach LaVine",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203903": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Jordan Clarkson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203924": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Jerami Grant",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203932": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Aaron Gordon",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203944": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Julius Randle",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203952": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Andrew Wiggins",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203954": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Joel Embiid",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203991": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Clint Capela",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203994": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Jusuf Nurkic",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "203999": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Nikola Jokic",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "204001": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Kristaps Porzingis",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "204456": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "T.J. McConnell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626145": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Tyus Jones",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626157": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Karl-Anthony Towns",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626162": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Kelly Oubre Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626164": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Devin Booker",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626167": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Myles Turner",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626168": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Trey Lyles",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1626171": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Bobby Portis",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626172": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Kevon Looney",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626181": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Norman Powell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626204": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Larry Nance Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1626209": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Mario Hezonja",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1626220": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Royce O'Neale",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627734": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Domantas Sabonis",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627739": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Kris Dunn",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627741": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Buddy Hield",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627742": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Brandon Ingram",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627749": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Dejounte Murray",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627750": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Jamal Murray",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627751": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Jakob Poeltl",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627752": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Taurean Prince",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627759": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jaylen Brown",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627780": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Gary Payton II",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627783": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Pascal Siakam",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627826": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Ivica Zubac",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627832": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Fred VanVleet",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1627884": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Derrick Jones Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1627936": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Alex Caruso",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628368": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "De'Aaron Fox",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628369": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Jayson Tatum",
+    "source": "reviewed NBA primary role (both historical and current usage)",
+    "confidence": "high"
+  },
+  "1628370": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Malik Monk",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628371": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Jonathan Isaac",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628374": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Lauri Markkanen",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628378": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Donovan Mitchell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628379": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Luke Kennard",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628380": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Zach Collins",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1628381": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "John Collins",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628384": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "OG Anunoby",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628386": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Jarrett Allen",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628389": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Bam Adebayo",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628392": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Isaiah Hartenstein",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628396": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Tony Bradley",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628398": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Kyle Kuzma",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628401": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Derrick White",
+    "source": "reviewed NBA primary role (both historical and current usage)",
+    "confidence": "high"
+  },
+  "1628404": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Josh Hart",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628415": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Dillon Brooks",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "1628418": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Thomas Bryant",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628436": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Luke Kornet",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628960": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Grayson Allen",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628969": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Mikal Bridges",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628970": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Miles Bridges",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628973": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Jalen Brunson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628975": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jevon Carter",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628976": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Wendell Carter Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628978": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Donte DiVincenzo",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1628983": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Shai Gilgeous-Alexander",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628991": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Jaren Jackson Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1628997": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Caleb Martin",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629001": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "De'Anthony Melton",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629004": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Svi Mykhailiuk",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629008": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Michael Porter Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629011": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Mitchell Robinson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629012": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Collin Sexton",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629013": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Landry Shamet",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629014": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Anfernee Simons",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629018": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Gary Trent Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629020": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Jarred Vanderbilt",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629021": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Moritz Wagner",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629023": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "P.J. Washington",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629026": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Kenrich Williams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629027": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Trae Young",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629028": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Deandre Ayton",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629029": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Luka Doncic",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629048": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Goga Bitadze",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629057": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Robert Williams III",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629060": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Rui Hachimura",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629111": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Jock Landale",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629130": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Duncan Robinson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629162": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jordan McLaughlin",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629611": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Terance Mann",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629614": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Andrew Nembhard",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629618": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Jalen Pickett",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1629622": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Max Strus",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629627": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Zion Williamson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629628": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "RJ Barrett",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1629630": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Ja Morant",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629632": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Coby White",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629636": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Darius Garland",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629637": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Jaxson Hayes",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629638": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Nickeil Alexander-Walker",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629639": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Tyler Herro",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629640": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Keldon Johnson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629646": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Charles Bassey",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1629651": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Nic Claxton",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629652": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Luguentz Dort",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629655": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Daniel Gafford",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629660": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Ty Jerome",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629661": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Cameron Johnson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629673": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jordan Poole",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629674": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Neemias Queta",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629675": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Naz Reid",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629680": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Matisse Thybulle",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629684": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Grant Williams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629731": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Dean Wade",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1629750": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Javonte Green",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1630162": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Anthony Edwards",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630163": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "LaMelo Ball",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630164": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "James Wiseman",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1630166": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Deni Avdija",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630167": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Obi Toppin",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630168": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Onyeka Okongwu",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630169": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Tyrese Haliburton",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1630170": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Devin Vassell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1630171": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Isaac Okoro",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630172": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Patrick Williams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630173": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Precious Achiuwa",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630174": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Aaron Nesmith",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630178": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Tyrese Maxey",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630180": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Saddiq Bey",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630182": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Josh Green",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630183": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jaden McDaniels",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "1630188": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Jalen Smith",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630191": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Isaiah Stewart",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630192": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Zeke Nnaji",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630193": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Immanuel Quickley",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630194": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Paul Reed",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630198": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Isaiah Joe",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630200": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Tre Jones",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630202": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Payton Pritchard",
+    "source": "reviewed NBA primary role (both historical and current usage)",
+    "confidence": "high"
+  },
+  "1630217": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Desmond Bane",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630224": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Jalen Green",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630228": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Jonathan Kuminga",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630230": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Naji Marshall",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630241": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Sam Merrill",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630245": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Ayo Dosunmu",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630249": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Vit Krejci",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630256": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jae'Sean Tate",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630264": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Anthony Gill",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630311": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Pat Spencer",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630314": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Brandon Williams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630529": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Herbert Jones",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630530": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Trey Murphy III",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630532": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Franz Wagner",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630533": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Ziaire Williams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630538": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Bones Hyland",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630540": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Miles McBride",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630541": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Moses Moody",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630543": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Isaiah Jackson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630544": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Tre Mann",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630545": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Terrence Shannon Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630549": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Day'Ron Sharpe",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630551": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Justin Champagnie",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630552": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Jalen Johnson",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "1630557": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Corey Kispert",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630558": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Davion Mitchell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630559": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Austin Reaves",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630567": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Scottie Barnes",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630568": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Luka Garza",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630570": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Trendon Watford",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630572": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Sandro Mamukelashvili",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630573": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Sam Hauser",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630574": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Ariel Hukporti",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630577": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Julian Champagnie",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630578": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Alperen Sengun",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630579": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Jericho Sims",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630581": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Josh Giddey",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630583": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Santi Aldama",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630590": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Scotty Pippen Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630591": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Jalen Suggs",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630592": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Jalen Wilson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630595": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Cade Cunningham",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630596": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Evan Mobley",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630598": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Aaron Wiggins",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630611": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Gui Santos",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630619": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Moussa Cisse",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630631": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Jose Alvarado",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630643": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Jay Huff",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630658": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Colin Castleton",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1630692": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jordan Goodwin",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630695": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Micah Potter",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630696": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Dru Smith",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630700": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Dyson Daniels",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630702": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Jaden Hardy",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1630703": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Scoot Henderson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631094": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Paolo Banchero",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631095": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Jabari Smith Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631096": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Chet Holmgren",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631097": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Bennedict Mathurin",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631099": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Keegan Murray",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631101": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Shaedon Sharpe",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631104": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Blake Wesley",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631105": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Jalen Duren",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631106": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Tari Eason",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631107": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Nikola Jovic",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631108": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Max Christie",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631109": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Mark Williams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631114": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jalen Williams",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1631117": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Walker Kessler",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1631119": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Jaylin Williams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631121": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Bryce McGowens",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631123": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jamaree Bouyea",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631124": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Julian Strawther",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631127": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Harrison Ingram",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1631128": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Christian Braun",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631131": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Oscar Tshiebwe",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631133": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Jabari Walker",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631157": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Ryan Rollins",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631159": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Leonard Miller",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631165": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Keon Ellis",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631166": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Drew Timme",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631169": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Josh Minott",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631170": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jaime Jaquez Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631172": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Ousmane Dieng",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631199": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Ron Harper Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631200": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Kris Murray",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631204": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Marcus Sasser",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631212": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Peyton Watson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631217": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Moussa Diabate",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631218": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Trayce Jackson-Davis",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631221": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Collin Gillespie",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631222": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Jake LaRavia",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631230": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Dominick Barlow",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631243": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Mouhamed Gueye",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631245": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Quenton Jackson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631248": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Baylor Scheierman",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631250": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Pete Nance",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631255": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Karlo Matkovic",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631260": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "AJ Green",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631288": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Jamal Cain",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631321": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Sidy Cissoko",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631323": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Simone Fontecchio",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631342": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Daeqwon Plowden",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1631457": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Alex Morales",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1641705": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Victor Wembanyama",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641706": {
+    "position": "SF",
+    "secondaryPosition": null,
+    "name": "Brandon Miller",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641707": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Taylor Hendricks",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "1641708": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Amen Thompson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641709": {
+    "position": "SF",
+    "secondaryPosition": null,
+    "name": "Ausar Thompson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641710": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Anthony Black",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641711": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Gradey Dick",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641712": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Rayan Rupert",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641713": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "GG Jackson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641715": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Cam Whitmore",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641716": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Jarace Walker",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641717": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Cason Wallace",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641718": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Keyonte George",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641722": {
+    "position": "SG",
+    "secondaryPosition": null,
+    "name": "Jordan Hawkins",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641723": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Kobe Bufkin",
+    "source": "2025-26 independent primary listing",
+    "confidence": "medium"
+  },
+  "1641724": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jett Howard",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641725": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Trey Alexander",
+    "source": "2025-26 independent primary listing",
+    "confidence": "medium"
+  },
+  "1641726": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Dereck Lively II",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1641729": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Brice Sensabaugh",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641730": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Noah Clowney",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641731": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Bilal Coulibaly",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1641737": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Adem Bona",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641738": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Kobe Brown",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641739": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Toumani Camara",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1641740": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Jaylen Clark",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641744": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Zach Edey",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641747": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "DaRon Holmes II",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1641750": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Ryan Kalkbrenner",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641757": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Jordan Miller",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641759": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Dillon Mitchell",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1641761": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Grant Nelson",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1641763": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Julian Phillips",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641764": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Brandin Podziemski",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641765": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Olivier-Maxence Prosper",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641767": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Ben Sheppard",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641771": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jalen Slawson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641774": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Tristan Vukcevic",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641775": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Jordan Walsh",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641778": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Leaky Black",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641783": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Tristan da Silva",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641790": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "PJ Hall",
+    "source": "2025-26 independent primary listing",
+    "confidence": "medium"
+  },
+  "1641796": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Pelle Larsson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641824": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Matas Buzelis",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641842": {
+    "position": "PF",
+    "secondaryPosition": "SG",
+    "name": "Ronald Holland II",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1641854": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Craig Porter Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641869": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Malachi Smith",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641871": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Duop Reath",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1641989": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Elijah Harkless",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642066": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Myron Gardner",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642258": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Zaccharie Risacher",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642259": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Alex Sarr",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642260": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Nikola Topic",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1642261": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Dalton Knecht",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642262": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Cody Williams",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642263": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Reed Sheppard",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642264": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Stephon Castle",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1642266": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Ja'Kobe Walter",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642267": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Bub Carrington",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642268": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Isaiah Collier",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642269": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Devin Carter",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642270": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Donovan Clingan",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642271": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Kyle Filipowski",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642272": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Jared McCain",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642273": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Kyshawn George",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642274": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Yves Missi",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642275": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Tidjane Salaun",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642276": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Kel'el Ware",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642277": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Johnny Furphy",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642278": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Tyler Kolek",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642281": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Jaylon Tyson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642284": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Alex Karaban",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642285": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Cam Spencer",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642345": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Oso Ighodaro",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "1642346": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Ryan Dunn",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642347": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jamal Shead",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642348": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Justin Edwards",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642349": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Ajay Mitchell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642350": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Trevon Brazile",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642352": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Keshad Johnson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642353": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Cam Christie",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642355": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Bronny James",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642357": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "David Jones Garcia",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642359": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Pacome Dadiet",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1642363": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Nique Clifford",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642364": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Jamir Watkins",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642366": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Quinten Post",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "1642367": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Jonathan Mogbo",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642377": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jaylen Wells",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "1642382": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Branden Carlson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642384": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Isaiah Crawford",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642389": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Zyon Pullin",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642394": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Baba Miller",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642400": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Tristan Enaruna",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642402": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Enrique Freeman",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642403": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Isaac Jones",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642404": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Chaz Lanier",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642419": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jamison Battle",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642449": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Tolu Smith",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1642450": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Daniss Jenkins",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642461": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Spencer Jones",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642484": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "RayJ Dennis",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1642502": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Malevy Leons",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642504": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Cormac Ryan",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642843": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Cooper Flagg",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642844": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Dylan Harper",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642845": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "VJ Edgecombe",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642846": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Ace Bailey",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642847": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jeremiah Fears",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642848": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Tre Johnson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642849": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Nolan Traore",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642851": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Kon Knueppel",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1642852": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Derik Queen",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642853": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Rasheer Fleming",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642854": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Asa Newell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642855": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Noa Essengue",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642856": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Egor Demin",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642859": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Jase Richardson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642860": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Will Riley",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642862": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Liam McNeeley",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642863": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Khaman Maluach",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642864": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Hugo Gonzalez",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642865": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Yaxel Lendeborg",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642866": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Joan Beringer",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "1642867": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Collin Murray-Boyles",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642868": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Carter Bryant",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642869": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Noah Penda",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642873": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Amari Williams",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1642874": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Danny Wolf",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642875": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Maxime Raynaud",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642876": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Adou Thiero",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1642877": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Micah Peavy",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1642878": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Tyrese Proctor",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642879": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Ben Saraf",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1642881": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Bogoljub Markovic",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642882": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Julian Reese",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642883": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Sion James",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642884": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Vladislav Goldin",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642885": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Mohamed Diawara",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "1642889": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Labaron Philon Jr.",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642892": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Bennett Stirtz",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642905": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Yang Hansen",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642907": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Cedric Coward",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642911": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Rocco Zikarsky",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642912": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Isaiah Evans",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642914": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Javon Small",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642918": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Alijah Martin",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "1642920": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Kobe Sanders",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642928": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Dylan Cardwell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642942": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Jahmai Mashack",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642949": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Yanic Konan Niederhauser",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642951": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Sean Pedulla",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1642954": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Will Richard",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642962": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Drake Powell",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1642964": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Brooks Barnhizer",
+    "source": "2025-26 independent primary listing",
+    "confidence": "medium"
+  },
+  "1643018": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "LJ Cryer",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1643022": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jaden Akins",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643024": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Chris Manon",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643052": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Chaney Johnson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "1643133": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Lawson Lovering",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643257": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Jayson Kent",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643407": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "AJ Dybantsa",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643408": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Darryn Peterson",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643409": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Cameron Boozer",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643410": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Caleb Wilson",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643411": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Darius Acuff Jr.",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643412": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Kingston Flemings",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643413": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Keaton Wagler",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643414": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Mikel Brown Jr.",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643415": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Brayden Burries",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643416": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Chris Cenac Jr.",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643417": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Nate Ament",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643418": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Cameron Carr",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643419": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Hannes Steinbach",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643509": {
+    "position": "SG",
+    "secondaryPosition": null,
+    "name": "Meleek Thomas",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643510": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Karim Lopez",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643512": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Allen Graves",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643515": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Christian Anderson",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643516": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Morez Johnson Jr.",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643517": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Dailyn Swain",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643520": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Koa Peat",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643530": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Aday Mara",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643536": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Ebuka Okorie",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643538": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Joshua Jefferson",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643542": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Tarris Reed Jr.",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643544": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Zuby Ejiofor",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643547": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Sergio de Larrea",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643551": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Ja'Kobi Gillespie",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643552": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Braden Smith",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643553": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Ryan Conwell",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643558": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jaden Bradley",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643567": {
+    "position": "SG",
+    "secondaryPosition": null,
+    "name": "Emanuel Sharp",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643568": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Nick Martinelli",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643570": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Bruce Thornton",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643576": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Maliq Brown",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643588": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Tobi Lawal",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643590": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Felix Okpara",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643591": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Tobe Awaka",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643624": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Bryce Hopkins",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643633": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Graham Ike",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643637": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Jaylin Sellers",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643717": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Josh Dix",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643721": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Carson Cooper",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "1643813": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Alpha Diallo",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "2578185": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Dorian Finney-Smith",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "2990969": {
+    "position": "PF",
+    "secondaryPosition": "SF",
+    "name": "Georges Niang",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "2990992": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Marcus Smart",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "2991043": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Caris LeVert",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "2993874": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Kyle Anderson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "3032979": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Dennis Schroder",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "3037789": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Bogdan Bogdanovic",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "3904625": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Tacko Fall",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "3907387": {
+    "position": "PG",
+    "secondaryPosition": "PF",
+    "name": "Ben Simmons",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4065663": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Josh Okogie",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "4065732": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "De'Andre Hunter",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "4066372": {
+    "position": "SF",
+    "secondaryPosition": "SG",
+    "name": "Kevin Huerter",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "4277848": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Marvin Bagley III",
+    "source": "2025-26 dominant on-court role",
+    "confidence": "high"
+  },
+  "4277919": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Mo Bamba",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4278076": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Nick Richards",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "4397014": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Quentin Grimes",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "4432187": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Reece Beekman",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4432586": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Nate Bittle",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4433144": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "Caleb Love",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "4433599": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Arthur Kaluma",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4433629": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Ryan Nembhard",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "medium"
+  },
+  "4585618": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Keshon Gilbert",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4593043": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "John Tonje",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4683860": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Quadir Copeland",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4684269": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Kylan Boswell",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4697268": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Kam Jones",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "4703115": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Jaron Pierre Jr.",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4706557": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Chris Youngblood",
+    "source": "2025-26 split on-court role corroborated by 2026-27 ESPN depth",
+    "confidence": "high"
+  },
+  "4712862": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Malik Dia",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4837356": {
+    "position": "PG",
+    "secondaryPosition": null,
+    "name": "Tre Donaldson",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4838721": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Tyler Nickel",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "4896372": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Walter Clayton Jr.",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "5037878": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Ugonna Onyenso",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5061603": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Thomas Sorber",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5101845": {
+    "position": "C",
+    "secondaryPosition": "PF",
+    "name": "Jayden Quaintance",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5105571": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Henri Veesaar",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5105626": {
+    "position": "PF",
+    "secondaryPosition": null,
+    "name": "Tyler Bilodeau",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5106261": {
+    "position": "C",
+    "secondaryPosition": null,
+    "name": "Ernest Udeh Jr.",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5107251": {
+    "position": "PF",
+    "secondaryPosition": "C",
+    "name": "Izaiyah Nelson",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5114350": {
+    "position": "SF",
+    "secondaryPosition": null,
+    "name": "AK Okereke",
+    "source": "current roster listing / physical fallback",
+    "confidence": "low"
+  },
+  "5148538": {
+    "position": "SG",
+    "secondaryPosition": "SF",
+    "name": "Tarik Biberovic",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5170947": {
+    "position": "SG",
+    "secondaryPosition": "PG",
+    "name": "AJ Johnson",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  },
+  "5177362": {
+    "position": "SF",
+    "secondaryPosition": "PF",
+    "name": "Riley Minix",
+    "source": "current ESPN depth chart",
+    "confidence": "medium"
+  },
+  "5214640": {
+    "position": "PG",
+    "secondaryPosition": "SG",
+    "name": "Kasparas Jakucionis",
+    "source": "2025-26 independent primary listing supported by season roles",
+    "confidence": "high"
+  }
+}

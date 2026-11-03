@@ -1,3 +1,4 @@
+import auditedRoles2026 from "@/gm/seed/nba-player-position-book-2026.json";
 import type { GmPlayer, GmPosition, GmTeam } from "@/gm/types";
 import {
   overallFromAttributes,
@@ -91,7 +92,7 @@ export function inferredSecondary(player: GmPlayer): GmPosition | null {
 }
 
 /** Bump when natural-position rules change so saves re-list. */
-export const POSITION_BOOK_VERSION = 5;
+export const POSITION_BOOK_VERSION = 6;
 
 function heightBell(height: number, peak: number, spread: number): number {
   const z = (height - peak) / spread;
@@ -306,12 +307,26 @@ export function verifiedNbaPrimary(player: GmPlayer): GmPosition | null {
 /** Apply five-spot listing + sibling secondary. Rebuilds overall when primary moves. */
 export function withListedPositions(player: GmPlayer): GmPlayer {
   if (player.manualPosition && player.listedPosition) return { ...player, position: player.listedPosition };
-  const verified = verifiedNbaPrimary(player);
-  if (verified && player.position !== verified) {
-    const moved = reassignPosition(player, verified);
-    return { ...moved, listedPosition: verified, secondaryPosition: siblingPosition(verified) };
+  // A primary position is the player's verified role, not the five-man
+  // lineup seat or an ESPN G/F height guess. Never apply this 2026-27 book
+  // to a different historical season or a fictional draft prospect.
+  const sourceRole = player.nbaPlayerId && player.realRole?.season === 2027
+    ? (auditedRoles2026 as Record<string, {
+        position: GmPosition;
+        secondaryPosition: GmPosition | null;
+      }>)[player.nbaPlayerId]
+    : undefined;
+  const verified = verifiedNbaPrimary(player) ?? sourceRole?.position ?? null;
+  if (verified) {
+    const secondary = sourceRole
+      ? sourceRole.secondaryPosition === verified ? null : sourceRole.secondaryPosition
+      : player.secondaryPosition ?? siblingPosition(verified);
+    if (player.position !== verified) {
+      const moved = reassignPosition(player, verified);
+      return { ...moved, listedPosition: verified, secondaryPosition: secondary };
+    }
+    return { ...player, listedPosition: verified, secondaryPosition: secondary };
   }
-  if (verified) return { ...player, listedPosition: verified, secondaryPosition: player.secondaryPosition ?? siblingPosition(verified) };
   if (player.listedPosition) return { ...player, position: player.listedPosition, secondaryPosition: player.secondaryPosition ?? siblingPosition(player.listedPosition) };
   const listed = classifyListedPosition(player);
   if (
