@@ -117,7 +117,8 @@ function firstSeasons(
     if (!traded) seasons.add(pick.season);
   }
   for (const pick of received) {
-    if (pick.round === 1) seasons.add(pick.season);
+    // Incoming lottery-protected picks may not convey, either.
+    if (pick.round === 1 && !(pick.protectionTopN ?? 0)) seasons.add(pick.season);
   }
   return seasons;
 }
