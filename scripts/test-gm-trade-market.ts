@@ -111,6 +111,16 @@ next = {
 const second = advanceTradeMarket(next);
 assert.equal(second.tradeMarket?.lastCpuDealWindow, 1);
 assert.ok(second.tradeLog.length - first.tradeLog.length <= 1);
+const resumedLegacy = advanceTradeMarket({
+  ...league, day: scheduleWindows[2]! + 2, tradeMarket: undefined,
+});
+assert.equal(resumedLegacy.tradeMarket?.lastCpuDealWindow, 2,
+  "loading an old midseason save cannot replay every earlier CPU window");
+const resumedAgain = advanceTradeMarket({
+  ...resumedLegacy, day: resumedLegacy.day + 1,
+});
+assert.equal(resumedAgain.tradeLog.length, resumedLegacy.tradeLog.length,
+  "a restored league should not run a burst of delayed trades");
 const closed = advanceTradeMarket({
   ...second, day: deadline, tradeDeadlinePassed: true,
 });
