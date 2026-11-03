@@ -46,6 +46,7 @@ jobs:
       - run: npm run test:franchise-badges
       - run: npm run test:franchise-development
       - run: npm run test:franchise-dynamic-progression
+      - run: npx tsx scripts/test-gm-open-development.ts
       - run: npm run test:franchise-calendar
       - run: npm run test:franchise-flow
       - name: Six-season free-agency offer and acceptance audit
