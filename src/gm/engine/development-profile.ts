@@ -108,8 +108,17 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
   const disposition = profile.learning *
     (0.74 + (profile.aptitudes[focus] ?? mean(profile.aptitudes.creation, profile.aptitudes.shooting)) * 0.26) *
     (0.82 + profile.adaptability * 0.18);
+  // Exceptional learners need a *chance* to cross 90, not just to join the
+  // much larger 85-89 crowd. This selectively relieves high-OVR friction
+  // using the same stable, persisted learning profile; ordinary players keep
+  // strong diminishing returns. No draft slot or fixed ceiling is consulted.
+  const exceptionalResponse = clamp((profile.learning - 1.12) * 5.5, 0, 1) *
+    clamp((profile.adaptability - 0.75) * 2, 0.5, 1);
+  const lateSkillRelief = overall < 77 ? 1
+    : 1 + exceptionalResponse * (overall < 82 ? 0.28
+      : overall < 86 ? 0.75 : overall < 90 ? 1.65 : 2.2);
   return clamp(
-    disposition * (1 + profile.discovery) * ovrDrag * skillDrag * newSkillTax,
+    disposition * (1 + profile.discovery) * ovrDrag * lateSkillRelief * skillDrag * newSkillTax,
     0.035, 1.65
   );
 }
