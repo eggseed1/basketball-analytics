@@ -5,9 +5,8 @@
  */
 import type { GmFaOffer, GmLeagueState, GmPlayer } from "@/gm/types";
 import { evaluateSigning, exceptionAmounts, maxSalaryForAge } from "@/gm/engine/cap";
-import { askingSalary, askingYears } from "@/gm/engine/free-agency-ask";
+import { askingSalary, askingYears, minimumCredibleSalaryRatio } from "@/gm/engine/free-agency-ask";
 import { evaluateOfferUtility, agentFeedback } from "@/gm/engine/fa-utility";
-import { overallOf } from "@/gm/engine/lineup";
 
 const round = (value: number) => Math.round(value * 100) / 100;
 const clamp = (value: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, value));
@@ -109,8 +108,7 @@ export function projectFreeAgentResponse(
   const ask = askingSalary(player, league);
   const askYears = askingYears(player, league);
   const salaryRatio = salaryM / Math.max(0.5, ask);
-  const ovr = overallOf(player);
-  const floor = ovr >= 86 ? .80 : ovr >= 83 ? .67 : ovr >= 80 ? .54 : ovr >= 78 ? .42 : 0;
+  const floor = minimumCredibleSalaryRatio(player);
   // Mirrors the NBA-style agent reservation and competitor comparisons.
   // Actual offers still go through userOfferFreeAgent / resolvePlayers.
   let chance = clamp(46 + (salaryRatio - 1) * 95 + (offered.total - 46) * .55 +
