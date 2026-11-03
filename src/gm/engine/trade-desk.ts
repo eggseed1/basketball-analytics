@@ -40,6 +40,8 @@ export function tradeDeskRead(
     return { ...base, status: "incomplete", headline: "Build a two-sided offer",
       detail: "Choose at least one asset from each team, then review their response." };
   }
+  if (league.tradeDeadlinePassed) return { ...base, status: "rules", headline: "Trading is closed",
+    detail: "The trade deadline has passed. You can make another deal when trading reopens." };
   const verdict = evaluateTrade(league, league.userTeamId, partnerId, youSend, youReceive);
   if (verdict.ok) {
     return { ...base, status: "ready", headline: "They would accept this deal",
