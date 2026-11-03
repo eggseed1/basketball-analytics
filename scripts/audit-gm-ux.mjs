@@ -398,7 +398,13 @@ try {
     await load("camp", "/gm/development");
     const campSave = JSON.parse(readFileSync(`${dir}/camp.json`, "utf8")).league;
     const campers = campSave.players.filter(p => p.teamId === campSave.userTeamId && p.contract && !p.injury).slice(0, 2);
-    await page.locator("summary").filter({ hasText: "Training camp" }).click();
+    // The current phase opens camp automatically; only expand when closed.
+    const campSection = page.locator("details").filter({
+      has: page.locator("summary").filter({ hasText: "Training camp" })
+    }).first();
+    if (!(await campSection.evaluate(el => el.open))) {
+      await campSection.locator("summary").click();
+    }
     for (const camper of campers) await page.getByLabel(`Camp focus for ${camper.name}`, { exact: true }).selectOption("shooting");
     await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
     const campDialog = page.getByRole("dialog", { name: "Confirm training camp", exact: true });
