@@ -78,6 +78,8 @@ const beforeProtected = { ...bos, draftPicks: bos.draftPicks.map(p =>
   p.id === firsts[0]!.id ? { ...p, protectionTopN: 4 } : p) };
 assert.equal(stepienViolation(beforeProtected, [both[0]!, both[1]!], [], league.season), true,
   "protected outgoing firsts must not be counted as guaranteed retained picks");
+assert.equal(stepienViolation(bos, both, [{ ...firsts[0]!, protectionTopN: 4 }], league.season), true,
+  "an incoming protected first is not guaranteed Stepien coverage");
 const emptyRead = tradeDeskRead(league, "nyk", [], []);
 assert.equal(emptyRead.status, "incomplete");
 assert.match(emptyRead.need, /pick|need|help|upgrade/i);
