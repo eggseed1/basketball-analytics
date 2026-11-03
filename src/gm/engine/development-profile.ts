@@ -9,7 +9,7 @@
  * This is intentionally not shown to GMs or scouting. Observed development
  * is evidence; the hidden profile is not a promised outcome.
  */
-import type { GmAttributes, GmDevelopmentProfile, GmPlayer } from "@/gm/types";
+import type { GmAttributes, GmDevelopmentProfile, GmLeagueState, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 
 export type DevelopmentSkill = keyof GmDevelopmentProfile["aptitudes"];
@@ -69,12 +69,57 @@ export function developmentProfileOf(player: GmPlayer): GmDevelopmentProfile {
   };
 }
 
-export function developmentFocusSkill(player: GmPlayer): DevelopmentSkill {
+/**
+ * CPU clubs coach toward a plausible role AND the needs of their current
+ * rotation. This reads only visible skills and roster depth, never hidden DNA.
+ * The shortlist prevents small guards becoming rebounders or bigs learning
+ * point-guard handles just because the club has a positional hole.
+ *
+ * Re-evaluated at progression checkpoints, so trades and roster construction
+ * matter without storing a new preference or mutating human GM selections.
+ */
+export function cpuDevelopmentFocus(player: GmPlayer, league: GmLeagueState): DevelopmentSkill {
+  const candidates: Record<GmPlayer["position"], DevelopmentSkill[]> = {
+    PG: ["creation", "shooting", "finishing", "defense"],
+    SG: ["shooting", "creation", "finishing", "defense"],
+    SF: ["shooting", "defense", "creation", "finishing"],
+    PF: ["defense", "rebounding", "finishing", "shooting"],
+    C: ["defense", "rebounding", "finishing", "shooting"],
+  };
+  const choices = candidates[player.position];
+  const teammates = league.players
+    .filter(other => other.teamId === player.teamId && other.id !== player.id && other.sheet?.attributes)
+    .sort((a, b) => (b.sheet?.overall ?? 0) - (a.sheet?.overall ?? 0))
+    .slice(0, 8);
+  const skills = player.sheet?.attributes;
+  if (!skills) return choices[0]!;
+  let best = choices[0]!;
+  let bestScore = -Infinity;
+  for (const [index, focus] of choices.entries()) {
+    const keys = developmentSkillKeys(player.position, focus);
+    const strength = mean(...keys.map(key => skills[key]));
+    const peers = teammates.length
+      ? mean(...teammates.map(other => mean(...keys.map(key => other.sheet!.attributes[key]))))
+      : 70;
+    // Grow real strengths rather than mechanically fixing every weakness.
+    // A weak rotation in this skill makes a promising specialist more valuable.
+    const role = [4, 3, 1.5, 0.5][index]!;
+    const score = role + clamp((strength - 67) * 0.2, -3.5, 5) +
+      clamp((70 - peers) * 0.29, -5.5, 6) +
+      (stableHash(`cpu-focus:${player.id}:${league.season}:${focus}`) % 100) / 500;
+    if (score > bestScore) { best = focus; bestScore = score; }
+  }
+  return best;
+}
+
+export function developmentFocusSkill(player: GmPlayer, league?: GmLeagueState): DevelopmentSkill {
   if (player.developmentFocus && player.developmentFocus !== "balanced") {
     return player.developmentFocus;
   }
-  // Balanced development reinforces a role's natural fundamentals instead
-  // of randomly turning a small guard into a rebounder or rim protector.
+  if (league && player.draftModel === 2 && player.teamId && player.teamId !== league.userTeamId) {
+    return cpuDevelopmentFocus(player, league);
+  }
+  // Balanced human plans and legacy saves retain their familiar defaults.
   if (player.position === "C" || player.position === "PF") return "defense";
   if (player.position === "PG") return "creation";
   return "shooting";
@@ -97,9 +142,9 @@ export function developmentSkillKeys(
   }
 }
 
-export function softGrowthFactor(player: GmPlayer, overall: number): number {
+export function softGrowthFactor(player: GmPlayer, overall: number, league?: GmLeagueState): number {
   const profile = developmentProfileOf(player);
-  const focus = developmentFocusSkill(player);
+  const focus = developmentFocusSkill(player, league);
   const selected = developmentSkillKeys(player.position, focus);
   const attrs = player.sheet?.attributes;
   const skill = attrs ? mean(...selected.map(key => attrs[key])) : 70;
