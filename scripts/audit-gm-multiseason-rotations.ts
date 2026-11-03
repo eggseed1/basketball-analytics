@@ -126,7 +126,7 @@ for(const season of seasons){
           const d=overallOf(a)-overallOf(b);
           if(Math.abs(d)<8)continue;
           total.rankPairs++;
-          const gap=(plan.minutes[a.id]??0)-(plan.minutes[b.id]??0);
+          const gap=(lineById.get(a.id)?.minutes??0)-(lineById.get(b.id)?.minutes??0);
           if(d*gap<0)total.rankInversions++;
         }
         const side=box.homeTeamId===teamId?"home":"away";
@@ -169,7 +169,7 @@ for(const season of seasons){
 }
 const aggregate=blank("ALL",0);for(const row of results)add(aggregate,row);
 const report={
-  methodology:"Three independent seeded full regular seasons (not three consecutive franchise rollovers); seeded injuries injected into a sample of home games. Rank inversion compares planned minutes among rotation players with >=8 OVR separation. Overtime excluded from minute-error denominator. Substitution count is changed on-court players at each two-minute transition.",
+  methodology:"Three independent seeded full regular seasons (not three consecutive franchise rollovers); seeded injuries injected into a sample of home games. Rank inversion compares ACTUAL box-score minutes among rotation players with >=8 OVR separation. Overtime excluded from minute-error denominator. Substitution count is changed on-court players at each two-minute transition.",
   seasons,scheduledGames:3690,simulatedGames:totalGames,failedGames,
   aggregate:summary(aggregate),
   perSeason:seasons.map(season=>{const v=blank("ALL",season);for(const r of results.filter(x=>x.season===season))add(v,r);return summary(v);}),
