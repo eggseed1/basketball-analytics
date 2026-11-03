@@ -680,15 +680,24 @@ function TradeBody() {
             onToggle={(player) =>
               setGive(toggleAsset(give, { type: "player", id: player.id }))
             }
-            statusOf={(player) =>
-              (team.untouchables ?? []).includes(player.id)
-                ? "untouchable"
-                : (team.tradeBlock ?? []).includes(player.id)
-                  ? "block"
-                  : "open"
-            }
-            onStatus={(player, status) => setTradeStatus(player.id, status)}
           />
+          <details className="rounded-xl border border-border p-3">
+            <summary className="cursor-pointer text-sm font-semibold">Trade block and untouchables</summary>
+            <div className="mt-3 max-h-56 divide-y divide-border overflow-y-auto">
+              {myPlayers.map(player => <div key={player.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <span className="min-w-0 truncate">{player.name}</span>
+                <select aria-label={player.name + " trade status"}
+                  className="max-w-32 rounded-md border border-border bg-background px-2 py-1 text-xs"
+                  value={(team.untouchables ?? []).includes(player.id) ? "untouchable" :
+                    (team.tradeBlock ?? []).includes(player.id) ? "block" : "open"}
+                  onChange={event => setTradeStatus(player.id, event.target.value as "open" | "block" | "untouchable")}>
+                  <option value="open">Available</option>
+                  <option value="block">Shop player</option>
+                  <option value="untouchable">Untouchable</option>
+                </select>
+              </div>)}
+            </div>
+          </details>
           <details className="rounded-xl border border-border p-3">
             <summary className="cursor-pointer text-sm font-semibold">Add your picks or cash</summary>
             <div className="mt-3 space-y-3">
