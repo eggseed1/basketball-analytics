@@ -22,6 +22,10 @@ jobs:
   longitudinal:
     runs-on: ubuntu-24.04
     timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [42841, 97613]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -32,10 +36,12 @@ jobs:
       - run: npm run typecheck
       - name: Five full seasons and four guided summer cycles
         run: npm run audit:franchise-five-year
+        env:
+          FIVE_YEAR_SEED: ${{ matrix.seed }}
       - uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: franchise-five-year-continuity
+          name: franchise-five-year-continuity-${{ matrix.seed }}
           path: |
             artifacts/franchise-continuous-five-year.json
             artifacts/franchise-continuous-five-year.md
