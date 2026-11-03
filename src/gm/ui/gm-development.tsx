@@ -66,7 +66,7 @@ export function GmDevelopment() {
             })}</tbody>
           </table>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">An early breakout can change a young player's trajectory. Playing time alone never guarantees growth.</p>
+        <p className="mt-3 text-xs text-muted-foreground">An early breakout can change a young player&apos;s trajectory. Playing time alone never guarantees growth.</p>
       </SectionFrame>
     </div></details>
     <details className="rounded-xl border border-border p-3 text-sm"><summary className="cursor-pointer font-semibold">Skill badges</summary><div className="mt-3"><GmBadges roster={roster} /></div></details>
@@ -79,7 +79,7 @@ export function GmDevelopment() {
       <Link href="/gm/offseason" className="mt-4 inline-block text-sm font-semibold underline underline-offset-4">Open season hub</Link>
     </SectionFrame></div></details>
     <details className="rounded-xl border border-border p-3 text-sm"><summary className="cursor-pointer font-semibold">Breakout history</summary><div id="development-history" className="scroll-mt-32"><SectionFrame title="Development milestones" description="Rare breakouts and mentoring can improve a young player's future growth. These are earned, not guaranteed.">
-      {awards.length ? <ul className="divide-y divide-border">{awards.map((award,index) => <li key={award.player.id + award.season + award.source + index} className="py-3 text-sm"><span className="inline-flex items-center gap-2"><GmPlayerPortrait player={award.player} /><strong>{award.player.name}</strong></span> · {award.season - 1}-{String(award.season).slice(-2)} · {award.source}{award.player.draftModel === 2 ? " · Outlook improved" : ` · Potential +${award.gain}`}<p className="mt-1 text-muted-foreground">{award.reason}</p></li>)}</ul> : <p className="text-sm text-muted-foreground">Season-end development discoveries will appear here. Extra minutes alone don't guarantee progress.</p>}
+      {awards.length ? <ul className="divide-y divide-border">{awards.map((award,index) => <li key={award.player.id + award.season + award.source + index} className="py-3 text-sm"><span className="inline-flex items-center gap-2"><GmPlayerPortrait player={award.player} /><strong>{award.player.name}</strong></span> · {award.season - 1}-{String(award.season).slice(-2)} · {award.source}{award.player.draftModel === 2 ? " · Outlook improved" : ` · Potential +${award.gain}`}<p className="mt-1 text-muted-foreground">{award.reason}</p></li>)}</ul> : <p className="text-sm text-muted-foreground">Season-end development discoveries will appear here. Extra minutes alone don&apos;t guarantee progress.</p>}
     </SectionFrame></div></details>
   </div>;
 }
