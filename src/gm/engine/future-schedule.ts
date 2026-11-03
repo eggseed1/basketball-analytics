@@ -139,7 +139,7 @@ function allFixtures(teams:GmTeam[],season:number,seed:number,groups:Groups){
     const target=targets.get(pairKey(cup.home,cup.away));
     if(!target||!Number.isFinite(target[cup.home])||target[cup.home]!<=0)
       throw new Error("Cup fixture conflicts with home/away opponent matrix");
-    target[cup.home]!--;
+    target[cup.home] = target[cup.home]! - 1;
   }
   const regular:Fixture[]=[];
   for(const [key,goal] of targets){
