@@ -831,44 +831,43 @@ function coveredMinutes(
   return sum;
 }
 
-/**
- * Build the night's body pool: named starters first, one backup per spot when
- * depth allows, then the best remaining wish until `depth` is reached.
- */
+/** Skill and established workload determine who deserves a rotation spot. */
+export function rotationMerit(player: GmPlayer): number {
+  return overallOf(player) + clamp((rotationTarget(player) - 20) * 0.22, -3.5, 3.5);
+}
+
+/** Select the best usable players first, instead of one backup at each spot. */
 function rotationPool(
   roster: GmPlayer[],
   starters: Partial<Record<GmPosition, string | null>> | undefined,
   depth: number
 ): GmPlayer[] {
-  const caps = depthCaps(depth);
-  const byId = new Map(roster.map((player) => [player.id, player]));
+  const cap = depthCaps(depth).pool;
+  const byId = new Map(roster.map(p => [p.id, p]));
   const pool: GmPlayer[] = [];
   const used = new Set<string>();
-  const take = (player: GmPlayer | undefined) => {
-    if (!player || used.has(player.id) || pool.length >= caps.pool) return;
-    pool.push(player);
-    used.add(player.id);
-  };
   for (const slot of FILL_ORDER) {
-    const id = starters?.[slot];
-    if (id) take(byId.get(id));
+    const p = byId.get(starters?.[slot] ?? "");
+    if (p && !used.has(p.id)) { pool.push(p); used.add(p.id); }
   }
-  // Reserve genuine backups for the starting seats. A forward's inferred
-  // secondary listing cannot fill two different backup jobs at once.
-  const backupSeats = [...FILL_ORDER].sort((a, b) =>
-    pool.filter(p => roleFit(p, a) >= 0.94).length - pool.filter(p => roleFit(p, b) >= 0.94).length || FILL_ORDER.indexOf(a) - FILL_ORDER.indexOf(b)
-  );
-  for (const slot of backupSeats) {
-    if (pool.length >= caps.pool) break;
-    const ranked = roster.filter(p => !used.has(p.id) && roleFit(p, slot) >= 0.84).sort((a, b) => {
-      const score = (p: GmPlayer) => rotationTarget(p) * 0.8 + overallOf(p) * 0.12 + roleFit(p, slot) * 12;
-      return score(b) - score(a);
-    });
-    take(ranked[0]);
+  const remaining = roster.filter(p => !used.has(p.id))
+    .sort((a, b) => rotationMerit(b) - rotationMerit(a) || rotationTarget(b) - rotationTarget(a) || a.id.localeCompare(b.id));
+  for (const p of remaining) {
+    if (pool.length >= cap) break;
+    pool.push(p);
   }
-  for (const player of [...roster].sort(byWish)) {
-    if (pool.length >= caps.pool) break;
-    take(player);
+  // Functional coverage may justify a small tradeoff, never a large rating
+  // sacrifice merely to make the position bars add up perfectly.
+  for (const seat of ["PG", "C"] as const) {
+    const cutoff = seat === "C" ? 0.90 : 0.84;
+    if (pool.filter(p => roleFit(p, seat) >= cutoff).length >= 2) continue;
+    const challenger = roster.filter(p => !pool.some(q => q.id === p.id) && roleFit(p, seat) >= cutoff)
+      .sort((a,b) => rotationMerit(b) - rotationMerit(a))[0];
+    const replaceable = pool.filter(p => !Object.values(starters ?? {}).includes(p.id) && roleFit(p, seat) < cutoff)
+      .sort((a,b) => rotationMerit(a) - rotationMerit(b))[0];
+    if (challenger && replaceable && rotationMerit(replaceable) - rotationMerit(challenger) <= 5) {
+      pool[pool.indexOf(replaceable)] = challenger;
+    }
   }
   return pool;
 }
@@ -892,10 +891,9 @@ function resolveMinutePlanOptions(
 }
 
 /**
- * Minutes for a roster that has to cover five spots inside a depth cap.
- * Starters keep the bulk; the depth setting decides how many backups eat
- * the rest. Bodies outside the pool get 0. `coverSlot` keeps the bars honest
- * when a SG slides to SF.
+ * Merit-first 240-minute allocation. Five positional labels describe live
+ * court assignments; they are not separate 48-minute natural-position quotas.
+ * The common stint planner provides exact five-player coverage on the court.
  */
 export function positionalMinutePlan(
   players: GmPlayer[],
@@ -903,178 +901,28 @@ export function positionalMinutePlan(
   maybeDepth?: number
 ): MinutePlan {
   const options = resolveMinutePlanOptions(startersOrOptions, maybeDepth);
-  const out: Record<string, number> = {};
+  const depth = depthCaps(options.depth ?? DEFAULT_ROTATION_DEPTH);
+  const minutes: Record<string, number> = Object.fromEntries(players.map(p => [p.id, 0]));
   const coverSlot: Record<string, GmPosition> = {};
-  for (const player of players) out[player.id] = 0;
-  const roster = players.filter((player) => rotationTarget(player) > 0);
-  const caps = depthCaps(options.depth ?? DEFAULT_ROTATION_DEPTH);
-  if (roster.length < 5) {
-    for (const player of roster) {
-      out[player.id] = clamp(rotationTarget(player), 0, caps.starterMax);
-      coverSlot[player.id] = player.position;
-    }
-    return {
-      minutes: scaleMinutes(
-        out,
-        roster.reduce((sum, player) => sum + (out[player.id] ?? 0), 0),
-        caps.starterMax
-      ),
-      coverSlot,
-    };
+  const roster = players.filter(p => rotationTarget(p) > 0);
+  if (!roster.length) return { minutes, coverSlot };
+  const pool = rotationPool(roster, options.starters, depth.pool);
+  const starters = new Set(Object.values(options.starters ?? {}).filter(Boolean));
+  const cap = Math.min(MAX_PLAYER_MINUTES, Math.max(depth.starterMax, depth.pool >= 10 ? 39 : 40));
+  const desired: Record<string, number> = {};
+  for (const player of pool) {
+    const wish = rotationTarget(player);
+    const meritMinutes = clamp(22 + (overallOf(player) - 78) * 1.5, 8, 40);
+    desired[player.id] = clamp(wish * 0.43 + meritMinutes * 0.57 + (starters.has(player.id) ? 1.5 : 0), 7, cap);
+    coverSlot[player.id] = player.position;
   }
-
-  const pool = rotationPool(roster, options.starters, caps.pool);
-  const poolIds = new Set(pool.map((player) => player.id));
-  const used = new Set<string>();
-  const chosenStarters: Partial<Record<GmPosition, GmPlayer>> = {};
-
-  for (const slot of FILL_ORDER) {
-    const chosen = options.starters?.[slot];
-    const named = chosen
-      ? pool.find((player) => player.id === chosen && !used.has(player.id))
-      : undefined;
-    const namedFits = named && canCover(named, slot);
-    const fit =
-      (namedFits ? named : undefined) ??
-      pickForSlot(slot, pool, used);
-    if (!fit) continue;
-    chosenStarters[slot] = fit;
-    used.add(fit.id);
-    coverSlot[fit.id] = slot;
-    const wish = rotationTarget(fit);
-    const base = STARTER_MINUTES[slot] + (9 - caps.pool) * 1.2;
-    // Real MPG wins. A 19-minute specialist does not jump to a 32-minute floor
-    // just because the auto chart parked him in the starting five.
-    const blended = wish >= 26 ? wish * 0.55 + base * 0.45 : wish * 0.82 + base * 0.18;
-    const low = wish >= 26 ? caps.starterMin : Math.max(14, Math.min(wish + 2, caps.starterMin));
-    out[fit.id] = clamp(blended, low, Math.min(caps.starterMax, MAX_PLAYER_MINUTES));
+  for (const seat of FILL_ORDER) {
+    const id = options.starters?.[seat];
+    if (id && desired[id] != null) coverSlot[id] = seat;
   }
-
-  let spare = 0;
-  const backupOrder = [...FILL_ORDER].sort(
-    (a, b) =>
-      (chosenStarters[a] ? (out[chosenStarters[a]!.id] ?? 0) : 0) -
-        (chosenStarters[b] ? (out[chosenStarters[b]!.id] ?? 0) : 0) ||
-      FILL_ORDER.indexOf(a) - FILL_ORDER.indexOf(b)
-  );
-  for (const slot of backupOrder) {
-    const starter = chosenStarters[slot];
-    const open = pool.filter((player) => !used.has(player.id));
-    const natural = open.filter((player) => player.position === slot).sort(byWish);
-    const secondary = open
-      .filter((player) => player.secondaryPosition === slot && player.position !== slot)
-      .sort(byWish);
-    const slider = open
-      .filter(
-        (player) =>
-          player.position !== slot &&
-          player.secondaryPosition !== slot &&
-          slotAccepts(slot, player.position)
-      )
-      .sort(byWish);
-    const backup = natural[0] ?? secondary[0] ?? slider[0];
-    const room = Math.max(0, 48 - (starter ? (out[starter.id] ?? 0) : 0));
-    if (!backup || room < 4) {
-      // Orphan starter with real starter minutes: nudge up. Low-MPG
-      // chart fillers stay near their wish so stars keep the lead.
-      if (starter) {
-        const wish = rotationTarget(starter);
-        if (wish >= 26 && (out[starter.id] ?? 0) < 36) {
-          const bump = Math.min(10, 38 - (out[starter.id] ?? 0));
-          out[starter.id] = (out[starter.id] ?? 0) + bump;
-        }
-      }
-      spare += BACKUP_MINUTES[slot];
-      continue;
-    }
-    const wish = rotationTarget(backup);
-    const give = Math.min(
-      room,
-      clamp(wish * 0.3 + BACKUP_MINUTES[slot] * 0.7, caps.backupMin, caps.backupMax)
-    );
-    out[backup.id] = (out[backup.id] ?? 0) + give;
-    coverSlot[backup.id] = slot;
-    used.add(backup.id);
-    spare += Math.max(0, room - give);
-  }
-
-  // Leftover pool seats (third string) fill the thinnest legal spots.
-  const extras = pool.filter((player) => !used.has(player.id)).sort(byWish);
-  for (const player of extras) {
-    if (spare < 4) break;
-    const thin = FILL_ORDER.map((slot) => ({
-      slot,
-      covered: coveredMinutes(coverSlot, out, slot),
-      can: canCover(player, slot),
-    }))
-      .filter((row) => row.can && row.covered < 46)
-      .sort((a, b) => a.covered - b.covered)[0];
-    if (!thin) continue;
-    const room = Math.max(0, caps.thirdMax - (out[player.id] ?? 0));
-    const give = Math.min(spare, room, 46 - thin.covered, caps.thirdMax);
-    if (give < 4) continue;
-    out[player.id] = (out[player.id] ?? 0) + give;
-    coverSlot[player.id] = thin.slot;
-    used.add(player.id);
-    spare -= give;
-  }
-
-  // Unused spare prefers players still under their wish, then higher-wish stars.
-  // Thin-spot fill alone was pumping 21-MPG orphans up to the starter max.
-  if (spare >= 2) {
-    const seated = pool.filter((player) => (out[player.id] ?? 0) > 0).sort((a, b) => {
-      const aWish = rotationTarget(a);
-      const bWish = rotationTarget(b);
-      const aGap = aWish - (out[a.id] ?? 0);
-      const bGap = bWish - (out[b.id] ?? 0);
-      const aSlot = coverSlot[a.id]!;
-      const bSlot = coverSlot[b.id]!;
-      return (
-        (bGap > 0 ? 1 : 0) - (aGap > 0 ? 1 : 0) ||
-        bGap - aGap ||
-        bWish - aWish ||
-        coveredMinutes(coverSlot, out, aSlot) - coveredMinutes(coverSlot, out, bSlot) ||
-        (out[a.id] ?? 0) - (out[b.id] ?? 0)
-      );
-    });
-    for (const player of seated) {
-      if (spare < 2) break;
-      const slot = coverSlot[player.id];
-      if (!slot) continue;
-      const wish = rotationTarget(player);
-      const softCap = minuteSoftCap(wish, caps.starterMax, false);
-      const spotRoom = Math.max(0, 50 - coveredMinutes(coverSlot, out, slot));
-      const playerRoom = Math.max(0, softCap - (out[player.id] ?? 0));
-      const give = Math.min(spare, spotRoom, playerRoom, 4);
-      if (give < 1) continue;
-      out[player.id] = (out[player.id] ?? 0) + give;
-      spare -= give;
-    }
-  }
-
-  // Zero anyone outside the depth pool (injured already filtered).
-  for (const player of players) {
-    if (!poolIds.has(player.id)) {
-      out[player.id] = 0;
-      delete coverSlot[player.id];
-    }
-  }
-
-  const sum = Object.values(out).reduce((total, minutes) => total + minutes, 0);
-  const playerCap = maxMinutesForDepth(caps.pool);
-  const scaled = scaleMinutes(out, sum, Math.min(caps.starterMax, playerCap), playerCap);
-  // Shallow books leave some spots starter-only. Nudge minutes across spots
-  // so the bars stay near 48 instead of 33/52 — without turning role orphans
-  // into ironmen past their wish.
-  const wishOf: Record<string, number> = {};
-  for (const player of pool) wishOf[player.id] = rotationTarget(player);
-  equalizePositionMinutes(
-    scaled,
-    coverSlot,
-    Math.min(caps.starterMax, playerCap),
-    wishOf
-  );
-  return { minutes: scaled, coverSlot };
+  const scaled = scaleMinutes(desired, Object.values(desired).reduce((n,v) => n + v, 0), cap);
+  for (const [id, value] of Object.entries(scaled)) minutes[id] = value;
+  return { minutes, coverSlot };
 }
 
 /**
