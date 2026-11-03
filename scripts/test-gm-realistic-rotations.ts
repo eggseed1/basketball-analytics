@@ -86,9 +86,23 @@ assert.ok(matchingPlayerSlots>=102,
   "at least 85% of planned player-shift appearances should survive contextual substitutions");
 const regulationMinutes=result.box.players.filter(p=>p.teamId===team.id).reduce((n,p)=>n+p.minutes,0);
 assert.equal(regulationMinutes,240+(result.box.overtime??0)*25,"contextual substitutions preserve 240 regulation minutes");
-for(const row of result.box.players.filter(p=>p.teamId===team.id)){
-  const regulation=original.minutes[row.playerId]??0;
-  assert.ok(Math.abs(row.minutes-regulation)<=8+(result.box.overtime??0)*5,`nightly minute deviation: ${row.playerName} planned ${regulation}, played ${row.minutes}, fouls ${row.personalFouls??0}, score ${result.box.homeScore}-${result.box.awayScore}, OT ${result.box.overtime??0}`);
+const myLines=result.box.players.filter(p=>p.teamId===team.id);
+const fouloutMinutesDisplaced=myLines.filter(p=>(p.personalFouls??0)>=6)
+  .reduce((n,p)=>n+Math.max(0,(original.minutes[p.playerId]??0)-p.minutes),0);
+for(const row of myLines){
+  const planned=original.minutes[row.playerId]??0;
+  const drift=row.minutes-planned;
+  const normalLimit=8+(result.box.overtime??0)*5;
+  if((row.personalFouls??0)>=6){
+    // Losing 16 minutes after a sixth personal foul is legitimate; penalize
+    // unexplained extra playing time, not the minutes the player had to miss.
+    assert.ok(drift<=normalLimit,
+      `fouled-out player ${row.playerName} exceeded planned minutes by ${drift}`);
+  }else{
+    // The other four players must absorb minutes vacated by foul-outs.
+    assert.ok(Math.abs(drift)<=normalLimit+fouloutMinutesDisplaced,
+      `nightly minute deviation: ${row.playerName} planned ${planned}, played ${row.minutes}, foul-out displacement ${fouloutMinutesDisplaced}, score ${result.box.homeScore}-${result.box.awayScore}`);
+  }
   assert.equal(Object.values(row.positionMinutes??{}).reduce((a,b)=>a+b,0),row.minutes);
   assert.equal(row.started,original.openingIds.has(row.playerId));
 }
