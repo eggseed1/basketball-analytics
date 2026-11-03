@@ -719,6 +719,39 @@ function TradeBody() {
       <DealBox league={league} receive={toAssets} send={fromAssets}
         onInspect={setMachineInspectId} inspectedId={machineInspectId} />
       </div>
+      {packages && packages.length > 0 ? (
+        <section data-testid="trade-finder-matches" aria-label="Trade Finder packages" className="rounded-xl border border-border p-3">
+          <h2 className="mb-2 text-sm font-semibold">Suggested deals</h2>
+          <ul className="flex flex-col gap-2">
+          {packages.map((pack) => {
+            const abbr = league.teams.find((entry) => entry.id === pack.partnerId)?.abbr ?? pack.partnerId;
+            return (
+              <li key={`${pack.partnerId}-${pack.youSend.map((asset) => asset.id).join("-")}-${pack.youReceive.map((asset) => asset.id).join("-")}`}>
+                <button
+                  type="button"
+                  className="w-full rounded-lg border border-border px-3 py-2 text-left text-sm hover:bg-muted"
+                  onClick={() => {
+                    setPartnerChoice(pack.partnerId);
+                    setGive(pack.youSend.filter((asset) => asset.type !== "cash"));
+                    setGet(pack.youReceive.filter((asset) => asset.type !== "cash"));
+                    setCashSend(pack.youSend.find((asset) => asset.type === "cash")?.cashM ?? 0);
+                    setCashReceive(
+                      pack.youReceive
+                        .filter((asset) => asset.type === "cash")
+                        .reduce((sum, asset) => sum + (asset.cashM ?? 0), 0)
+                    );
+                    setPackages(null);
+                    setMessage("Package loaded. Review and propose when ready.");
+                  }}
+                >
+                  {abbr} sends {assetNames(league, pack.youReceive)} for {assetNames(league, pack.youSend)}
+                </button>
+              </li>
+            );
+          })}
+          </ul>
+        </section>
+      ) : null}
 
       {machineInspected ? (
         <TradePlayerPeek
@@ -896,35 +929,6 @@ function TradeBody() {
           setPackages(null); setMessage(null);
         }}>Clear</Button>
       </div>
-      {packages && packages.length > 0 ? (
-        <ul className="flex flex-col gap-2">
-          {packages.map((pack) => {
-            const abbr = league.teams.find((entry) => entry.id === pack.partnerId)?.abbr ?? pack.partnerId;
-            return (
-              <li key={`${pack.partnerId}-${pack.youSend.map((asset) => asset.id).join("-")}-${pack.youReceive.map((asset) => asset.id).join("-")}`}>
-                <button
-                  type="button"
-                  className="w-full rounded-lg border border-border px-3 py-2 text-left text-sm hover:bg-muted"
-                  onClick={() => {
-                    setPartnerChoice(pack.partnerId);
-                    setGive(pack.youSend.filter((asset) => asset.type !== "cash"));
-                    setGet(pack.youReceive.filter((asset) => asset.type !== "cash"));
-                    setCashSend(pack.youSend.find((asset) => asset.type === "cash")?.cashM ?? 0);
-                    setCashReceive(
-                      pack.youReceive
-                        .filter((asset) => asset.type === "cash")
-                        .reduce((sum, asset) => sum + (asset.cashM ?? 0), 0)
-                    );
-                    setMessage("Package loaded.");
-                  }}
-                >
-                  {abbr} sends {assetNames(league, pack.youReceive)} for {assetNames(league, pack.youSend)}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
       {message ? <p className="text-sm">{message}</p> : null}
     </div>
   );
