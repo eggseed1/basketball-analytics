@@ -166,10 +166,13 @@ function bestSpot(player: GmPlayer): GmPosition {
 
 async function realLeagueChecks() {
   const { league } = await createRealSeasonLeague({ userTeamId: "bos" });
-  assert.equal(league.positionBook, 4);
+  assert.equal(league.positionBook, 5);
 
   const expect: Record<string, GmPosition> = {
     "Jayson Tatum": "PF",
+    "Paul George": "SF",
+    "Payton Pritchard": "PG",
+    "Derrick White": "SG",
     "Draymond Green": "PF",
     "Nikola Jokic": "C",
     "Stephen Curry": "PG",
