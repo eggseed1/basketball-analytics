@@ -411,8 +411,10 @@ try {
     await campDialog.getByText(/fatigue/).waitFor();
     await campDialog.getByRole("button", { name: "Cancel", exact: true }).click();
     assert.equal((await exportedLeague()).seasonFlow.campResults, undefined, "canceling camp preserves the saved season");
-    if (!(await page.getByRole("button", { name: "Run individual camp", exact: true }).count())) {
-      await page.locator("summary").filter({ hasText: "Training camp" }).click();
+    // A collapsed <details> still contains the button, so locator.count()
+    // cannot tell whether the action is visible after closing the dialog.
+    if (!(await campSection.evaluate(el => el.open))) {
+      await campSection.locator("summary").click();
     }
     await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
     await campDialog.getByRole("button", { name: "Run camp", exact: true }).click();
