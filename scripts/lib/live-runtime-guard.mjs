@@ -3,6 +3,9 @@ export const LIVE_BOARD_FILES = [
   "src/data/runtime/standings-snapshot.json",
   "src/data/runtime/game-snapshot.json",
   "src/data/runtime/team-game-box-snapshot.json",
+  "src/data/runtime/season-tables-snapshot.json",
+  "src/data/runtime/season-tables-meta.json",
+  "src/data/runtime/team-board-snapshot.json",
 ];
 
 const timestamp = (value) => {
@@ -26,6 +29,11 @@ const finals = (data, season) => (data?.games ?? []).filter(game =>
 export function snapshotRegressed(file, current, nightly) {
   if (timestamp(nightly) < 0) throw new Error(`Nightly ${file} has no valid generatedAt`);
   if (timestamp(current) < timestamp(nightly)) return true;
+  // These NBA team/player datasets are versioned by ingestion timestamp.
+  // Never ship a prior season-table or by-team snapshot from a feature branch.
+  if (file.endsWith("/season-tables-snapshot.json") ||
+      file.endsWith("/season-tables-meta.json") ||
+      file.endsWith("/team-board-snapshot.json")) return false;
   const season = latestSeason(nightly);
   if (!season) throw new Error(`Nightly ${file} has no current season`);
   if (file.endsWith("/standings-snapshot.json")) {
