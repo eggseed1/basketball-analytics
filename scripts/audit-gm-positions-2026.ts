@@ -1,12 +1,11 @@
 /**
  * Audits every real player in the current Franchise Lab roster against:
- *   1. Basketball-Reference 2025-26 positional-minute percentages, mirrored
- *      with attribution by deocheng/nba_data;
+ *   1. Basketball-Reference 2025-26 primary position and estimated shares;
  *   2. ESPN's current 30-team, five-slot depth charts;
  *   3. the live Franchise Lab role/listing as a fallback.
  *
- * Creates a per-player evidence JSON and compact listing to be reviewed and
- * checked into the repo. This script never silently relists users' saves.
+ * Creates per-player evidence and a versioned game-reference book.
+ * Fails closed on incomplete independent data; user manual positions remain untouched.
  *
  * npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-positions-2026.ts
  */
@@ -26,48 +25,21 @@ const normalize = (s: string) => s.normalize("NFKD").replace(/[\u0300-\u036f]/g,
 const blank = (): Record<Pos, number> => ({ PG: 0, SG: 0, SF: 0, PF: 0, C: 0 });
 const teams = "ATL BOS BRK CHO CHI CLE DAL DEN DET GSW HOU IND LAC LAL MEM MIA MIL MIN NOP NYK OKC ORL PHI PHO POR SAC SAS TOR UTA WAS".split(" ");
 type BRef = { position: Pos; percentages: Record<Pos,number>; minutes: number; seasonTeam: string; player: string };
-async function fetchBRef(abbr: string): Promise<BRef[]> {
-  const url = "https://raw.githubusercontent.com/deocheng/nba_data/main/CSV/2025-2026" + abbr + ".csv";
-  const res = await fetch(url, { signal: AbortSignal.timeout(20000), headers: { "user-agent": "FranchiseLabPositionAudit/1.0 (source attribution in docs)" } });
-  if (!res.ok) throw Error(abbr + " " + res.status);
-  const raw = await res.text();
-  const lines = raw.split(/\r?\n/);
-  const start = lines.findIndex(line => /^Rk,Player,Age,Pos,G,GS,MP,PG%,SG%,SF%,PF%,C%/.test(line));
-  if (start < 0) throw Error(abbr + " no position estimate table");
-  const parsed: BRef[] = [];
-  for (const line of lines.slice(start+1)) {
-    if (!line.trim() && parsed.length) break;
-    const cells = line.split(",");
-    const position = cells[3] as Pos;
-    if (!/^\d+$/.test(cells[0] ?? "") || !POS.includes(position)) {
-      if (parsed.length && cells[0]?.startsWith("Rk")) break;
-      continue;
-    }
-    const minutes=Number(cells[6]??0);
-    if (!Number.isFinite(minutes) || minutes <= 0) continue;
-    const percentages=blank();
-    for (let i=0; i<5; i++) percentages[POS[i]!] = Number(cells[7+i]??0) || 0;
-    parsed.push({ player: cells[1]!, position, percentages, minutes, seasonTeam: abbr });
-  }
-  if (parsed.length < 9) throw Error(abbr+" suspiciously short: "+parsed.length);
-  return parsed;
-}
 async function main() {
   const { league, seasonCanonical } = await createRealSeasonLeague({ userTeamId: "bos", seed: 20261103 });
   const current = league.players.filter(p => Boolean(p.nbaPlayerId) && !league.draftPool.includes(p.id));
   assert.ok(current.length >= 350, "expected entire current NBA player pool");
-  // Python extracts independent position shares from the 30 source xlsx
-  // workbooks. Only fall back to the CSV mirror where a workbook is unavailable.
-  const workbookSources = JSON.parse(readFileSync(
+  // Extractor checks the canonical league-wide Basketball-Reference table,
+  // never mislabeled third-party team workbooks or stale CSV mirrors.
+  const independent=JSON.parse(readFileSync(
     "artifacts/gm-bref-position-source-2026.json", "utf8"
   )) as Record<string,{rows:BRef[];error:string|null}>;
-  // Source extractor uses Basketball-Reference team aliases BRK/CHO/PHO.
-  const results = await Promise.all(teams.map(async abbr=>{
-    const source = workbookSources[abbr];
-    if(source?.rows.length) return {abbr,rows:source.rows,error:null};
-    try { return {abbr,rows:await fetchBRef(abbr),error:null}; }
-    catch(error) {return {abbr,rows:[] as BRef[],error:String(source?.error??error)};}
+  const results=teams.map(abbr=>({
+    abbr, rows:independent[abbr]?.rows??[],
+    error:independent[abbr]?.error??null
   }));
+  assert.equal(results.filter(x=>x.rows.length>0).length,30,
+    "all 30 teams must have independent position evidence");
   const allBRef = new Map<string, BRef>();
   for (const {rows} of results) for(const row of rows) {
     const key = normalize(row.player);
@@ -133,19 +105,21 @@ async function main() {
     // and wing assignments, not generic position-count quotas.
     const vetted:Record<string,Pos>={
       "Jayson Tatum":"PF", "Payton Pritchard":"PG",
-      "Derrick White":"SG", "Paul George":"SF"
+      "Derrick White":"SG", "Paul George":"SF", "AK Okereke":"PF"
     };
     if(vetted[player.name]) {
       after=vetted[player.name]!;
-      reason="reviewed NBA primary role (both historical and current usage)";
-      confidence="high";
+      reason=player.name==="AK Okereke"
+        ? "2026-27 listed NBA forward, PF-sized 6ft7 244lb rookie without NBA season minutes"
+        : "reviewed NBA primary role (both historical and current usage)";
+      confidence=player.name==="AK Okereke" ? "medium" : "high";
     }
     // Respect a deliberate, explicit NBA source over a broad G/F estimate
     // where both independent five-spot references are missing.
     const secondaryCandidates=POS.filter(pos=>pos!==after && (
       (b && b.percentages[pos]>=18) || depth.includes(pos)
     )).sort((a,c)=>((b?.percentages[c]??0)+(e?.get(c)??0)*14)-((b?.percentages[a]??0)+(e?.get(a)??0)*14));
-    const secondary=secondaryCandidates[0]??null;
+    const secondary=player.name==="AK Okereke" ? "SF" : secondaryCandidates[0]??null;
     evidence.push({id:player.nbaPlayerId??player.id,name:player.name,team:player.teamId,
       before:player.position,after,secondary,bref:b?{position:b.position,percentages:b.percentages,minutes:b.minutes,seasonTeam:b.seasonTeam}:null,
       espn:depth,reason,confidence});
@@ -170,8 +144,8 @@ async function main() {
   console.log("GM_PLAYER_POSITIONS_BASE64 "+Buffer.from(JSON.stringify(compact)).toString("base64"));
   console.log("GM_PLAYER_POSITION_CONFLICTS "+JSON.stringify(evidence.filter(x=>x.bref&&x.espn.length&&x.espn[0]!==x.after).slice(0,80)
     .map(x=>({name:x.name,after:x.after,bref:x.bref?.percentages,espn:x.espn}))));
-  if (results.filter(x=>x.rows.length).length < 25) {
-    throw Error("Position source coverage inadequate: "+results.filter(x=>x.rows.length).length+" of 30 independent team workbooks/CSVs");
+  if (results.filter(x=>x.rows.length).length !== 30) {
+    throw Error("Position source coverage inadequate: require all 30 independent teams");
   }
   if (summary.brefMatched < 320) throw Error("insufficient full-season positional evidence: "+summary.brefMatched);
 }

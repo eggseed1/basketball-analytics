@@ -3612,11 +3612,11 @@
     "confidence": "medium"
   },
   "5114350": {
-    "position": "SF",
-    "secondaryPosition": null,
+    "position": "PF",
+    "secondaryPosition": "SF",
     "name": "AK Okereke",
-    "source": "current roster listing / physical fallback",
-    "confidence": "low"
+    "source": "reviewed NBA forward; PF-sized 6ft7 244lb rookie without NBA season minutes",
+    "confidence": "medium"
   },
   "5148538": {
     "position": "SG",
