@@ -202,7 +202,7 @@ assert.ok(!observed.detail.includes("ceiling"),
 
 const sample: number[] = [];
 for (let n = 0; n < 100; n++) {
-  let p = {
+  const p = {
     ...rookie,
     id: "rookie-trial-" + n,
     age: 19,
