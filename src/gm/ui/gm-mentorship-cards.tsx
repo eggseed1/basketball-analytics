@@ -5,6 +5,7 @@ import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { BADGES, BADGE_LEVELS, badgeLevel, ensureBadges } from "@/gm/engine/badges";
 import { activeMentor, mentorEligible, mentorshipBonus, mentorshipSlots } from "@/gm/engine/development";
 import { useGmStore } from "@/gm/state/gm-store";
+import { developmentOutlook } from "@/gm/engine/development-profile";
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
 
 const control = "min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
@@ -114,38 +115,76 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
   </section>;
 }
 
-export function GmIndividualTraining({ roster }: { roster: GmPlayer[] }) {
+export function GmIndividualTraining({ roster, season }: { roster: GmPlayer[]; season: number }) {
   const [selected, setSelected] = useState("");
   const setFocus = useGmStore(state => state.setDevelopmentFocus);
   const setPlan = useGmStore(state => state.setDevelopmentPlan);
   const player = roster.find(row => row.id === selected) ?? roster[0];
   if (!player) return <p className="text-sm text-muted-foreground">No players available.</p>;
-  return <div className="grid gap-4 sm:grid-cols-3">
-    <label className="grid gap-1.5 text-sm font-medium">Player
-      <select className={control} aria-label="Training player" value={player.id}
-        onChange={event => setSelected(event.target.value)}>
-        {roster.map(row => <option key={row.id} value={row.id}>{row.name} · {row.position}</option>)}
-      </select>
-    </label>
-    <label className="grid gap-1.5 text-sm font-medium">Skill focus
-      <select className={control} aria-label={`Development focus for ${player.name}`}
-        value={player.developmentFocus ?? "balanced"}
-        onChange={event => setFocus(player.id, event.target.value as NonNullable<GmPlayer["developmentFocus"]>)}>
-        {["balanced", "shooting", "creation", "defense", "rebounding"].map(focus =>
-          <option key={focus} value={focus}>{focus[0]!.toUpperCase() + focus.slice(1)}</option>)}
-      </select>
-    </label>
-    <label className="grid gap-1.5 text-sm font-medium">Development plan
-      <select className={control} aria-label={`Development plan for ${player.name}`}
-        value={player.developmentPlan ?? "balanced"}
-        onChange={event => setPlan(player.id, event.target.value as NonNullable<GmPlayer["developmentPlan"]>)}>
-        <option value="balanced">Balanced reps</option>
-        <option value="practice">Skills work</option>
-        <option value="rotation">Rotation reps</option>
-      </select>
-    </label>
-    {player.sheet?.developmentReport ? <p className="text-xs text-muted-foreground sm:col-span-3">
-      Latest: {player.sheet.developmentReport.gains.join(", ")}
-    </p> : null}
-  </div>;
+  const focus = player.developmentFocus ?? "balanced";
+  const labels: Record<NonNullable<GmPlayer["developmentFocus"]>, string> = {
+    balanced: "Balanced", shooting: "Shooting", creation: "Shot creation",
+    defense: "Defense", rebounding: "Rebounding",
+  };
+  const descriptions: Record<NonNullable<GmPlayer["developmentFocus"]>, string> = {
+    balanced: "Build his existing strengths with broad skill work.",
+    shooting: "Develop shotmaking and consistency from the line.",
+    creation: "Train handle, passing and on-ball control.",
+    defense: "Build the defensive skills suited to his position.",
+    rebounding: "Work on positioning, strength and securing the glass.",
+  };
+  const outlook = developmentOutlook(player, season);
+  const overall = player.sheet?.overall ?? 0;
+  const previous = player.developmentBaseline?.season === season
+    ? player.developmentBaseline.overall : player.sheet?.priorOverall ?? overall;
+  return <section data-testid="development-path" className="rounded-xl border border-border bg-card p-4">
+    <div className="mb-3">
+      <h2 className="text-base font-bold">Shape a player</h2>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Pick a skill direction. Playing time, practice and performance decide how much he grows.
+      </p>
+    </div>
+    <div className="grid gap-3 sm:grid-cols-2">
+      <label className="grid gap-1.5 text-sm font-medium">Player
+        <select className={control} aria-label="Training player" value={player.id}
+          onChange={event => setSelected(event.target.value)}>
+          {roster.map(row => <option key={row.id} value={row.id}>{row.name} · {row.age} yrs · {row.position}</option>)}
+        </select>
+      </label>
+      <label className="grid gap-1.5 text-sm font-medium">Development focus
+        <select className={control} aria-label={`Development focus for ${player.name}`}
+          value={focus}
+          onChange={event => setFocus(player.id, event.target.value as NonNullable<GmPlayer["developmentFocus"]>)}>
+          {Object.entries(labels).map(([id, label]) =>
+            <option key={id} value={id}>{label}</option>)}
+        </select>
+      </label>
+    </div>
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-secondary/30 p-3">
+      <div className="min-w-0">
+        <p className="text-sm font-semibold">{player.name} · {Math.round(overall)} OVR
+          <span className="ml-2 text-xs font-normal text-muted-foreground">{outlook.label}</span>
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">{descriptions[focus]}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{outlook.detail}</p>
+      </div>
+      {Math.round(overall - previous) !== 0 ? <span className="text-sm font-bold tabular-nums text-primary">
+        {overall >= previous ? "+" : ""}{Math.round(overall - previous)} OVR this season
+      </span> : null}
+    </div>
+    <details className="mt-3 text-xs text-muted-foreground">
+      <summary className="cursor-pointer font-medium text-foreground">Playing-time plan (optional)</summary>
+      <label className="mt-3 grid max-w-xs gap-1.5 text-sm font-medium text-foreground">
+        Development approach
+        <select className={control} aria-label={`Development plan for ${player.name}`}
+          value={player.developmentPlan ?? "balanced"}
+          onChange={event => setPlan(player.id, event.target.value as NonNullable<GmPlayer["developmentPlan"]>)}>
+          <option value="balanced">Balanced</option>
+          <option value="practice">Practice-first</option>
+          <option value="rotation">NBA rotation reps</option>
+        </select>
+      </label>
+      <p className="mt-2">Practice protects growth with limited minutes. NBA rotation reps work best with a sustainable role, not forced 40-minute nights.</p>
+    </details>
+  </section>;
 }
