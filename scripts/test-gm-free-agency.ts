@@ -543,6 +543,22 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   const rfa = player("rfa-ui", null, 78, 24,
     { rightsTeamId: "nyk", rightsKind: "restricted", qoStatus: "tendered" });
   const league = { ...baseLeague([rfa]), faMarket: { ...emptyFaMarket(51), stage: "open" as const } };
+  // Season-journey RFA offer sheets cannot be submitted until open signing.
+  // The live agent forecast must flag that same restriction as illegal.
+  const preSigning = {
+    ...league,
+    seasonFlow: { stage: "free_agency" } as GmLeagueState["seasonFlow"],
+    faMarket: { ...league.faMarket!, stage: "moratorium" as const },
+  };
+  const blockedForecast = projectFreeAgentResponse(preSigning, rfa, 9, 2);
+  assert.equal(blockedForecast.legal, false,
+    "the slider must not allow a restricted offer sheet before open signing");
+  assert.match(blockedForecast.reason ?? "", /offer sheets open/i);
+  assert.equal(userOfferFreeAgent(preSigning, rfa.id, 9, 2).ok, false,
+    "the offer engine must reject the same premature sheet");
+  const signingOpen = { ...preSigning, faMarket: { ...preSigning.faMarket!, stage: "open" as const } };
+  assert.equal(projectFreeAgentResponse(signingOpen, rfa, 9, 2).legal, true,
+    "the forecast must unlock the offer sheet once signing opens");
   assert.equal(legalFreeAgentSalaryRange(league, rfa, 1).maxM, 0);
   assert.equal(submitOfferSheet(league, rfa.id, "bos", 9, 1).ok, false);
   const own = { ...rfa, id: "bird-ui", rightsTeamId: "bos", rightsKind: "bird" as const };
