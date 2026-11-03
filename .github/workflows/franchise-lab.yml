@@ -79,6 +79,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:franchise-multiseason
+      - run: npm run test:franchise-cpu-balance
       - uses: actions/upload-artifact@v4
         if: always()
         with:
