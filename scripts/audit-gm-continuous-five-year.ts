@@ -50,8 +50,9 @@ async function main(){
     // Compare opening rosters/player pool across consecutive seasons, not
     // against the same season's opening pool (which always returns zero).
     const openingPlayerIds=new Set(league.players.map(p=>p.id));
-    const newSeasonPlayers=previousSeasonPlayerIds
-      ? [...openingPlayerIds].filter(id=>!previousSeasonPlayerIds.has(id)).length : 0;
+    const priorIds=previousSeasonPlayerIds;
+    const newSeasonPlayers=priorIds
+      ? [...openingPlayerIds].filter(id=>!priorIds.has(id)).length : 0;
     const openingTradeCount=league.tradeLog.length;
     league={...league,automation:{...league.automation,autoDraft:true,autoFreeAgency:true},
       seenCheckpoints:[...(league.seenCheckpoints??[]),"trade_deadline"]};
