@@ -514,7 +514,9 @@ export function rotationForTeam(team:GmTeam,players:GmPlayer[],playoff=false){
   if(stretched)warnings.push(`${stretched} minutes need emergency position coverage. Add a handler, wing or big, or adjust the minute targets.`);
   if(manual)warnings.push("Saved shift blocks set the actual minutes and opening unit.");
   if(!manual&&roster.some(p=>Math.abs((requested[p.id]??0)-(minutes[p.id]??0))>1.01))warnings.push("Minute targets are fitted to five players per block and 240 total minutes. Tonight's minutes are shown below.");
-  const closingFrame=validClose?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:manual?frames[23]!:assignFive(roster.filter(p=>close.includes(p.id))).starters;
+  // Overtime must use the exact court-seat assignment played in the final regulation shift.
+  // Reconstructing it from closingLineup order could disagree with saved manual shifts.
+  const closingFrame=frames[23]!;
   const fitScore=frames.reduce((n,frame)=>n+spots.reduce((sum,spot)=>{const p=byId.get(frame[spot]??" ");return sum+(p?roleFit(p,spot):0);},0),0)/120;
   return {roster,rows,frames,minutes,requested,positionMinutes,fitScore,starters:frames[0]!,openingIds:actualIds,closing:close,closingFrame,warnings,tightened:tighten};
 }
