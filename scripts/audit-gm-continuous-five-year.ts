@@ -16,6 +16,7 @@ import {overallOf} from "../src/gm/engine/lineup";
 import {createRng} from "../src/gm/engine/rng";
 import {beginOffseason,advanceSeasonJourney,decideRookieContract,openingRosterChecks} from "../src/gm/engine/season-flow";
 import {applySign} from "../src/gm/engine/free-agency";
+import {askingSalary} from "../src/gm/engine/free-agency-ask";
 import {evaluateSigning,exceptionAmounts} from "../src/gm/engine/cap";
 import {releasePlayer} from "../src/gm/engine/roster-decisions";
 import {runSummerLeague} from "../src/gm/engine/season-development";
@@ -25,6 +26,9 @@ import type {GmLeagueState,GmPlayer} from "../src/gm/types";
 const auditSeed=Number(process.env.FIVE_YEAR_SEED??42841);
 Math.random=createRng(auditSeed*67+141);
 let league=createGeneratedLeague({userTeamId:"bos",season:2027,seed:auditSeed});
+const unsignedAtSeed=new Set(league.freeAgents);
+assert.equal(league.players.filter(p=>unsignedAtSeed.has(p.id)&&overallOf(p)>=85).length,0,
+  "an opening league with every club at 15 players must not start with unsigned superstars");
 const mean=(a:number[])=>a.reduce((n,v)=>n+v,0)/Math.max(1,a.length);
 const std=(a:number[])=>Math.sqrt(mean(a.map(v=>(v-mean(a))**2)));
 const correlation=(a:number[],b:number[])=>{
@@ -40,7 +44,8 @@ const rosterIds=(state:GmLeagueState,id:string)=>
 type SeasonResult={season:number;games:number;calendarDays:number;winSd:number;minWins:number;maxWins:number;
   meanStrengthWinCorrelation:number;teams:Array<{id:string;wins:number;losses:number;quality:number;roster:string[]}>;newIdCount:number;
   cpuTrades:number;injuryEvents:number;topTeam:string;lastTeam:string;firstGames:string[];
-  unsigned80Plus:number;unsigned85Plus:number;underMinimumClubs:number;};
+  unsigned80Plus:number;unsigned85Plus:number;underMinimumClubs:number;
+  unsignedElite:Array<{name:string;overall:number;age:number;askM:number;seedPool:boolean}>;};
 const seasons:SeasonResult[]=[];
 type SummerResult = {
   from:number;to:number;archived:boolean;ageContinuity:number;
@@ -95,6 +100,8 @@ async function main(){
       cpuTrades:league.tradeLog.length-openingTradeCount,injuryEvents,topTeam:ordered[0]!.id,lastTeam:ordered[29]!.id,
       unsigned80Plus:league.players.filter(p=>p.teamId==null&&!league.draftPool.includes(p.id)&&overallOf(p)>=80).length,
       unsigned85Plus:league.players.filter(p=>p.teamId==null&&!league.draftPool.includes(p.id)&&overallOf(p)>=85).length,
+      unsignedElite:league.players.filter(p=>p.teamId==null&&!league.draftPool.includes(p.id)&&overallOf(p)>=85)
+        .map(p=>({name:p.name,overall:overallOf(p),age:p.age,askM:askingSalary(p,league),seedPool:unsignedAtSeed.has(p.id)})),
       underMinimumClubs:league.teams.filter(t=>league.players.filter(p=>p.teamId===t.id&&p.contract).length<league.settings.minRoster).length,
       firstGames:league.schedule.filter(gameCounts).slice(0,24).map(g=>g.homeTeamId+":"+g.awayTeamId),
     };

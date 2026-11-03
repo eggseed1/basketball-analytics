@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'src/gm/engine/free-agency.ts'
+      - 'src/gm/engine/simulate.ts'
+      - 'src/gm/seed/create-league.ts'
       - 'src/gm/engine/fa-utility.ts'
       - 'src/gm/engine/trades.ts'
       - 'src/gm/engine/dynamic-progression.ts'

@@ -11,9 +11,9 @@ import { seasonMarks } from "../src/gm/engine/calendar-marks";
 import { secondNightScale } from "../src/gm/engine/simulate";
 import type { GmTeam } from "../src/gm/types";
 
-const teams = FRANCHISES.map(
-  (franchise) => ({ id: franchise.id }) as GmTeam
-);
+// The future NBA schedule requires conferences and five-team divisions.
+// Do not silently cast ID-only test fixtures into complete NBA teams.
+const teams = FRANCHISES.map(franchise => ({ ...franchise }) as GmTeam);
 
 function audit(label: string, games: ReturnType<typeof officialSchedule>) {
   const byTeam = new Map<string, string[]>();

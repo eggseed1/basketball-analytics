@@ -177,7 +177,11 @@ export function createGeneratedLeague(options?: {
 
   // Free agents + draft pool
   for (let i = 0; i < 40; i++) {
-    const p = makePlayer(rng, null, 2, 0.05, season);
+    // Every club already holds a full opening roster. An elite unsigned player
+    // here would have no realistic cap/roster route onto a team before tipoff.
+    // Seed the unsigned pool as available depth; elite talent starts signed
+    // and can subsequently reach the market through genuine FA/offseasons.
+    const p = makePlayer(rng, null, 2, 0, season);
     p.contract = null;
     players.push(p);
   }

@@ -223,7 +223,11 @@ export function simulateGame(
     const fit = lineupBalance(off) * 0.002 - off.reduce((n, p) => n + (1 - roleFit(p, courtSpots.get(p.id) ?? p.position)) * 0.015, 0);
     for (let attempt = 0; attempt < 5; attempt++) {
       if (attempt > 0) for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
-      const shooter = weighted(off, p => rates.get(p.id)!.fga * playerForm.get(p.id)!.volume * usageBoost(p, own.coaching), rng);
+      // Preserve team-wide attempts, pace and shot accuracy, but concentrate
+      // a little more of the existing shots with established high-volume
+      // scorers. Linear FGA weights under-allocated real 24+ PPG scorers by
+      // ~2 PPG despite realistic minutes. Do NOT raise player minutes here.
+      const shooter = weighted(off, p => Math.pow(Math.max(0.01, rates.get(p.id)!.fga), 1.20) * playerForm.get(p.id)!.volume * usageBoost(p, own.coaching), rng);
       const r = rates.get(shooter.id)!;
       const line = lines.get(shooter.id)!;
       const tired = ((shooter.campFatigueGames ?? 0) > 0 ? 0.98 : 1) * secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70) * clamp(1-Math.max(0,(stintMinutes.get(shooter.id)??0)-8)*0.003,0.95,1);

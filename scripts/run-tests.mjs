@@ -11,6 +11,10 @@ import os from "node:os";
 
 const SKIP = /:live-espn|identity-regressions/;
 const TIMEOUT_MS = 180_000;
+// These deterministic league-wide audits can exceed three minutes when
+// running alongside the full CI matrix; keep the normal timeout elsewhere.
+const LONG_TEST_TIMEOUT_MS = 360_000;
+const LONG_TESTS = new Set(["test:franchise-draft-accessibility", "test:franchise-multiseason"]);
 const CONCURRENCY = Math.max(2, Math.min(6, os.cpus().length - 1));
 
 const only = process.argv
@@ -32,10 +36,11 @@ function run(name) {
     const child = spawn("npm", ["run", "-s", name], {
       env: { ...process.env, CI: process.env.CI ?? "1" },
     });
+    const timeout = LONG_TESTS.has(name) ? LONG_TEST_TIMEOUT_MS : TIMEOUT_MS;
     const timer = setTimeout(() => {
-      output.push(`\nTIMEOUT after ${TIMEOUT_MS / 1000}s`);
+      output.push(`\nTIMEOUT after ${timeout / 1000}s`);
       child.kill("SIGKILL");
-    }, TIMEOUT_MS);
+    }, timeout);
     child.stdout.on("data", (chunk) => output.push(chunk.toString()));
     child.stderr.on("data", (chunk) => output.push(chunk.toString()));
     child.on("close", (code) => {
