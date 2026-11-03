@@ -30,6 +30,8 @@ jobs:
       - name: Generate route types
         run: npx next typegen
       - run: npm run typecheck
+      - name: Test live NBA snapshot regression protection
+        run: node --test scripts/test-live-runtime-guard.mjs
       - name: Lint (new violations only; baseline in eslint-suppressions.json)
         id: lint
         run: npx eslint . --quiet
