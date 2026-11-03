@@ -749,7 +749,7 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
     ? potential.trait==="xfactor"?1.2:potential.trait==="superstar"?1.14:potential.trait==="star"?1.08:potential.trait==="bust"?0.88:1
     : potential.trait==="xfactor"?1.25:potential.trait==="superstar"?1.18:potential.trait==="star"?1.08:potential.trait==="bust"?0.65:1;
   let opportunity=0.72+Math.min(minutes,24)/24*0.4;
-  if(player.developmentPlan==="practice") {opportunity=minutes<18?0.94+coach*0.05:0.91;reasons.push("Skills work preserves a path while rotation minutes are limited");}
+  if(player.developmentPlan==="practice") {opportunity=minutes<18?0.80+coach*0.05:0.88;reasons.push("Skills work preserves a path while rotation minutes are limited");}
   else if(player.developmentPlan==="rotation") {opportunity=0.5+Math.min(minutes,26)/26*0.7;reasons.push(minutes>=16?"Regular game reps support the role plan":"The rotation plan needs more game reps");}
   if(minutes>34) {opportunity*=0.94;reasons.push("Heavy minutes add workload, not extra development credit");}
   if(player.injury) {opportunity*=0.72;reasons.push("Injury limited development work");}
