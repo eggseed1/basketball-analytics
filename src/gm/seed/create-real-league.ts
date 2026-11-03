@@ -47,6 +47,7 @@ import {
   estimateActivePotential,
 } from "@/gm/engine/rookie-ratings";
 import { applyRealBooks } from "@/gm/seed/real-books";
+import { minutesFromRealMpg } from "@/gm/seed/real-depth";
 import { entryValueForNbaId } from "@/gm/lib/season-line";
 import {
   defaultTeamDeveloper,
@@ -596,7 +597,33 @@ export function buildLeagueFromPlayerSeasons(
     updatedAt: new Date().toISOString(),
   };
 
-  return applyRealBooks(applyBalancedRotations(state));
+  // On a real NBA opening roster, preserve observed minutes as the primary
+  // workload prior instead of scaling the five highest-rated players toward
+  // 40 MPG. This book is constructed only at seed time: subsequent offseason
+  // rotations and user manual edits still use their chosen coaching system.
+  const seeded = applyRealBooks(applyBalancedRotations(state));
+  return {
+    ...seeded,
+    teams: seeded.teams.map((team) => {
+      const roster = seeded.players.filter((player) =>
+        player.teamId === team.id && !player.injury
+      );
+      const seasonEvidence = roster.filter((player) =>
+        player.nbaSeason && player.nbaSeason.gp >= 15 && player.nbaSeason.min > 0
+      );
+      if (roster.length < 11 || seasonEvidence.length < 9) return team;
+      const book = minutesFromRealMpg(roster, team.starters, 11);
+      return {
+        ...team,
+        coaching: {
+          ...team.coaching,
+          rotationDepth: 11 as const,
+          minutes: book.minutes,
+          coverSlot: book.coverSlot,
+        },
+      };
+    }),
+  };
 }
 
 export function defaultGmCanonicalSeason(): string {

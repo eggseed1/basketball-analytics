@@ -64,6 +64,10 @@ async function main() {
     meanSimStarPpg: round(mean(rows.map(r => r.simPpg))),
     starPpgMae: round(mean(rows.map(r => Math.abs(r.simPpg - r.realPpg)))),
     starApgMae: round(mean(rows.map(r => Math.abs(r.simApg - r.realApg)))),
+    meanRealStarMpg: round(mean(rows.map(r => r.realMpg))),
+    meanSimStarMpg: round(mean(rows.map(r => r.simMpg))),
+    meanStarMpgBias: round(mean(rows.map(r => r.simMpg - r.realMpg))),
+    starsOver38SimMpg: rows.filter(r => r.simMpg > 38).length,
     starsBelow80PctRealPpg: rows.filter(r => r.simPpg < 0.8 * r.realPpg).length,
     starsAt25SimPpg: rows.filter(r => r.simPpg >= 25).length,
   };
