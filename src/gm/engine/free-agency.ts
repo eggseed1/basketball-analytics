@@ -402,12 +402,18 @@ function resolvePlayers(
           evaluateOfferUtility(next, player, team, offer.salaryM, offer.years);
         return { offer, team, appeal: utility.total, utility };
       })
-      // Illegal headline offers must not prevent a player from accepting a
-      // lower-ranked *legal* offer. Re-evaluate against the live cap and
-      // roster after earlier signings/reservations in this same market day.
+      // The highest-utility offer must also be legal and at a credible
+      // market price. Otherwise an inflated/invalid offer can strand a star
+      // even when another team has made a reasonable legal proposal.
       .filter((row): row is NonNullable<typeof row> =>
         row !== null &&
-        evaluateSigning(next, row.team.id, player, row.offer.salaryM, row.offer.years).ok
+        evaluateSigning(next, row.team.id, player, row.offer.salaryM, row.offer.years).ok &&
+        row.offer.salaryM + 0.05 >=
+          askingSalary(player, rules) *
+          (overallOf(player) >= 86 ? 0.80 :
+            overallOf(player) >= 83 ? 0.67 :
+            overallOf(player) >= 80 ? 0.54 :
+            overallOf(player) >= 78 ? 0.42 : 0)
       )
       .sort(
         (a, b) =>
@@ -417,15 +423,6 @@ function resolvePlayers(
     if (!winner) continue;
     const ovr = overallOf(player);
     const ask = askingSalary(player, rules);
-    // The open market previously signed whichever offer ranked first,
-    // including a superstar's only minimum bid. Allow veterans to discount
-    // for fit, but not to take a 90% pay cut with no agent resistance.
-    const minMarketShare =
-      ovr >= 86 ? 0.80 :
-      ovr >= 83 ? 0.67 :
-      ovr >= 80 ? 0.54 :
-      ovr >= 78 ? 0.42 : 0;
-    if (winner.offer.salaryM + 0.05 < ask * minMarketShare) continue;
     if (mode === "agree") {
       if (ovr >= 86 && winner.offer.salaryM + 0.05 < ask * 0.95) continue;
       if (ovr >= 84 && winner.offer.salaryM + 0.05 < ask * 0.9) continue;
