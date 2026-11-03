@@ -70,9 +70,15 @@ assert.equal(tradeCompetitionMultiplier(rivalMarket, partner.id, "nyk") > 1, tru
 assert.equal(tradeCompetitionMultiplier({
   ...rivalMarket, day: rivalMarket.day + 19,
 }, partner.id, "nyk"), 1, "outdated rumors cannot raise asking prices");
-const possible = findPlayerPackages(league, "bos", partner.id)[0];
+const quietLeague: GmLeagueState = {
+  ...league,
+  tradeMarket: {
+    season: league.season, lastPulseDay: league.day, rumors: [],
+  },
+};
+const possible = findPlayerPackages(quietLeague, "bos", partner.id)[0];
 if (possible) {
-  const base = evaluateTrade(league, "bos", "nyk", possible.youSend, possible.youReceive);
+  const base = evaluateTrade(quietLeague, "bos", "nyk", possible.youSend, possible.youReceive);
   const contested = evaluateTrade(rivalMarket, "bos", "nyk", possible.youSend, possible.youReceive);
   assert.ok(contested.toValue > base.toValue,
     "competing scouting interest must affect the actual acceptance evaluator");
