@@ -107,6 +107,9 @@ export function retieCupGroupGames(
   groups: CupGroups,
   season: number
 ): GmScheduleGame[] {
+  // New generated seasons already reserve the actual group fixtures and
+  // their paired home/road quotas. Do not mutate them after scheduling.
+  if (schedule.filter(game => game.cup === "group").length === 60) return schedule;
   const dates = CUP_NIGHTS.map(([month, day]) => cupDate(season, month, day));
   const slotIndexes: number[] = [];
   schedule.forEach((game, index) => {
