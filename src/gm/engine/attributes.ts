@@ -761,8 +761,11 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   // Baseline practice must not turn nearly half of the second round into
   // rotation players. Most learners advance patiently; unusually responsive
   // rookies retain the chance to become genuinely surprising late gems.
-  const learningPace=openPath
-    ? clamp(0.81+Math.max(0,developmentProfileOf({...player,sheet}).learning-1.02)*0.55,0.81,1.08)
+  const profile = openPath ? developmentProfileOf({...player,sheet}) : null;
+  const learningPace=openPath && profile
+    ? clamp(0.81+Math.max(0,profile.learning-1.02)*0.55,0.81,1.08) *
+      (profile.learningSurge ?? 1)
+    : 1
     : 1;
   const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;
