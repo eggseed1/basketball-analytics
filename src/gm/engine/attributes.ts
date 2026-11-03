@@ -18,6 +18,7 @@ import {
 import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
 import { ensureSimProfile } from "@/gm/engine/player-profile";
 import { impactToOverall, netStrength } from "@/gm/engine/true-strength";
+import { softGrowthFactor, developmentProfileOf } from "@/gm/engine/development-profile";
 
 export { productionOverallSpine } from "@/gm/engine/true-strength";
 
@@ -731,7 +732,10 @@ type DevelopmentOptions = {
 
 /** Fractional development avoids a free whole attribute at every check-in. */
 function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:DevelopmentOptions):GmPlayer {
-  const potential=sheet.potential,age=player.age,gap=Math.max(0,potential.ceiling-sheet.overall);
+  const potential=sheet.potential,age=player.age;
+  const openPath=player.draftModel===2;
+  const ratingLimit=openPath?99:potential.ceiling;
+  const gap=Math.max(0,ratingLimit-sheet.overall);
   const minutes=Math.max(0,opts.minutes??0),coach=clamp(opts.coach??0,0,1.5);
   const rng=createRng(hashId(player.id+":"+(opts.pace??"summer"))+age*997);
   const reasons:string[]=[];
@@ -748,10 +752,12 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   if ((opts.mentorBonus??0)>0) reasons.push("A veteran teammate supports focused development work");
   const staff=(1+coach*0.06)*clamp(opts.devStaff??1,0.85,1.25);
   const work=1+clamp(player.personality,-20,25)*0.004;
-  const annual=clamp((0.9+gap*0.14)*ageFactor*path*trait*opportunity*staff*work*(0.85+rng()*0.3),0,5.5);
+  const growthFriction=openPath?softGrowthFactor({...player,sheet},sheet.overall):1;
+  const growthInput=openPath?Math.min(gap,14):gap;
+  const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;
   const budget=annual*pace*(1+clamp(opts.mentorBonus??0,0,0.18))*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
-  const steps=Math.min(Math.max(0,potential.ceiling-sheet.overall),Math.floor(budget));
+  const steps=Math.min(Math.max(0,ratingLimit-sheet.overall),Math.floor(budget));
   const carry=gap>0?budget-Math.floor(budget):0;
   const focusKeys:Record<string,Array<keyof GmAttributes>>={shooting:["threePoint","midrange","freeThrow"],creation:["passAccuracy","ballHandle","speedWithBall","drivingLayup"],defense:["interiorDefense","perimeterDefense","steal","block"],rebounding:["offReb","defReb","strength"]};
   const keys=focusKeys[player.developmentFocus??"balanced"]??GROW_KEYS[player.position];
@@ -762,20 +768,20 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   }
   if(steps&&age<=21) for(const key of ["strength","stamina"] as const) attributes[key]=band(attributes[key]+1);
   const offset=sheet.overallOffset??sheet.overall-overallFromAttributes(player.position,sheet.attributes,{impact:player.ratings.impact,drbl100:player.drbl100});
-  const target=Math.min(potential.ceiling,sheet.overall+steps);
+  const target=Math.min(ratingLimit,sheet.overall+steps);
   let low=player.ratings.impact,high=Math.min(10,low+steps*0.7);
   for(let pass=0;pass<18&&steps;pass++) {
     const middle=(low+high)/2;
     if(offset+overallFromAttributes(player.position,attributes,{impact:middle,drbl100:player.drbl100})<target) low=middle; else high=middle;
   }
   const impact=steps?Math.round(high*100)/100:player.ratings.impact;
-  const overall=clamp(offset+overallFromAttributes(player.position,attributes,{impact,drbl100:player.drbl100}),25,potential.ceiling);
+  const overall=clamp(offset+overallFromAttributes(player.position,attributes,{impact,drbl100:player.drbl100}),25,ratingLimit);
   const delta=impact-player.ratings.impact;
   const offenseShare=player.developmentFocus==="defense"?0.15:player.developmentFocus==="rebounding"?0.35:0.75;
   if(gap<=2) reasons.push("Limited headroom slows further gains");
   else reasons.push(age<=23?"Young player with skills still to develop":"Growth slows as the player approaches his prime");
   if(!steps&&gap>2) reasons.push("Small gains accumulate between reports");
-  return {...player,sheet:{...sheet,attributes,overall,overallOffset:offset,priorOverall:sheet.overall,priorSimple:simpleCategoryMeans(sheet.attributes),developmentCarry:carry,developmentReport:{age,before:sheet.overall,after:overall,reasons,gains}},ratings:{...player.ratings,impact,offense:Math.round((player.ratings.offense+delta*offenseShare)*100)/100,defense:Math.round((player.ratings.defense+delta*(1-offenseShare))*100)/100}};
+  return {...player,...(openPath?{developmentProfile:developmentProfileOf(player)}:{}),sheet:{...sheet,attributes,overall,overallOffset:offset,priorOverall:sheet.overall,priorSimple:simpleCategoryMeans(sheet.attributes),developmentCarry:carry,developmentReport:{age,before:sheet.overall,after:overall,reasons,gains}},ratings:{...player.ratings,impact,offense:Math.round((player.ratings.offense+delta*offenseShare)*100)/100,defense:Math.round((player.ratings.defense+delta*(1-offenseShare))*100)/100}};
 }
 
 /** One offseason. Age on the player is the age they just turned. */
