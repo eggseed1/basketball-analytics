@@ -15,6 +15,7 @@ for(const season of [2028,2029,2030,2031,2032]){
   const groups=league.cupGroups!;
   assert.equal(games.filter(g=>g.cup==="group").length,60,"Cup group games fixed in new schedule");
   const byDate=new Map<string,Set<string>>();
+  const backToBacks:number[]=[];
   const perTeam=new Map(league.teams.map(t=>[t.id,[] as typeof games]));
   for(const game of games){
     const date=game.gameDate!;
@@ -58,6 +59,7 @@ for(const season of [2028,2029,2030,2031,2032]){
       assert.ok(gap>=1,"no double-booked dates");
       if(gap===1)b2b++;
     }
+    backToBacks.push(b2b);
     assert.ok(b2b<=18,team.id+" too many back-to-backs: "+b2b);
     for(let i=3;i<days.length;i++)
       assert.ok(days[i]!-days[i-3]!>=5,team.id+" has four games in five nights");
@@ -83,6 +85,8 @@ for(const season of [2028,2029,2030,2031,2032]){
     }
   }
   console.log("FUTURE_SCHEDULE "+JSON.stringify({season,games:games.length,days:byDate.size,cup:60,
-    busiest:Math.max(...[...byDate.values()].map(x=>x.size/2))}));
+    busiest:Math.max(...[...byDate.values()].map(x=>x.size/2)),
+    backToBacks:{min:Math.min(...backToBacks),max:Math.max(...backToBacks),
+      average:+(backToBacks.reduce((n,v)=>n+v,0)/backToBacks.length).toFixed(2)}}));
 }
 console.log("Five independently generated NBA-like schedules: ok");
