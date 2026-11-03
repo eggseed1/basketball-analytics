@@ -32,6 +32,8 @@ jobs:
       - run: npm ci
       - name: TypeScript
         run: npm run typecheck
+      - name: Rotation and minute accounting regressions
+        run: npm run test:franchise-rotations
       - name: Sim game outcome regression
         run: npm run test:franchise-outcome-realism
       - name: Full real-season standings cohort
