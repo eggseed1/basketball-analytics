@@ -309,6 +309,14 @@ assert.ok(qualityInversions<0.023,`Merit-first minute rankings regressed: ${(qua
 assert.ok(minuteMae<1.2,`Planned-versus-actual minutes regressed: ${minuteMae.toFixed(2)} MAE`);
 const maxTeamEmergency=Math.max(...results.map(row=>
   row.emergencySeatMinutes/Math.max(1,row.activeSeatMinutes)));
+const averageGeneratedSd=generatedStandings.reduce((n,x)=>n+x.winSd,0)/generatedStandings.length;
+assert.ok(averageGeneratedSd>=9.5 && averageGeneratedSd<=16,
+  `Generated leagues became overly compressed or extreme: ${averageGeneratedSd.toFixed(2)} win SD`);
+assert.ok(generatedStandings.every(x=>x.minWins<=27 && x.maxWins>=55),
+  "Generated NBA-like seasons must contain both strong and rebuilding clubs");
+assert.ok(generatedStandings.every(x=>x.homeWinRate>=0.45&&x.homeWinRate<=0.63),
+  "Generated home-court win rate outside NBA-like range");
+
 assert.ok(maxTeamEmergency<0.05,
   `A team still has ${(100*maxTeamEmergency).toFixed(2)}% emergency-position minutes`);
 
