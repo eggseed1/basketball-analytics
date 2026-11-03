@@ -14,7 +14,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { resolveTeamBrand } from "../src/lib/nba-brand";
-import { fetchEspnCdnGameSummary } from "../src/data/providers/nba/espn-cdn-summary";
+import { fetchEspnCdnGameSummary, findEspnCdnSummary } from "../src/data/providers/nba/espn-cdn-summary";
 import { transformEspnBoxScore } from "../src/data/transformers/espn";
 import { teamRowsFromEspnBox } from "../src/lib/team-game-box-espn";
 import type { Game } from "../src/data/types";
@@ -195,6 +195,24 @@ async function fromCdn(
  * HTTP 403 from GitHub runners. Only fetch final, unrecorded games. The
  * underlying ESPN CDN game feed also works from the Workers runtime.
  */
+async function espnBoxWithPlayers(gameId: string) {
+  // The general game/play-by-play CDN response can have plays but no player
+  // totals; fetch the dedicated boxscore first to avoid that false success.
+  try {
+    const res = await fetch(
+      `https://cdn.espn.com/core/nba/boxscore?xhr=1&gameId=${encodeURIComponent(gameId)}`,
+      { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(12_000) }
+    );
+    if (res.ok) {
+      const summary = findEspnCdnSummary(await res.json());
+      if (summary?.boxscore?.players?.length) return summary;
+    }
+  } catch {
+    // ESPN's game page is an independent fallback.
+  }
+  return fetchEspnCdnGameSummary(gameId);
+}
+
 async function fromEspnSnapshot(
   season: string,
   existing: TeamGameBoxSnapshot
@@ -224,7 +242,7 @@ async function fromEspnSnapshot(
   const worker = async () => {
     for (let game = queue.shift(); game; game = queue.shift()) {
       try {
-        const summary = await fetchEspnCdnGameSummary(game.id);
+        const summary = await espnBoxWithPlayers(game.id);
         const box = summary && transformEspnBoxScore(summary, season);
         const rows = box && teamRowsFromEspnBox(game, box);
         if (!rows) { skipped++; continue; }
