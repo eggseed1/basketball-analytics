@@ -38,8 +38,12 @@ const faRange = legalFreeAgentSalaryRange(freeAgency, freeAgent, 3);
 const faAsk = askingSalary(freeAgent, freeAgency);
 if (faRange.maxM + 0.05 < faAsk) throw new Error("Browser free-agency fixture cannot offer the player's ask.");
 writeFileSync(dir + "/journey-fa.json", exportFranchise(freeAgency));
+// Use a rotation-level RFA so his legal two-year exception offer is also
+// a plausible contract, rather than testing a superstar minimum-sheet exploit.
+if (!freeAgent.sheet) throw new Error("Expected the prepared player ratings sheet.");
 const restrictedPlayer = {
-  ...freeAgent, rightsTeamId: "nyk", rightsKind: "restricted" as const,
+  ...freeAgent, sheet: { ...freeAgent.sheet, overall: 77 }, lastSalaryM: 8,
+  rightsTeamId: "nyk", rightsKind: "restricted" as const,
   qoStatus: "tendered" as const,
 };
 const rfa = { ...freeAgency, players: freeAgency.players.map(player =>
