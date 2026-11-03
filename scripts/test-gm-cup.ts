@@ -143,8 +143,16 @@ test("the next season redraws Cup groups from this save's wins", () => {
     assert.equal(groups[conference].length, 3);
     for (const room of groups[conference]) assert.equal(room.length, 5);
   }
-  const tied = retieCupGroupGames(generateSchedule(teams, 2028), groups, 2028);
+  // Future calendars must be generated with the freshly drawn Cup rooms.
+  // Retie is intentionally a no-op on a valid 60-game generated Cup slate:
+  // reassigning matchups afterward would break home/road and rest quotas.
+  const generated = generateSchedule(teams, 2028, 2028 * 997, groups);
+  const tied = retieCupGroupGames(generated, groups, 2028);
+  assert.deepEqual(tied, generated, "already generated Cup dates are immutable");
   const tagged = tagGroupGames(tied, 2028, groups);
+  const reverseWins = Object.fromEntries(teams.map((team, index) => [team.id, 100 - index]));
+  assert.notDeepEqual(drawCupGroups(teams, reverseWins), groups,
+    "a different preceding-season order must redraw Cup rooms");
   const group = tagged.filter((game) => game.cup === "group");
   assert.equal(group.length, 60);
   const mates = new Map<string, Set<string>>();
