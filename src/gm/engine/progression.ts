@@ -1,4 +1,5 @@
 import { mentorshipBonus, reviewPlayerCeilings } from "@/gm/engine/development";
+import { developmentProfileOf } from "@/gm/engine/development-profile";
 import { draftScoutingOf } from "@/gm/engine/draft-intel";
 import { maybeCpuDraftTrade } from "@/gm/engine/draft-trades";
 import { rookieContractForPick } from "@/gm/engine/draft-order";
@@ -326,7 +327,11 @@ export function runDraftPick(
   const fixed=state.players.map(player=>{
     if(player.id!==playerId) return player;
     const stamped=ensurePlayerSheet(player);
-    return {...stamped,teamId,identityRevealed:true,contract:state.seasonFlow?null:contract,pendingRookieContract:state.seasonFlow?contract:undefined,serviceYears:0,draftedByTeamId:teamId,draftPick:pickNum,draftYear:state.season,developmentPlan:"balanced" as const,scouted:{impact:player.ratings.impact,offense:player.ratings.offense,defense:player.ratings.defense,uncertainty:0.05}};
+    // Persist intrinsic learning DNA at draft selection, before camp,
+    // mentors or other user actions change the player's actual attributes.
+    const draftedProfile=stamped.draftModel===2
+      ? { developmentProfile: developmentProfileOf(stamped) } : {};
+    return {...stamped,...draftedProfile,teamId,identityRevealed:true,contract:state.seasonFlow?null:contract,pendingRookieContract:state.seasonFlow?contract:undefined,serviceYears:0,draftedByTeamId:teamId,draftPick:pickNum,draftYear:state.season,developmentPlan:"balanced" as const,scouted:{impact:player.ratings.impact,offense:player.ratings.offense,defense:player.ratings.defense,uncertainty:0.05}};
   });
   const drafted=fixed.find(player=>player.id===playerId);
   const round=index<state.teams.length?1:2;
