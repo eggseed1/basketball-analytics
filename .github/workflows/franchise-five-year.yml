@@ -5,6 +5,13 @@ on:
     branches: [main]
     paths:
       - 'scripts/audit-gm-continuous-five-year.ts'
+      - 'src/gm/engine/future-schedule.ts'
+      - 'src/gm/engine/schedule.ts'
+      - 'src/gm/engine/offseason.ts'
+      - 'src/gm/engine/season-flow.ts'
+      - 'src/gm/engine/free-agency.ts'
+      - 'src/gm/engine/progression.ts'
+      - 'src/gm/seed/create-league.ts'
       - '.github/workflows/franchise-five-year.yml'
 permissions:
   contents: read
