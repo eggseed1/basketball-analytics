@@ -19,7 +19,7 @@ for(let seed=1;seed<=classes;seed++){
       grown=progressSheet({...grown,age:grown.age+1},{minutes:22,coach:0.4});
     }
     rows.push({rank:index+1,age:player.age,entry,peak:grown.sheet!.overall});
-    assert.ok(grown.sheet!.overall<=grown.sheet!.potential.ceiling,"development must retain finite headroom");
+    assert.ok(grown.sheet!.overall<= (grown.draftModel===2?99:grown.sheet!.potential.ceiling),"generated prospects have soft growth limits while legacy cohorts preserve fixed ceilings");
     assert.ok(Object.values(grown.sheet!.attributes).every(value=>value>=25&&value<=99));
     const heights={PG:[72,76],SG:[74,79],SF:[77,81],PF:[79,84],C:[81,87]}[player.position];
     assert.ok(player.heightIn>=heights[0]!&&player.heightIn<=heights[1]!,"a style nickname cannot change a prospect's position away from his generated body");
