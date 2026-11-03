@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/audit-gm-positions-2026.ts'
+      - 'scripts/extract-gm-bref-positions.py'
       - '.github/workflows/franchise-player-positions.yml'
 permissions:
   contents: read
@@ -19,24 +20,10 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - name: Inspect independent 2025-26 Basketball-Reference source workbooks
+      - name: Extract independent full-season positional minute estimates from 30 NBA team workbooks
         run: |
           python -m pip install --quiet openpyxl
-          python - <<'PY'
-          from io import BytesIO
-          from urllib.request import urlopen
-          from openpyxl import load_workbook
-          url='https://raw.githubusercontent.com/deocheng/nba_data/main/CSV/2025-2026BOS.xlsx'
-          with urlopen(url, timeout=35) as r: data=r.read()
-          wb=load_workbook(BytesIO(data),read_only=True,data_only=True)
-          print('POSITION_WORKBOOK_SHEETS',wb.sheetnames)
-          for ws in wb.worksheets:
-              ws.reset_dimensions()
-              print('POSITION_SHEET',ws.title)
-              for idx,row in enumerate(ws.iter_rows(values_only=True)):
-                  if idx>=9:break
-                  print('POSITION_ROW',repr(list(row[:16])))
-          PY
+          python scripts/extract-gm-bref-positions.py
       - name: Compare 2025-26 positional minutes with current ESPN depth charts for every player
         run: npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-positions-2026.ts
       - uses: actions/upload-artifact@v4
