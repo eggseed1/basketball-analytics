@@ -30,6 +30,10 @@ jobs:
         run: npm run typecheck
       - name: Rotation regression tests
         run: npm run test:franchise-rotations
+      - name: Real-season statistical calibration
+        run: npm run test:franchise-calibration
+      - name: Game outcome distribution
+        run: npm run test:franchise-outcome-realism
       - name: Run three full NBA schedule cohorts
         run: npm run audit:franchise-rotations
       - name: Publish detailed audit
