@@ -68,16 +68,22 @@ for(const teamId of [game.homeTeamId,game.awayTeamId]){
   }
 }
 
-let matchingFrames=0;
+let matchingFrames=0,matchingPlayerSlots=0;
 for(let slot=0;slot<24;slot++){
   const actual=new Set(result.box.stints![slot]![side]);
   const expected=new Set(Object.values(original.frames[slot]!));
   assert.equal(actual.size,5,"each active frame must field five unique players");
   if(slot===0)assert.deepEqual(actual,expected,"opening tip respects starters");
+  matchingPlayerSlots += [...expected].filter(id=>actual.has(id)).length;
   if([...expected].every(id=>actual.has(id)))matchingFrames++;
 }
-console.log(`Rotation preview matched ${matchingFrames}/24 simulated two-minute shifts (seeded fixture).`);
-assert.ok(matchingFrames>=16,"planned shifts remain dominant, while contextual bench/foul-out changes are permitted");
+console.log(`Rotation preview matched ${matchingFrames}/24 complete shifts and ${matchingPlayerSlots}/120 on-court player slots (seeded fixture).`);
+// A single contextual swap changes the full five-man set, so full-frame
+// parity exaggerates divergence. Require >=85% of planned player-shift
+// appearances while separately verifying opening starters, all 240 minutes,
+// bounded individual minute drift, and manual-plan exactness.
+assert.ok(matchingPlayerSlots>=102,
+  "at least 85% of planned player-shift appearances should survive contextual substitutions");
 const regulationMinutes=result.box.players.filter(p=>p.teamId===team.id).reduce((n,p)=>n+p.minutes,0);
 assert.equal(regulationMinutes,240+(result.box.overtime??0)*25,"contextual substitutions preserve 240 regulation minutes");
 for(const row of result.box.players.filter(p=>p.teamId===team.id)){
