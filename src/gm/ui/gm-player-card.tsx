@@ -13,6 +13,7 @@ import {
   playerSheet,
 } from "@/gm/engine/attributes";
 import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
+import { developmentOutlook } from "@/gm/engine/development-profile";
 import { scoutPotentialView, trajectoryRead } from "@/gm/engine/scouting";
 import {
   entrySeasonIsCurrentSaveYear,
@@ -334,7 +335,9 @@ export function GmPlayerCard({
               {player.draftModel===2?"Growth depends on age, work habits, health and a realistic practice or rotation plan.":"Overall is the rating used across the league. Development trait drives how hard they grow."}
             </p>
             <p className="mt-2 text-sm" data-testid="development-outlook">
-              {player.draftModel===2?"Development outlook":"Scouted potential"} {scoutRead.low}-{scoutRead.high}. {scoutRead.comment}
+              {player.draftModel === 2
+                ? <><strong>{developmentOutlook(player, league.season).label}.</strong> {developmentOutlook(player, league.season).detail}</>
+                : <>Scouted potential {scoutRead.low}-{scoutRead.high}. {scoutRead.comment}</>}
             </p>
             {player.sheet?.potential && player.draftModel!==2 ? (
               <p className="mt-1 text-sm text-muted-foreground">
@@ -351,7 +354,7 @@ export function GmPlayerCard({
                   {player.sheet.developmentReport.reasons.map(reason => <li key={reason}>{reason}</li>)}
                 </ul>
                 {player.sheet.developmentReport.gains.length ? <p className="mt-2 text-sm">{player.sheet.developmentReport.gains.join(" · ")}</p> : null}
-                {onRoster ? <Link href="/gm/franchise" className="mt-3 inline-block text-sm font-medium underline underline-offset-4">Adjust training and role</Link> : null}
+                {onRoster ? <Link href="/gm/development" className="mt-3 inline-block text-sm font-medium underline underline-offset-4">Choose development focus</Link> : null}
               </div>
             ) : null}
           </>

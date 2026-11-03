@@ -88,6 +88,16 @@ export function simulationRates(player: GmPlayer): GmSimProfile["rates"] {
   const delta = (key: keyof GmAttributes) => (attrs?.[key] ?? 65) - (profile.baseline[key] ?? attrs?.[key] ?? 65);
   rates.twoPct = clamp(rates.twoPct + (delta("closeShot") + delta("drivingLayup") + delta("midrange")) * 0.0015 + (delta("vertical") + delta("speedWithBall") + delta("drivingDunk")) * 0.0005, 0.3, 0.84);
   rates.threePct = clamp(rates.threePct + delta("threePoint") * 0.003, 0.12, 0.54);
+  // A generated player's changing skills also reshape his shot diet, rather
+  // than simply improving accuracy at a frozen draft-day three-point volume.
+  // The adjustment is deliberately gradual, so a short camp cannot create
+  // a volume shooter or distort league-wide three-point attempt rates.
+  if (player.draftModel === 2) {
+    rates.threeShare = clamp(
+      rates.threeShare + clamp(delta("threePoint"), -30, 30) * 0.0022,
+      0.02, 0.84
+    );
+  }
   rates.ftPct = clamp(rates.ftPct + delta("freeThrow") * 0.004, 0.35, 0.98);
   rates.fga *= clamp(1 + (player.ratings.impact - profile.impact) * 0.025 + delta("ballHandle") * 0.002, 0.65, 1.4);
   rates.ast *= clamp(1 + delta("passAccuracy") * 0.018, 0.4, 1.7);

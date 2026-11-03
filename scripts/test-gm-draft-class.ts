@@ -19,7 +19,7 @@ for(let seed=1;seed<=classes;seed++){
       grown=progressSheet({...grown,age:grown.age+1},{minutes:22,coach:0.4});
     }
     rows.push({rank:index+1,age:player.age,entry,peak:grown.sheet!.overall});
-    assert.ok(grown.sheet!.overall<=grown.sheet!.potential.ceiling,"development must retain finite headroom");
+    assert.ok(grown.sheet!.overall<= (grown.draftModel===2?99:grown.sheet!.potential.ceiling),"generated prospects have soft growth limits while legacy cohorts preserve fixed ceilings");
     assert.ok(Object.values(grown.sheet!.attributes).every(value=>value>=25&&value<=99));
     const heights={PG:[72,76],SG:[74,79],SF:[77,81],PF:[79,84],C:[81,87]}[player.position];
     assert.ok(player.heightIn>=heights[0]!&&player.heightIn<=heights[1]!,"a style nickname cannot change a prospect's position away from his generated body");
@@ -30,6 +30,7 @@ const mean=(values:number[])=>values.reduce((a,b)=>a+b,0)/values.length;
 const rate=(values:boolean[])=>values.filter(Boolean).length/values.length;
 const groups=[[1,1],[1,5],[6,14],[15,30],[31,60]].map(([from,to])=>{const group=band(from!,to!);return {from,to,entry:mean(group.map(row=>row.entry)),peak:mean(group.map(row=>row.peak)),rotation:rate(group.map(row=>row.peak>=74)),star:rate(group.map(row=>row.peak>=85)),elite:rate(group.map(row=>row.peak>=90))};});
 const top=band(1,1),first=band(1,5),second=band(31,60);
+console.log("Draft cohort distribution before balance assertions:",JSON.stringify({groups,secondUseful:rate(second.map(row=>row.peak>=74)),secondStars:rate(second.map(row=>row.peak>=85)),firstPeak:mean(first.map(row=>row.peak))}));
 assert.ok(mean(top.map(row=>row.entry))>=73&&mean(top.map(row=>row.entry))<=79,"first picks should usually need development on this league's scale");
 assert.ok(mean(rows.map(row=>row.entry))>=64&&mean(rows.map(row=>row.entry))<=70);
 assert.ok(rate(rows.map(row=>row.entry>=80))*60<1.5,"exceptional NBA-ready entrants must stay rare");

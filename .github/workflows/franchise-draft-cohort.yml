@@ -1,0 +1,42 @@
+name: Franchise draft cohort balance
+on:
+  pull_request:
+    paths:
+      - 'src/gm/engine/attributes.ts'
+      - 'src/gm/engine/development-profile.ts'
+      - 'src/gm/engine/dynamic-progression.ts'
+      - 'src/gm/seed/prospect-identities.ts'
+      - 'scripts/test-gm-draft-class.ts'
+      - 'scripts/test-gm-systems-pass.ts'
+      - 'scripts/test-gm-pace.ts'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cohort:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify 100 NBA draft classes and 6,000 career trajectories
+        run: npx tsx scripts/test-gm-draft-class.ts
+      - name: Cross-system trait and development regression
+        run: npx tsx scripts/test-gm-systems-pass.ts
+      - name: Star workload and foul-out rotation regression
+        run: npx tsx scripts/test-gm-pace.ts
+      - name: Open-ended development and saved-profile compatibility
+        run: npx tsx scripts/test-gm-open-development.ts
+      - name: Save draft cohort distribution
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: franchise-draft-cohort
+          path: /tmp/franchise-draft-calibration/cohorts.json
+          if-no-files-found: ignore

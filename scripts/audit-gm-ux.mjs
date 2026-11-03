@@ -324,9 +324,10 @@ try {
       await page.getByLabel("Mentorship 2 mentor", { exact: true }).selectOption(secondVeteran.id);
       assert.equal(await page.getByLabel("Mentorship 2 mentee", { exact: true }).inputValue(), secondPupil.id);
       assert.equal(await page.getByLabel("Mentorship 2 mentor", { exact: true }).inputValue(), secondVeteran.id);
-      await page.locator("summary").filter({ hasText: "Individual training" }).click();
+      await page.getByTestId("development-path").getByRole("heading", { name: "Shape a player" }).waitFor();
       await page.getByLabel("Training player", { exact: true }).selectOption(pupil.id);
       await page.getByLabel(`Development focus for ${pupil.name}`, { exact: true }).selectOption("defense");
+      await page.getByTestId("development-path").locator("summary").filter({ hasText: "Playing-time plan" }).click();
       await page.getByLabel(`Development plan for ${pupil.name}`, { exact: true }).selectOption("practice");
       await page.locator("summary").filter({ hasText: "Skill badges" }).click();
       await page.getByLabel("Badge player", { exact: true }).selectOption(pupil.id);
@@ -397,23 +398,34 @@ try {
     await load("camp", "/gm/development");
     const campSave = JSON.parse(readFileSync(`${dir}/camp.json`, "utf8")).league;
     const campers = campSave.players.filter(p => p.teamId === campSave.userTeamId && p.contract && !p.injury).slice(0, 2);
-    await page.locator("summary").filter({ hasText: "Training camp" }).click();
+    // The current phase opens camp automatically; only expand when closed.
+    const campSection = page.locator("details").filter({
+      has: page.locator("summary").filter({ hasText: "Training camp" })
+    }).first();
+    if (!(await campSection.evaluate(el => el.open))) {
+      await campSection.locator("summary").click();
+    }
     for (const camper of campers) await page.getByLabel(`Camp focus for ${camper.name}`, { exact: true }).selectOption("shooting");
     await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
     const campDialog = page.getByRole("dialog", { name: "Confirm training camp", exact: true });
     await campDialog.getByText(/fatigue/).waitFor();
     await campDialog.getByRole("button", { name: "Cancel", exact: true }).click();
     assert.equal((await exportedLeague()).seasonFlow.campResults, undefined, "canceling camp preserves the saved season");
-    if (!(await page.getByRole("button", { name: "Run individual camp", exact: true }).count())) {
-      await page.locator("summary").filter({ hasText: "Training camp" }).click();
+    // A collapsed <details> still contains the button, so locator.count()
+    // cannot tell whether the action is visible after closing the dialog.
+    if (!(await campSection.evaluate(el => el.open))) {
+      await campSection.locator("summary").click();
     }
     await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
     await campDialog.getByRole("button", { name: "Run camp", exact: true }).click();
+    assert.equal(await campSection.evaluate(el => el.open), true, "camp results should stay expanded in the active phase");
     await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
     const afterCamp = await exportedLeague();
     assert.equal(afterCamp.seasonFlow.campResults.filter(row => campers.some(p => p.id === row.playerId)).length, 2);
     await page.reload({ waitUntil: "domcontentloaded" });
-    await page.locator("summary").filter({ hasText: "Training camp" }).click();
+    if (!(await campSection.evaluate(el => el.open))) {
+      await campSection.locator("summary").click();
+    }
     await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
     assert.deepEqual((await exportedLeague()).seasonFlow.campResults, afterCamp.seasonFlow.campResults, "reloading preserves camp results without rerolling risk");
     assert.equal(await page.getByRole("button", { name: "Run individual camp", exact: true }).count(), 0);

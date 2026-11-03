@@ -18,6 +18,7 @@ import {
 import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
 import { ensureSimProfile } from "@/gm/engine/player-profile";
 import { impactToOverall, netStrength } from "@/gm/engine/true-strength";
+import { softGrowthFactor, developmentProfileOf } from "@/gm/engine/development-profile";
 
 export { productionOverallSpine } from "@/gm/engine/true-strength";
 
@@ -731,15 +732,22 @@ type DevelopmentOptions = {
 
 /** Fractional development avoids a free whole attribute at every check-in. */
 function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:DevelopmentOptions):GmPlayer {
-  const potential=sheet.potential,age=player.age,gap=Math.max(0,potential.ceiling-sheet.overall);
+  const potential=sheet.potential,age=player.age;
+  const openPath=player.draftModel===2;
+  const ratingLimit=openPath?99:potential.ceiling;
+  const gap=Math.max(0,ratingLimit-sheet.overall);
   const minutes=Math.max(0,opts.minutes??0),coach=clamp(opts.coach??0,0,1.5);
   const rng=createRng(hashId(player.id+":"+(opts.pace??"summer"))+age*997);
   const reasons:string[]=[];
   const ageFactor=age<=21?1.08:age<=23?0.95:age<=25?0.86:age<=27?0.58:0.25;
-  let path=potential.path==="boom"?1.45:potential.path==="bust"?0.2:1;
-  if(potential.path==="bust"&&age>=22&&age<=25&&rng()<0.08) {path=0.85;reasons.push("A better development stretch after a slow start");}
-  else if(potential.path==="average"&&age<=25&&player.personality>=10&&rng()<0.1) {path=1.45;reasons.push("A productive development stretch");}
-  const trait=potential.trait==="xfactor"?1.25:potential.trait==="superstar"?1.18:potential.trait==="star"?1.08:potential.trait==="bust"?0.65:1;
+  let path=openPath
+    ? potential.path==="boom"?1.06:potential.path==="bust"?0.92:1
+    : potential.path==="boom"?1.45:potential.path==="bust"?0.2:1;
+  if(!openPath&&potential.path==="bust"&&age>=22&&age<=25&&rng()<0.08) {path=0.85;reasons.push("A better development stretch after a slow start");}
+  else if(!openPath&&potential.path==="average"&&age<=25&&player.personality>=10&&rng()<0.1) {path=1.45;reasons.push("A productive development stretch");}
+  const trait=openPath
+    ? potential.trait==="xfactor"?1.2:potential.trait==="superstar"?1.14:potential.trait==="star"?1.08:potential.trait==="bust"?0.88:1
+    : potential.trait==="xfactor"?1.25:potential.trait==="superstar"?1.18:potential.trait==="star"?1.08:potential.trait==="bust"?0.65:1;
   let opportunity=0.72+Math.min(minutes,24)/24*0.4;
   if(player.developmentPlan==="practice") {opportunity=minutes<18?0.94+coach*0.05:0.91;reasons.push("Skills work preserves a path while rotation minutes are limited");}
   else if(player.developmentPlan==="rotation") {opportunity=0.5+Math.min(minutes,26)/26*0.7;reasons.push(minutes>=16?"Regular game reps support the role plan":"The rotation plan needs more game reps");}
@@ -748,12 +756,20 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   if ((opts.mentorBonus??0)>0) reasons.push("A veteran teammate supports focused development work");
   const staff=(1+coach*0.06)*clamp(opts.devStaff??1,0.85,1.25);
   const work=1+clamp(player.personality,-20,25)*0.004;
-  const annual=clamp((0.9+gap*0.14)*ageFactor*path*trait*opportunity*staff*work*(0.85+rng()*0.3),0,5.5);
+  const growthFriction=openPath?softGrowthFactor({...player,sheet},sheet.overall):1;
+  const growthInput=openPath?Math.min(gap,14):gap;
+  // Baseline practice must not turn nearly half of the second round into
+  // rotation players. Most learners advance patiently; unusually responsive
+  // rookies retain the chance to become genuinely surprising late gems.
+  const learningPace=openPath
+    ? clamp(0.81+Math.max(0,developmentProfileOf({...player,sheet}).learning-1.02)*0.55,0.81,1.08)
+    : 1;
+  const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;
   const budget=annual*pace*(1+clamp(opts.mentorBonus??0,0,0.18))*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
-  const steps=Math.min(Math.max(0,potential.ceiling-sheet.overall),Math.floor(budget));
+  const steps=Math.min(Math.max(0,ratingLimit-sheet.overall),Math.floor(budget));
   const carry=gap>0?budget-Math.floor(budget):0;
-  const focusKeys:Record<string,Array<keyof GmAttributes>>={shooting:["threePoint","midrange","freeThrow"],creation:["passAccuracy","ballHandle","speedWithBall","drivingLayup"],defense:["interiorDefense","perimeterDefense","steal","block"],rebounding:["offReb","defReb","strength"]};
+  const focusKeys:Record<string,Array<keyof GmAttributes>>={shooting:["threePoint","midrange","freeThrow"],creation:["passAccuracy","ballHandle","speedWithBall","drivingLayup"],finishing:player.position==="C"||player.position==="PF"?["closeShot","standingDunk","postControl"]:["drivingLayup","closeShot","drivingDunk"],defense:["interiorDefense","perimeterDefense","steal","block"],rebounding:["offReb","defReb","strength"]};
   const keys=focusKeys[player.developmentFocus??"balanced"]??GROW_KEYS[player.position];
   const attributes={...sheet.attributes},gains:string[]=[];
   for(const key of keys) {
@@ -762,20 +778,20 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   }
   if(steps&&age<=21) for(const key of ["strength","stamina"] as const) attributes[key]=band(attributes[key]+1);
   const offset=sheet.overallOffset??sheet.overall-overallFromAttributes(player.position,sheet.attributes,{impact:player.ratings.impact,drbl100:player.drbl100});
-  const target=Math.min(potential.ceiling,sheet.overall+steps);
+  const target=Math.min(ratingLimit,sheet.overall+steps);
   let low=player.ratings.impact,high=Math.min(10,low+steps*0.7);
   for(let pass=0;pass<18&&steps;pass++) {
     const middle=(low+high)/2;
     if(offset+overallFromAttributes(player.position,attributes,{impact:middle,drbl100:player.drbl100})<target) low=middle; else high=middle;
   }
   const impact=steps?Math.round(high*100)/100:player.ratings.impact;
-  const overall=clamp(offset+overallFromAttributes(player.position,attributes,{impact,drbl100:player.drbl100}),25,potential.ceiling);
+  const overall=clamp(offset+overallFromAttributes(player.position,attributes,{impact,drbl100:player.drbl100}),25,ratingLimit);
   const delta=impact-player.ratings.impact;
-  const offenseShare=player.developmentFocus==="defense"?0.15:player.developmentFocus==="rebounding"?0.35:0.75;
+  const offenseShare=player.developmentFocus==="defense"?0.15:player.developmentFocus==="rebounding"?0.35:player.developmentFocus==="finishing"?0.9:0.75;
   if(gap<=2) reasons.push("Limited headroom slows further gains");
   else reasons.push(age<=23?"Young player with skills still to develop":"Growth slows as the player approaches his prime");
   if(!steps&&gap>2) reasons.push("Small gains accumulate between reports");
-  return {...player,sheet:{...sheet,attributes,overall,overallOffset:offset,priorOverall:sheet.overall,priorSimple:simpleCategoryMeans(sheet.attributes),developmentCarry:carry,developmentReport:{age,before:sheet.overall,after:overall,reasons,gains}},ratings:{...player.ratings,impact,offense:Math.round((player.ratings.offense+delta*offenseShare)*100)/100,defense:Math.round((player.ratings.defense+delta*(1-offenseShare))*100)/100}};
+  return {...player,...(openPath?{developmentProfile:developmentProfileOf(player)}:{}),sheet:{...sheet,attributes,overall,overallOffset:offset,priorOverall:sheet.overall,priorSimple:simpleCategoryMeans(sheet.attributes),developmentCarry:carry,developmentReport:{age,before:sheet.overall,after:overall,reasons,gains}},ratings:{...player.ratings,impact,offense:Math.round((player.ratings.offense+delta*offenseShare)*100)/100,defense:Math.round((player.ratings.defense+delta*(1-offenseShare))*100)/100}};
 }
 
 /** One offseason. Age on the player is the age they just turned. */
@@ -785,7 +801,10 @@ export function progressSheet(
 ): GmPlayer {
   player = ensureSimProfile(ensurePlayerSheet(player));
   const sheet = player.sheet ?? buildSheet(player);
-  if((player.draftModel===2||player.developmentPlan)&&player.age<=28) return progressDevelopmentPath(player,sheet,opts??{});
+  // The alternative offseason path must not revive fixed potential limits
+  // when a generated prospect reaches his late twenties.
+  const openPath = player.draftModel === 2;
+  if ((openPath || player.developmentPlan) && player.age <= 28) return progressDevelopmentPath(player,sheet,opts??{});
   const { potential } = sheet;
   const age = player.age;
   const big = player.position === "C" || player.position === "PF";
@@ -796,15 +815,15 @@ export function progressSheet(
   let delta = agingBase(big ? age - 1 : age);
   const traitMul = traitGrowthMul(potential.trait);
   if (delta > 0) {
-    const pathMul = potential.path === "boom" ? 1.85 : potential.path === "bust" ? 0.25 : 1;
+    const pathMul = openPath ? (potential.path === "boom" ? 1.06 : potential.path === "bust" ? 0.92 : 1) : potential.path === "boom" ? 1.85 : potential.path === "bust" ? 0.25 : 1;
     const minuteMul = clamp(minutes / 26, 0.55, 1.15);
     const coachMul = 1 + clamp(coach, 0, 1.5) * 0.08;
     const work = player.personality > 15 ? 1.08 : player.personality < -15 ? 0.92 : 1;
     delta *= pathMul * traitMul * minuteMul * coachMul * work * clamp(devStaff, 0.85, 1.25) * (1 + clamp(opts?.mentorBonus ?? 0, 0, 0.18));
-    if (potential.path === "bust") delta *= 0.5;
+    if (!openPath && potential.path === "bust") delta *= 0.5;
     // Slow down once a player has already grabbed most of their realistic peak.
     // Stops mid-tier books from all drifting into the 80s over a long save.
-    const span = Math.max(6, potential.ceiling - potential.floor);
+    const span = Math.max(6, (openPath ? 99 : potential.ceiling) - potential.floor);
     const progress = (sheet.overall - potential.floor) / span;
     if (progress > 0.55) delta *= clamp(1.15 - progress, 0.25, 1);
     if (
@@ -837,8 +856,8 @@ export function progressSheet(
     delta += potential.trait === "xfactor" ? 0.08 : potential.trait === "superstar" ? 0.06 : 0.04;
   }
   delta += (rng() - 0.5) * 0.08;
-  if (delta > 0 && sheet.overall >= potential.ceiling) delta = 0;
-  if (delta > 0 && potential.path === "bust" && sheet.overall <= potential.floor + 1) delta = 0;
+  if (!openPath && delta > 0 && sheet.overall >= potential.ceiling) delta = 0;
+  if (!openPath && delta > 0 && potential.path === "bust" && sheet.overall <= potential.floor + 1) delta = 0;
   delta = clamp(delta * clamp(opts?.speed ?? 1, 0.5, 2), -0.7, 0.65);
   if (opts?.pace === "season") {
     delta = delta > 0 ? delta * 0.32 : delta * 0.12;
@@ -867,7 +886,7 @@ export function progressSheet(
                 ? -1
                 : 0;
   let attributes = sheet.attributes;
-  const focusKeys: Record<string, Array<keyof GmAttributes>> = { shooting: ["threePoint", "midrange", "freeThrow"], creation: ["passAccuracy", "ballHandle", "drivingLayup"], defense: ["interiorDefense", "perimeterDefense", "steal", "block"], rebounding: ["offReb", "defReb", "strength"] };
+  const focusKeys: Record<string, Array<keyof GmAttributes>> = { shooting: ["threePoint", "midrange", "freeThrow"], creation: ["passAccuracy", "ballHandle", "drivingLayup"], finishing: player.position === "C" || player.position === "PF" ? ["closeShot","standingDunk","postControl"] : ["drivingLayup","closeShot","drivingDunk"], defense: ["interiorDefense", "perimeterDefense", "steal", "block"], rebounding: ["offReb", "defReb", "strength"] };
   if (ticks > 0) attributes = addKeys(attributes, focusKeys[player.developmentFocus ?? "balanced"] ?? GROW_KEYS[player.position], ticks);
   if (ticks < 0) {
     attributes = addKeys(attributes, DECLINE_KEYS, ticks);
@@ -879,7 +898,7 @@ export function progressSheet(
       );
     }
   }
-  const offenseShare = player.developmentFocus === "shooting" || player.developmentFocus === "creation" ? 0.9 : player.developmentFocus === "defense" ? 0.15 : player.developmentFocus === "rebounding" ? 0.35 : delta > 0 ? 0.62 : 0.45;
+  const offenseShare = player.developmentFocus === "shooting" || player.developmentFocus === "creation" || player.developmentFocus === "finishing" ? 0.9 : player.developmentFocus === "defense" ? 0.15 : player.developmentFocus === "rebounding" ? 0.35 : delta > 0 ? 0.62 : 0.45;
   // Impact tracks development, but at a damped rate so long saves do not
   // turn every rotation guy into a +1.5 board name.
   const impactDelta = delta * (delta > 0 ? 0.45 : 0.7);
@@ -908,6 +927,7 @@ export function progressSheet(
   }), 25, 99);
   return {
     ...player,
+    ...(openPath ? { developmentProfile: developmentProfileOf(player) } : {}),
     sheet: {
       ...sheet,
       overall,

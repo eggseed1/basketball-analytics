@@ -34,6 +34,25 @@ try {
   await overview.locator("summary").click();
   assert.equal(await overview.evaluate(node => node.open), true, "overview remains available");
 
+  // Development should make one clear skill choice prominent, without
+  // exposing a hard-coded final OVR. The focus persists after a page reload.
+  await page.goto("http://127.0.0.1:3107/gm/development", { waitUntil: "domcontentloaded" });
+  const development = page.getByTestId("development-path");
+  await development.getByRole("heading", { name: "Shape a player" }).waitFor();
+  const focusSelect = development.getByRole("combobox", { name: /Development focus for/ });
+  await focusSelect.selectOption("defense");
+  await page.reload();
+  const focusReloaded = page.getByTestId("development-path").getByRole("combobox", { name: /Development focus for/ });
+  assert.equal(await focusReloaded.inputValue(), "defense",
+    "development focus must persist across reloads");
+  assert.equal(await page.getByText("Potential ceiling", { exact: true }).count(), 0,
+    "the development UI must not promise a fixed OVR destiny");
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2),
+    "the development screen must fit a narrow mobile viewport");
+  await page.screenshot({ path: `${dir}/development-open-mobile.png`, fullPage: true, animations: "disabled" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
   // The regular trade desk should work like a two-sided trade machine,
   // with a clear live response and optional details on a narrow viewport.
   await page.goto("http://127.0.0.1:3107/gm/trade", { waitUntil: "domcontentloaded" });

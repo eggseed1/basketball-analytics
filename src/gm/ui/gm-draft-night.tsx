@@ -89,6 +89,9 @@ export function GmDraftNight() {
     if (!added.length) return;
     const yours = added.find((row) => row.teamId === league.userTeamId);
     const jackpotRow = added.find((row) => {
+      // Generated prospects don't come with a knowable career verdict.
+      // Do not pause CPU draft jumps based on a hidden growth seed.
+      if (row.player.draftModel === 2) return false;
       const trait = playerDevTrait(row.player);
       return trait === "xfactor" || trait === "superstar";
     });
@@ -97,7 +100,8 @@ export function GmDraftNight() {
     if (added.length > 2 && !yours && !jackpotRow) return;
     const focus = yours ?? jackpotRow ?? sleeper ?? added[added.length - 1]!;
     const trait = playerDevTrait(focus.player);
-    const jackpot = trait === "xfactor" || trait === "superstar";
+    const jackpot = focus.player.draftModel !== 2 &&
+      (trait === "xfactor" || trait === "superstar");
     const isYours = focus.teamId === league.userTeamId;
     // Ceremony for your pick, jackpots, and sleepers. Ordinary CPU picks stay on the ticker.
     if (!isYours && !jackpot && !focus.sleeper) return;
@@ -156,9 +160,9 @@ export function GmDraftNight() {
             {clockClub ? ` · ${clockClub.city} ${clockClub.name}` : ""}
           </h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            Overall and the development trait stay sealed until the pick.
-            Draft off fogged grades and ceiling/floor comps. Jackpots land with
-            a full reveal.
+            Overall stays sealed until the pick. Draft from the scouting
+            reports, then shape every rookie through coaching, reps and
+            targeted development.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -378,7 +382,28 @@ export function GmDraftNight() {
           yourTurn={yourTurn}
           onDraft={(id) => {
             setAuto(false);
+            const priorPick = league.draftPickIndex;
             draftPlayer(id);
+            // The user pick ceremony must not depend on a later log-diff
+            // effect: the draft board can re-mount as the clock advances.
+            const next = useGmStore.getState().league;
+            const chosen = next && next.draftPickIndex !== priorPick
+              ? draftPickLog(next).find(row => row.player.id === id && row.teamId === next.userTeamId)
+              : null;
+            if (chosen && next) {
+              logLenRef.current = draftPickLog(next).length;
+              setReveal({
+                pick: chosen.pick,
+                teamAbbr: next.teams.find(club => club.id === chosen.teamId)?.abbr ?? chosen.teamId.toUpperCase(),
+                teamId: chosen.teamId,
+                userTeam: true,
+                player: chosen.player,
+                codename: chosen.player.codename,
+                mockRank: chosen.mockRank,
+                sleeper: chosen.sleeper,
+                fall: chosen.fall,
+              });
+            }
           }}
           mockRank={
             selected

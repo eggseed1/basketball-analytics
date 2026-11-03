@@ -11,6 +11,7 @@ import { flowOf } from "@/gm/engine/season-flow-state";
 export const CAMP_FOCUSES: ReadonlyArray<{ id: GmCampFocus; label: string; keys: Array<keyof GmAttributes> }> = [
   { id: "shooting", label: "Shooting", keys: ["threePoint", "midrange", "freeThrow"] },
   { id: "creation", label: "Creation", keys: ["passAccuracy", "ballHandle", "speedWithBall"] },
+  { id: "finishing", label: "Finishing", keys: ["closeShot", "drivingLayup", "standingDunk"] },
   { id: "defense", label: "Defense", keys: ["perimeterDefense", "interiorDefense", "steal", "block"] },
   { id: "rebounding", label: "Rebounding", keys: ["offReb", "defReb"] },
   { id: "conditioning", label: "Conditioning", keys: ["stamina", "agility", "strength"] },
@@ -64,7 +65,12 @@ export function campSkillChanges(league: GmLeagueState, player: GmPlayer, focus:
   const attributes = ensurePlayerSheet(player).sheet!.attributes;
   const trainer = league.teams.find(team => team.id === player.teamId)?.staff.trainerLevel ?? 1;
   const gain = player.age <= 25 && trainer >= 3 ? 2 : 1;
-  return (camp?.keys ?? []).map(key => ({ key, before: attributes[key], after: clamp(attributes[key] + gain, 25, 99) }));
+  const keys: Array<keyof GmAttributes> = focus === "finishing"
+    ? player.position === "C" || player.position === "PF"
+      ? ["closeShot", "standingDunk", "postControl"]
+      : ["drivingLayup", "closeShot", "drivingDunk"]
+    : (camp?.keys ?? []);
+  return keys.map(key => ({ key, before: attributes[key], after: clamp(attributes[key] + gain, 25, 99) }));
 }
 
 export function suggestCampAssignments(league: GmLeagueState): { state: GmLeagueState; ok: boolean; reason: string } {

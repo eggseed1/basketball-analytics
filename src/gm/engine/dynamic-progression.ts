@@ -6,8 +6,12 @@
 import type { GmDevTrait, GmLeagueState, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { developmentSeed, workEthicOf } from "@/gm/engine/development";
-import { ensurePlayerSheet, overallFromAttributes, simpleCategoryMeans } from "@/gm/engine/attributes";
+import { ATTRIBUTE_LABEL, ensurePlayerSheet, overallFromAttributes, simpleCategoryMeans } from "@/gm/engine/attributes";
 import { pathFromTrait } from "@/gm/engine/dev-traits";
+import {
+  developmentProfileOf, developmentFocusSkill, developmentSkillKeys,
+  softGrowthFactor,
+} from "@/gm/engine/development-profile";
 
 export type DevelopmentCheckpoint = "quarter1" | "january" | "quarter3" | "finale" | "summer";
 export type ProgressContext = { league: GmLeagueState; checkpoint: DevelopmentCheckpoint; coach?: number; staff?: number; mentor?: number; playoffGames?: number };
@@ -116,25 +120,43 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
   const before = sheet.overall;
   const step = target - before;
   const attrs = { ...sheet.attributes };
-  const chosen = old.developmentFocus === "shooting" ? ["threePoint", "midrange", "freeThrow"]
+  const openPath = old.draftModel === 2;
+  const focus = developmentFocusSkill(old);
+  const chosen = openPath
+    ? developmentSkillKeys(old.position, focus)
+    : old.developmentFocus === "shooting" ? ["threePoint", "midrange", "freeThrow"]
     : old.developmentFocus === "creation" ? ["passAccuracy", "ballHandle", "speedWithBall"]
+    : old.developmentFocus === "finishing" ? developmentSkillKeys(old.position, "finishing")
     : old.developmentFocus === "defense" ? ["perimeterDefense", "interiorDefense", "steal", "block"]
     : old.developmentFocus === "rebounding" ? ["offReb", "defReb", "strength"]
     : old.position === "C" || old.position === "PF" ? ["interiorDefense", "defReb", "strength", "closeShot"]
     : ["threePoint", "perimeterDefense", "ballHandle", "midrange"];
   const swing = checkpoint === "summer" ? Math.max(1, Math.min(3, Math.abs(step))) : step === 0 ? 0 : 1;
+  const aptitude = developmentProfileOf(old).aptitudes;
+  const affinity = openPath ? aptitude[focus] ?? ((aptitude.shooting + aptitude.creation) / 2) : 1;
+  const attributeSteps = step === 0 ? 0 : Math.max(1, Math.round(swing * affinity));
   for (const name of chosen) {
     const key = name as keyof typeof attrs;
-    attrs[key] = clamp(attrs[key] + Math.sign(step) * swing, 25, 99);
+    attrs[key] = clamp(attrs[key] + Math.sign(step) * attributeSteps, 25, 99);
   }
   const impactChange = step * 0.31;
   const oldRatings = old.ratings;
   const impact = clamp(Math.round((oldRatings.impact + impactChange) * 100) / 100, -4, 10);
-  const attacking = old.developmentFocus === "defense" ? 0.2 : old.developmentFocus === "rebounding" ? 0.4 : 0.65;
+  const attacking = old.developmentFocus === "defense" ? 0.2
+    : old.developmentFocus === "rebounding" ? 0.4
+    : openPath && (focus === "shooting" || focus === "creation" || focus === "finishing") ? 0.86
+    : 0.65;
   const offense = clamp(Math.round((oldRatings.offense + impactChange * attacking) * 100) / 100, -5, 12);
   const defense = clamp(Math.round((oldRatings.defense + impactChange * (1 - attacking)) * 100) / 100, -5, 10);
   const rating = { ...oldRatings, impact, offense, defense };
   const offset = target - overallFromAttributes(old.position, attrs, { impact, offense, defense });
+  const skillGains = openPath && step > 0 ? chosen
+    .filter(key => attrs[key as keyof typeof attrs] > sheet.attributes[key as keyof typeof attrs])
+    .slice(0, 3)
+    .map(key => {
+      const ratingKey = key as keyof typeof attrs;
+      return `${ATTRIBUTE_LABEL[ratingKey]} +${attrs[ratingKey] - sheet.attributes[ratingKey]}`;
+    }) : [];
   return {
     ...old,
     ratings: rating,
@@ -142,7 +164,7 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
       ...sheet, overall: target, attributes: attrs, overallOffset: offset,
       priorOverall: before, priorSimple: simpleCategoryMeans(sheet.attributes),
       developmentReport: { age: old.age, before, after: target,
-        reasons: [label], gains: step ? [`Overall ${step > 0 ? "+" : ""}${step}`] : ["Skill maintenance"] },
+        reasons: [label], gains: step ? [`Overall ${step > 0 ? "+" : ""}${step}`, ...skillGains] : ["Skill maintenance"] },
     },
   };
 }
@@ -157,7 +179,13 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const trait = sheet.potential.trait ?? "normal";
   const signal = performanceSignal(withSheet, context.league.season);
   const accolade = isSummer ? accoladeScore(context.league, player.id).score : 0;
-  const headroom = Math.max(0, sheet.potential.ceiling - baseline);
+  // Generated players have no preordained final OVR. Each skill has a
+  // learning aptitude; elite ratings instead encounter steep soft friction.
+  // Existing NBA players and pre-v2 generated saves retain their legacy
+  // ceiling data, but drafted model-2 rookies use the new open path.
+  const openPath = withSheet.draftModel === 2;
+  const profile = openPath ? developmentProfileOf(withSheet) : undefined;
+  const headroom = Math.max(0, (openPath ? 99 : sheet.potential.ceiling) - baseline);
   const rng = createRng(developmentSeed(player.id + ":" + context.league.season + ":" + context.checkpoint));
   const peak = sheet.potential.peakStart || (player.position === "C" ? 29 : 27);
   const age = player.age; // Callers of summer progression already apply the birthday once.
@@ -165,7 +193,9 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
     : age <= 27 ? 0.95 : age <= peak + 1 ? 0.3
     : age <= 31 ? -0.30 : age <= 33 ? -0.82 : age <= 35 ? -1.36 : -1.90;
   const bonus = trait === "xfactor" ? 1.24 : trait === "superstar" ? 1.18 : trait === "star" ? 1.1 : trait === "bust" ? 0.55 : 1;
-  const path = sheet.potential.path === "boom" ? 1.13 : sheet.potential.path === "bust" ? 0.72 : 1;
+  // Draft-day boom/bust labels become modest tendencies, not destinies.
+  const path = sheet.potential.path === "boom" ? (openPath ? 1.06 : 1.13)
+    : sheet.potential.path === "bust" ? (openPath ? 0.92 : 0.72) : 1;
   const play = withSheet.seasonLine;
   const availability = play && play.gp >= 12 ? clamp(play.gp / 65, 0.35, 1) : 0.86;
   let activity = play && play.gp >= 12 ? clamp(play.min / play.gp / 25, 0.65, 1.12) : 0.85;
@@ -174,7 +204,9 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   if (withSheet.injury) activity *= 0.78;
   const professionalism = 0.9 + workEthicOf(withSheet) / 1000;
   const staff = clamp(1 + (context.coach ?? 0) * 0.07 + ((context.staff ?? 1) - 1) * 0.12 + (context.mentor ?? 0), 0.85, 1.4);
-  const positive = ageDelta > 0 ? ageDelta * bonus * path * activity * availability * professionalism * staff : ageDelta;
+  const growthFriction = openPath ? softGrowthFactor(withSheet, baseline) : 1;
+  const positive = ageDelta > 0 ? ageDelta * bonus * path * activity *
+    availability * professionalism * staff * growthFriction : ageDelta;
   const performance = signal * (isSummer ? 1.1 : 0.52);
   const awardsBonus = isSummer ? Math.min(1.15, accolade * 0.12) : 0;
   const playoff = isSummer && age < 30 ? Math.min(0.4, (context.playoffGames ?? 0) * 0.02) : 0;
@@ -187,9 +219,24 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   let steps = isSummer ? Math.round(total) : Math.trunc(total);
   steps = clamp(steps, -4, Math.min(headroom, isSummer ? 5 : 1));
   const carry = clamp(total - steps, -0.99, 0.99);
-  if (steps === 0) return { ...withSheet, sheet: { ...sheet, progressionCarry: carry } };
-  const next = changeRating(withSheet, clamp(baseline + steps, 30, 99), isSummer ? "Offseason development: potential, performance, staff and accolades" : "In-season development checkpoint", context.checkpoint);
-  return { ...next, sheet: { ...next.sheet!, progressionCarry: carry } };
+  if (steps === 0) return {
+    ...withSheet,
+    ...(profile ? { developmentProfile: profile } : {}),
+    sheet: { ...sheet, progressionCarry: carry },
+  };
+  const next = changeRating(
+    withSheet, clamp(baseline + steps, 30, 99),
+    isSummer
+      ? openPath ? "Offseason skill development: focus, learning, performance and environment"
+        : "Offseason development: potential, performance, staff and accolades"
+      : "In-season development checkpoint",
+    context.checkpoint
+  );
+  return {
+    ...next,
+    ...(profile ? { developmentProfile: profile } : {}),
+    sheet: { ...next.sheet!, progressionCarry: carry },
+  };
 }
 
 export function reviewDevelopmentTrait(league: GmLeagueState, player: GmPlayer): GmPlayer {

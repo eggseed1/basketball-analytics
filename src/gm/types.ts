@@ -312,7 +312,23 @@ export interface GmSeasonArchive {
 
 export type GmBadgeId = "inside_touch" | "deep_range" | "free_throw" | "floor_general" | "secure_handle" | "passing_lanes" | "rim_guardian" | "glass_cleaner" | "defensive_anchor" | "clutch_scorer";
 
+/**
+ * Hidden, persistent learning profile. Generated once from pre-draft inputs,
+ * never exposed as a deterministic final-overall promise. Old saves can derive
+ * the same starting profile without altering existing players.
+ */
+export interface GmDevelopmentProfile {
+  version: 1;
+  learning: number;
+  adaptability: number;
+  aptitudes: Record<"shooting" | "creation" | "defense" | "rebounding", number> & { finishing?: number };
+  /** Positive performance/mentoring discoveries; soft acceleration, not a ceiling. */
+  discovery: number;
+}
+
 export interface GmPlayer {
+  /** A player's developmental tendencies; generated prospects have no fixed OVR ceiling. */
+  developmentProfile?: GmDevelopmentProfile;
   /** One deterministic trait review per offseason; retained in saves. */
   traitHistory?: Array<{ season: number; before: GmDevTrait; after: GmDevTrait; reason: string }>;
   badges?: { version: 1 | 2; xp: Partial<Record<GmBadgeId, number>>; season?: number; gameIds?: string[] };
@@ -328,7 +344,7 @@ export interface GmPlayer {
   /** User-picked primary role; never silently overridden by roster imports. */
   manualPosition?: boolean;
   simProfile?: GmSimProfile;
-  developmentFocus?: "balanced" | "shooting" | "creation" | "defense" | "rebounding";
+  developmentFocus?: "balanced" | "shooting" | "creation" | "finishing" | "defense" | "rebounding";
   developmentPlan?: "balanced" | "practice" | "rotation";
   /** Calibrated generated class; existing NBA player sheets remain authoritative. */
   draftModel?: 2;
@@ -1010,7 +1026,7 @@ export type GmQoStatus =
   | "expired";
 
 export type GmOffseasonStage = "review" | "staff" | "lottery" | "scouting" | "draft" | "rookie_signing" | "free_agency" | "progression" | "summer_league" | "training_camp" | "roster_check";
-export type GmCampFocus = "shooting" | "creation" | "defense" | "rebounding" | "conditioning";
+export type GmCampFocus = "shooting" | "creation" | "finishing" | "defense" | "rebounding" | "conditioning";
 export interface GmSeasonFlow {
   version: 1;
   season: number;

@@ -19,6 +19,7 @@ import {
   type LetterGrade,
 } from "@/gm/engine/attributes";
 import { traitLabel } from "@/gm/engine/dev-traits";
+import { developmentOutlook } from "@/gm/engine/development-profile";
 import { formatHeight, scoutPotentialView } from "@/gm/engine/scouting";
 import { perGame, rateLabel, shotLabel } from "@/gm/lib/counting";
 import { countingForBoard, seasonHasGames } from "@/gm/lib/season-line";
@@ -368,15 +369,24 @@ function SelectedHero({
         </p>
         <p className="gm-roster__archetype">{archetype}</p>
         <p className="gm-roster__strengths">{strengths.join(" · ")}</p>
-        <p className="gm-roster__scout text-sm text-muted-foreground" title={scoutRead.comment}>
-          Scout POT {scoutRead.low}-{scoutRead.high}
-          <span className="ml-1 text-[11px]">(scout range, not true ceiling)</span>
-        </p>
-        {sheet.potential.trait && sheet.potential.trait !== "normal" ? (
-          <p className="gm-roster__growth text-xs text-muted-foreground" title={scoutRead.comment}>
-            {scoutRead.comment}
+        {player.draftModel === 2 ? (
+          <p className="gm-roster__scout text-sm text-muted-foreground" title={developmentOutlook(player, league.season).detail}>
+            Development: {developmentOutlook(player, league.season).label}
+            <span className="ml-1 text-[11px]">(no fixed final OVR)</span>
           </p>
-        ) : null}
+        ) : (
+          <>
+            <p className="gm-roster__scout text-sm text-muted-foreground" title={scoutRead.comment}>
+              Scout POT {scoutRead.low}-{scoutRead.high}
+              <span className="ml-1 text-[11px]">(estimate, not true ceiling)</span>
+            </p>
+            {sheet.potential.trait && sheet.potential.trait !== "normal" ? (
+              <p className="gm-roster__growth text-xs text-muted-foreground" title={scoutRead.comment}>
+                {scoutRead.comment}
+              </p>
+            ) : null}
+          </>
+        )}
       </div>
 
       <div className="gm-roster__hero-status">
