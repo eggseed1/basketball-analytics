@@ -64,13 +64,16 @@ export function GmDraftReveal({
   reveal: DraftRevealPayload;
   onClose: () => void;
 }) {
+  const openCareer = reveal.player.draftModel === 2;
   const trait = playerDevTrait(reveal.player);
   const ovr = playerSheet(reveal.player).overall;
-  const jackpot = trait === "xfactor" || trait === "superstar";
-  const bust = trait === "bust";
+  // A prospect with open-ended development has no revealed secret career
+  // verdict on draft night. Celebrate the scout's pick, not hidden DNA.
+  const jackpot = !openCareer && (trait === "xfactor" || trait === "superstar");
+  const bust = !openCareer && trait === "bust";
   const longBeat = jackpot || reveal.userTeam;
   const [stage, setStage] = useState<Stage>("pick");
-  const hit = scoutVsTruth(reveal.player, trait);
+  const hit = openCareer ? null : scoutVsTruth(reveal.player, trait);
 
   useEffect(() => {
     setStage("pick");
@@ -131,8 +134,8 @@ export function GmDraftReveal({
             <strong className="tabular-nums">{showOvr ? ovr : "—"}</strong>
           </div>
           <div className={cn("gm-draft-reveal__stat", showTrait && "is-on", jackpot && "is-hot")}>
-            <span>Dev trait</span>
-            <strong>{showTrait ? traitLabel(trait) : "Sealed"}</strong>
+            <span>{openCareer ? "Career path" : "Dev trait"}</span>
+            <strong>{showTrait ? openCareer ? "Unwritten" : traitLabel(trait) : "Sealed"}</strong>
           </div>
         </div>
 
@@ -141,7 +144,9 @@ export function GmDraftReveal({
             Sleeper · fell {reveal.fall} from mock #{reveal.mockRank}
           </p>
         ) : null}
-        {showTrait && hit ? <p className="gm-draft-reveal__note">{hit}</p> : null}
+        {showTrait && openCareer ? (
+          <p className="gm-draft-reveal__note">The tools are real. Coaching, opportunity and performance will shape what comes next.</p>
+        ) : showTrait && hit ? <p className="gm-draft-reveal__note">{hit}</p> : null}
 
         {stage === "done" ? (
           <Button className="mt-4 w-full" onClick={onClose}>
