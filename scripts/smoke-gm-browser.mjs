@@ -89,6 +89,52 @@ try {
   await page.getByText(/Extended: 3 added years/).waitFor();
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), "contracts desk overflows mobile");
   await page.screenshot({ path: `${dir}/contracts-mobile.png`, fullPage: true, animations: "disabled" });
+
+  // The FA desk must open a standalone player negotiation with a legal,
+  // interactive salary ceiling. A verbal commitment persists and signs only
+  // after the moratorium, rather than signing immediately on the offer click.
+  const faManifest = JSON.parse(readFileSync(`${dir}/journey-fa-manifest.json`, "utf8"));
+  await importJourney("fa");
+  await page.goto("http://127.0.0.1:3107/gm/free-agency", { waitUntil: "domcontentloaded" });
+  await page.getByRole("link", { name: "Review terms for " + faManifest.playerName, exact: true }).click();
+  await page.waitForURL("**/gm/free-agency/offer/**");
+  const faSlider = page.getByRole("slider", { name: "Annual salary offer", exact: true });
+  assert.ok(Number(await faSlider.getAttribute("max")) <= faManifest.maxSalaryM + 0.01,
+    "free-agent salary slider must respect the contract evaluator's legal maximum");
+  assert.ok(Number(await faSlider.getAttribute("max")) + 0.05 >= faManifest.ask,
+    "fixture club must be able to meet the agent asking price");
+  assert.ok(Number(await faSlider.inputValue()) <= Number(await faSlider.getAttribute("max")) + .001);
+  await faSlider.focus();
+  await faSlider.press("End");
+  await page.getByRole("button", { name: "Request verbal agreement", exact: true }).click();
+  await page.getByRole("status").filter({ hasText: /Verbal agreement with/ }).waitFor();
+  await page.reload();
+  await page.getByText(/A verbal agreement is on record with/).waitFor();
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2),
+    "free-agent negotiation overflows mobile");
+  await page.screenshot({ path: `${dir}/free-agency-offer-mobile.png`, fullPage: true, animations: "disabled" });
+  await page.goto("http://127.0.0.1:3107/gm/free-agency", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.goto("http://127.0.0.1:3107/gm/franchise", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
+  const faDownloadPromise = page.waitForEvent("download", { timeout: 90000 });
+  await page.getByRole("button", { name: "Export this franchise", exact: true }).click();
+  const faDownload = await faDownloadPromise;
+  const faExport = JSON.parse(readFileSync(await faDownload.path(), "utf8"));
+  const signedFa = faExport.league.players.find(p => p.id === faManifest.playerId);
+  assert.equal(signedFa?.teamId, "bos", "verbal agreement must become a signed BOS contract in the open window");
+  assert.ok(signedFa.contract?.yearsRemaining >= 1, "accepted FA deal must persist a real contract");
+
+  // The same offer page must disable restricted sheets before open signing.
+  await importJourney("rfa");
+  await page.goto("http://127.0.0.1:3107/gm/free-agency/offer/" + encodeURIComponent(faManifest.playerId),
+    { waitUntil: "domcontentloaded" });
+  const sheetButton = page.getByRole("button", { name: "Submit offer sheet", exact: true });
+  assert.equal(await sheetButton.isDisabled(), true, "moratorium RFA offer sheet must be blocked");
+  await page.getByText(/Restricted offer sheets open when contracts can be signed/).first().waitFor();
+  await page.screenshot({ path: `${dir}/restricted-offer-sheet-mobile.png`, fullPage: true, animations: "disabled" });
   await importJourney("review");
   await page.getByRole("link", { name: "Season hub", exact: true }).click();
   await page.getByRole("heading", { name: "Season review", exact: true }).waitFor();
@@ -119,7 +165,7 @@ try {
   await page.getByRole("heading", { name: "Opening-night roster", exact: true }).waitFor();
   await page.screenshot({ path: `${dir}/opening-roster-desktop.png`, fullPage: true, animations: "disabled" });
   assert.deepEqual(errors, [], "Franchise screens must not produce uncaught browser errors");
-  console.log("Franchise browser checks passed: import/export, commissioner edits, extensions, season handoffs, camp, reloads and mobile layout.");
+  console.log("Franchise browser checks passed: import/export, commissioner edits, extensions, free-agent offers, RFA gates, signing, season handoffs, reloads and mobile layout.");
 } catch (error) {
   if (page) {
     await page.screenshot({ path: `${dir}/failure.png`, fullPage: true });
