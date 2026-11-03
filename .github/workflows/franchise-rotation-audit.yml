@@ -5,6 +5,10 @@ on:
   push:
     paths:
       - 'scripts/audit-gm-multiseason-rotations.ts'
+      - 'src/gm/engine/lineup.ts'
+      - 'src/gm/engine/coaching.ts'
+      - 'src/gm/engine/rotation-pattern.ts'
+      - 'src/gm/engine/rotation-roles.ts'
       - '.github/workflows/franchise-rotation-audit.yml'
 
 permissions:
@@ -21,6 +25,10 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Check TypeScript
+        run: npm run typecheck
+      - name: Rotation regression tests
+        run: npm run test:franchise-rotations
       - name: Run three full NBA schedule cohorts
         run: npm run audit:franchise-rotations
       - name: Publish detailed audit
