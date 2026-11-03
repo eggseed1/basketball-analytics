@@ -260,7 +260,7 @@ try {
         // Read the machine-readable cursor; display month headings can lag
         // the day while the auto-sim is animating across month boundaries.
         const iso = await calendar.getAttribute("data-current-date");
-        assert.match(iso ?? "", /^\\d{4}-\\d{2}-\\d{2}$/);
+        assert.match(iso ?? "", /^\d{4}-\d{2}-\d{2}$/);
         const value = Date.parse(iso + "T00:00:00Z");
         assert.ok(Number.isFinite(value));
         return value;
