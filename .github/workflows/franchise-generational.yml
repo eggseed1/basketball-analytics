@@ -20,6 +20,12 @@ jobs:
   historic-talent:
     runs-on: ubuntu-24.04
     timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [3167, 8341, 95421]
+    env:
+      GENERATIONAL_SEED: ${{ matrix.seed }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,7 +41,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: franchise-generational-cohort
+          name: franchise-generational-cohort-${{ matrix.seed }}
           path: /tmp/franchise-generational/careers.json
           retention-days: 30
           if-no-files-found: warn
