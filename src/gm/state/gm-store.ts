@@ -1428,7 +1428,11 @@ export const useGmStore = create<GmStore>()(
               status === "untouchable" ? [...locked, playerId] : locked,
           };
         });
-        set({ league: withUpdate({ ...league, teams }) });
+        const updated = { ...league, teams };
+        set({ league: withUpdate({
+          ...updated,
+          tradeMarket: buildTradeMarket(updated),
+        }) });
       },
 
       setPickProtection: (pickId, topN) => {
