@@ -14,7 +14,7 @@ const TIMEOUT_MS = 180_000;
 // These deterministic league-wide audits can exceed three minutes when
 // running alongside the full CI matrix; keep the normal timeout elsewhere.
 const LONG_TEST_TIMEOUT_MS = 360_000;
-const LONG_TESTS = new Set(["test:franchise-draft-accessibility", "test:franchise-multiseason"]);
+const LONG_TESTS = new Set(["test:franchise-draft-accessibility", "test:franchise-multiseason", "test:franchise-calendar"]);
 const CONCURRENCY = Math.max(2, Math.min(6, os.cpus().length - 1));
 
 const only = process.argv
