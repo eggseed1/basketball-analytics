@@ -10,6 +10,7 @@ on:
       - 'src/gm/engine/offseason.ts'
       - 'src/gm/seed/create-league.ts'
       - 'scripts/test-gm-future-schedule.ts'
+      - 'scripts/test-gm-calendar.ts'
       - '.github/workflows/franchise-future-schedule.yml'
 permissions:
   contents: read
