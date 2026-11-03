@@ -55,12 +55,28 @@ export function boardValue(
   assets: GmTradeAsset[]
 ): number {
   const picks = state.teams.flatMap((team) => team.draftPicks);
+  const profile = rosterProfile(state, viewerId);
   return assets.reduce((sum, asset) => {
     const player =
       asset.type === "player" ? state.players.find((entry) => entry.id === asset.id) : undefined;
     const pick = asset.type === "pick" ? picks.find((entry) => entry.id === asset.id) : undefined;
     const base = assetValue(asset, state.players, picks, state);
-    return sum + Math.round(base * stanceMultiplier(state, viewerId, asset, player, pick));
+    let roleFactor = 1;
+    if (player) {
+      // A weak guard group wants a real guard upgrade more than a third
+      // similar wing. Primary and genuine secondary roles both matter.
+      const positions = [player.position, player.secondaryPosition].filter(Boolean);
+      const rank = Math.min(...positions.map(pos => profile.needs.indexOf(pos!)));
+      const bestAt = Math.max(0, ...positions.map(pos =>
+        profile.depth.find(row => row.position === pos)?.best ?? 0));
+      const established = overallOf(player) >= bestAt - 2;
+      if (player.teamId === viewerId && rank <= 1 && established) roleFactor = 1.10;
+      else if (player.teamId !== viewerId && rank <= 1 && established) roleFactor = 1.08;
+      else if (player.teamId !== viewerId && rank >= 3 &&
+        overallOf(player) < bestAt - 5) roleFactor = 0.94;
+    }
+    return sum + Math.round(base * roleFactor *
+      stanceMultiplier(state, viewerId, asset, player, pick));
   }, 0);
 }
 
