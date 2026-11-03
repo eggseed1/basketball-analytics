@@ -13,7 +13,7 @@ import type {
   GmStandingsRow,
   GmTeam,
 } from "@/gm/types";
-import { simulateGame, compactSimBox } from "@/gm/engine/simulate";
+import { simulateGame, compactSimBox, actualShiftSnapshot } from "@/gm/engine/simulate";
 import { cupChampionNews, ensureNbaCup, gameCounts } from "@/gm/engine/cup";
 import { allStarChampionNews, ensureAllStar } from "@/gm/engine/allstar";
 import { maybeGrowInSeason, rollGameInjuries, tickInjuries } from "@/gm/engine/progression";
@@ -21,7 +21,7 @@ import { maxScheduleDay, regularSeasonComplete } from "@/gm/engine/schedule";
 import { applyGameToStandings } from "@/gm/engine/standings";
 import { noteTradeDeadline } from "@/gm/engine/offseason";
 import { recordSimGame } from "@/gm/lib/season-line";
-import { rebalanceForInjuryChanges, schemeHeadline, shiftSnapshot } from "@/gm/engine/coaching";
+import { rebalanceForInjuryChanges, schemeHeadline } from "@/gm/engine/coaching";
 import { injuryReturnDate } from "@/gm/engine/injury-schedule";
 
 export function stepDay(league: GmLeagueState): {
@@ -65,7 +65,7 @@ export function stepDay(league: GmLeagueState): {
     const result = simulateGame(g, league.teams, players, undefined, schedule, league.settings);
     if (g.homeTeamId === league.userTeamId || g.awayTeamId === league.userTeamId) {
       const team = league.teams.find(row => row.id === league.userTeamId);
-      if (team) result.box.shiftPlan = shiftSnapshot(team, players);
+      if (team) result.box.shiftPlan = actualShiftSnapshot(result.box, team.id);
     }
     schedule = schedule.map((x) => (x.id === g.id ? result.game : x));
     if (!g.exhibition) players = recordBadgeBox(players, result.box);
