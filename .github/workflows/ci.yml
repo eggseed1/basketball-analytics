@@ -30,6 +30,8 @@ jobs:
       - name: Generate route types
         run: npx next typegen
       - run: npm run typecheck
+      - name: Test ESPN team box fallback
+        run: npx tsx scripts/test-team-game-box-espn.ts
       - name: Lint (new violations only; baseline in eslint-suppressions.json)
         id: lint
         run: npx eslint . --quiet
