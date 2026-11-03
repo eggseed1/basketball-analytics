@@ -91,7 +91,7 @@ export function inferredSecondary(player: GmPlayer): GmPosition | null {
 }
 
 /** Bump when natural-position rules change so saves re-list. */
-export const POSITION_BOOK_VERSION = 4;
+export const POSITION_BOOK_VERSION = 5;
 
 function heightBell(height: number, peak: number, spread: number): number {
   const z = (height - peak) / spread;
@@ -294,8 +294,23 @@ export function classifyListedPosition(
   return { position: primary, secondaryPosition: secondary };
 }
 
+/** Curated real NBA primary roles; never treat a unit seat as a new listing. */
+const VERIFIED_NBA_PRIMARY: Record<string, GmPosition> = {
+  "Jayson Tatum": "PF", "Paul George": "SF",
+  "Payton Pritchard": "PG", "Derrick White": "SG",
+};
+export function verifiedNbaPrimary(player: GmPlayer): GmPosition | null {
+  return player.nbaPlayerId ? VERIFIED_NBA_PRIMARY[player.name] ?? null : null;
+}
+
 /** Apply five-spot listing + sibling secondary. Rebuilds overall when primary moves. */
 export function withListedPositions(player: GmPlayer): GmPlayer {
+  const verified = verifiedNbaPrimary(player);
+  if (verified && player.position !== verified) {
+    const moved = reassignPosition(player, verified);
+    return { ...moved, listedPosition: verified, secondaryPosition: siblingPosition(verified) };
+  }
+  if (verified) return { ...player, listedPosition: verified, secondaryPosition: player.secondaryPosition ?? siblingPosition(verified) };
   if (player.listedPosition) return { ...player, position: player.listedPosition, secondaryPosition: player.secondaryPosition ?? siblingPosition(player.listedPosition) };
   const listed = classifyListedPosition(player);
   if (
@@ -327,6 +342,8 @@ export function ensureTeamPositionCoverage(players: GmPlayer[]): GmPlayer[] {
   }
   const promote = new Map<string, GmPosition>();
   for (const roster of byTeam.values()) {
+    // Do not rewrite NBA player identities to artificially fill PG/PF quotas.
+    if (roster.some(player => player.nbaPlayerId)) continue;
     if (!roster.some((player) => player.position === "PG")) {
       const guard = [...roster]
         .filter((player) => player.position === "SG" && !player.listedPosition)
