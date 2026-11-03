@@ -312,7 +312,23 @@ export interface GmSeasonArchive {
 
 export type GmBadgeId = "inside_touch" | "deep_range" | "free_throw" | "floor_general" | "secure_handle" | "passing_lanes" | "rim_guardian" | "glass_cleaner" | "defensive_anchor" | "clutch_scorer";
 
+/**
+ * Hidden, persistent learning profile. Generated once from pre-draft inputs,
+ * never exposed as a deterministic final-overall promise. Old saves can derive
+ * the same starting profile without altering existing players.
+ */
+export interface GmDevelopmentProfile {
+  version: 1;
+  learning: number;
+  adaptability: number;
+  aptitudes: Record<"shooting" | "creation" | "defense" | "rebounding", number>;
+  /** Positive performance/mentoring discoveries; soft acceleration, not a ceiling. */
+  discovery: number;
+}
+
 export interface GmPlayer {
+  /** A player's developmental tendencies; generated prospects have no fixed OVR ceiling. */
+  developmentProfile?: GmDevelopmentProfile;
   /** One deterministic trait review per offseason; retained in saves. */
   traitHistory?: Array<{ season: number; before: GmDevTrait; after: GmDevTrait; reason: string }>;
   badges?: { version: 1 | 2; xp: Partial<Record<GmBadgeId, number>>; season?: number; gameIds?: string[] };
