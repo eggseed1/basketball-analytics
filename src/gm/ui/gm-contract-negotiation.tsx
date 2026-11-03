@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -105,7 +106,7 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
         "He will not extend at this number. Move the salary to his asking range."
     : projection?.note ?? "Review the contract rules before sending an offer.";
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!canSend) return;
     if (isExtension) {

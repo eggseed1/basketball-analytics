@@ -213,16 +213,22 @@ try {
   await page.getByRole("heading", { name: "Free agency", exact: true }).waitFor();
   await capture("mobile-own-negotiations");
   if (verify) {
-    await page.getByRole("button", { name: `Review offer for ${manifest.ownPlayerName}`, exact: true }).click();
-    await page.getByRole("region", { name: `Offer terms for ${manifest.ownPlayerName}`, exact: true }).waitFor();
-    const nameAction = page.getByRole("button", { name: `Review terms for ${manifest.ownPlayerName}`, exact: true });
-    assert.ok(await nameAction.evaluate(node => node.getBoundingClientRect().left < innerWidth), "the player-name offer action must be reachable without horizontal table searching");
-    await page.getByText(/M total over \d+ season/).waitFor();
+    await page.getByRole("button", { name: "Market", exact: true }).click();
+    const nameAction = page.getByRole("link", { name: `Review terms for ${manifest.ownPlayerName}`, exact: true });
+    assert.ok(await nameAction.evaluate(node => node.getBoundingClientRect().left < innerWidth), "player-name offer link must be reachable on mobile");
+    await page.getByRole("link", { name: `Review offer for ${manifest.ownPlayerName}`, exact: true }).click();
+    await page.waitForURL("**/gm/free-agency/offer/**");
+    await page.getByRole("heading", { name: manifest.ownPlayerName, exact: true }).waitFor();
+    await page.getByRole("heading", { name: "What he's looking for", exact: true }).waitFor();
+    await page.getByRole("heading", { name: "Offers from other teams", exact: true }).waitFor();
+    const salarySlider = page.getByRole("slider", { name: "Annual salary offer", exact: true });
+    assert.ok(Number(await salarySlider.getAttribute("max")) >= Number(await salarySlider.inputValue()), "legal salary cap must bound slider");
+    await page.getByText("Total contract value", { exact: true }).waitFor();
     const before = await exportedLeague();
     assert.equal(before.players.find(player => player.id === manifest.ownPlayerId).teamId, null);
-    assert.equal(before.faMarket.agreements.length, 0, "reviewing terms must not submit an offer");
-    // Reloading closes the local draft; reopen the same named offer before submission.
-    await page.getByRole("button", { name: `Review offer for ${manifest.ownPlayerName}`, exact: true }).click();
+    assert.equal(before.faMarket.agreements.length, 0, "reviewing offer must not submit it");
+    await page.reload();
+    await page.getByRole("slider", { name: "Annual salary offer", exact: true }).waitFor();
     await capture("mobile-offer-terms");
     await page.getByRole("button", { name: "Request verbal agreement", exact: true }).click();
     await page.getByRole("status").filter({ hasText: "Verbal agreement with" }).waitFor();
