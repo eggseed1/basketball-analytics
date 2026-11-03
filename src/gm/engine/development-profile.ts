@@ -43,7 +43,11 @@ export function developmentProfileOf(player: GmPlayer): GmDevelopmentProfile {
   // Scout-grade upside makes high learning slightly more likely, but does not
   // dictate the outcome. Unheralded prospects can get exceptional rolls.
   const talentNudge = (initialPotential - 5) * 0.013;
-  const rareLearner = rng() < 0.045 ? 0.15 : 0;
+  // Strong entry tools make rapid learning more likely, not inevitable.
+  // Ordinary and overlooked rookies can still win the same rare roll.
+  const rareLearningChance = initialPotential >= 8.5 ? 0.25
+    : initialPotential >= 7.5 ? 0.14 : 0.045;
+  const rareLearner = rng() < rareLearningChance ? 0.15 : 0;
   const learning = clamp(0.76 + rng() * 0.43 + talentNudge + rareLearner, 0.72, 1.4);
   const adaptability = clamp(0.77 + rng() * 0.46, 0.7, 1.3);
   const aptitudes = {} as GmDevelopmentProfile["aptitudes"];
@@ -108,8 +112,17 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
   const disposition = profile.learning *
     (0.74 + (profile.aptitudes[focus] ?? mean(profile.aptitudes.creation, profile.aptitudes.shooting)) * 0.26) *
     (0.82 + profile.adaptability * 0.18);
+  // Exceptional learners need a *chance* to cross 90, not just to join the
+  // much larger 85-89 crowd. This selectively relieves high-OVR friction
+  // using the same stable, persisted learning profile; ordinary players keep
+  // strong diminishing returns. No draft slot or fixed ceiling is consulted.
+  const exceptionalResponse = clamp((profile.learning - 1.12) * 5.5, 0, 1) *
+    clamp((profile.adaptability - 0.75) * 2, 0.5, 1);
+  const lateSkillRelief = overall < 77 ? 1
+    : 1 + exceptionalResponse * (overall < 82 ? 0.28
+      : overall < 86 ? 0.75 : overall < 90 ? 1.65 : 2.2);
   return clamp(
-    disposition * (1 + profile.discovery) * ovrDrag * skillDrag * newSkillTax,
+    disposition * (1 + profile.discovery) * ovrDrag * lateSkillRelief * skillDrag * newSkillTax,
     0.035, 1.65
   );
 }

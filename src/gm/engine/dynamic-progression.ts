@@ -199,7 +199,7 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const play = withSheet.seasonLine;
   const availability = play && play.gp >= 12 ? clamp(play.gp / 65, 0.35, 1) : 0.86;
   let activity = play && play.gp >= 12 ? clamp(play.min / play.gp / 25, 0.65, 1.12) : 0.85;
-  if (withSheet.developmentPlan === "practice") activity = Math.max(activity, 0.93);
+  if (withSheet.developmentPlan === "practice") activity = Math.max(activity, 0.81);
   if (withSheet.developmentPlan === "rotation" && play && play.gp >= 12) activity *= play.min / play.gp >= 18 ? 1.07 : 0.75;
   if (withSheet.injury) activity *= 0.78;
   const professionalism = 0.9 + workEthicOf(withSheet) / 1000;

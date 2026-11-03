@@ -124,6 +124,8 @@ test("a bad team's pick projects earlier than a good team's pick", () => {
   const goodPick = good.draftPicks[0]!;
   assert.ok(projectedSlot(league, badPick) < projectedSlot(league, goodPick));
   assert.ok(pickStars(league, badPick) > pickStars(league, goodPick));
+  assert.ok(pickStars(league, badPick) >= 4.5, "top-lottery picks must actually display as premium assets");
+  assert.ok(pickStars(league, team("bos").draftPicks[0]!) >= 3.5, "the visible star scale must not undervalue the second lottery slot");
   const protectedPick = { ...badPick, id: "prot", protectionTopN: 4 };
   assert.ok(pickStars(league, protectedPick) < pickStars(league, badPick));
 

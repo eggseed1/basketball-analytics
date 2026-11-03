@@ -9,6 +9,10 @@ on:
       - 'scripts/test-gm-draft-class.ts'
       - 'scripts/test-gm-systems-pass.ts'
       - 'scripts/test-gm-pace.ts'
+      - 'scripts/test-gm-management-skill.ts'
+      - 'scripts/test-gm-value.ts'
+      - 'src/gm/engine/value.ts'
+      - 'src/gm/ui/gm-draft-war-room.tsx'
   workflow_dispatch:
 permissions:
   contents: read
@@ -33,6 +37,10 @@ jobs:
         run: npx tsx scripts/test-gm-pace.ts
       - name: Open-ended development and saved-profile compatibility
         run: npx tsx scripts/test-gm-open-development.ts
+      - name: User skill advantage and draft class valuation
+        run: npx tsx scripts/test-gm-management-skill.ts
+      - name: Lottery pick display and trade economic regression
+        run: npx tsx scripts/test-gm-value.ts
       - name: Save draft cohort distribution
         if: always()
         uses: actions/upload-artifact@v4

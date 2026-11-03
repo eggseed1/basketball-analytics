@@ -54,6 +54,7 @@ type LeagueValueCache = {
   rankedIds: string[];
   pickStars: Map<string, number>;
   stance: Map<string, TradeStance>;
+  classQuality: Map<number, { label: string; multiplier: number }>;
 };
 
 const valueCaches = new WeakMap<GmLeagueState, LeagueValueCache>();
@@ -114,6 +115,7 @@ function leagueValueCache(league: GmLeagueState): LeagueValueCache {
     rankedIds,
     pickStars: new Map(),
     stance: new Map(),
+    classQuality: new Map(),
   };
   valueCaches.set(league, cache);
   return cache;
@@ -181,10 +183,11 @@ export function pickStars(league: GmLeagueState, pick: GmDraftPick): number {
   const cache = leagueValueCache(league);
   const cached = cache.pickStars.get(pick.id);
   if (cached != null) return cached;
-  const slot = projectedSlot(league, pick);
-  const points = draftSlotTradePoints(slot);
+  const points = pickTradePoints(league, pick);
   // Same 0.5–5 scale as players. #1 lands at 5; #2 ~4; mid-first ~2–3; seconds ~1.
-  const stars = clamp(Math.round((points / 11.6) * 2) / 2, 0.5, 5);
+  // A square-root display scale preserves the #1 ceiling while giving #2 a
+  // visible 3.5–4 stars instead of misleadingly collapsing it to 2.5.
+  const stars = clamp(Math.round((0.5 + 4.5 * Math.sqrt(points / 58)) * 2) / 2, 0.5, 5);
   cache.pickStars.set(pick.id, stars);
   return stars;
 }
@@ -292,10 +295,41 @@ export function playerTradePoints(player: GmPlayer, league?: GmLeagueState): num
   return Math.max(1, Math.round((talent * age * control + potential + surplus) * availability));
 }
 
+/**
+ * Only publicly available consensus grades can affect a pick's class premium.
+ * Distant future classes have no known board and therefore price neutrally.
+ * Never price from hidden development DNA or actual future outcomes.
+ */
+export function draftClassQuality(league: GmLeagueState, season: number): { label: string; multiplier: number } {
+  const cache = leagueValueCache(league);
+  const stored = cache.classQuality.get(season);
+  if (stored) return stored;
+  const ranked = league.players
+    .filter(row => row.draftYear === season && Number.isFinite(row.consensusRank) && row.consensus != null)
+    .sort((a, b) => (a.consensusRank ?? 99) - (b.consensusRank ?? 99));
+  let value = { label: "Unscouted", multiplier: 1 };
+  if (ranked.length >= 40) {
+    const top = ranked.slice(0, 12);
+    const consensus = top.reduce((n, player) => n + (player.consensus ?? 0), 0) / top.length;
+    const multiplier = clamp(1 + (consensus - 0.08) * 0.62, 0.82, 1.22);
+    const label = multiplier >= 1.17 ? "Loaded class"
+      : multiplier >= 1.07 ? "Strong class"
+      : multiplier <= 0.89 ? "Thin class"
+      : multiplier < 0.97 ? "Below-average class" : "Balanced class";
+    value = { label, multiplier: Math.round(multiplier * 1000) / 1000 };
+  }
+  cache.classQuality.set(season, value);
+  return value;
+}
+
 export function pickTradePoints(league: GmLeagueState, pick: GmDraftPick): number {
-  // Use the slot curve directly so #1 stays expensive in package math,
-  // not flattened by the 5-star display cap.
-  return Math.round(draftSlotTradePoints(projectedSlot(league, pick)));
+  const slot = projectedSlot(league, pick);
+  const base = draftSlotTradePoints(slot);
+  const quality = draftClassQuality(league, pick.season);
+  // The lottery is sensitive to rare top-end prospects. Late picks are mostly
+  // priced for cost-controlled rotation value, not for hypothetical stars.
+  const weight = slot <= 10 ? 1 : slot <= 30 ? 0.6 : 0.25;
+  return Math.max(1, Math.round(base * (1 + (quality.multiplier - 1) * weight)));
 }
 
 export function formatStars(stars: number): string {
