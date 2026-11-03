@@ -25,6 +25,7 @@ type Totals = {
   injuredAppearances: number; minuteFailures: number; stintFailures: number;
   positionFailures: number; shiftFailures: number; injuredStarterGames: number;
   injuredReplacementGames: number; injuredReplacementFailures: number;
+  emergencyBySeat: Record<string,number>; emergencyByPair: Record<string,number>;
 };
 const blank = (team:string,season:number): Totals => ({
   team,season,games:0,playerGames:0,planned:0,actual:0,absoluteError:0,
@@ -33,10 +34,15 @@ const blank = (team:string,season:number): Totals => ({
   activeSeatMinutes:0,injuredAppearances:0,minuteFailures:0,stintFailures:0,
   positionFailures:0,shiftFailures:0,injuredStarterGames:0,
   injuredReplacementGames:0,injuredReplacementFailures:0,
+  emergencyBySeat:{},emergencyByPair:{},
 });
 const add = (a:Totals,b:Totals) => {
   for(const key of Object.keys(a) as (keyof Totals)[]){
     if(key==="team"||key==="season")continue;
+    if(key==="emergencyBySeat"||key==="emergencyByPair") {
+      for(const [label,minutes] of Object.entries(b[key])) a[key][label]=(a[key][label]??0)+minutes;
+      continue;
+    }
     (a[key] as number)+=b[key] as number;
   }
 };
@@ -49,6 +55,8 @@ const summary = (t:Totals) => ({
   substitutionsPerGame:+(t.substitutions/Math.max(1,t.games)).toFixed(2),
   emergencySeatMinutePct:+(100*t.emergencySeatMinutes/Math.max(1,t.activeSeatMinutes)).toFixed(2),
   usableSeatMinutePct:+(100*t.coverageSeatMinutes/Math.max(1,t.activeSeatMinutes)).toFixed(2),
+  emergencyBySeat:Object.fromEntries(Object.entries(t.emergencyBySeat).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[k,+v.toFixed(1)])),
+  emergencyByPair:Object.fromEntries(Object.entries(t.emergencyByPair).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([k,v])=>[k,+v.toFixed(1)])),
   injuredStarterGames:t.injuredStarterGames,
   injuredReplacementFailures:t.injuredReplacementFailures,
   minuteFailures:t.minuteFailures,stintFailures:t.stintFailures,
@@ -158,7 +166,12 @@ for(const season of seasons){
             const fit=roleFit(player,seat as GmPlayer["position"]);
             total.activeSeatMinutes+=minutes;
             if(fit>=0.84)total.coverageSeatMinutes+=minutes;
-            if(fit<0.80)total.emergencySeatMinutes+=minutes;
+            if(fit<0.80){
+              total.emergencySeatMinutes+=minutes;
+              total.emergencyBySeat[seat]=(total.emergencyBySeat[seat]??0)+minutes;
+              const pair=`${player.position}->${seat}`;
+              total.emergencyByPair[pair]=(total.emergencyByPair[pair]??0)+minutes;
+            }
           }
         }
       }
