@@ -681,7 +681,7 @@ function TradeBody() {
                         "Teams monitoring"}
                     {interest > 0 ? ` · ${interest} ${interest === 1 ? "team" : "teams"} interested` : ""}
                   </p>
-                  <Button size="sm" variant="outline" block onClick={() => loadMarketPlayer(player.id, owner.id)}>
+                  <Button size="sm" variant="outline" className="w-full" onClick={() => loadMarketPlayer(player.id, owner.id)}>
                     {owner.id === league.userTeamId ? "Find trade partners" : "Explore a deal"}
                   </Button>
                 </article>;
