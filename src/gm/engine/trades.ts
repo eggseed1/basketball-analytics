@@ -29,6 +29,23 @@ import {
 
 const CASH_ANCHOR = 140.588;
 
+// The trade finder evaluates thousands of bundles against the same saved
+// league. Cache the immutable club profile by league identity so role-aware
+// pricing does not re-scan every roster for each candidate.
+const boardProfiles = new WeakMap<GmLeagueState, Map<string, ReturnType<typeof rosterProfile>>>();
+function boardProfile(state: GmLeagueState, teamId: string) {
+  let byTeam = boardProfiles.get(state);
+  if (!byTeam) {
+    byTeam = new Map();
+    boardProfiles.set(state, byTeam);
+  }
+  const cached = byTeam.get(teamId);
+  if (cached) return cached;
+  const profile = rosterProfile(state, teamId);
+  byTeam.set(teamId, profile);
+  return profile;
+}
+
 export function cashLimitM(settings: { salaryCapM: number }): number {
   return Math.round((7 * settings.salaryCapM) / CASH_ANCHOR * 10) / 10;
 }
@@ -55,7 +72,7 @@ export function boardValue(
   assets: GmTradeAsset[]
 ): number {
   const picks = state.teams.flatMap((team) => team.draftPicks);
-  const profile = rosterProfile(state, viewerId);
+  const profile = boardProfile(state, viewerId);
   return assets.reduce((sum, asset) => {
     const player =
       asset.type === "player" ? state.players.find((entry) => entry.id === asset.id) : undefined;
