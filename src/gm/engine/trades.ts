@@ -131,7 +131,7 @@ export function stepienViolation(
   const sentIds = new Set(
     sent.filter((asset) => asset.type === "pick").map((asset) => asset.id)
   );
-  const before = [...firstSeasons(team, new Set(), [])].sort((a, b) => a - b);
+  const before = firstSeasons(team, new Set(), []);
   const after = firstSeasons(team, sentIds, receivedPicks);
   // Check the post-trade calendar rather than only consecutive picks on the
   // original list. A club already missing one year cannot trade the next.
