@@ -560,6 +560,22 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   const signingOpen = { ...preSigning, faMarket: { ...preSigning.faMarket!, stage: "open" as const } };
   assert.equal(projectFreeAgentResponse(signingOpen, rfa, 9, 2).legal, true,
     "the forecast must unlock the offer sheet once signing opens");
+  const noTender = { ...rfa, qoStatus: "eligible" as const };
+  const noTenderLeague = { ...signingOpen, players: [noTender] };
+  const untendered = projectFreeAgentResponse(noTenderLeague, noTender, 9, 2);
+  assert.equal(untendered.legal, false,
+    "the UI must not advertise sheets for an untendered qualifying offer");
+  assert.match(untendered.reason ?? "", /tendered qualifying offer/i);
+  assert.equal(submitOfferSheet(noTenderLeague, rfa.id, "bos", 9, 2).ok, false);
+  const firstSheet = submitOfferSheet(signingOpen, rfa.id, "bos", 9, 2);
+  assert.equal(firstSheet.ok, true, firstSheet.ok ? "" : firstSheet.reason);
+  if (firstSheet.ok) {
+    const pendingMatch = projectFreeAgentResponse(firstSheet.state, rfa, 10, 2);
+    assert.equal(pendingMatch.legal, false,
+      "a second RFA offer must be disabled while a match decision is pending");
+    assert.match(pendingMatch.reason ?? "", /awaiting a match/i);
+    assert.equal(submitOfferSheet(firstSheet.state, rfa.id, "bos", 10, 2).ok, false);
+  }
   assert.equal(legalFreeAgentSalaryRange(league, rfa, 1).maxM, 0);
   assert.equal(submitOfferSheet(league, rfa.id, "bos", 9, 1).ok, false);
   const own = { ...rfa, id: "bird-ui", rightsTeamId: "bos", rightsKind: "bird" as const };
