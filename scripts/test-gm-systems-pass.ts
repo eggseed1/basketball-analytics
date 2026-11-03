@@ -97,7 +97,8 @@ assert.ok(
 function growYears(base: GmPlayer, trait: "xfactor" | "bust", years: number): number {
   let p: GmPlayer = {
     ...base,
-    id: `${base.id}-${trait}`,
+    // Hold the rookie and random sample constant: only growth disposition changes.
+    id: `${base.id}-trait-paired`, 
     age: 20,
     sheet: {
       ...playerSheet(base),
@@ -105,8 +106,9 @@ function growYears(base: GmPlayer, trait: "xfactor" | "bust", years: number): nu
         ...playerSheet(base).potential,
         trait,
         path: trait === "bust" ? "bust" : "boom",
-        ceiling: trait === "bust" ? 78 : 94,
-        floor: trait === "bust" ? 62 : 72,
+        // Obsolete fixed estimates must not decide a model-2 rookie career.
+        ceiling: 78,
+        floor: 62,
       },
       overall: 74,
     },
