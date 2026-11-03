@@ -232,7 +232,7 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
 
       <div className="space-y-4">
         <section className="rounded-2xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="text-base font-bold">What he's looking for</h2>
+          <h2 className="text-base font-bold">What he&apos;s looking for</h2>
           <p className="mt-1 text-xs text-muted-foreground">Agent scouting projections, not confirmed statements from the real player.</p>
           <div className="mt-4 space-y-3">
             {priorities.map(priority => <div key={priority.id} className="space-y-1">
