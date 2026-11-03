@@ -57,3 +57,70 @@ paused = false;
 assert.equal(actions.simulateNextGame(), "box");
 assert.equal(day, 3, "next-game action stops immediately after its target");
 console.log("Next-game action respects daily gates and has a single simulation clock.");
+
+
+// Future seasons must be genuine, NBA-shaped calendars rather than a shifted
+// or shuffled copy of the opening slate. Validate the complete fixture matrix,
+// game dates and rest constraints (including Cup group games).
+const officialPairOrder = seed.schedule.map(g => g.homeTeamId + ":" + g.awayTeamId).join(",");
+const calendarSignatures: string[] = [];
+for (const [year, calendarSeed] of [[2028, 23], [2029, 47]] as const) {
+  const future = createGeneratedLeague({ userTeamId: "bos", season: year, seed: calendarSeed });
+  const games = future.schedule;
+  assert.equal(games.length, 1200, year + ": 80 published games for each of 30 clubs");
+  assert.equal(new Set(games.map(g => g.id)).size, 1200, year + ": game IDs unique");
+  assert.equal(games.filter(g => g.cup === "group").length, 60, year + ": 60 Cup group games");
+  const seenDates = new Set<string>();
+  const teamDates = new Map<string, number[]>();
+  const homes = new Map<string, number>();
+  const opponents = new Map<string, Map<string, number>>();
+  for (const team of future.teams) { teamDates.set(team.id, []); homes.set(team.id, 0); opponents.set(team.id, new Map()); }
+  for (const game of games) {
+    assert.equal(game.season, year);
+    assert.ok(game.gameDate, year + ": every game has a date");
+    assert.notEqual(game.homeTeamId, game.awayTeamId);
+    assert.ok(teamDates.has(game.homeTeamId) && teamDates.has(game.awayTeamId));
+    const date = game.gameDate!;
+    assert.ok(date >= (year - 1) + "-10-19" && date <= year + "-04-13", year + ": game falls inside season window");
+    assert.ok(!(date.slice(5, 7) === "02" && Number(date.slice(8, 10)) >= 13 && Number(date.slice(8, 10)) <= 21),
+      year + ": February All-Star break protected");
+    const day = Math.floor(Date.parse(date + "T00:00:00Z") / 86400000);
+    for (const [team, opponent] of [[game.homeTeamId, game.awayTeamId], [game.awayTeamId, game.homeTeamId]]) {
+      assert.ok(!seenDates.has(team + "|" + date), year + ": team cannot play twice in one day");
+      seenDates.add(team + "|" + date);
+      teamDates.get(team)!.push(day);
+      const counts = opponents.get(team)!;
+      counts.set(opponent, (counts.get(opponent) ?? 0) + 1);
+    }
+    homes.set(game.homeTeamId, homes.get(game.homeTeamId)! + 1);
+  }
+  for (const team of future.teams) {
+    const dates = teamDates.get(team.id)!.sort((a,b) => a-b);
+    assert.equal(dates.length, 80, year + ": " + team.id + " plays 80 published games");
+    assert.equal(homes.get(team.id), 40, year + ": " + team.id + " has 40 home games");
+    assert.equal(opponents.get(team.id)!.size, 29, year + ": visits all opponents");
+    let backToBacks = 0;
+    for (let i = 1; i < dates.length; i++) if (dates[i]! - dates[i-1]! === 1) backToBacks++;
+    assert.ok(backToBacks <= 18, year + ": " + team.id + " has too many back-to-backs");
+    for (let i = 0; i + 2 < dates.length; i++)
+      assert.ok(dates[i+2]! - dates[i]! >= 3, year + ": no three consecutive nights for " + team.id);
+    for (let i = 0; i + 3 < dates.length; i++)
+      assert.ok(dates[i+3]! - dates[i]! >= 5, year + ": no four games in five nights for " + team.id);
+    for (const opponent of future.teams.filter(t => t.id !== team.id)) {
+      const count = opponents.get(team.id)!.get(opponent.id);
+      const expected = team.conference !== opponent.conference ? 2
+        : team.division === opponent.division ? 4 : undefined;
+      if (expected) assert.equal(count, expected, year + ": " + team.id + " vs " + opponent.id);
+      else assert.ok(count === 3 || count === 4, year + ": intraconference matchup count");
+    }
+    const conferenceGames = [...opponents.get(team.id)!].reduce((sum,[opponent,count]) =>
+      sum + (future.teams.find(t => t.id === opponent)!.conference === team.conference ? count : 0),0);
+    assert.equal(conferenceGames, 50, year + ": conference fixture split");
+  }
+  const pairOrder = games.map(g => g.homeTeamId + ":" + g.awayTeamId).join(",");
+  assert.notEqual(pairOrder, officialPairOrder, year + ": cannot copy first-season opponents");
+  calendarSignatures.push(pairOrder);
+}
+assert.notEqual(calendarSignatures[0], calendarSignatures[1],
+  "independent future seasons should not repeat the same opponent order");
+console.log("Future calendars: all fixture, rest, Cup and season-variation checks passed.");
