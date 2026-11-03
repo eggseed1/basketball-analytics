@@ -325,6 +325,8 @@ export interface GmPlayer {
   /** The real role at the selected season, used as a prior while he stays on that club. */
   realRole?: { season: number; teamId: string | null; starts: number; games: number; mpg: number };
   listedPosition?: GmPosition;
+  /** User-picked primary role; never silently overridden by roster imports. */
+  manualPosition?: boolean;
   simProfile?: GmSimProfile;
   developmentFocus?: "balanced" | "shooting" | "creation" | "defense" | "rebounding";
   developmentPlan?: "balanced" | "practice" | "rotation";
