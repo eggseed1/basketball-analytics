@@ -9,6 +9,7 @@
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { createRng } from "../src/gm/engine/rng";
 import { ensureNbaCup, gameCounts } from "../src/gm/engine/cup";
 import { simulateGame, actualShiftSnapshot } from "../src/gm/engine/simulate";
 import { rotationForTeam } from "../src/gm/engine/coaching";
@@ -69,6 +70,10 @@ const summary = (t:Totals) => ({
   positionFailures:t.positionFailures,shiftFailures:t.shiftFailures,
   injuredAppearances:t.injuredAppearances,
 });
+// Generated IDs use uid() / Math.random; without this, id-based tie breaks
+// differ between CI runs even though the league generator has a seed.
+// This is a standalone audit process; simulation itself remains seeded.
+Math.random=createRng(726421);
 const seasons=[2027,2028,2029];
 const results:Totals[]=[];
 const rosterProfiles:Array<{season:number;team:string;players:Array<{name:string;ovr:number;position:string;minutes:number;pg:number;sg:number;pf:number;c:number}>}>=[];
