@@ -79,6 +79,16 @@ jobs:
           node --require ./scripts/lib/stub-server-only.cjs --import tsx \
             scripts/build-explore-players-first-page.ts
 
+      # main can itself have been overwritten by a stale feature-branch merge.
+      # Recheck against the most recent nightly ingestion before shipping any
+      # Worker; a successful deploy must never remove yesterday's final games.
+      - name: Protect current NBA results from stale merge snapshots
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --test scripts/test-live-runtime-guard.mjs
+          node scripts/protect-live-runtime.mjs --repair
+
       - name: Copy runtime JSON to Static Assets
         run: node scripts/copy-runtime-json-assets.mjs
 
