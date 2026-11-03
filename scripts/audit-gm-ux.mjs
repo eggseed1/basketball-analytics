@@ -324,9 +324,10 @@ try {
       await page.getByLabel("Mentorship 2 mentor", { exact: true }).selectOption(secondVeteran.id);
       assert.equal(await page.getByLabel("Mentorship 2 mentee", { exact: true }).inputValue(), secondPupil.id);
       assert.equal(await page.getByLabel("Mentorship 2 mentor", { exact: true }).inputValue(), secondVeteran.id);
-      await page.locator("summary").filter({ hasText: "Individual training" }).click();
+      await page.getByTestId("development-path").getByRole("heading", { name: "Shape a player" }).waitFor();
       await page.getByLabel("Training player", { exact: true }).selectOption(pupil.id);
       await page.getByLabel(`Development focus for ${pupil.name}`, { exact: true }).selectOption("defense");
+      await page.getByTestId("development-path").locator("summary").filter({ hasText: "Playing-time plan" }).click();
       await page.getByLabel(`Development plan for ${pupil.name}`, { exact: true }).selectOption("practice");
       await page.locator("summary").filter({ hasText: "Skill badges" }).click();
       await page.getByLabel("Badge player", { exact: true }).selectOption(pupil.id);
