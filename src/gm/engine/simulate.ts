@@ -380,6 +380,24 @@ export function simulateGame(
   return { game: { ...game, played: true, homeScore, awayScore, boxScoreId: box.id }, box };
 }
 
+/** Actual regulation substitutions recorded from played stints.
+ * Never replace this with a fresh pregame preview: foul trouble and garbage
+ * time can change who actually took the court, including for away teams.
+ */
+export function actualShiftSnapshot(box: GmBoxScore, teamId: string): NonNullable<GmBoxScore["shiftPlan"]> {
+  const side = box.homeTeamId === teamId ? "home" : box.awayTeamId === teamId ? "away" : null;
+  if (!side || !box.stints?.length) return [];
+  const regulation = box.stints.filter(stint => stint.start < 2880).slice(0, 24);
+  const names = new Map(box.players.map(line => [line.playerId, line.playerName]));
+  const ids = new Set<string>();
+  for (const stint of regulation) for (const id of stint[side]) ids.add(id);
+  return [...ids].map(id => ({
+    playerId: id,
+    playerName: names.get(id) ?? id,
+    on: Array.from({ length: 24 }, (_, slot) => regulation[slot]?.[side].includes(id) ?? false),
+  }));
+}
+
 /** Keep detailed feeds for the user's games without filling saves with CPU event logs. */
 export function compactSimBox(box: GmBoxScore, userTeamId: string): GmBoxScore {
   return box.homeTeamId === userTeamId || box.awayTeamId === userTeamId ? box : { ...box, events: undefined, stints: undefined, shiftPlan: undefined };
