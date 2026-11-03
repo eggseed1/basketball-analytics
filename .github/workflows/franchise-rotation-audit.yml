@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'scripts/audit-gm-multiseason-rotations.ts'
+      - 'scripts/test-gm-realistic-rotations.ts'
       - 'src/gm/engine/lineup.ts'
       - 'src/gm/engine/coaching.ts'
       - 'src/gm/engine/rotation-pattern.ts'
