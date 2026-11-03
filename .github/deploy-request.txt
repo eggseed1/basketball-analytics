@@ -1,6 +1,7 @@
 DRBL production code-only deploy request
 Target: main
-Includes Franchise Lab Trade Desk v2 merged in PR #170
-Merge commit: f51cfd652ec385cab33c23ff120a428fcba49420
-Validation: CI, franchise simulation, balance, fidelity, browser/mobile, runtime parity and two-seed five-year continuity (all passed)
+Includes Franchise Lab living trade market merged in PR #171
+Merge commit: ed62c97a5b844c280a766f7a56cf4358bec0ad27
+Validation: CI, Franchise Lab simulation/balance/fidelity/browser, runtime parity and two-seed five-year continuity (8/8 passed)
+Trade activity audit: 67 CPU trades across 10 simulated seasons, no unexplained large win swings
 Requested on 2026-11-03
