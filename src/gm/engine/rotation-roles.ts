@@ -56,7 +56,7 @@ export function bestStartingFive(team: GmTeam, roster: GmPlayer[], season?: numb
   const rolePrior = (p: GmPlayer) => {
     const role = p.realRole;
     return role && role.teamId === team.id && !p.priorLine && (!season || role.season === season)
-      ? 12 * role.starts / Math.max(1, role.games) + clamp((role.mpg - 24) * 0.5, -6, 6) : 0;
+      ? 4 * role.starts / Math.max(1, role.games) + clamp((role.mpg - 24) * 0.18, -2, 2) : 0;
   };
   const pool = [...roster].sort((a, b) => ovr(b) + rolePrior(b) - ovr(a) - rolePrior(a)).slice(0, 12);
   let top = -Infinity;
