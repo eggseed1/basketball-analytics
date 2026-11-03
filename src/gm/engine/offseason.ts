@@ -357,7 +357,7 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     freeAgents: players
       .filter((player) => player.teamId == null && !fresh.draftPool.includes(player.id))
       .map((player) => player.id),
-    schedule: retieCupGroupGames(generateSchedule(teams, season, season * 997), cupGroups, season),
+    schedule: retieCupGroupGames(generateSchedule(teams, season, season * 997, cupGroups), cupGroups, season),
     priorWins,
     champion: undefined,
     awards: undefined,
