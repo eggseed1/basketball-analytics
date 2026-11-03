@@ -14,6 +14,10 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { resolveTeamBrand } from "../src/lib/nba-brand";
+import { fetchEspnCdnGameSummary } from "../src/data/providers/nba/espn-cdn-summary";
+import { transformEspnBoxScore } from "../src/data/transformers/espn";
+import { teamRowsFromEspnBox } from "../src/lib/team-game-box-espn";
+import type { Game } from "../src/data/types";
 import {
   TEAM_GAME_BOX_COLUMNS,
   type TeamGameBoxRow,
@@ -186,6 +190,55 @@ async function fromCdn(
   return { collected, games, skipped, known };
 }
 
+/**
+ * ESPN schedule is already baked every night, even when cdn.nba.com returns
+ * HTTP 403 from GitHub runners. Only fetch final, unrecorded games. The
+ * underlying ESPN CDN game feed also works from the Workers runtime.
+ */
+async function fromEspnSnapshot(
+  season: string,
+  existing: TeamGameBoxSnapshot
+): Promise<{ collected: Collected; games: number; skipped: number; known: number }> {
+  const snapshotFile = join(ROOT, "src", "data", "runtime", "game-snapshot.json");
+  if (!existsSync(snapshotFile)) throw new Error("Missing ESPN game snapshot");
+  const snapshot = JSON.parse(readFileSync(snapshotFile, "utf8")) as { games?: Game[] };
+  const completed = (snapshot.games ?? []).filter(game =>
+    game.season === season && game.status === "final" &&
+    game.gameType !== "preseason" && !game.cupChampionship &&
+    /^40\d{6,}$/.test(game.id)
+  );
+  if (!completed.length) throw new Error("No ESPN final games for " + season);
+  const have = existing.teams[season] ?? {};
+  const hasRow = (teamId: string, date: string) =>
+    Boolean(have[teamId]?.some(row => row[0] === date));
+  const todo: Game[] = [];
+  let known = 0;
+  for (const game of completed) {
+    if (hasRow(game.homeTeamId, game.gameDate) && hasRow(game.awayTeamId, game.gameDate)) known++;
+    else todo.push(game);
+  }
+  const collected: Collected = new Map();
+  let games = 0;
+  let skipped = 0;
+  const queue = [...todo];
+  const worker = async () => {
+    for (let game = queue.shift(); game; game = queue.shift()) {
+      try {
+        const summary = await fetchEspnCdnGameSummary(game.id);
+        const box = summary && transformEspnBoxScore(summary, season);
+        const rows = box && teamRowsFromEspnBox(game, box);
+        if (!rows) { skipped++; continue; }
+        collect(collected, season, rows);
+        games++;
+      } catch {
+        skipped++;
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: 6 }, worker));
+  return { collected, games, skipped, known };
+}
+
 function merge(snapshot: TeamGameBoxSnapshot, collected: Collected): TeamGameBoxSnapshot {
   const teams = { ...snapshot.teams };
   for (const [season, bySeason] of collected) {
@@ -200,7 +253,7 @@ function merge(snapshot: TeamGameBoxSnapshot, collected: Collected): TeamGameBox
   const ordered = Object.fromEntries(Object.entries(teams).sort(([a], [b]) => a.localeCompare(b)));
   return {
     generatedAt: new Date().toISOString(),
-    source: "NBA box scores (team totals)",
+    source: "NBA/ESPN final box scores (team totals)",
     columns: [...TEAM_GAME_BOX_COLUMNS],
     teams: ordered,
   };
@@ -213,13 +266,26 @@ async function main() {
 
   if (args.includes("--fetch")) {
     if (!seasonArg || !/^\d{4}-\d{2}$/.test(seasonArg)) throw new Error("--fetch needs --season YYYY-YY");
-    const { collected, games, skipped, known } = await fromCdn(seasonArg, existing);
+    // NBA's schedule endpoint is frequently 403 on GitHub Actions. Treat the
+    // existing nightly ESPN game snapshot as primary and use NBA CDN only
+    // if ESPN itself cannot provide any of the outstanding game boxes.
+    let result: Awaited<ReturnType<typeof fromEspnSnapshot>>;
+    let provider = "ESPN";
+    try {
+      result = await fromEspnSnapshot(seasonArg, existing);
+      if (result.skipped > 0 && result.games === 0) throw new Error("ESPN summaries unavailable for " + result.skipped + " missing final games");
+    } catch (error) {
+      console.warn("ESPN team boxes unavailable; trying NBA CDN: " + String(error));
+      provider = "NBA";
+      result = await fromCdn(seasonArg, existing);
+    }
+    const { collected, games, skipped, known } = result;
     if (!games) {
-      console.log(`team box totals ${seasonArg}: nothing new (${known} already stored, ${skipped} unavailable)`);
+      console.log(`team box totals ${seasonArg}: nothing new (${known} already stored, ${skipped} unavailable; source=${provider})`);
       return;
     }
     writeFileSync(OUT, `${JSON.stringify(merge(existing, collected))}\n`);
-    console.log(`team box totals ${seasonArg}: +${games} games (${known} already stored, ${skipped} unavailable)`);
+    console.log(`team box totals ${seasonArg}: +${games} games (${known} already stored, ${skipped} unavailable; source=${provider})`);
     return;
   }
 
