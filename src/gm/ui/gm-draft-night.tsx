@@ -160,9 +160,9 @@ export function GmDraftNight() {
             {clockClub ? ` · ${clockClub.city} ${clockClub.name}` : ""}
           </h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            Overall and the development trait stay sealed until the pick.
-            Draft off fogged grades and ceiling/floor comps. Jackpots land with
-            a full reveal.
+            Overall stays sealed until the pick. Draft from the scouting
+            reports, then shape a rookie's career through coaching, reps and
+            targeted development.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
