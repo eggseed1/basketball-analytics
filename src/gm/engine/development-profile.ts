@@ -45,8 +45,8 @@ export function developmentProfileOf(player: GmPlayer): GmDevelopmentProfile {
   const talentNudge = (initialPotential - 5) * 0.013;
   // Strong entry tools make rapid learning more likely, not inevitable.
   // Ordinary and overlooked rookies can still win the same rare roll.
-  const rareLearningChance = initialPotential >= 8.5 ? 0.12
-    : initialPotential >= 7.5 ? 0.08 : 0.045;
+  const rareLearningChance = initialPotential >= 8.5 ? 0.25
+    : initialPotential >= 7.5 ? 0.14 : 0.045;
   const rareLearner = rng() < rareLearningChance ? 0.15 : 0;
   const learning = clamp(0.76 + rng() * 0.43 + talentNudge + rareLearner, 0.72, 1.4);
   const adaptability = clamp(0.77 + rng() * 0.46, 0.7, 1.3);
