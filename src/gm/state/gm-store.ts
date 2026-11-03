@@ -47,12 +47,13 @@ import {
   tradeDeadlineDate,
   tradeDeadlineDay,
 } from "@/gm/engine/schedule";
-import { applyTrade, evaluateTrade, suggestCounterOffer } from "@/gm/engine/trades";
+import { advanceTradeMarket, applyTrade, evaluateTrade, suggestCounterOffer } from "@/gm/engine/trades";
 import {
   considerIncomingOffer,
   offerIsFair,
   recordDeclinedOffer,
 } from "@/gm/engine/offers";
+import { buildTradeMarket } from "@/gm/engine/trade-market";
 import {
   considerTeamBuildingCheckpoint,
   continuePastCheckpoint as continuePastCheckpointEngine,
@@ -161,7 +162,8 @@ import { startYearFromCanonicalSeason } from "@/data/providers/historical/season
 /** Incoming offer → team-building date → monthly scouting focus. */
 function afterDayGates(league: GmLeagueState): GmLeagueState {
   const pauses = franchisePlan(league).pauses;
-  let next = pauses.offers ? considerIncomingOffer(league) : league;
+  let next = advanceTradeMarket(league);
+  if (pauses.offers) next = considerIncomingOffer(next);
   if (!next.incomingOffer) next = considerTeamBuildingCheckpoint(next);
   if (!next.incomingOffer && !next.teamBuildingCheckpoint) {
     next = considerScoutingFocus(next);
