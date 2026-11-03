@@ -249,7 +249,22 @@ function placeFixtures(teams:GmTeam[],season:number,seed:number,groups:Groups){
       assigned.push({id:g.id,home:g.home,away:g.away,date:dayOf(date*MILLIS_DAY)});
     }
   }
-  if(remaining.length)throw new Error("Unable to place "+remaining.length+" NBA games; schedule constraints need rebalancing");
+  // Greedy daily filling can leave a few pairings blocked on the final day
+  // even though both teams have a legal open date earlier in the season.
+  // Reinsert those fixtures without overriding rest, calendar, or caps.
+  for(const fixture of remaining){
+    const legal=days.filter(date=>hardOk(fixture.home,date)&&hardOk(fixture.away,date));
+    if(!legal.length)throw new Error("No NBA-rest-compliant date for "+fixture.id);
+    legal.sort((a,b)=>{
+      const count=(date:number)=>assigned.filter(g=>Math.round(Date.parse(g.date)/MILLIS_DAY)===date).length;
+      return count(a)-count(b)||Math.abs(a-days[Math.round(days.length/2)]!)-Math.abs(b-days[Math.round(days.length/2)]!);
+    });
+    const date=legal[0]!;
+    gamesByTeam.get(fixture.home)!.push({day:date,home:true,opponent:fixture.away});
+    gamesByTeam.get(fixture.away)!.push({day:date,home:false,opponent:fixture.home});
+    assigned.push({id:fixture.id,home:fixture.home,away:fixture.away,date:dayOf(date*MILLIS_DAY)});
+  }
+
   return assigned;
 }
 
