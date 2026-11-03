@@ -134,6 +134,10 @@ test("a bad team's pick projects earlier than a good team's pick", () => {
   }) as GmLeagueState;
   assert.ok(publicDraftClassMultiplier(projections(1.5),2027) > publicDraftClassMultiplier(projections(-0.5),2027),
     "public stronger classes should make current lottery picks more valuable");
+  const drafted = projections(1.5);
+  drafted.draftPool = drafted.draftPool.slice(3);
+  assert.equal(publicDraftClassMultiplier(drafted,2027), publicDraftClassMultiplier(projections(1.5),2027),
+    "class strength and current-year pick price must not drift as selections come off the board");
   const badPick = bad.draftPicks[0]!;
   const goodPick = good.draftPicks[0]!;
   assert.ok(projectedSlot(league, badPick) < projectedSlot(league, goodPick));
