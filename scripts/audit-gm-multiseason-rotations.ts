@@ -13,7 +13,7 @@ import { ensureNbaCup, gameCounts } from "../src/gm/engine/cup";
 import { simulateGame, actualShiftSnapshot } from "../src/gm/engine/simulate";
 import { rotationForTeam } from "../src/gm/engine/coaching";
 import { overallOf } from "../src/gm/engine/lineup";
-import { roleFit } from "../src/gm/engine/rotation-roles";
+import { assignFive, roleFit } from "../src/gm/engine/rotation-roles";
 import type { GmPlayer } from "../src/gm/types";
 
 type Totals = {
@@ -25,6 +25,8 @@ type Totals = {
   injuredAppearances: number; minuteFailures: number; stintFailures: number;
   positionFailures: number; shiftFailures: number; injuredStarterGames: number;
   injuredReplacementGames: number; injuredReplacementFailures: number;
+  plannedEmergencySeatMinutes: number; avoidableAssignmentMinutes: number;
+  unavoidableOnFloorMinutes: number;
   emergencyBySeat: Record<string,number>; emergencyByPair: Record<string,number>;
 };
 const blank = (team:string,season:number): Totals => ({
@@ -34,6 +36,7 @@ const blank = (team:string,season:number): Totals => ({
   activeSeatMinutes:0,injuredAppearances:0,minuteFailures:0,stintFailures:0,
   positionFailures:0,shiftFailures:0,injuredStarterGames:0,
   injuredReplacementGames:0,injuredReplacementFailures:0,
+  plannedEmergencySeatMinutes:0,avoidableAssignmentMinutes:0,unavoidableOnFloorMinutes:0,
   emergencyBySeat:{},emergencyByPair:{},
 });
 const add = (a:Totals,b:Totals) => {
@@ -55,6 +58,9 @@ const summary = (t:Totals) => ({
   substitutionsPerGame:+(t.substitutions/Math.max(1,t.games)).toFixed(2),
   emergencySeatMinutePct:+(100*t.emergencySeatMinutes/Math.max(1,t.activeSeatMinutes)).toFixed(2),
   usableSeatMinutePct:+(100*t.coverageSeatMinutes/Math.max(1,t.activeSeatMinutes)).toFixed(2),
+  plannedEmergencySeatPct:+(100*t.plannedEmergencySeatMinutes/Math.max(1,t.games*240)).toFixed(2),
+  avoidableAssignmentPct:+(100*t.avoidableAssignmentMinutes/Math.max(1,t.games*240)).toFixed(2),
+  unavoidableOnFloorPct:+(100*t.unavoidableOnFloorMinutes/Math.max(1,t.games*240)).toFixed(2),
   emergencyBySeat:Object.fromEntries(Object.entries(t.emergencyBySeat).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[k,+v.toFixed(1)])),
   emergencyByPair:Object.fromEntries(Object.entries(t.emergencyByPair).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([k,v])=>[k,+v.toFixed(1)])),
   injuredStarterGames:t.injuredStarterGames,
@@ -107,6 +113,20 @@ for(const season of seasons){
         const members=activeByTeam.get(teamId)!;
         const plan=rotationForTeam(team,players);
         const lines=box.players.filter(p=>p.teamId===teamId);
+        const rosterById=new Map(members.map(p=>[p.id,p]));
+        for(const frame of plan.frames){
+          const floor=Object.values(frame).map(id=>rosterById.get(id??"")).filter((p):p is GmPlayer=>!!p);
+          if(floor.length!==5)continue;
+          const best=assignFive(floor).starters;
+          const emergency=(seats:typeof frame)=>Object.entries(seats).filter(([spot,id])=>{
+            const player=rosterById.get(id??"");
+            return !!player && roleFit(player,spot as GmPlayer["position"])<0.8;
+          }).length*2;
+          const actual=emergency(frame),optimal=emergency(best);
+          total.plannedEmergencySeatMinutes+=actual;
+          total.avoidableAssignmentMinutes+=Math.max(0,actual-optimal);
+          total.unavoidableOnFloorMinutes+=optimal;
+        }
         const lineById=new Map(lines.map(p=>[p.playerId,p]));
         const minutes=sum(lines.map(p=>p.minutes));
         const expected=240+25*(box.overtime??0);
