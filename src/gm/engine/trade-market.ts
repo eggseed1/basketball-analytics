@@ -105,6 +105,7 @@ export function buildTradeMarket(league: GmLeagueState): GmTradeMarket {
       const level = remaining <= 12 ? "deadline" :
         interestedTeamIds.length >= 2 || request ? "active" : "quiet";
       const priority = (request ? 90 : signal === "listed" ? 65 : 30) +
+        (team.id === league.userTeamId ? 50 : 0) +
         interestedTeamIds.length * 8 + Math.max(0, overallOf(player) - 75) * 1.8 +
         ((player.contract.yearsRemaining ?? 3) <= 1 ? 8 : 0);
       // Quiet CPU rumors must have actual team interest; a player merely
@@ -126,14 +127,19 @@ export function buildTradeMarket(league: GmLeagueState): GmTradeMarket {
   };
 }
 
-/** Use a recent saved market, or preview it on the first day of a new save. */
+/** Stable derived market for a first-day save; reuse during finder searches. */
+const displayedMarkets = new WeakMap<GmLeagueState, GmTradeMarket>();
 export function marketForDisplay(league: GmLeagueState): GmTradeMarket {
   if (league.tradeMarket?.season === league.season &&
       league.tradeMarket.lastPulseDay <= league.day &&
       league.day - league.tradeMarket.lastPulseDay <= 18) {
     return league.tradeMarket;
   }
-  return buildTradeMarket(league);
+  const cached = displayedMarkets.get(league);
+  if (cached) return cached;
+  const built = buildTradeMarket(league);
+  displayedMarkets.set(league, built);
+  return built;
 }
 
 /** A real rival interest premium, never a fabricated competing contract. */
@@ -142,9 +148,8 @@ export function tradeCompetitionMultiplier(
   playerId: string,
   sellerTeamId: string
 ): number {
-  const snapshot = league.tradeMarket;
-  if (!snapshot || snapshot.season !== league.season ||
-      league.day - snapshot.lastPulseDay > 18) return 1;
+  const snapshot = marketForDisplay(league);
+  if (snapshot.season !== league.season) return 1;
   const rumor = snapshot.rumors.find(row =>
     row.playerId === playerId && row.teamId === sellerTeamId);
   if (!rumor) return 1;
