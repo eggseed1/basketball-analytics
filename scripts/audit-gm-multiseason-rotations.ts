@@ -76,6 +76,7 @@ const summary = (t:Totals) => ({
 Math.random=createRng(726421);
 const seasons=[2027,2028,2029];
 const results:Totals[]=[];
+const generatedStandings:Array<{season:number;winSd:number;minWins:number;maxWins:number;homeWinRate:number;meanMargin:number;winsByTeam:Record<string,number>}>=[];
 const rosterProfiles:Array<{season:number;team:string;players:Array<{name:string;ovr:number;position:string;minutes:number;pg:number;sg:number;pf:number;c:number}>}>=[];
 let totalGames=0,failedGames=0;
 const errors:string[]=[];
@@ -97,6 +98,8 @@ for(const season of seasons){
     })).sort((a,b)=>b.ovr-a.ovr)});
   }
   const counts=new Map<string,number>();
+  const wins=new Map(league.teams.map(team=>[team.id,0]));
+  let homeGames=0,homeWins=0,regulationMargins=0;
   let gameIndex=0;
   // Cup knockout and makeup games are generated only after group results exist.
   while(true){
@@ -121,7 +124,15 @@ for(const season of seasons){
     try{
       const simulated=simulateGame(game,league.teams,players,500000+season*1300+gameIndex);
       const box=simulated.box;
-      if(countsForStandings)totalGames++;
+      if(countsForStandings){
+        totalGames++;
+        const homeWon=box.homeScore>box.awayScore;
+        const winner=homeWon?game.homeTeamId:game.awayTeamId;
+        wins.set(winner,(wins.get(winner)??0)+1);
+        homeGames++;
+        homeWins+=Number(homeWon);
+        regulationMargins+=Math.abs(box.homeScore-box.awayScore);
+      }
       for(const teamId of [game.homeTeamId,game.awayTeamId]){
         const team=teams.get(teamId)!;
         const total=byTeam.get(teamId)!;
@@ -227,6 +238,16 @@ for(const season of seasons){
     const n=counts.get(team.id)??0;
     if(n!==82)errors.push(`${season} ${team.id}: ${n} standings games, expected 82`);
   }
+  const seasonWins=[...wins.values()];
+  assert.equal(seasonWins.reduce((a,b)=>a+b,0),1230,"one winner for every scheduled standings game");
+  const avgWins=seasonWins.reduce((a,b)=>a+b,0)/seasonWins.length;
+  const winSd=Math.sqrt(seasonWins.reduce((a,b)=>a+(b-avgWins)**2,0)/seasonWins.length);
+  generatedStandings.push({
+    season,winSd:+winSd.toFixed(2),minWins:Math.min(...seasonWins),maxWins:Math.max(...seasonWins),
+    homeWinRate:+(homeWins/Math.max(1,homeGames)).toFixed(3),
+    meanMargin:+(regulationMargins/Math.max(1,homeGames)).toFixed(2),
+    winsByTeam:Object.fromEntries([...wins].sort((a,b)=>b[1]-a[1])),
+  });
   for(const x of byTeam.values())results.push(x);
   console.log(`Simulated ${season}: ${[...counts.values()].reduce((n,v)=>n+v,0)/2} standings games across ${byTeam.size} teams`);
 }
@@ -237,6 +258,7 @@ const report={
   aggregate:summary(aggregate),
   perSeason:seasons.map(season=>{const v=blank("ALL",season);for(const r of results.filter(x=>x.season===season))add(v,r);return summary(v);}),
   perTeamSeason:results.map(summary),
+  generatedStandings,
   outlierRosters:rosterProfiles.filter(profile=>{
     const row=results.find(result=>result.team===profile.team&&result.season===profile.season);
     return row && row.emergencySeatMinutes/Math.max(1,row.activeSeatMinutes)>0.03;
@@ -263,6 +285,8 @@ ${JSON.stringify(report.aggregate,null,2)}
 ${metrics}
 `);
 console.log(JSON.stringify({aggregate:report.aggregate,failedGames,firstErrors:errors.slice(0,5)},null,2));
+console.log("GENERATED_STANDINGS "+JSON.stringify(generatedStandings));
+
 assert.equal(failedGames,0,"Every full-schedule game must simulate");
 assert.equal(totalGames,3690,"Expected 3 x 1,230 standings games, including Cup and makeup games");
 assert.ok(errors.length===0,errors.slice(0,5).join("\n"));
