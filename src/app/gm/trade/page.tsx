@@ -646,7 +646,7 @@ function TradeBody() {
           }}
         >
           {league.teams
-            .filter((t) => t.id !== team.id)
+            .filter((t) => t.id !== team.id && !t.id.startsWith("as-"))
             .map((t) => (
               <option key={t.id} value={t.id}>
                 {t.abbr} - {t.city} ({stanceLabel(tradeStance(league, t.id))})
