@@ -94,7 +94,7 @@ async function main(){
       automation:{...league.automation,autoDraft:true,autoFreeAgency:true}};
     league=beginOffseason(league);
     const priorRoster=new Map(league.teams.map(t=>[t.id,rosterIds(league,t.id)]));
-    const priorAges=new Map(league.players.map(p=>[p.id,p.age]));
+    const priorAges=new Map(league.players.filter(p=>p.draftYear!==season).map(p=>[p.id,p.age]));
     let drafted=0,rookiesSigned=0,freeAgentsSigned=0;
     let stages:string[]=[];
     for(let guard=0;guard<340&&league.season===season;guard++){
