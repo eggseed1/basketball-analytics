@@ -16,6 +16,7 @@ import {overallOf} from "../src/gm/engine/lineup";
 import {createRng} from "../src/gm/engine/rng";
 import {beginOffseason,advanceSeasonJourney,decideRookieContract,openingRosterChecks} from "../src/gm/engine/season-flow";
 import {applySign} from "../src/gm/engine/free-agency";
+import {evaluateSigning,exceptionAmounts} from "../src/gm/engine/cap";
 import {releasePlayer} from "../src/gm/engine/roster-decisions";
 import {runSummerLeague} from "../src/gm/engine/season-development";
 import {franchisePlan} from "../src/gm/engine/franchise";
@@ -38,7 +39,8 @@ const rosterIds=(state:GmLeagueState,id:string)=>
   new Set(state.players.filter(p=>p.teamId===id).map(p=>p.id));
 type SeasonResult={season:number;games:number;calendarDays:number;winSd:number;minWins:number;maxWins:number;
   meanStrengthWinCorrelation:number;teams:Array<{id:string;wins:number;losses:number;quality:number;roster:string[]}>;newIdCount:number;
-  cpuTrades:number;injuryEvents:number;topTeam:string;lastTeam:string;firstGames:string[];};
+  cpuTrades:number;injuryEvents:number;topTeam:string;lastTeam:string;firstGames:string[];
+  unsigned80Plus:number;unsigned85Plus:number;underMinimumClubs:number;};
 const seasons:SeasonResult[]=[];
 const summers:any[]=[];
 let previousSeasonPlayerIds: Set<string> | null = null;
@@ -84,6 +86,9 @@ async function main(){
       meanStrengthWinCorrelation:+correlation(table.map(t=>t.quality),table.map(t=>t.wins)).toFixed(3),
       teams:table,newIdCount:newSeasonPlayers,
       cpuTrades:league.tradeLog.length-openingTradeCount,injuryEvents,topTeam:ordered[0]!.id,lastTeam:ordered[29]!.id,
+      unsigned80Plus:league.players.filter(p=>p.teamId==null&&!league.draftPool.includes(p.id)&&overallOf(p)>=80).length,
+      unsigned85Plus:league.players.filter(p=>p.teamId==null&&!league.draftPool.includes(p.id)&&overallOf(p)>=85).length,
+      underMinimumClubs:league.teams.filter(t=>league.players.filter(p=>p.teamId===t.id&&p.contract).length<league.settings.minRoster).length,
       firstGames:league.schedule.filter(gameCounts).slice(0,24).map(g=>g.homeTeamId+":"+g.awayTeamId),
     };
     seasons.push(seasonResult);
@@ -92,6 +97,7 @@ async function main(){
       winRange:[seasonResult.minWins,seasonResult.maxWins],
       strengthWinCorrelation:seasonResult.meanStrengthWinCorrelation,
       cpuTrades:seasonResult.cpuTrades,injuryEvents,newPlayers:seasonResult.newIdCount,
+      unsigned80Plus:seasonResult.unsigned80Plus,unsigned85Plus:seasonResult.unsigned85Plus,underMinimumClubs:seasonResult.underMinimumClubs,
       topTeam:seasonResult.topTeam,bottomTeam:seasonResult.lastTeam}));
     if(cycle===4)break;
     const top=ordered[0]!.id;
@@ -132,10 +138,18 @@ async function main(){
         for(let fill=0;fill<20;fill++){
           const signed=league.players.filter(p=>p.teamId===id&&p.contract);
           if(signed.length>=league.settings.minRoster)break;
-          const free=[...league.players].filter(p=>p.teamId==null&&!p.pendingRookieContract)
-            .sort((a,b)=>overallOf(b)-overallOf(a))[0];
+          // The audit must not hide FA-market failures by force-signing
+          // an exclusive-rights rookie or expensive star on an illegal minimum.
+          const minimum=exceptionAmounts(league.settings).minimumM;
+          const eligible=[...league.players]
+            .filter(p=>p.teamId==null&&!p.pendingRookieContract&&
+              p.rightsKind!=="exclusive_draft"&&p.rightsKind!=="restricted"&&overallOf(p)<78)
+            .sort((a,b)=>overallOf(b)-overallOf(a));
+          const free=eligible.find(p=>evaluateSigning(league,id,p,minimum,1).ok);
           if(!free)break;
-          league=applySign(league,free.id,id,Math.max(1.2,league.settings.salaryCapM*0.013),1,"minimum");
+          const verdict=evaluateSigning(league,id,free,minimum,1);
+          if(!verdict.ok)break;
+          league=applySign(league,free.id,id,minimum,1,verdict.via);
           freeAgentsSigned++;
         }
       }
@@ -197,7 +211,7 @@ async function main(){
   const report={seed:auditSeed,method:"One persistent generated 30-team save; five 82-game seasons, four CPU-auto guided offseasons; champion supplied by season leader solely to release UI progression gates (playoff simulation excluded)",seasons,summers,transitions};
   mkdirSync("artifacts",{recursive:true});
   writeFileSync("artifacts/franchise-continuous-five-year.json",JSON.stringify(report,null,2)+"\n");
-  const seasonal=seasons.map(s=>"| "+s.season+" | "+s.minWins+"-"+s.maxWins+" | "+s.winSd+" | "+s.meanStrengthWinCorrelation+" | "+s.cpuTrades+" | "+s.injuryEvents+" |").join("\n");
+  const seasonal=seasons.map(s=>"| "+s.season+" | "+s.minWins+"-"+s.maxWins+" | "+s.winSd+" | "+s.meanStrengthWinCorrelation+" | "+s.cpuTrades+" | "+s.injuryEvents+" | "+s.unsigned80Plus+" | "+s.unsigned85Plus+" | "+s.underMinimumClubs+" |").join("\n");
   const delta=transitions.map(s=>"| "+s.from+"-"+s.to+" | "+s.winCorrelation+" | "+s.averageAbsWinChange+" | "+s["25plusSwings"]+" | "+s.unpromptedLargeSwings.map((x:any)=>x.team).join(", ")+" |").join("\n");
   writeFileSync("artifacts/franchise-continuous-five-year.md",
     "# Five-year continuous Franchise Lab audit\n\n"+report.method+"\n\n## Seasons\n| Year | Win range | Win SD | Team quality vs wins | CPU trades | Injury events |\n|---|---|---:|---:|---:|---:|\n"+seasonal+
