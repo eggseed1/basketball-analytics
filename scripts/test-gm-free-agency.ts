@@ -456,4 +456,25 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   }
 }
 
+
+
+// ——— MyNBA pain point: open market cannot accept an elite player's
+// only minimum offer, while fair unrestricted offers still sign ———
+{
+  const star = player("underpriced", null, 89, 28);
+  const league = {
+    ...baseLeague([star]),
+    faMarket: { ...emptyFaMarket(299), stage: "open" as const, day: 6 },
+  };
+  const cheap = userOfferFreeAgent(league, star.id, 2.5, 1);
+  assert.equal(cheap.ok, false, "an established star must reject a near-minimum salary");
+  assert.equal((cheap.ok ? cheap.state : cheap.state)?.players.find(p => p.id === star.id)?.teamId ?? null,
+    null, "rejected minimum offer must not sign the player");
+
+  const reasonable = userOfferFreeAgent(league, star.id, 36, 4);
+  assert.equal(reasonable.ok, true, reasonable.ok ? "" : reasonable.reason);
+  assert.equal(reasonable.ok && reasonable.state.players.find(p => p.id === star.id)?.teamId,
+    "bos", "a legitimate star salary must still be accepted");
+}
+
 console.log("gm free agency ok");
