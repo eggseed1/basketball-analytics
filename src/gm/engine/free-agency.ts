@@ -402,7 +402,13 @@ function resolvePlayers(
           evaluateOfferUtility(next, player, team, offer.salaryM, offer.years);
         return { offer, team, appeal: utility.total, utility };
       })
-      .filter((row): row is NonNullable<typeof row> => Boolean(row))
+      // Illegal headline offers must not prevent a player from accepting a
+      // lower-ranked *legal* offer. Re-evaluate against the live cap and
+      // roster after earlier signings/reservations in this same market day.
+      .filter((row): row is NonNullable<typeof row> =>
+        row !== null &&
+        evaluateSigning(next, row.team.id, player, row.offer.salaryM, row.offer.years).ok
+      )
       .sort(
         (a, b) =>
           b.appeal - a.appeal || a.team.id.localeCompare(b.team.id)
@@ -494,7 +500,7 @@ function resolvePlayers(
   return { state: next, lines };
 }
 
-function fillMinimums(
+export function fillMinimums(
   state: GmLeagueState,
   rules: CBARules
 ): { state: GmLeagueState; lines: string[] } {
@@ -516,7 +522,16 @@ function fillMinimums(
           const nb = b.position === needs[0] ? 12 : b.position === needs[1] ? 5 : 0;
           return overallOf(b) + nb - (overallOf(a) + na) || a.id.localeCompare(b.id);
         });
-      const choice = pool[0];
+      // Minimum roster insurance is for fringe/depth free agents, not
+      // unreleased rookies, restricted rights, or $40M-caliber stars.
+      // Never let an ineligible first choice block the rest of the market.
+      const choice = pool.find(player =>
+        !player.pendingRookieContract &&
+        player.rightsKind !== "exclusive_draft" &&
+        player.rightsKind !== "restricted" &&
+        overallOf(player) < 78 &&
+        evaluateSigning(next, team.id, player, min, 1).ok
+      );
       if (!choice) break;
       const verdict = evaluateSigning(next, team.id, choice, min, 1);
       if (!verdict.ok) break;
