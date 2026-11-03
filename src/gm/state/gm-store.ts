@@ -185,6 +185,9 @@ export function normalizeLoadedLeague(league: GmLeagueState): GmLeagueState {
     next.lineupRoles === 1 && !needsPositions
       ? next.teams
       : next.teams.map((team) => {
+          // Position-book migrations must never erase a user-edited rotation.
+          // A manual book already represents a deliberate minute/seat choice.
+          if (needsPositions && next.lineupRoles === 1 && team.coaching?.rotationMode === "manual") return team;
           const cleared = needsPositions
             ? {
                 ...team,
