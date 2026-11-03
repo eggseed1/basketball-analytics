@@ -2,6 +2,10 @@
 export const LIVE_BOARD_FILES = [
   "src/data/runtime/standings-snapshot.json",
   "src/data/runtime/game-snapshot.json",
+  "src/data/runtime/team-game-box-snapshot.json",
+  "src/data/runtime/season-tables-snapshot.json",
+  "src/data/runtime/season-tables-meta.json",
+  "src/data/runtime/team-board-snapshot.json",
 ];
 
 const timestamp = (value) => {
@@ -9,7 +13,7 @@ const timestamp = (value) => {
   return Number.isFinite(parsed) ? parsed : -1;
 };
 const latestSeason = (value) => {
-  const seasons = Array.isArray(value?.seasons) ? value.seasons : Object.keys(value?.seasons ?? {});
+  const seasons = Array.isArray(value?.seasons) ? value.seasons : Object.keys(value?.seasons ?? value?.teams ?? {});
   return seasons.filter(x => /^20\d\d-\d\d$/.test(x)).sort().at(-1) ?? null;
 };
 const standingRows = (data, season) =>
@@ -25,6 +29,11 @@ const finals = (data, season) => (data?.games ?? []).filter(game =>
 export function snapshotRegressed(file, current, nightly) {
   if (timestamp(nightly) < 0) throw new Error(`Nightly ${file} has no valid generatedAt`);
   if (timestamp(current) < timestamp(nightly)) return true;
+  // These NBA team/player datasets are versioned by ingestion timestamp.
+  // Never ship a prior season-table or by-team snapshot from a feature branch.
+  if (file.endsWith("/season-tables-snapshot.json") ||
+      file.endsWith("/season-tables-meta.json") ||
+      file.endsWith("/team-board-snapshot.json")) return false;
   const season = latestSeason(nightly);
   if (!season) throw new Error(`Nightly ${file} has no current season`);
   if (file.endsWith("/standings-snapshot.json")) {
@@ -39,6 +48,17 @@ export function snapshotRegressed(file, current, nightly) {
   if (file.endsWith("/game-snapshot.json")) {
     const sourceFinals = finals(nightly, season);
     return finals(current, season) < sourceFinals;
+  }
+  if (file.endsWith("/team-game-box-snapshot.json")) {
+    const sources = Object.entries(nightly.teams?.[season] ?? {});
+    if (!sources.length) throw new Error(`Nightly team boxes for ${season} have no teams`);
+    const actual = current?.teams?.[season] ?? {};
+    return sources.some(([team, rows]) => {
+      const got = actual[team] ?? [];
+      if (got.length < rows.length) return true;
+      const lastDate = rows.at(-1)?.[0] ?? "";
+      return lastDate > (got.at(-1)?.[0] ?? "");
+    });
   }
   throw new Error(`Unrecognized live board: ${file}`);
 }
