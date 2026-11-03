@@ -740,10 +740,14 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   const rng=createRng(hashId(player.id+":"+(opts.pace??"summer"))+age*997);
   const reasons:string[]=[];
   const ageFactor=age<=21?1.08:age<=23?0.95:age<=25?0.86:age<=27?0.58:0.25;
-  let path=potential.path==="boom"?1.45:potential.path==="bust"?0.2:1;
-  if(potential.path==="bust"&&age>=22&&age<=25&&rng()<0.08) {path=0.85;reasons.push("A better development stretch after a slow start");}
-  else if(potential.path==="average"&&age<=25&&player.personality>=10&&rng()<0.1) {path=1.45;reasons.push("A productive development stretch");}
-  const trait=potential.trait==="xfactor"?1.25:potential.trait==="superstar"?1.18:potential.trait==="star"?1.08:potential.trait==="bust"?0.65:1;
+  let path=openPath
+    ? potential.path==="boom"?1.06:potential.path==="bust"?0.92:1
+    : potential.path==="boom"?1.45:potential.path==="bust"?0.2:1;
+  if(!openPath&&potential.path==="bust"&&age>=22&&age<=25&&rng()<0.08) {path=0.85;reasons.push("A better development stretch after a slow start");}
+  else if(!openPath&&potential.path==="average"&&age<=25&&player.personality>=10&&rng()<0.1) {path=1.45;reasons.push("A productive development stretch");}
+  const trait=openPath
+    ? potential.trait==="xfactor"?1.2:potential.trait==="superstar"?1.14:potential.trait==="star"?1.08:potential.trait==="bust"?0.88:1
+    : potential.trait==="xfactor"?1.25:potential.trait==="superstar"?1.18:potential.trait==="star"?1.08:potential.trait==="bust"?0.65:1;
   let opportunity=0.72+Math.min(minutes,24)/24*0.4;
   if(player.developmentPlan==="practice") {opportunity=minutes<18?0.94+coach*0.05:0.91;reasons.push("Skills work preserves a path while rotation minutes are limited");}
   else if(player.developmentPlan==="rotation") {opportunity=0.5+Math.min(minutes,26)/26*0.7;reasons.push(minutes>=16?"Regular game reps support the role plan":"The rotation plan needs more game reps");}
@@ -791,7 +795,10 @@ export function progressSheet(
 ): GmPlayer {
   player = ensureSimProfile(ensurePlayerSheet(player));
   const sheet = player.sheet ?? buildSheet(player);
-  if((player.draftModel===2||player.developmentPlan)&&player.age<=28) return progressDevelopmentPath(player,sheet,opts??{});
+  // The alternative offseason path must not revive fixed potential limits
+  // when a generated prospect reaches his late twenties.
+  const openPath = player.draftModel === 2;
+  if ((openPath || player.developmentPlan) && player.age <= 28) return progressDevelopmentPath(player,sheet,opts??{});
   const { potential } = sheet;
   const age = player.age;
   const big = player.position === "C" || player.position === "PF";
@@ -802,15 +809,15 @@ export function progressSheet(
   let delta = agingBase(big ? age - 1 : age);
   const traitMul = traitGrowthMul(potential.trait);
   if (delta > 0) {
-    const pathMul = potential.path === "boom" ? 1.85 : potential.path === "bust" ? 0.25 : 1;
+    const pathMul = openPath ? (potential.path === "boom" ? 1.06 : potential.path === "bust" ? 0.92 : 1) : potential.path === "boom" ? 1.85 : potential.path === "bust" ? 0.25 : 1;
     const minuteMul = clamp(minutes / 26, 0.55, 1.15);
     const coachMul = 1 + clamp(coach, 0, 1.5) * 0.08;
     const work = player.personality > 15 ? 1.08 : player.personality < -15 ? 0.92 : 1;
     delta *= pathMul * traitMul * minuteMul * coachMul * work * clamp(devStaff, 0.85, 1.25) * (1 + clamp(opts?.mentorBonus ?? 0, 0, 0.18));
-    if (potential.path === "bust") delta *= 0.5;
+    if (!openPath && potential.path === "bust") delta *= 0.5;
     // Slow down once a player has already grabbed most of their realistic peak.
     // Stops mid-tier books from all drifting into the 80s over a long save.
-    const span = Math.max(6, potential.ceiling - potential.floor);
+    const span = Math.max(6, (openPath ? 99 : potential.ceiling) - potential.floor);
     const progress = (sheet.overall - potential.floor) / span;
     if (progress > 0.55) delta *= clamp(1.15 - progress, 0.25, 1);
     if (
@@ -843,8 +850,8 @@ export function progressSheet(
     delta += potential.trait === "xfactor" ? 0.08 : potential.trait === "superstar" ? 0.06 : 0.04;
   }
   delta += (rng() - 0.5) * 0.08;
-  if (delta > 0 && sheet.overall >= potential.ceiling) delta = 0;
-  if (delta > 0 && potential.path === "bust" && sheet.overall <= potential.floor + 1) delta = 0;
+  if (!openPath && delta > 0 && sheet.overall >= potential.ceiling) delta = 0;
+  if (!openPath && delta > 0 && potential.path === "bust" && sheet.overall <= potential.floor + 1) delta = 0;
   delta = clamp(delta * clamp(opts?.speed ?? 1, 0.5, 2), -0.7, 0.65);
   if (opts?.pace === "season") {
     delta = delta > 0 ? delta * 0.32 : delta * 0.12;
@@ -914,6 +921,7 @@ export function progressSheet(
   }), 25, 99);
   return {
     ...player,
+    ...(openPath ? { developmentProfile: developmentProfileOf(player) } : {}),
     sheet: {
       ...sheet,
       overall,
