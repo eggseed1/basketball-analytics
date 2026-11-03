@@ -19,7 +19,13 @@ const mean=(a:number[])=>a.reduce((x,y)=>x+y,0)/Math.max(1,a.length);
 const sd=(a:number[])=>Math.sqrt(mean(a.map(x=>(x-mean(a))**2)));
 const rank=(a:number[])=>a.map(x=>a.filter(y=>y>x).length+0.5*a.filter(y=>y===x).length);
 const corr=(a:number[],b:number[])=>{const x=rank(a),y=rank(b),ax=mean(x),by=mean(y);return mean(x.map((v,i)=>(v-ax)*(y[i]!-by)))/Math.max(.0001,sd(x)*sd(y));};
-const rows:any[]=[];
+type ProductionRun = {
+  seed:number;days:number;games:number;rankCorrelation:number;mae:number;
+  sd:number;realSd:number;minWins:number;maxWins:number;
+  injuredGameAbsences:number;injuryEvents:number;meanGp:number;histGp:number;simulatedGp:number;
+  teams:Array<{team:string;real:number;sim:number}>;
+};
+const rows:ProductionRun[]=[];
 async function main(){
   const data=(await getBundledBrefPeerBoard("2025-26"))
     .filter(p=>p.gamesPlayed>=5&&p.minutes>=40&&p.fieldGoalsAttempted>0);

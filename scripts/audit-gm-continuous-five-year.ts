@@ -42,7 +42,14 @@ type SeasonResult={season:number;games:number;calendarDays:number;winSd:number;m
   cpuTrades:number;injuryEvents:number;topTeam:string;lastTeam:string;firstGames:string[];
   unsigned80Plus:number;unsigned85Plus:number;underMinimumClubs:number;};
 const seasons:SeasonResult[]=[];
-const summers:any[]=[];
+type SummerResult = {
+  from:number;to:number;archived:boolean;ageContinuity:number;
+  drafted:number;rookiesSigned:number;freeAgentsSigned:number;
+  movedPlayers:number;averageRetention:number;
+  qualityChanges:Array<{team:string;added:number;departed:number;retention:number;qualityDelta:number}>;
+  stages:string[];scheduleChanged:boolean;
+};
+const summers:SummerResult[]=[];
 let previousSeasonPlayerIds: Set<string> | null = null;
 async function main(){
   for(let cycle=0;cycle<5;cycle++){
@@ -110,7 +117,7 @@ async function main(){
     const priorRoster=new Map(league.teams.map(t=>[t.id,rosterIds(league,t.id)]));
     const priorAges=new Map(league.players.filter(p=>p.draftYear!==season).map(p=>[p.id,p.age]));
     let drafted=0,rookiesSigned=0,freeAgentsSigned=0;
-    let stages:string[]=[];
+    const stages:string[]=[];
     for(let guard=0;guard<340&&league.season===season;guard++){
       const stage=league.seasonFlow?.stage??"none";
       stages.push(stage);
@@ -189,7 +196,10 @@ async function main(){
     assert.ok(league.schedule.every(g=>g.season===season+1&&!g.played));
     assert.ok(rosterChanges.some(r=>r.added>0),"new season has no roster additions");
   }
-  const transitions=[] as any[];
+  type TeamTransition = {team:string;priorWins:number;wins:number;delta:number;retention:number;qualityDelta:number};
+  type TransitionResult = {from:number;to:number;winCorrelation:number;averageAbsWinChange:number;
+    "25plusSwings":number;unpromptedLargeSwings:TeamTransition[];clubs:TeamTransition[]};
+  const transitions:TransitionResult[]=[];
   for(let index=1;index<seasons.length;index++){
     const before=seasons[index-1]!,after=seasons[index]!;
     const changes=after.teams.map(now=>{
@@ -212,7 +222,7 @@ async function main(){
   mkdirSync("artifacts",{recursive:true});
   writeFileSync("artifacts/franchise-continuous-five-year.json",JSON.stringify(report,null,2)+"\n");
   const seasonal=seasons.map(s=>"| "+s.season+" | "+s.minWins+"-"+s.maxWins+" | "+s.winSd+" | "+s.meanStrengthWinCorrelation+" | "+s.cpuTrades+" | "+s.injuryEvents+" | "+s.unsigned80Plus+" | "+s.unsigned85Plus+" | "+s.underMinimumClubs+" |").join("\n");
-  const delta=transitions.map(s=>"| "+s.from+"-"+s.to+" | "+s.winCorrelation+" | "+s.averageAbsWinChange+" | "+s["25plusSwings"]+" | "+s.unpromptedLargeSwings.map((x:any)=>x.team).join(", ")+" |").join("\n");
+  const delta=transitions.map(s=>"| "+s.from+"-"+s.to+" | "+s.winCorrelation+" | "+s.averageAbsWinChange+" | "+s["25plusSwings"]+" | "+s.unpromptedLargeSwings.map(x=>x.team).join(", ")+" |").join("\n");
   writeFileSync("artifacts/franchise-continuous-five-year.md",
     "# Five-year continuous Franchise Lab audit\n\n"+report.method+"\n\n## Seasons\n| Year | Win range | Win SD | Team quality vs wins | CPU trades | Injury events | Unsigned 80+ | Unsigned 85+ | Clubs below min |\n|---|---|---:|---:|---:|---:|---:|---:|---:|\n"+seasonal+
     "\n\n## Year-over-year movement\n| Transition | Record correlation | Average win change | 25+ win swings | Unexplained swings |\n|---|---:|---:|---:|---|\n"+delta+"\n");

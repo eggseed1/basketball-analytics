@@ -4,7 +4,7 @@ import { retieCupGroupGames, ensureNbaCup, gameCounts } from "../src/gm/engine/c
 import { createRng } from "../src/gm/engine/rng";
 
 Math.random=createRng(62832);
-let lastDates=new Map<string,string>();
+const lastDates=new Map<string,string>();
 for(const season of [2028,2029,2030,2031,2032]){
   const league=createGeneratedLeague({season,seed:season*101+29,userTeamId:"bos"});
   const games=league.schedule;
