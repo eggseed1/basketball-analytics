@@ -859,7 +859,7 @@ function rotationPool(
   }
   // Functional coverage may justify a small tradeoff, never a large rating
   // sacrifice merely to make the position bars add up perfectly.
-  for (const seat of ["PG", "C"] as const) {
+  for (const seat of ["PG", "PF", "C"] as const) {
     const cutoff = seat === "C" ? 0.90 : 0.84;
     if (pool.filter(p => roleFit(p, seat) >= cutoff).length >= 2) continue;
     const challenger = roster.filter(p => !pool.some(q => q.id === p.id) && roleFit(p, seat) >= cutoff)
