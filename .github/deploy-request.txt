@@ -1,6 +1,6 @@
 DRBL production code-only deploy request
 Target: main
-Includes Franchise Lab free-agency negotiation and acceptance fixes merged in PR #169
-Merge commit: fe0fb5a054850bc892bb43359909e349a43b5008
-Validation: CI, Franchise Lab simulation/balance/fidelity/browser, runtime parity, and two-seed five-year continuity (all successful)
+Includes Franchise Lab Trade Desk v2 merged in PR #170
+Merge commit: f51cfd652ec385cab33c23ff120a428fcba49420
+Validation: CI, franchise simulation, balance, fidelity, browser/mobile, runtime parity and two-seed five-year continuity (all passed)
 Requested on 2026-11-03
