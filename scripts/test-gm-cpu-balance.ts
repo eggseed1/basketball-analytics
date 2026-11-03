@@ -131,8 +131,7 @@ for (const seed of SEEDS) {
       .sort((a, b) => (risk(b) + hash(b.id + ":" + season) % 13) -
                        (risk(a) + hash(a.id + ":" + season) % 13))
       .slice(0, ANNUAL).map(p => p.id));
-    const newcomers = draft(seed, season + 1 + 10, ANNUAL, teams, 10 + offset)
-      .map(p => ({ ...p, age: p.age - (10 + offset) }));
+    const newcomers = draft(seed, season + 1 + 10, ANNUAL, teams, 10 + offset);
     oldWorld = { ...oldWorld, players: [...oldWorld.players.filter(p => !leaving.has(p.id)),
       ...newcomers.map(p => ({ ...p, developmentFocus: positional(p) }))] };
     newWorld = { ...newWorld, players: [...newWorld.players.filter(p => !leaving.has(p.id)), ...newcomers] };
