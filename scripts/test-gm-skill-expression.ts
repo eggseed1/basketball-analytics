@@ -21,8 +21,8 @@ for (let seed = 1; seed <= 150; seed++) {
 const outcomes: { good:number; poor:number; special:boolean }[]=[];
 for (const original of sample) {
   const profile = developmentProfileOf(original);
-  let good = { ...original, developmentProfile: profile, developmentPlan:"rotation" as const, developmentFocus:"shooting" as const };
-  let poor = { ...original, developmentProfile: profile, developmentPlan:"practice" as const, developmentFocus:"balanced" as const };
+  let good: GmPlayer = { ...original, developmentProfile: profile, developmentPlan:"rotation" as const, developmentFocus:"shooting" as const };
+  let poor: GmPlayer = { ...original, developmentProfile: profile, developmentPlan:"practice" as const, developmentFocus:"balanced" as const };
   while(good.age<28){
     for (const mode of ["season","season","summer"] as const){
       const age = mode==="summer" ? good.age+1 : good.age;
