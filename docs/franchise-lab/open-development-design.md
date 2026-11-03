@@ -46,7 +46,10 @@ finishing at an exact OVR.
   performance, coaching, staff, mentoring and work ethic. Elite ratings
   encounter soft diminishing returns, not a fixed cap.
 - Breakouts/mentoring increase persistent development discovery rather than
-  the historical overall ceiling. Older player types preserve the legacy
+  the historical overall ceiling. Exceptionally productive generated players
+  aged 26–29 can still unlock a late breakthrough, but require at least
+  55 games, 1,400 minutes, efficient scoring and substantially better production
+  than their opening rating. Older player types preserve the legacy
   implementation to avoid rewriting real-world ratings overnight.
 - Development UI leads with a player and a skill-direction selector, then a
   concise observed-status summary; the playing-time plan is optional.
@@ -57,8 +60,9 @@ finishing at an exact OVR.
 
 - Calibrate 10–30 seasons and more seeds: mean OVR by career year, rookie
   survival rates, proportion reaching 80/85/90, and roster rating distributions.
-- Introduce a rare *true late bloomer* path at ages 26–29 when sustained
-  production, efficiency, role consistency and adaptability justify it.
+- Calibrate how often *true late bloomers* trigger at ages 26–29;
+  the initial strict full-season breakout path is implemented, but the frequency
+  must be checked across multiple career cohorts.
 - Allow one or two independent skill groups to plateau while others progress
   and preserve realistic physical limits. Test whether a chosen role actually
   changes shot mix and rotation usefulness, not only cosmetic attributes.
