@@ -43,7 +43,7 @@ export function paintShifts(input:{players:ShiftPlayer[];coaching?:GmCoaching}):
   function unitCost(unit:number[]):number{
     const mask=unit.reduce((n,i)=>n+2**i,0),memo=unitCosts.get(mask);if(memo!=null)return memo;
     let best=-Infinity;
-    function visit(k:number,used:number,value:number){if(k===5){best=Math.max(best,value);return;}for(let pos=0;pos<5;pos++)if(!(used&(1<<pos)))visit(k+1,used|(1<<pos),value+fits[unit[k]!]![pos]!);}
+    function visit(k:number,used:number,value:number){if(k===5){best=Math.max(best,value);return;}for(let pos=0;pos<5;pos++)if(!(used&(1<<pos)))visit(k+1,used|(1<<pos),value+fits[unit[k]!]![pos]!- (fits[unit[k]!]![pos]!<0.80 ? 0.5+(0.80-fits[unit[k]!]![pos]!)*2.5 : 0));}
     visit(0,0,0);
     const coverage=[anchors,handlers].reduce((n,pool)=>n+(pool.reduce((total,i)=>total+targets[i]!,0)>=24&&!unit.some(i=>pool.includes(i))?1000:0),0);
     const cost=(5-best)*45+coverage+(creators.length&&!unit.some(i=>creators.includes(i))?10:0);
