@@ -46,6 +46,17 @@ test("team-game statistics cannot fall back to October 27 after the next nightly
   assert.equal(snapshotRegressed("src/data/runtime/team-game-box-snapshot.json",
     boxes("2026-11-04T16:00:00Z", ["2026-10-20"]), after), true);
 });
+test("player season tables and team boards cannot revert to yesterday", () => {
+  for (const file of [
+    "src/data/runtime/season-tables-snapshot.json",
+    "src/data/runtime/season-tables-meta.json",
+    "src/data/runtime/team-board-snapshot.json",
+  ]) {
+    assert.equal(snapshotRegressed(file, { generatedAt: stale }, { generatedAt: night }), true);
+    assert.equal(snapshotRegressed(file,
+      { generatedAt: "2026-11-04T16:00:00Z" }, { generatedAt: night }), false);
+  }
+});
 test("unverifiable nightly source fails closed", () => {
   assert.throws(() => snapshotRegressed("src/data/runtime/standings-snapshot.json", at(night, 5, 2), at("bad-date", 5, 2)));
 });
