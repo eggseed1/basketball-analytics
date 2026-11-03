@@ -11,6 +11,7 @@ import assert from "node:assert/strict";
 import {mkdirSync,writeFileSync} from "node:fs";
 import {createGeneratedLeague} from "../src/gm/seed/create-league";
 import {stepDay} from "../src/gm/engine/pace";
+import {advanceTradeMarket} from "../src/gm/engine/trades";
 import {gameCounts} from "../src/gm/engine/cup";
 import {overallOf} from "../src/gm/engine/lineup";
 import {createRng} from "../src/gm/engine/rng";
@@ -74,7 +75,9 @@ async function main(){
     let priorInjured=new Set(league.players.filter(p=>p.injury).map(p=>p.id));
     while(!ended&&days<350){
       const stepped=stepDay(league);
-      league=stepped.league;
+      // Match the live user's daily gate: CPU trades and market pulses run
+      // after each simulated calendar day, before the next day's tipoff.
+      league=advanceTradeMarket(stepped.league);
       ended=stepped.seasonOver;
       days++;
       const injured=new Set(league.players.filter(p=>p.injury).map(p=>p.id));

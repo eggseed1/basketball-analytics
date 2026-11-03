@@ -377,6 +377,7 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     draftDeals: undefined,
     combineDone: false,
     tradeDeadlinePassed: false,
+    tradeMarket: undefined,
     incomingOffer: undefined,
     declinedOffers: [],
     lastOfferResolvedDay: undefined,

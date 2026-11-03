@@ -37,6 +37,17 @@ try {
   // The regular trade desk should work like a two-sided trade machine,
   // with a clear live response and optional details on a narrow viewport.
   await page.goto("http://127.0.0.1:3107/gm/trade", { waitUntil: "domcontentloaded" });
+  const tradeMarket = page.getByTestId("trade-market");
+  await tradeMarket.getByRole("heading", { name: "Around the league" }).waitFor();
+  assert.ok(await tradeMarket.getByText(/days until the trade deadline/).count(),
+    "live market should show the remaining trading window");
+  const explore = tradeMarket.getByRole("button", { name: "Explore a deal", exact: true });
+  if (await explore.count()) {
+    await explore.first().click();
+    assert.ok(await page.getByTestId("trade-partner-players").getByRole("checkbox", { checked: true }).count() >= 1,
+      "a market lead should load the requested player into the trade builder");
+    await page.getByRole("button", { name: "Clear", exact: true }).click();
+  }
   const gmRead = page.getByTestId("trade-gm-response");
   await gmRead.getByRole("heading", { name: "Build a two-sided offer" }).waitFor();
   await page.getByTestId("trade-my-players").getByRole("checkbox").first().check();
