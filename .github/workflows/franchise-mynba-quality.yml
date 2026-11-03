@@ -14,6 +14,7 @@ on:
       - 'scripts/test-gm-dynamic-progression.ts'
       - 'scripts/test-gm-draft-accessibility.ts'
       - 'scripts/test-gm-save-slots.mjs'
+      - 'scripts/audit-gm-star-stat-realism.ts'
       - '.github/workflows/franchise-mynba-quality.yml'
 permissions:
   contents: read
@@ -48,3 +49,12 @@ jobs:
         run: npm run test:franchise-calibration
       - name: Individual game outcomes and player stat variance
         run: npm run test:franchise-outcome-realism
+      - name: Star scoring and assists diagnostic (no tuned threshold yet)
+        run: npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-star-stat-realism.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: franchise-mynba-star-stat-diagnostic
+          path: artifacts/franchise-star-stat-realism.json
+          if-no-files-found: ignore
+          retention-days: 30
