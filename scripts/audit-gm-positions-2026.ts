@@ -11,7 +11,7 @@
  * npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-positions-2026.ts
  */
 import assert from "node:assert/strict";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRealSeasonLeague } from "../src/gm/seed/create-real-season-league";
 import { fetchLeagueDepthCharts } from "../src/gm/seed/real-depth";
 
@@ -56,9 +56,17 @@ async function main() {
   const { league, seasonCanonical } = await createRealSeasonLeague({ userTeamId: "bos", seed: 20261103 });
   const current = league.players.filter(p => Boolean(p.nbaPlayerId) && !league.draftPool.includes(p.id));
   assert.ok(current.length >= 350, "expected entire current NBA player pool");
+  // Python extracts independent position shares from the 30 source xlsx
+  // workbooks. Only fall back to the CSV mirror where a workbook is unavailable.
+  const workbookSources = JSON.parse(readFileSync(
+    "artifacts/gm-bref-position-source-2026.json", "utf8"
+  )) as Record<string,{rows:BRef[];error:string|null}>;
+  const aliases:Record<string,string>={BRK:"BKN",CHO:"CHA",PHO:"PHX"};
   const results = await Promise.all(teams.map(async abbr=>{
+    const source = workbookSources[aliases[abbr]??abbr];
+    if(source?.rows.length) return {abbr,rows:source.rows,error:null};
     try { return {abbr,rows:await fetchBRef(abbr),error:null}; }
-    catch(error) {return {abbr,rows:[] as BRef[],error:String(error)};}
+    catch(error) {return {abbr,rows:[] as BRef[],error:String(source?.error??error)};}
   }));
   const allBRef = new Map<string, BRef>();
   for (const {rows} of results) for(const row of rows) {
@@ -126,7 +134,7 @@ async function main() {
   console.log("GM_PLAYER_POSITION_CONFLICTS "+JSON.stringify(evidence.filter(x=>x.bref&&x.espn.length&&x.espn[0]!==x.after).slice(0,80)
     .map(x=>({name:x.name,after:x.after,bref:x.bref?.percentages,espn:x.espn}))));
   if (results.filter(x=>x.rows.length).length < 25) {
-    throw Error("Position source coverage inadequate: "+results.filter(x=>x.rows.length).length+" of 30 Basketball-Reference CSVs");
+    throw Error("Position source coverage inadequate: "+results.filter(x=>x.rows.length).length+" of 30 independent team workbooks/CSVs");
   }
   if (summary.brefMatched < 320) throw Error("insufficient full-season positional evidence: "+summary.brefMatched);
 }
