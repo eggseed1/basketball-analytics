@@ -417,6 +417,15 @@ function resolvePlayers(
     if (!winner) continue;
     const ovr = overallOf(player);
     const ask = askingSalary(player, rules);
+    // The open market previously signed whichever offer ranked first,
+    // including a superstar's only minimum bid. Allow veterans to discount
+    // for fit, but not to take a 90% pay cut with no agent resistance.
+    const minMarketShare =
+      ovr >= 86 ? 0.80 :
+      ovr >= 83 ? 0.67 :
+      ovr >= 80 ? 0.54 :
+      ovr >= 78 ? 0.42 : 0;
+    if (winner.offer.salaryM + 0.05 < ask * minMarketShare) continue;
     if (mode === "agree") {
       if (ovr >= 86 && winner.offer.salaryM + 0.05 < ask * 0.95) continue;
       if (ovr >= 84 && winner.offer.salaryM + 0.05 < ask * 0.9) continue;
