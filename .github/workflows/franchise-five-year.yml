@@ -1,0 +1,36 @@
+name: Franchise continuous five-year simulation
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-gm-continuous-five-year.ts'
+      - '.github/workflows/franchise-five-year.yml'
+permissions:
+  contents: read
+concurrency:
+  group: franchise-five-year
+  cancel-in-progress: true
+jobs:
+  longitudinal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Five full seasons and four guided summer cycles
+        run: npm run audit:franchise-five-year
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: franchise-five-year-continuity
+          path: |
+            artifacts/franchise-continuous-five-year.json
+            artifacts/franchise-continuous-five-year.md
+          if-no-files-found: warn
+          retention-days: 60
