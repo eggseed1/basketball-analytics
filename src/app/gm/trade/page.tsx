@@ -681,7 +681,7 @@ function TradeBody() {
       ) : null}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="flex flex-col gap-3">
+        <div data-testid="trade-my-players" className="flex flex-col gap-3">
           <PlayerList
             title={`You send (${team.abbr})`}
             players={myPlayers}
@@ -716,7 +716,7 @@ function TradeBody() {
             </div>
           </details>
         </div>
-        <div className="gm-club-panel flex flex-col gap-3" style={teamColorStyle(partner.id)}>
+        <div data-testid="trade-partner-players" className="gm-club-panel flex flex-col gap-3" style={teamColorStyle(partner.id)}>
           <PlayerList
             title={
               <>
@@ -911,15 +911,14 @@ function PlayerList({
               />
               <GmPlayerPortrait player={player} />
               <span className="min-w-0 flex-1 truncate">
-                {player.name}
-                {" · "}
-                {player.position} · {displayOverall(player)}
+                <span className="block truncate font-medium">{player.name}</span>
+                <span className="block text-xs text-muted-foreground">
+                  {player.position}{player.secondaryPosition ? "/" + player.secondaryPosition : ""} · {displayOverall(player)} OVR ·
+                  ${player.contract?.annualSalaryM.toFixed(1) ?? "-"}M
+                </span>
               </span>
-              <StarValue stars={playerStars(player)} />
-              <Surplus player={player} />
-              <span className="tabular-nums text-muted-foreground">
-                ${player.contract?.annualSalaryM.toFixed(1) ?? "-"}M
-              </span>
+              <span className="hidden sm:inline"><StarValue stars={playerStars(player)} /></span>
+              <span className="hidden lg:inline"><Surplus player={player} /></span>
             </label>
             {onInspect ? (
               <button
