@@ -6,6 +6,9 @@ on:
     paths:
       - 'scripts/audit-gm-positions-2026.ts'
       - 'scripts/extract-gm-bref-positions.py'
+      - 'scripts/test-gm-natural-positions.ts'
+      - 'src/gm/engine/lineup.ts'
+      - 'src/gm/seed/nba-player-position-book-2026.json'
       - '.github/workflows/franchise-player-positions.yml'
 permissions:
   contents: read
@@ -26,6 +29,8 @@ jobs:
           python scripts/extract-gm-bref-positions.py
       - name: Compare 2025-26 positional minutes with current ESPN depth charts for every player
         run: npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-positions-2026.ts
+      - name: Verify every imported NBA primary and secondary and manual edits
+        run: npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-gm-natural-positions.ts
       - uses: actions/upload-artifact@v4
         if: always()
         with:
