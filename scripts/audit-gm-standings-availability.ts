@@ -184,6 +184,18 @@ writeFileSync("artifacts/franchise-standings-availability.md",
   table+"\n");
 console.log("STANDINGS_AUDIT "+JSON.stringify(report.overall)+" YEARLY "+JSON.stringify(yearly));
 assert.equal(report.totalGames,7380);
+
+// Long-run accuracy must exceed a weak coincidental standings correlation.
+// These broad bands are based on multiple complete real-player seasons,
+// not exact team records, and allow future improvements or new randomness.
+assert.ok(report.overall.avgRankCorrelation>=0.76,
+  "historical-availability standings ranking became implausible");
+assert.ok(report.overall.avgRecordMae<=7,
+  "historical-availability win totals drifted too far from NBA references");
+assert.ok(report.overall.avgWinSd>=10 && report.overall.avgWinSd<=16,
+  "historical-availability league is too compressed or too extreme");
+assert.ok(report.overall.avgHomeWins>=0.47 && report.overall.avgHomeWins<=0.62,
+  "home-court advantage is outside NBA-like range");
 assert.ok(report.overall.avgRankCorrelation>-1 && report.overall.avgRankCorrelation<=1);
 
 }
