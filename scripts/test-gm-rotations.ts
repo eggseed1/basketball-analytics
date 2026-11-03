@@ -89,13 +89,10 @@ assert.ok(balanced.quality >= 0.78, `expected solid default balance, got ${balan
 const rows = minutesPerPosition(roster, balanced.minutes, balanced.coverSlot);
 assert.equal(rows.length, 5);
 assert.ok(rows.every((row) => row.total > 0));
-// Position bars must sit near 48 when the roster can cover every spot.
-for (const row of rows) {
-  assert.ok(
-    Math.abs(row.total - 48) <= 12,
-    `${row.position} should be near 48, got ${row.total}`
-  );
-}
+// Seat totals are descriptive, not targets for auto-selection. NBA lineups
+// need five players on court, not exactly 48 minutes from each natural label.
+assert.equal(rows.reduce((total, row) => total + row.total, 0), 240);
+assert.ok(rows.every(row => row.total >= 0));
 
 // Sibling secondaries must not double-count when cover slots are missing.
 const twinned = roster.map((player) => ({
@@ -222,6 +219,32 @@ assert.ok(
 assert.ok(
   skewedBalanced.quality > 0.75,
   `skewed auto-balance should still score decently, got ${skewedBalanced.quality}`
+);
+
+// Deep wing talent should beat weak position-specific reserves. This used to
+// fail when auto rotations reserved a backup for each traditional position.
+const flexible = [
+  ...roster.slice(0, 5),
+  player("star-wing", "SF", 4.8),
+  player("star-guard", "SG", 4.4),
+  player("good-wing", "SF", 3.5),
+  player("good-guard", "PG", 3.2),
+  player("deep-wing", "SF", 2.6),
+  player("weak-pg", "PG", -1.5),
+  player("weak-pf", "PF", -1.5),
+  player("weak-c", "C", -1.5),
+];
+const flexiblePlan = autoBalanceRotation(team, flexible);
+assert.equal(Object.values(flexiblePlan.minutes).reduce((a,b) => a+b, 0), 240);
+for (const id of ["star-wing", "star-guard", "good-wing", "good-guard"]) {
+  assert.ok((flexiblePlan.minutes[id] ?? 0) > 0, `talented ${id} must make the rotation`);
+}
+for (const id of ["weak-pg", "weak-pf", "weak-c"]) {
+  assert.equal(flexiblePlan.minutes[id] ?? 0, 0, `positional quota must not elevate ${id}`);
+}
+assert.ok(
+  (flexiblePlan.minutes["star-wing"] ?? 0) > (flexiblePlan.minutes["deep-wing"] ?? 0),
+  "an elite reserve should receive more time than a fringe reserve"
 );
 
 const hogged: Record<string, number> = {};
