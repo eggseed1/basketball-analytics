@@ -21,8 +21,9 @@ import {runSummerLeague} from "../src/gm/engine/season-development";
 import {franchisePlan} from "../src/gm/engine/franchise";
 import type {GmLeagueState,GmPlayer} from "../src/gm/types";
 
-Math.random=createRng(2851641);
-let league=createGeneratedLeague({userTeamId:"bos",season:2027,seed:42841});
+const auditSeed=Number(process.env.FIVE_YEAR_SEED??42841);
+Math.random=createRng(auditSeed*67+141);
+let league=createGeneratedLeague({userTeamId:"bos",season:2027,seed:auditSeed});
 const mean=(a:number[])=>a.reduce((n,v)=>n+v,0)/Math.max(1,a.length);
 const std=(a:number[])=>Math.sqrt(mean(a.map(v=>(v-mean(a))**2)));
 const correlation=(a:number[],b:number[])=>{
@@ -186,7 +187,7 @@ async function main(){
       unpromptedLargeSwings:changes.filter(c=>Math.abs(c.delta)>=25&&c.retention>=.8&&Math.abs(c.qualityDelta)<2.5),
       clubs:changes});
   }
-  const report={method:"One persistent generated 30-team save; five 82-game seasons, four CPU-auto guided offseasons; champion supplied by season leader solely to release UI progression gates (playoff simulation excluded)",seasons,summers,transitions};
+  const report={seed:auditSeed,method:"One persistent generated 30-team save; five 82-game seasons, four CPU-auto guided offseasons; champion supplied by season leader solely to release UI progression gates (playoff simulation excluded)",seasons,summers,transitions};
   mkdirSync("artifacts",{recursive:true});
   writeFileSync("artifacts/franchise-continuous-five-year.json",JSON.stringify(report,null,2)+"\n");
   const seasonal=seasons.map(s=>"| "+s.season+" | "+s.minWins+"-"+s.maxWins+" | "+s.winSd+" | "+s.meanStrengthWinCorrelation+" | "+s.cpuTrades+" | "+s.injuryEvents+" |").join("\n");
@@ -197,9 +198,21 @@ async function main(){
   assert.equal(seasons.length,5);
   assert.equal(summers.length,4);
   assert.ok(summers.every(s=>s.drafted>0),"draft picks must join teams every offseason");
-  assert.ok(seasons.every(s=>s.winSd>=6.5&&s.winSd<=17),"league parity should remain within broad NBA-like bands");
-  assert.ok(transitions.every(t=>t.winCorrelation>-0.4),
-    "a consecutive year should not invert standings without substantial roster changes");
+  assert.ok(seasons.every(s=>s.winSd>=7.5&&s.winSd<=17),"team records must preserve NBA-like parity");
+  assert.ok(seasons.every(s=>s.minWins<=32&&s.maxWins>=53),
+    "NBA-like seasons should feature genuine contenders and rebuilding clubs");
+  assert.ok(seasons.every(s=>s.meanStrengthWinCorrelation>=0.45),
+    "team talent must matter to season results");
+  assert.ok(transitions.every(t=>t.winCorrelation>=0.3&&t.winCorrelation<=0.96),
+    "year-to-year records must be related without being scripted");
+  assert.ok(transitions.every(t=>t.averageAbsWinChange>=2.5&&t.averageAbsWinChange<=12.5),
+    "year-to-year records are too static or too volatile");
+  assert.ok(transitions.reduce((n,t)=>n+t.unpromptedLargeSwings.length,0)<=3,
+    "too many 25-win swings without large roster/talent changes");
+  assert.ok(summers.every(s=>s.movedPlayers>=20&&s.averageRetention>=0.5&&s.averageRetention<=0.98),
+    "offseason needs meaningful roster churn without a complete league reset");
+  assert.ok(summers.every(s=>s.ageContinuity>=0.98),
+    "veteran age must carry correctly through every offseason");
   console.log("CONTINUOUS_FIVE_YEAR "+JSON.stringify({
     seasons:seasons.map(s=>({year:s.season,range:[s.minWins,s.maxWins],sd:s.winSd,qualityCorrelation:s.meanStrengthWinCorrelation})),
     transitions:transitions.map(t=>({years:t.from+"-"+t.to,winCorrelation:t.winCorrelation,averageAbsWinChange:t.averageAbsWinChange,
