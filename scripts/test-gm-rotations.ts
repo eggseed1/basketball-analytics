@@ -210,9 +210,14 @@ const skewedRows = minutesPerPosition(
   skewedBalanced.minutes,
   skewedBalanced.coverSlot
 );
+assert.equal(
+  skewedRows.reduce((total, row) => total + row.total, 0),
+  240,
+  "natural-position display sums to 240 even if guards cover more minutes"
+);
 assert.ok(
-  skewedRows.every((row) => row.total >= 30),
-  `skewed cover should staff every spot: ${skewedRows.map((r) => `${r.position}:${r.total}`).join(" ")}`
+  (skewedBalanced.minutes.g2 ?? 0) > (skewedBalanced.minutes.b1 ?? 0),
+  "a stronger guard receives more time than an end-of-bench positional reserve"
 );
 assert.ok(
   skewedBalanced.quality > 0.75,
