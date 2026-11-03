@@ -6,6 +6,9 @@ on:
       - 'src/data/runtime/standings-snapshot.json'
       - 'src/data/runtime/game-snapshot.json'
       - 'src/data/runtime/team-game-box-snapshot.json'
+      - 'src/data/runtime/season-tables-snapshot.json'
+      - 'src/data/runtime/season-tables-meta.json'
+      - 'src/data/runtime/team-board-snapshot.json'
   workflow_dispatch:
 permissions:
   contents: write
@@ -30,13 +33,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          if git diff --quiet -- src/data/runtime/standings-snapshot.json src/data/runtime/game-snapshot.json src/data/runtime/team-game-box-snapshot.json; then
+          if git diff --quiet -- src/data/runtime/standings-snapshot.json src/data/runtime/game-snapshot.json src/data/runtime/team-game-box-snapshot.json src/data/runtime/season-tables-snapshot.json src/data/runtime/season-tables-meta.json src/data/runtime/team-board-snapshot.json; then
             echo "Live NBA boards are fresh; no repair necessary."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- src/data/runtime/standings-snapshot.json src/data/runtime/game-snapshot.json src/data/runtime/team-game-box-snapshot.json
+          git add -- src/data/runtime/standings-snapshot.json src/data/runtime/game-snapshot.json src/data/runtime/team-game-box-snapshot.json src/data/runtime/season-tables-snapshot.json src/data/runtime/season-tables-meta.json src/data/runtime/team-board-snapshot.json
           git commit -m "Restore live NBA records after stale snapshot merge [skip ci]"
           git push origin HEAD:main
           gh workflow run deploy-site.yml --ref main
