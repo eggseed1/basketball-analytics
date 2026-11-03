@@ -892,6 +892,51 @@ function resolveMinutePlanOptions(
 }
 
 /**
+ * Real teams stagger capable ball-handlers and frontcourt players for most of
+ * the night. The merit-first pool may include the right players but spread
+ * their minutes so evenly that a center has to play SG for long stretches.
+ * Move at most eight minutes per player, only between near-peer talents.
+ * This is a broad backcourt/frontcourt safeguard, NOT five 48-minute quotas.
+ */
+function supportFunctionalUnits(
+  minutes: Record<string,number>,
+  pool: GmPlayer[],
+  cap: number
+): void {
+  const original={...minutes};
+  const groups=[["PG","SG"],["PF","C"]] as const;
+  const covers=(p:GmPlayer,group:readonly GmPosition[])=>
+    group.some(spot=>roleFit(p,spot)>=0.84);
+  const total=(group:readonly GmPosition[])=>
+    pool.reduce((n,p)=>n+(covers(p,group)?minutes[p.id]??0:0),0);
+  for(let groupIndex=0;groupIndex<groups.length;groupIndex++){
+    const group=groups[groupIndex]!;
+    const other=groups[1-groupIndex]!;
+    for(let pass=0;pass<40&&total(group)<90;pass++){
+      const receivers=pool.filter(p=>covers(p,group)&&
+        (minutes[p.id]??0)+2<=Math.min(cap,38)&&
+        (minutes[p.id]??0)-(original[p.id]??0)<8)
+        .sort((a,b)=>rotationMerit(b)-rotationMerit(a));
+      let changed=false;
+      for(const receiver of receivers){
+        const donors=pool.filter(p=>!covers(p,group)&&
+          (minutes[p.id]??0)-2>=12&&
+          (original[p.id]??0)-(minutes[p.id]??0)<8&&
+          rotationMerit(p)<=rotationMerit(receiver)+4&&
+          (!covers(p,other)||total(other)>=92))
+          .sort((a,b)=>rotationMerit(a)-rotationMerit(b));
+        if(!donors.length)continue;
+        minutes[receiver.id]=(minutes[receiver.id]??0)+2;
+        minutes[donors[0]!.id]=(minutes[donors[0]!.id]??0)-2;
+        changed=true;
+        break;
+      }
+      if(!changed)break;
+    }
+  }
+}
+
+/**
  * Merit-first 240-minute allocation. Five positional labels describe live
  * court assignments; they are not separate 48-minute natural-position quotas.
  * The common stint planner provides exact five-player coverage on the court.
@@ -922,6 +967,7 @@ export function positionalMinutePlan(
     if (id && desired[id] != null) coverSlot[id] = seat;
   }
   const scaled = scaleMinutes(desired, Object.values(desired).reduce((n,v) => n + v, 0), cap);
+  if(depth.pool>=8) supportFunctionalUnits(scaled,pool,cap);
   for (const [id, value] of Object.entries(scaled)) minutes[id] = value;
   return { minutes, coverSlot };
 }
