@@ -1,0 +1,50 @@
+name: Franchise MyNBA quality guardrails
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/gm/engine/free-agency.ts'
+      - 'src/gm/engine/fa-utility.ts'
+      - 'src/gm/engine/trades.ts'
+      - 'src/gm/engine/dynamic-progression.ts'
+      - 'src/gm/seed/prospect-identities.ts'
+      - 'scripts/test-gm-free-agency.ts'
+      - 'scripts/test-gm-trade-fit.ts'
+      - 'scripts/test-gm-dynamic-progression.ts'
+      - 'scripts/test-gm-draft-accessibility.ts'
+      - 'scripts/test-gm-save-slots.mjs'
+      - '.github/workflows/franchise-mynba-quality.yml'
+permissions:
+  contents: read
+concurrency:
+  group: franchise-mynba-quality-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  core:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Legal free agent offers and roster-fill integrity
+        run: npx tsx scripts/test-gm-free-agency.ts
+      - name: Trade fit and negotiation sanity
+        run: npx tsx scripts/test-gm-trade-fit.ts
+      - name: Development, player aging and traits
+        run: npm run test:franchise-dynamic-progression
+      - name: Draft sleeper accessibility and classes
+        run: npm run test:franchise-draft-accessibility
+      - name: Save slot and export integrity
+        run: npm run test:franchise-saves
+      - name: Offseason phase continuity
+        run: npm run test:franchise-flow
+      - name: Real-roster game statistics calibration
+        run: npm run test:franchise-calibration
+      - name: Individual game outcomes and player stat variance
+        run: npm run test:franchise-outcome-realism
