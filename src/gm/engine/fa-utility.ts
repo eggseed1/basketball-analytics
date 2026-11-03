@@ -15,6 +15,7 @@ import { rosterNeeds } from "@/gm/engine/draft-room";
 import { teamOutlook } from "@/gm/engine/value";
 import { createRng, clamp } from "@/gm/engine/rng";
 import { askingSalary, askingYears } from "@/gm/engine/free-agency-ask";
+import { locationAppeal } from "@/gm/engine/fa-location";
 
 export type FaPersonality = "opportunity" | "security" | "contention" | "continuity";
 
@@ -32,17 +33,33 @@ function weightsFor(personality: FaPersonality): {
   role: number;
   continuity: number;
   fit: number;
+  location: number;
 } {
   switch (personality) {
     case "opportunity":
-      return { money: 0.22, winning: 0.12, role: 0.38, continuity: 0.08, fit: 0.2 };
+      return { money: 0.21, winning: 0.11, role: 0.36, continuity: 0.08, fit: 0.17, location: 0.07 };
     case "security":
-      return { money: 0.42, winning: 0.18, role: 0.12, continuity: 0.18, fit: 0.1 };
+      return { money: 0.4, winning: 0.17, role: 0.12, continuity: 0.17, fit: 0.08, location: 0.06 };
     case "contention":
-      return { money: 0.28, winning: 0.34, role: 0.16, continuity: 0.1, fit: 0.12 };
+      return { money: 0.27, winning: 0.32, role: 0.16, continuity: 0.1, fit: 0.09, location: 0.06 };
     case "continuity":
-      return { money: 0.3, winning: 0.18, role: 0.14, continuity: 0.28, fit: 0.1 };
+      return { money: 0.29, winning: 0.17, role: 0.14, continuity: 0.26, fit: 0.08, location: 0.06 };
   }
+}
+
+/** Priority weights drive the actual contract-choice model and the agent UI. */
+export function faPlayerPriorities(player: GmPlayer): Array<{
+  id: "money" | "winning" | "role" | "continuity" | "fit" | "location";
+  title: string; weight: number;
+}> {
+  const weights = weightsFor(faPersonality(player));
+  const titles = {
+    money: "Contract value", winning: "Winning", role: "Playing time",
+    continuity: "Familiarity", fit: "Team direction", location: "Lifestyle & location",
+  };
+  return (Object.keys(weights) as Array<keyof typeof weights>)
+    .map(id => ({ id, title: titles[id], weight: weights[id] }))
+    .sort((a, b) => b.weight - a.weight);
 }
 
 function seededNoise(seed: number, playerId: string, teamId: string): number {
@@ -127,6 +144,7 @@ export function evaluateOfferUtility(
   const role = roleUtility(team, player, league.players);
   const continuity = continuityUtility(player, team.id);
   const fit = fitUtility(team, player, league.players);
+  const location = locationAppeal(player, team);
   const noise = seededNoise(seed, player.id, team.id);
   const total =
     money * w.money +
@@ -134,6 +152,7 @@ export function evaluateOfferUtility(
     role * w.role +
     continuity * w.continuity +
     fit * w.fit +
+    location * w.location +
     noise;
   return {
     total: Math.round(total * 10) / 10,
@@ -142,6 +161,7 @@ export function evaluateOfferUtility(
     role: Math.round(role * 10) / 10,
     continuity: Math.round(continuity * 10) / 10,
     fit: Math.round(fit * 10) / 10,
+    location: Math.round(location * 10) / 10,
     noise: Math.round(noise * 10) / 10,
   };
 }
@@ -164,6 +184,9 @@ export function agentFeedback(
     }
     if (rival.winning - winner.winning >= 8) {
       return "He likes the money, but the other club looks closer to contention.";
+    }
+    if ((rival.location ?? 50) - (winner.location ?? 50) >= 25) {
+      return "The competing city is closer to his lifestyle preferences.";
     }
     return "He is leaning toward another offer on the board.";
   }
