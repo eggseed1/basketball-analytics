@@ -18,6 +18,12 @@ import {
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { uid, clamp } from "@/gm/engine/rng";
 import {
+  buildTradeMarket,
+  tradeCompetitionMultiplier,
+  tradeWindowDeadline,
+  wantsTrade,
+} from "@/gm/engine/trade-market";
+import {
   dealImprovesFit,
   fitDelta,
   movablePlayers,
@@ -317,7 +323,13 @@ export function evaluateTrade(
   }
 
   const fromValue = boardValue(state, toTeamId, fromAssets);
-  const toValue = boardValue(state, toTeamId, toAssets) * clamp(state.settings.tradeDifficulty ?? 1, 0.5, 2);
+  // Other front offices monitoring a listed player give the seller leverage.
+  // This is a modest premium in the actual evaluator, not just UI theater.
+  const competition = Math.max(1, ...toAssets
+    .filter(asset => asset.type === "player")
+    .map(asset => tradeCompetitionMultiplier(state, asset.id, toTeamId)));
+  const toValue = boardValue(state, toTeamId, toAssets) *
+    clamp(state.settings.tradeDifficulty ?? 1, 0.5, 2) * competition;
 
   // Both piles are priced on the partner's board. A buyer or a seller
   // will give a little, and a club that is staying put will not.
@@ -418,10 +430,16 @@ export function applyTrade(
     status: "accepted",
   };
 
+  const tradedIds = new Set([...proposal.fromAssets, ...proposal.toAssets]
+    .filter(asset => asset.type === "player").map(asset => asset.id));
   return {
     ...state,
     players,
     teams: teams.map(team => [proposal.fromTeamId, proposal.toTeamId].includes(team.id) ? { ...autoSetLineup(team, players), injuryRotationBackup: undefined } : team),
+    tradeMarket: state.tradeMarket ? {
+      ...state.tradeMarket,
+      rumors: state.tradeMarket.rumors.filter(row => !tradedIds.has(row.playerId)),
+    } : undefined,
     tradeLog: [log, ...state.tradeLog].slice(0, 100),
     news: [
       {
@@ -773,13 +791,17 @@ export function refreshTradeBlocks(state: GmLeagueState): GmLeagueState {
   return {
     ...state,
     teams: state.teams.map((team) => {
-      if (team.id.startsWith("as-")) return team;
+      // Never erase the human GM's manually selected trade block.
+      if (team.id === state.userTeamId || team.id.startsWith("as-")) return team;
       const stance = tradeStance(state, team.id);
+      const requests = movablePlayers(state, team.id, { max: 16 })
+        .filter(wantsTrade).map(player => player.id).slice(0, 2);
       if (stance === "buy") {
-        return { ...team, tradeBlock: [] };
+        return { ...team, tradeBlock: requests };
       }
       const movable = movablePlayers(state, team.id, { max: 6 })
         .filter((player) => {
+          if (wantsTrade(player)) return true;
           if (stance === "sell") {
             return (
               player.age >= 27 ||
@@ -795,7 +817,7 @@ export function refreshTradeBlocks(state: GmLeagueState): GmLeagueState {
         })
         .slice(0, stance === "sell" ? 4 : 2)
         .map((player) => player.id);
-      return { ...team, tradeBlock: movable };
+      return { ...team, tradeBlock: [...new Set([...requests, ...movable])].slice(0, 4) };
     }),
   };
 }
@@ -844,13 +866,13 @@ function deadlineCandidates(state: GmLeagueState): DeadlinePackage[] {
  * Buyers fill holes; sellers take surplus and picks. No empty 1-for-1 swaps.
  * The user's roster is left alone. Each deal still has to clear evaluateTrade.
  */
-export function cpuDeadlineTrades(state: GmLeagueState): GmLeagueState {
+export function cpuDeadlineTrades(state: GmLeagueState, maxDeals = 4): GmLeagueState {
   let next = refreshTradeBlocks(state);
   const used = new Set<string>();
   let deals = 0;
 
   for (const pack of deadlineCandidates(next)) {
-    if (deals >= 4) break;
+    if (deals >= maxDeals) break;
     if (used.has(pack.buyerId) || used.has(pack.sellerId)) continue;
     const buyer = next.teams.find((team) => team.id === pack.buyerId);
     const seller = next.teams.find((team) => team.id === pack.sellerId);
@@ -904,6 +926,44 @@ export function cpuDeadlineTrades(state: GmLeagueState): GmLeagueState {
   return next;
 }
 
+
+/**
+ * Four small CPU trade windows across the regular season, plus the existing
+ * deadline sweep. Pulse on simulation days so skipping and normal play yield
+ * the same market. Windows never repeat on save/reload or repeated same-day
+ * actions, and CPU clubs never control the human roster.
+ */
+export function advanceTradeMarket(state: GmLeagueState): GmLeagueState {
+  if (state.phase !== "regular" || state.tradeDeadlinePassed) return state;
+  const deadline = tradeWindowDeadline(state);
+  if (state.day >= deadline) return state;
+  const previous = state.tradeMarket?.season === state.season ? state.tradeMarket : undefined;
+  let next = state;
+  if (!previous || state.day - previous.lastPulseDay >= 14) {
+    const updated = refreshTradeBlocks(state);
+    next = { ...updated, tradeMarket: buildTradeMarket(updated) };
+  }
+  const windows = [
+    Math.round(deadline * 0.31),
+    Math.round(deadline * 0.55),
+    Math.round(deadline * 0.76),
+    Math.max(15, deadline - 10),
+  ];
+  const lastWindow = previous?.lastCpuDealWindow ?? -1;
+  const dueWindow = windows.findIndex((day, index) =>
+    index > lastWindow && state.day >= day && state.day < deadline - 1);
+  if (dueWindow >= 0) {
+    const traded = cpuDeadlineTrades(next, 1);
+    next = {
+      ...traded,
+      tradeMarket: {
+        ...buildTradeMarket(traded),
+        lastCpuDealWindow: dueWindow,
+      },
+    };
+  }
+  return next;
+}
 
 /** A legal counter adds the least expensive available asset, never an untouchable. */
 export function suggestCounterOffer(state: GmLeagueState, fromTeamId: string, toTeamId: string, outgoing: GmTradeAsset[], incoming: GmTradeAsset[]): GmTradeAsset[] | undefined {
