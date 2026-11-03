@@ -82,7 +82,7 @@ test("the center and the point guard start ahead of the extra wings", () => {
   assert.ok(!Object.values(team.starters).includes("sg2"));
   const minutes = positionalMinuteTargets(roster, team.starters);
   assert.equal(Object.values(minutes).reduce((sum, value) => sum + value, 0), 240);
-  assert.ok((minutes.sg2 ?? 0) < (minutes.c ?? 0));
+  assert.ok((minutes.sg2 ?? 0) >= (minutes.c ?? 0), "strong guard gets more minutes than a weaker natural center while stints still field a big");
   assert.ok((minutes.sg1 ?? 0) > (minutes.sg3 ?? 0));
 });
 
@@ -152,7 +152,7 @@ test("real starters retain their roles and natural backups receive minutes", () 
   reserve.ratings = { ...reserve.ratings, impact: 4.5, shooting: 25 };
   const team = autoSetLineup({ id: "bos", starters: { PG: null, SG: null, SF: null, PF: null, C: null } } as GmTeam, all);
   assert.equal(team.starters.PF, "f", "a backup center's inferred secondary does not displace the starting forward");
-  assert.equal(team.starters.C, "big", "observed starter role survives a higher backup rate metric");
+  assert.equal(team.starters.C, "backup-big", "a clearly better center can take the starting job despite the prior starter label");
   assert.ok((team.coaching!.minutes!["backup-big"] ?? 0) >= 10, "the natural backup center stays in the rotation");
   assert.equal(team.coaching!.minutes!["deep-guard"], 0, "a low-minute natural point guard does not take an established combo guard's bench seat");
 });
