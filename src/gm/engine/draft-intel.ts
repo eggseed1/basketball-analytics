@@ -1,5 +1,6 @@
 import type { GmAmateurSeason, GmDraftRole, GmDraftScouting, GmDraftTool, GmLeagueState, GmPlayer, GmProspectReport, GmScoutStudy } from "@/gm/types";
 import { playerSheet } from "@/gm/engine/attributes";
+import { developmentProfileOf } from "@/gm/engine/development-profile";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { scoutMatchBonus } from "@/gm/seed/scouts";
 import { spendScoutingLook } from "@/gm/engine/scouting";
@@ -208,7 +209,14 @@ export function studyProspect(league: GmLeagueState, playerId: string, method: G
     tools.feel = round(clamp(42 + stats.assists/Math.max(1,stats.turnovers)*8 + error()*0.4,35,90));
     note = "Production reviewed. Compare shooting volume and free-throw touch; account for competition and role.";
   } else if (method === "interview") {
-    const signal = player.personality + error();
+    // Strong interviews are informative, never a hidden-potential reveal.
+    // A coachable player's learning habits are easier to recognize, but
+    // imperfect interviews produce both false positives and misses.
+    const dna = developmentProfileOf(player);
+    const learningEvidence = (dna.learning - 1) * 34 +
+      (dna.adaptability - 1) * 13 +
+      ((dna.learningSurge ?? 1) > 1 ? 11 : 0);
+    const signal = player.personality * 0.55 + learningEvidence + error() * 1.5;
     habits = signal > 13 ? "strong" : signal < -8 ? "uncertain" : "steady";
     note = habits === "strong" ? "Preparation and feedback answers were encouraging. A good interview is one piece of evidence." : habits === "uncertain" ? "Preparation answers were inconsistent. Discuss a concrete development plan before investing." : "Described a steady routine. Staff and opportunity will still matter.";
   } else {
