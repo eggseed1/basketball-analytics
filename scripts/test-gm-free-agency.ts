@@ -471,7 +471,7 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   assert.equal(cheap.state?.players.find(p => p.id === star.id)?.teamId ?? null,
     null, "rejected minimum offer must not sign the player");
 
-  const reasonable = userOfferFreeAgent(league, star.id, 36, 4);
+  const reasonable = userOfferFreeAgent(league, star.id, 41, 4);
   assert.equal(reasonable.ok, true, reasonable.ok ? "" : reasonable.reason);
   assert.equal(reasonable.ok && reasonable.state.players.find(p => p.id === star.id)?.teamId,
     "bos", "a legitimate star salary must still be accepted");
