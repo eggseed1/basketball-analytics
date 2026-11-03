@@ -6,6 +6,13 @@ name: Deploy site
 
 on:
   workflow_dispatch:
+  # A dedicated, opt-in request file can trigger deployment via GitHub API.
+  # Ordinary code commits do not auto-deploy.
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/deploy-request.txt'
 
 concurrency:
   group: deploy-site
