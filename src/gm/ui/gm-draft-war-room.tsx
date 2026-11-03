@@ -50,6 +50,8 @@ export function GmDraftWarRoom(){
   const needs=rosterNeeds(team,league.players),picked=draftPickLog(league),last=picked[picked.length-1];
   const chosenRead=selected?draftRead(league,selected,role):null;
   const sleeperPicks=sleeperRadar(league,5);
+  const classFactor=publicDraftClassMultiplier(league,league.season);
+  const classRead=classFactor>=1.07?"Strong class":classFactor<=0.94?"Thin class":"Typical class";
   const selectedBoard=desk?.boards.find(board=>board.id===(deskCategory??desk.recommended))??desk?.boards[0];
   const canCombine=!league.combineDone&&(league.seasonFlow?.stage==="scouting"||(!league.seasonFlow&&league.phase==="offseason"));
   function confirmSelection(playerId: string) {
