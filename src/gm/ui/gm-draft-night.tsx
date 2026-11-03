@@ -161,7 +161,7 @@ export function GmDraftNight() {
           </h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
             Overall stays sealed until the pick. Draft from the scouting
-            reports, then shape a rookie's career through coaching, reps and
+            reports, then shape every rookie through coaching, reps and
             targeted development.
           </p>
         </div>
