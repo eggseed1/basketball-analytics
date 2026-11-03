@@ -127,7 +127,7 @@ export function GmIndividualTraining({ roster, season }: { roster: GmPlayer[]; s
     defense: "Defense", rebounding: "Rebounding",
   };
   const descriptions: Record<NonNullable<GmPlayer["developmentFocus"]>, string> = {
-    balanced: "Work on the core skills for his natural position."
+    balanced: "Work on the core skills for his natural position.",
     shooting: "Develop shotmaking and consistency from the line.",
     creation: "Train handle, passing and on-ball control.",
     finishing: "Improve layups and drives, or inside touch and post finishing for bigs.",
