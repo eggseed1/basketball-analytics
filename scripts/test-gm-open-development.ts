@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
 import { advanceDynamicProgression } from "../src/gm/engine/dynamic-progression";
+import { progressSheet } from "../src/gm/engine/attributes";
 import {
   developmentProfileOf, developmentOutlook, developmentSkillKeys,
   softGrowthFactor,
@@ -170,6 +171,29 @@ const inflated = advanceDynamicProgression(minutes(40), {
 });
 assert.ok((inflated.sheet?.overall ?? 0) <= (standard.sheet?.overall ?? 0) + 1,
   "40 MPG must not guarantee a large growth advantage over healthy rotation minutes");
+
+// The standalone/offline progression API is also used by draft fixtures and
+// imports; it must never reintroduce a preassigned draft ceiling or a fixed
+// career verdict after age 28.
+const fallbackBust = {
+  ...rookie,
+  age: 24,
+  developmentProfile: strong,
+  sheet: {
+    ...rookie.sheet!,
+    potential: { ...rookie.sheet!.potential, path: "bust" as const, trait: "bust" as const },
+  },
+};
+let fallbackPlayer: GmPlayer = fallbackBust;
+for (let age = 24; age <= 30; age++) {
+  fallbackPlayer = progressSheet({ ...fallbackPlayer, age }, {
+    pace: "summer", minutes: 28, coach: 0.5, devStaff: 1.1,
+  });
+}
+assert.ok((fallbackPlayer.sheet?.overall ?? 0) > 75,
+  "a generated rookie labeled bust must still be able to exceed an obsolete ceiling in the alternate progression path");
+assert.ok(fallbackPlayer.developmentProfile?.version === 1,
+  "the fallback route must preserve generated-player learning DNA after age 28");
 
 const observed = developmentOutlook(grown, 2027);
 assert.ok(observed.label && observed.detail);
