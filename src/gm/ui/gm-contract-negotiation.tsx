@@ -189,8 +189,8 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
               {isExtension ? <p className="text-xs text-muted-foreground">
                 Your current-year salary remains in place; the extension starts in {quote?.startsSeason}. An eligible extension at or above his asking salary signs immediately.
               </p> : <p className="text-xs text-muted-foreground">
-                {verbal ? "During the moratorium an accepted proposal is a verbal agreement, not a signed contract. It reserves room until signing opens." :
-                  isRfa ? "An RFA offer sheet can be matched by his current rights holder." :
+                {isRfa ? "Restricted free agents can sign offer sheets during the moratorium. The rights holder gets two market days to match." :
+                  verbal ? "During the moratorium most accepted proposals are verbal agreements, not signed contracts. They reserve room until signing opens." :
                   "An offer can be accepted immediately or stay pending as teams compete. Continue the market to get another response."}
               </p>}
             </div>

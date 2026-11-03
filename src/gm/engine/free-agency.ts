@@ -18,7 +18,7 @@ import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { createRng, uid } from "@/gm/engine/rng";
 import { cbaSeason, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 import type { CBARules } from "@/gm/myleague/types";
-import { askingSalary, askingYears } from "@/gm/engine/free-agency-ask";
+import { askingSalary, askingYears, minimumCredibleSalaryRatio } from "@/gm/engine/free-agency-ask";
 import {
   defaultFaConfig,
   emptyFaMarket,
@@ -275,7 +275,9 @@ function placeCpuOffers(state: GmLeagueState, rules: CBARules): GmLeagueState {
           taken.add(key);
           continue;
         }
-        if (next.seasonFlow && market0.stage !== "open" && market0.stage !== "fill") continue;
+        // The NBA allows restricted offer sheets during the moratorium, even
+        // while most other contracts remain verbal until signing opens.
+        if (next.seasonFlow && !["moratorium", "open", "fill"].includes(market0.stage)) continue;
         if (overallOf(player) >= 76 && rng() > 0.55) {
           const bid = bestLegalBid(next, team, player, rules, aggression);
           if (!bid) continue;
@@ -409,11 +411,7 @@ function resolvePlayers(
         row !== null &&
         evaluateSigning(next, row.team.id, player, row.offer.salaryM, row.offer.years).ok &&
         row.offer.salaryM + 0.05 >=
-          askingSalary(player, rules) *
-          (overallOf(player) >= 86 ? 0.80 :
-            overallOf(player) >= 83 ? 0.67 :
-            overallOf(player) >= 80 ? 0.54 :
-            overallOf(player) >= 78 ? 0.42 : 0)
+          askingSalary(player, rules) * minimumCredibleSalaryRatio(player)
       )
       .sort(
         (a, b) =>
@@ -868,7 +866,9 @@ export function userOfferFreeAgent(
   if (market.stage === "re_signing" && player.rightsTeamId !== state.userTeamId) return { ok: false, reason: "This window is for your own expiring players. Other free agents enter during the moratorium." };
   if (market.agreements.some(row => row.playerId === playerId)) return { ok: false, reason: "He already has a verbal agreement. It will be checked again when signing opens." };
   if (player.rightsKind === "restricted" && player.rightsTeamId !== state.userTeamId) {
-    if (state.seasonFlow && market.stage !== "open" && market.stage !== "fill") return { ok: false, reason: "Restricted offer sheets open when contracts can be signed." };
+    if (state.seasonFlow && !["moratorium", "open", "fill"].includes(market.stage)) {
+      return { ok: false, reason: "Restricted offer sheets open during the moratorium." };
+    }
     return submitOfferSheet(state, playerId, state.userTeamId, salaryM, years);
   }
   const verdict = evaluateSigning(state, state.userTeamId, player, salaryM, years);

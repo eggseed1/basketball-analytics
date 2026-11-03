@@ -41,6 +41,17 @@ export function askingYears(
   return clamp(years, 1, rules.maxContractYears || 5);
 }
 
+/**
+ * The lowest plausible salary accepted by a market player of this quality.
+ * Used by actual signings, RFA sheets and the negotiation forecast so a
+ * near-minimum bid cannot secretly sign a star through a different path.
+ */
+export function minimumCredibleSalaryRatio(player: GmPlayer): number {
+  const ovr = overallOf(player);
+  return ovr >= 86 ? 0.80 : ovr >= 83 ? 0.67 :
+    ovr >= 80 ? 0.54 : ovr >= 78 ? 0.42 : 0;
+}
+
 /** Rough QO amount: near the prior salary, floored at the league minimum. */
 export function qualifyingOfferAmount(
   player: GmPlayer,

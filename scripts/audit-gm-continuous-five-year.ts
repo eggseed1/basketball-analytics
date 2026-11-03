@@ -122,6 +122,10 @@ async function main(){
       automation:{...league.automation,autoDraft:true,autoFreeAgency:true}};
     league=beginOffseason(league);
     const priorRoster=new Map(league.teams.map(t=>[t.id,rosterIds(league,t.id)]));
+    // Track entire league before free-agency and rookie-contract decisions.
+    // The previous counters only covered the audit's own manual actions,
+    // falsely reporting zero when CPU signings changed league rosters.
+    const unsignedBeforeSummer=new Set(league.players.filter(p=>p.teamId==null).map(p=>p.id));
     const priorAges=new Map(league.players.filter(p=>p.draftYear!==season).map(p=>[p.id,p.age]));
     let drafted=0,rookiesSigned=0,freeAgentsSigned=0;
     const stages:string[]=[];
@@ -183,6 +187,12 @@ async function main(){
         retention:[...before].filter(id=>now.has(id)).length/Math.max(1,before.size),
         qualityDelta:+(quality(league,t.id)-openingQuality.get(t.id)!).toFixed(2)};
     });
+    // Calculate finalized leaguewide results after the guided summer. These
+    // include CPU activity and avoid counting unsigned rookies as completed
+    // signings simply because they were selected in the draft.
+    rookiesSigned=league.players.filter(p=>p.draftYear===season&&p.teamId!=null&&p.contract!=null).length;
+    freeAgentsSigned=league.players.filter(p=>
+      unsignedBeforeSummer.has(p.id)&&p.draftYear!==season&&p.teamId!=null&&p.contract!=null).length;
     const summary={from:season,to:league.season,
       archived:league.history?.some(row=>row.season===season)??false,
       ageContinuity:carried.length?+(ageChanged/carried.length).toFixed(3):0,

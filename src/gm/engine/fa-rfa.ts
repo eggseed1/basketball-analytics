@@ -16,6 +16,7 @@ import { evaluateSigning } from "@/gm/engine/cap";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { defaultFaConfig, ensureFaMarket } from "@/gm/engine/fa-market-config";
 import { uid } from "@/gm/engine/rng";
+import { askingSalary, minimumCredibleSalaryRatio } from "@/gm/engine/free-agency-ask";
 
 function applySign(
   state: GmLeagueState,
@@ -106,6 +107,11 @@ export function submitOfferSheet(
     )
   ) {
     return { ok: false, reason: "An offer sheet is already pending on this player." };
+  }
+  // An offer sheet is a contract the player actually agrees to sign, not a
+  // no-risk bid. Elite RFAs must reject grossly under-market terms.
+  if (salaryM + 0.05 < askingSalary(player, state) * minimumCredibleSalaryRatio(player)) {
+    return { ok: false, reason: "He will not sign an offer sheet this far below his market value." };
   }
   const verdict = evaluateSigning(state, offeringTeamId, player, salaryM, years);
   if (!verdict.ok) return verdict;

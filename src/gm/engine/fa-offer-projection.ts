@@ -5,9 +5,8 @@
  */
 import type { GmFaOffer, GmLeagueState, GmPlayer } from "@/gm/types";
 import { evaluateSigning, exceptionAmounts, maxSalaryForAge } from "@/gm/engine/cap";
-import { askingSalary, askingYears } from "@/gm/engine/free-agency-ask";
+import { askingSalary, askingYears, minimumCredibleSalaryRatio } from "@/gm/engine/free-agency-ask";
 import { evaluateOfferUtility, agentFeedback } from "@/gm/engine/fa-utility";
-import { overallOf } from "@/gm/engine/lineup";
 
 const round = (value: number) => Math.round(value * 100) / 100;
 const clamp = (value: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, value));
@@ -76,9 +75,23 @@ export function projectFreeAgentResponse(
   const available = player.teamId == null &&
     (stage !== "re_signing" || player.rightsTeamId === league.userTeamId) &&
     !(league.faMarket?.agreements ?? []).some(o => o.playerId === player.id);
-  if (!verdict.ok || !marketOpen || !available) {
+  // NBA offer sheets are an exception to the usual moratorium signing
+  // restrictions. They may be filed in moratorium, open, and fill stages.
+  const outsideRestricted = player.rightsKind === "restricted" &&
+    player.rightsTeamId !== league.userTeamId;
+  const sheetWindowClosed = outsideRestricted &&
+    !["moratorium", "open", "fill"].includes(stage ?? "");
+  const sheetNotTendered = outsideRestricted &&
+    (!player.rightsTeamId || player.qoStatus !== "tendered");
+  const sheetPendingMatch = outsideRestricted && (league.faMarket?.offerSheets ?? [])
+    .some(sheet => sheet.playerId === player.id && sheet.status === "pending_match");
+  if (!verdict.ok || !marketOpen || !available || sheetWindowClosed ||
+      sheetNotTendered || sheetPendingMatch) {
     const reason = !marketOpen ? "Negotiations are not open in this market stage." :
       !available ? "This player is unavailable or already committed." :
+      sheetWindowClosed ? "Restricted offer sheets open during the moratorium." :
+      sheetNotTendered ? "He needs a tendered qualifying offer before an outside offer sheet." :
+      sheetPendingMatch ? "An offer sheet is already awaiting a match decision." :
       verdict.ok ? null : verdict.reason;
     return { chance: 0, level: "unlikely", note: reason ?? "Cannot offer now.",
       legal: false, reason, score: 0, rivalScore: null };
@@ -95,8 +108,7 @@ export function projectFreeAgentResponse(
   const ask = askingSalary(player, league);
   const askYears = askingYears(player, league);
   const salaryRatio = salaryM / Math.max(0.5, ask);
-  const ovr = overallOf(player);
-  const floor = ovr >= 86 ? .80 : ovr >= 83 ? .67 : ovr >= 80 ? .54 : ovr >= 78 ? .42 : 0;
+  const floor = minimumCredibleSalaryRatio(player);
   // Mirrors the NBA-style agent reservation and competitor comparisons.
   // Actual offers still go through userOfferFreeAgent / resolvePlayers.
   let chance = clamp(46 + (salaryRatio - 1) * 95 + (offered.total - 46) * .55 +
