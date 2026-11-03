@@ -870,6 +870,67 @@ function rotationPool(
       pool[pool.indexOf(replaceable)] = challenger;
     }
   }
+  // Head counts alone miss teams that have two nominal guards but only
+  // ~45 capable PG minutes. A center can then wind up at point guard even
+  // with a near-peer guard on the inactive bench. Estimate functional supply
+  // from each rotation player's projected workload, not natural-position
+  // quotas. Consider only small (<5 merit-point) reserve trades.
+  if (pool.length >= 8) {
+    const requirements: Array<{ seat: GmPosition; minutes: number; weight: number; fit: number }> = [
+      { seat: "PG", minutes: 70, weight: 1.35, fit: 0.84 },
+      { seat: "SF", minutes: 58, weight: 1, fit: 0.84 },
+      { seat: "C", minutes: 60, weight: 1.1, fit: 0.90 },
+    ];
+    const projected = new Map(roster.map(p => [
+      p.id,
+      clamp(
+        rotationTarget(p) * 0.43 +
+        clamp(22 + (overallOf(p) - 78) * 1.5, 8, 40) * 0.57,
+        7, 40
+      ),
+    ]));
+    const qualified = new Map(roster.map(p => [
+      p.id,
+      requirements.map(rule => roleFit(p, rule.seat) >= rule.fit),
+    ]));
+    const coveragePenalty = (group: GmPlayer[]) => {
+      const total = group.reduce((n, p) => n + (projected.get(p.id) ?? 0), 0);
+      if (!total) return 0;
+      return requirements.reduce((penalty, rule, index) => {
+        const supply = group.reduce((n, p) =>
+          n + (qualified.get(p.id)?.[index] ? projected.get(p.id) ?? 0 : 0), 0
+        ) * 240 / total;
+        return penalty + Math.max(0, rule.minutes - supply) * rule.weight;
+      }, 0);
+    };
+    const protectedIds = new Set([
+      ...Object.values(starters ?? {}).filter((id): id is string => Boolean(id)),
+      ...[...pool].sort((a, b) => rotationMerit(b) - rotationMerit(a))
+        .slice(0, 5).map(p => p.id),
+    ]);
+    for (let pass = 0; pass < 3; pass++) {
+      const before = coveragePenalty(pool);
+      const ids = new Set(pool.map(p => p.id));
+      let best: { at: number; player: GmPlayer; gain: number } | null = null;
+      for (let at = 0; at < pool.length; at++) {
+        const outgoing = pool[at]!;
+        if (protectedIds.has(outgoing.id)) continue;
+        for (const challenger of roster) {
+          if (ids.has(challenger.id)) continue;
+          const meritLoss = rotationMerit(outgoing) - rotationMerit(challenger);
+          if (meritLoss > 5) continue;
+          const proposed = [...pool];
+          proposed[at] = challenger;
+          const gain = before - coveragePenalty(proposed) - Math.max(0, meritLoss) * 1.1;
+          if (gain > 4 && (!best || gain > best.gain + 0.001)) {
+            best = { at, player: challenger, gain };
+          }
+        }
+      }
+      if (!best) break;
+      pool[best.at] = best.player;
+    }
+  }
   return pool;
 }
 
