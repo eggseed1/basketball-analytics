@@ -364,13 +364,7 @@ function OfferEditor({
       null
   );
   const fair = offerIsFair(league, offer.fromTeamId, offer.toTeamId, receive, send);
-  const preview = evaluateTrade(
-    league,
-    league.userTeamId,
-    offer.fromTeamId,
-    send,
-    receive
-  );
+  const read = tradeDeskRead(league, offer.fromTeamId, send, receive);
   const mine = league.players.filter(
     (player) => player.teamId === league.userTeamId && player.contract
   );
@@ -408,15 +402,9 @@ function OfferEditor({
         onInspect={setInspectedId}
       />
 
-      <div className="rounded-lg border border-border bg-background/70 px-3 py-2 text-sm">
-        <p>
-          On their board, you send {formatNumber(preview.fromValue, 1)} and they
-          send {formatNumber(preview.toValue, 1)}.
-          {dirty ? " (edited from the original offer)" : ""}
-        </p>
-        <p className="mt-0.5 text-muted-foreground">
-          {fair.ok ? "They will do this deal." : fair.reason}
-        </p>
+      <div role="status" className="rounded-lg border border-border bg-background/70 px-3 py-3 text-sm">
+        <p className="font-semibold">{fair.ok ? "Ready to accept" : read.headline}{dirty ? " · Edited terms" : ""}</p>
+        <p className="mt-1 text-muted-foreground">{fair.ok ? "Both teams agree to these terms." : fair.reason ?? read.detail}</p>
       </div>
 
       {inspected ? (
@@ -629,16 +617,16 @@ function TradeBody() {
   );
   const desk = tradeDeskRead(league, partnerId, fromAssets, toAssets);
   const talks = (league.tradeTalks ?? []).filter(talk => talk.teamId === partnerId).slice(0, 2);
+  if (league.incomingOffer) {
+    return <div className="flex flex-col gap-4">
+      <header><h1 className="text-2xl font-bold tracking-tight">Incoming trade offer</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Review the offer, adjust its terms, or decline before continuing the season.</p></header>
+      <IncomingOffer league={league} onAccept={acceptIncomingOffer} onDecline={declineIncomingOffer} />
+    </div>;
+  }
 
   return (
     <div className="flex flex-col gap-4">
-      {league.incomingOffer ? (
-        <IncomingOffer
-          league={league}
-          onAccept={acceptIncomingOffer}
-          onDecline={declineIncomingOffer}
-        />
-      ) : null}
       <header className="space-y-1">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Front office</p>
         <h1 className="text-2xl font-bold tracking-tight">{t("tradeTitle")}</h1>
