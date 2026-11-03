@@ -183,7 +183,6 @@ export function pickStars(league: GmLeagueState, pick: GmDraftPick): number {
   const cache = leagueValueCache(league);
   const cached = cache.pickStars.get(pick.id);
   if (cached != null) return cached;
-  const slot = projectedSlot(league, pick);
   const points = pickTradePoints(league, pick);
   // Same 0.5–5 scale as players. #1 lands at 5; #2 ~4; mid-first ~2–3; seconds ~1.
   const stars = clamp(Math.round((points / 11.6) * 2) / 2, 0.5, 5);
