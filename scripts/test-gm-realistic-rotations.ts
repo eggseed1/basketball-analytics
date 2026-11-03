@@ -91,7 +91,14 @@ assert.deepEqual(rotationForTeam(saved.teams.find(t=>t.id===team.id)!,saved.play
 const closing=original.rows.filter(row=>row.minutes>0).slice(-5).map(row=>row.id);
 const closer={...manualTeam,coaching:{...manualTeam.coaching!,closingLineup:closing}};
 const closingPlan=rotationForTeam(closer,league.players);
+const savedShiftClosing={...custom,coaching:{...custom.coaching!,closingLineup:closing}};
+const savedShiftPlan=rotationForTeam(savedShiftClosing,league.players);
+assert.deepEqual(savedShiftPlan.closingFrame,savedShiftPlan.frames[23],
+  "manual shift timing must not reconstruct a different overtime seat map");
+
 assert.deepEqual(new Set(Object.values(closingPlan.frames[23])),new Set(closing));
+assert.deepEqual(closingPlan.closingFrame,closingPlan.frames[23],
+  "overtime seat assignments must exactly match the final regulation frame");
 for(let i=0;i<5;i++)assert.equal(closingPlan.frames[23]![POSITIONS[i]!],closing[i],"closing positions honor the selected slots");
 let overtime=false;
 for(let seed=1;seed<=120&&!overtime;seed++){
