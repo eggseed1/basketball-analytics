@@ -1,0 +1,34 @@
+name: Franchise rotation multi-season audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/audit-gm-multiseason-rotations.ts'
+      - '.github/workflows/franchise-rotation-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Run three full NBA schedule cohorts
+        run: npm run audit:franchise-rotations
+      - name: Publish detailed audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: franchise-rotation-audit
+          path: |
+            artifacts/franchise-rotation-audit.json
+            artifacts/franchise-rotation-audit.md
+          if-no-files-found: warn
