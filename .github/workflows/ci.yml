@@ -32,6 +32,8 @@ jobs:
       - run: npm run typecheck
       - name: Test live NBA snapshot regression protection
         run: node --test scripts/test-live-runtime-guard.mjs
+      - name: Test ESPN team box fallback
+        run: npx tsx scripts/test-team-game-box-espn.ts
       - name: Lint (new violations only; baseline in eslint-suppressions.json)
         id: lint
         run: npx eslint . --quiet

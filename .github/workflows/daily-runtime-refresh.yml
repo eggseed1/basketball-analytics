@@ -34,6 +34,13 @@ name: Daily player-viz runtime refresh
 # Fan blogs need nothing.
 
 on:
+  # One immediate backfill/deploy when the team-box provider is repaired.
+  # Future updates use the existing twice-daily schedule.
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build-team-game-box-snapshot.ts'
+      - 'src/lib/team-game-box-espn.ts'
   schedule:
     # Two shots/day is enough when the guard works. Extra crons mostly burned
     # GitHub minutes and, on success, re-deployed / re-mirrored R2 for free.
@@ -205,6 +212,9 @@ jobs:
         run: |
           pip install --quiet curl_cffi
           python scripts/build-runtime-playtype-onoff-snapshot.py "${{ steps.season.outputs.season }}"
+
+      - name: Verify ESPN team-box fallback
+        run: npx tsx scripts/test-team-game-box-espn.ts
 
       - name: Daily runtime sync
         id: sync
