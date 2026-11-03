@@ -661,13 +661,13 @@ function TradeBody() {
             <p className="text-xs text-muted-foreground">{tradeDaysRemaining(league)} days until the trade deadline</p>
           </div>
           {market?.rumors.length ? (
-            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible xl:grid-cols-4">
               {market.rumors.slice(0, 4).map(rumor => {
                 const player = league.players.find(row => row.id === rumor.playerId);
                 const owner = league.teams.find(row => row.id === rumor.teamId);
                 if (!player || !owner) return null;
                 const interest = rumor.interestedTeamIds.length;
-                return <article key={player.id} className="flex flex-col gap-2 rounded-lg border border-border/70 bg-secondary/20 p-3">
+                return <article key={player.id} className="flex w-[228px] shrink-0 snap-start flex-col gap-2 rounded-lg border border-border/70 bg-secondary/20 p-3 sm:w-auto sm:shrink">
                   <div className="flex min-w-0 items-center gap-2">
                     <GmPlayerPortrait player={player} />
                     <div className="min-w-0 flex-1">
