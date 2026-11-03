@@ -1,0 +1,34 @@
+name: Franchise future schedule fidelity
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/gm/engine/future-schedule.ts'
+      - 'src/gm/engine/schedule.ts'
+      - 'src/gm/engine/cup.ts'
+      - 'src/gm/engine/offseason.ts'
+      - 'src/gm/seed/create-league.ts'
+      - 'scripts/test-gm-future-schedule.ts'
+      - '.github/workflows/franchise-future-schedule.yml'
+permissions:
+  contents: read
+concurrency:
+  group: franchise-future-schedule
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Validate all NBA scheduling constraints 2028-2032
+        run: npx tsx scripts/test-gm-future-schedule.ts
+      - name: Season flow and calendar regressions
+        run: npm run test:franchise-calendar && npm run test:franchise-flow
