@@ -534,13 +534,13 @@ export function rotationQuality(
   minutes: Record<string, number>,
   coverSlot?: Partial<Record<string, GmPosition>> | null
 ): number {
-  const rows = minutesPerPosition(players, minutes, coverSlot);
+  void coverSlot;
   const used = Object.values(minutes).reduce((sum, value) => sum + Math.max(0, value), 0);
-  const coverage =
-    rows.reduce((sum, row) => {
-      const gap = Math.abs(row.total - POSITION_MINUTE_TARGET);
-      return sum + clamp(1 - gap / 24, 0, 1);
-    }, 0) / 5;
+  // Assess functional handler and rim coverage, not whether each primary
+  // listing arbitrarily holds 48. A SG can initiate and a PF can play center.
+  const handler = players.reduce((sum,p) => sum + (roleFit(p,"PG") >= 0.84 ? Math.max(0,minutes[p.id] ?? 0) : 0),0);
+  const interior = players.reduce((sum,p) => sum + (roleFit(p,"C") >= 0.90 ? Math.max(0,minutes[p.id] ?? 0) : 0),0);
+  const coverage = (clamp(handler / 48, 0, 1) + clamp(interior / 48, 0, 1)) / 2;
   const depth = players.filter((player) => (minutes[player.id] ?? 0) >= 10).length;
   const depthScore = clamp(depth / 9, 0.28, 1.05);
   const maxMin = Math.max(0, ...players.map((player) => minutes[player.id] ?? 0));
