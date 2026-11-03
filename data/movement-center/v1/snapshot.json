@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-02",
+    "snapshotDate": "2026-11-03",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-02T23:34:33.109Z",
-    "rosterPlayerCount": 503,
-    "headlinesScanned": 9650,
-    "latestHeadlineAt": "2026-11-02T23:29:50.000Z",
+    "builtAt": "2026-11-03T18:04:54.586Z",
+    "rosterPlayerCount": 504,
+    "headlinesScanned": 10022,
+    "latestHeadlineAt": "2026-11-03T17:57:42.000Z",
     "latestTransactionDate": "2026-11-01",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -677,12 +677,14 @@
         "mv-5b7af0fcb67de169",
         "mv-8db2809ab941176b",
         "mv-82c4d074f1eb0943",
-        "mv-4b2754d7aad75d47"
+        "mv-61c4afc6ba83eed7",
+        "mv-4b2754d7aad75d47",
+        "mv-c055063cb53c6fbd"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-02T18:29:50.000Z",
+      "lastMeaningfulAt": "2026-11-03T02:43:19.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -831,6 +833,7 @@
         "mv-de8eebd6bae76b39",
         "mv-eb8ee940c8d36723",
         "mv-5fac0351ab73c138",
+        "mv-69d9c8c662606edf",
         "mv-1b28e4e9318fa264"
       ],
       "evidenceClass": "reported",
@@ -1321,15 +1324,16 @@
     },
     {
       "id": "mv-contract-3102531-20261014",
-      "headline": "Kristaps Porziņģis: free agency",
-      "primaryClaimId": "mv-dab3945f667dc615",
+      "headline": "Kristaps Porziņģis: contract future with the Warriors",
+      "primaryClaimId": "mv-5771cd29f4e3f3c0",
       "claimIds": [
-        "mv-dab3945f667dc615"
+        "mv-dab3945f667dc615",
+        "mv-5771cd29f4e3f3c0"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-14T08:52:43.000Z",
-      "lastMeaningfulAt": "2026-10-14T08:52:43.000Z",
+      "lastMeaningfulAt": "2026-11-03T16:45:52.000Z",
       "linkedPlayerIds": [
         "3102531"
       ],
@@ -9826,6 +9830,27 @@
       "isOriginal": false
     },
     {
+      "id": "mv-61c4afc6ba83eed7",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA Insider Explains Why Mavericks May Not Trade Kyrie Irving Despite Strong Market Interest",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-02T16:58:29.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/dallas-mavericks/nba-insider-explains-why-mavericks-may-not-trade-kyrie-irving-despite-strong-market-interest",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-5fac0351ab73c138",
       "clusterId": "mv-trade-3155942-20261005",
       "summary": "Domantas Sabonis wants out as Kings’ season unravels",
@@ -9838,6 +9863,26 @@
       "sourceLabel": "TalkBasket, citing Brian Windhorst (ESPN)",
       "reporterLabel": "Brian Windhorst",
       "sourceUrl": "https://www.talkbasket.net/225999-domantas-sabonis-wants-out-as-kings-season-unravels",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-69d9c8c662606edf",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Domantas Sabonis Reportedly Wants To Leave Kings As Sacramento Is Open To Trading Him",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-02T18:11:30.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/sacramento-kings/domantas-sabonis-reportedly-wants-to-leave-kings-as-sacramento-is-open-to-trading-him",
       "playerIds": [
         "3155942"
       ],
@@ -9883,6 +9928,44 @@
       ],
       "teamIds": [
         "23"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c055063cb53c6fbd",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Insider Shuts Down ‘Bizarre’ Kyrie Irving Trade Rumors: ‘Mavericks Don’t Even Want To Field Your Call’",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-03T02:43:19.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/dallas-mavericks/insider-shuts-down-bizarre-kyrie-irving-trade-rumors-mavericks-dont-even-want-to-field-your-call",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5771cd29f4e3f3c0",
+      "clusterId": "mv-contract-3102531-20261014",
+      "summary": "Warriors have no plans to void Kristaps Porzingis’ contract",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-03T16:45:52.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/226075-warriors-have-no-plans-to-void-kristaps-porzingis-contract",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
       ],
       "isOriginal": false
     },
