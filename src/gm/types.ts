@@ -1026,7 +1026,7 @@ export type GmQoStatus =
   | "expired";
 
 export type GmOffseasonStage = "review" | "staff" | "lottery" | "scouting" | "draft" | "rookie_signing" | "free_agency" | "progression" | "summer_league" | "training_camp" | "roster_check";
-export type GmCampFocus = "shooting" | "creation" | "defense" | "rebounding" | "conditioning";
+export type GmCampFocus = "shooting" | "creation" | "finishing" | "defense" | "rebounding" | "conditioning";
 export interface GmSeasonFlow {
   version: 1;
   season: number;
