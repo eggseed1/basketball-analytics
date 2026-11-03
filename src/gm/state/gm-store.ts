@@ -23,7 +23,7 @@ import type {
   GmTradeAsset,
 } from "@/gm/types";
 import { createGeneratedLeague } from "@/gm/seed/create-league";
-import { simulateGame } from "@/gm/engine/simulate";
+import { simulateGame, actualShiftSnapshot } from "@/gm/engine/simulate";
 import { ensurePlayerSheet } from "@/gm/engine/attributes";
 import { applyRookieRatings } from "@/gm/engine/rookie-ratings";
 import { applyRealBooks } from "@/gm/seed/real-books";
@@ -1597,7 +1597,7 @@ export const useGmStore = create<GmStore>()(
           result.game.postseason = "play_in";
           result.box.postseason = "play_in";
           const myTeam=league.teams.find(t=>t.id===league.userTeamId);
-          if(myTeam&&[tip.homeTeamId,tip.awayTeamId].includes(myTeam.id))result.box.shiftPlan=shiftSnapshot(myTeam,players,true);
+          if(myTeam&&[tip.homeTeamId,tip.awayTeamId].includes(myTeam.id))result.box.shiftPlan=actualShiftSnapshot(result.box,myTeam.id);
           players = recordBadgeBox(players, result.box);
           schedule.push(result.game);
           boxScores = [result.box, ...boxScores].slice(0, 400);
@@ -1820,7 +1820,7 @@ export const useGmStore = create<GmStore>()(
           const result = simulateGame(game, league.teams, players, undefined, league.schedule, league.settings);
           result.box.postseason = "playoffs";
           const myTeam=league.teams.find(t=>t.id===league.userTeamId);
-          if(myTeam&&[game.homeTeamId,game.awayTeamId].includes(myTeam.id))result.box.shiftPlan=shiftSnapshot(myTeam,players,true);
+          if(myTeam&&[game.homeTeamId,game.awayTeamId].includes(myTeam.id))result.box.shiftPlan=actualShiftSnapshot(result.box,myTeam.id);
           players = recordBadgeBox(players, result.box);
           schedule.push(result.game);
           boxScores = [result.box, ...boxScores].slice(0, 400);
