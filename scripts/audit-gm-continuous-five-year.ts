@@ -41,13 +41,13 @@ type SeasonResult={season:number;games:number;calendarDays:number;winSd:number;m
   cpuTrades:number;injuryEvents:number;topTeam:string;lastTeam:string;firstGames:string[];};
 const seasons:SeasonResult[]=[];
 const summers:any[]=[];
-const sameSave=new Set(league.players.map(p=>p.id));
 async function main(){
   for(let cycle=0;cycle<5;cycle++){
     const season=league.season;
     const opening=new Map(league.teams.map(t=>[t.id,rosterIds(league,t.id)]));
     const openingQuality=new Map(league.teams.map(t=>[t.id,quality(league,t.id)]));
     const initialPlayerIds=new Set(league.players.map(p=>p.id));
+    const openingTradeCount=league.tradeLog.length;
     league={...league,automation:{...league.automation,autoDraft:true,autoFreeAgency:true},
       seenCheckpoints:[...(league.seenCheckpoints??[]),"trade_deadline"]};
     let days=0,ended=false,injuryEvents=0;
@@ -76,8 +76,8 @@ async function main(){
     const seasonResult:SeasonResult={season,games:counted.length,calendarDays:days,
       winSd:+winSd.toFixed(2),minWins:ordered[29]!.wins,maxWins:ordered[0]!.wins,
       meanStrengthWinCorrelation:+correlation(table.map(t=>t.quality),table.map(t=>t.wins)).toFixed(3),
-      teams:table,newIdCount:league.players.filter(p=>!sameSave.has(p.id)).length,
-      cpuTrades:league.tradeLog.length,injuryEvents,topTeam:ordered[0]!.id,lastTeam:ordered[29]!.id,
+      teams:table,newIdCount:league.players.filter(p=>!initialPlayerIds.has(p.id)).length,
+      cpuTrades:league.tradeLog.length-openingTradeCount,injuryEvents,topTeam:ordered[0]!.id,lastTeam:ordered[29]!.id,
       firstGames:league.schedule.filter(gameCounts).slice(0,24).map(g=>g.homeTeamId+":"+g.awayTeamId),
     };
     seasons.push(seasonResult);
