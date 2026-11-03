@@ -9,6 +9,13 @@ on:
       - 'src/gm/engine/fa-offer-projection.ts'
       - 'src/gm/engine/free-agency-ask.ts'
       - 'scripts/test-gm-free-agency.ts'
+      - 'src/gm/engine/trades.ts'
+      - 'src/gm/engine/roster-fit.ts'
+      - 'src/gm/engine/value.ts'
+      - 'src/gm/engine/trade-desk.ts'
+      - 'src/app/gm/trade/page.tsx'
+      - 'scripts/test-gm-trades.ts'
+      - 'scripts/test-gm-trade-fit.ts'
       - '.github/workflows/franchise-five-year.yml'
   push:
     branches: [main]
