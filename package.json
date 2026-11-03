@@ -19,6 +19,7 @@
     "audit:franchise-rotations": "tsx scripts/audit-gm-multiseason-rotations.ts",
     "audit:franchise-standings": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-standings-realism.ts",
     "audit:franchise-availability": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-standings-availability.ts",
+    "audit:franchise-production-standings": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-production-standings.ts",
     "test:franchise-badges": "tsx scripts/test-gm-badges.ts",
     "test:franchise-development": "tsx scripts/test-gm-development.ts",
     "test:franchise-dynamic-progression": "tsx scripts/test-gm-dynamic-progression.ts",
