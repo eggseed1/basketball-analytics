@@ -8,6 +8,7 @@ import {rotationForTeam,shiftSnapshot,validShiftPlan,autoBalanceRotation,rebalan
 import {simulateGame,actualShiftSnapshot} from "../src/gm/engine/simulate";
 import {POSITIONS,positionalMinutePlan,rotationMerit,withListedPositions,assignLeaguePositions} from "../src/gm/engine/lineup";
 import {listedPositionCorrections,splitPositionListing} from "../src/gm/engine/position-listings";
+import {assignFive,roleFit} from "../src/gm/engine/rotation-roles";
 import type {GmLeagueState,GmPlayer,GmTeam} from "../src/gm/types";
 
 const league=prepareFranchise(createGeneratedLeague({userTeamId:"bos",season:2028,seed:23}));
@@ -21,6 +22,19 @@ assert.deepEqual(new Set(Object.values(original.frames[0])),new Set(Object.value
 assert.deepEqual(new Set(Object.values(original.frames[23])),new Set(Object.values(team.starters)));
 for(const frame of original.frames)assert.equal(new Set(Object.values(frame)).size,5);
 for(const pos of POSITIONS)assert.equal(Object.values(original.positionMinutes).reduce((n,row)=>n+(row[pos]??0),0),48);
+
+const byRosterId=new Map(roster.map(p=>[p.id,p]));
+for(const frame of original.frames){
+  const floor=Object.values(frame).map(id=>byRosterId.get(id??"")).filter((p):p is GmPlayer=>!!p);
+  const optimal=assignFive(floor).starters;
+  const emergencies=(seats:GmTeam["starters"])=>POSITIONS.filter(spot=>{
+    const p=byRosterId.get(seats[spot]??"");
+    return p&&roleFit(p,spot)<0.8;
+  }).length;
+  assert.ok(emergencies(frame)<=emergencies(optimal),
+    "automatic rotations must not force a worse five-seat assignment than the same on-court players can cover");
+}
+
 assert.deepEqual(shiftSnapshot(team,league.players).map(row=>row.on),original.rows.filter(row=>row.minutes>0).map(row=>row.on));
 
 let isolated=0,stints=0;
