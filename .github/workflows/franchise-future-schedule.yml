@@ -11,6 +11,7 @@ on:
       - 'src/gm/seed/create-league.ts'
       - 'scripts/test-gm-future-schedule.ts'
       - 'scripts/test-gm-calendar.ts'
+      - 'scripts/test-gm-cup.ts'
       - '.github/workflows/franchise-future-schedule.yml'
 permissions:
   contents: read
@@ -31,5 +32,7 @@ jobs:
       - run: npm run typecheck
       - name: Validate all NBA scheduling constraints 2028-2032
         run: npx tsx scripts/test-gm-future-schedule.ts
+      - name: Cup redraw, group fixtures and knockout accounting
+        run: npx tsx scripts/test-gm-cup.ts
       - name: Season flow and calendar regressions
         run: npm run test:franchise-calendar && npm run test:franchise-flow
