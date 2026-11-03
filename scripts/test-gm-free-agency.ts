@@ -582,6 +582,13 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   }
   assert.equal(legalFreeAgentSalaryRange(league, rfa, 1).maxM, 0);
   assert.equal(submitOfferSheet(league, rfa.id, "bos", 9, 1).ok, false);
+  const eliteRfa = player("elite-rfa-lowball", null, 90, 27,
+    { rightsTeamId: "nyk", rightsKind: "restricted", qoStatus: "tendered" });
+  const eliteLeague = { ...baseLeague([eliteRfa]),
+    faMarket: { ...emptyFaMarket(57), stage: "moratorium" as const } };
+  const cheapSheet = submitOfferSheet(eliteLeague, eliteRfa.id, "bos", 2.5, 2);
+  assert.equal(cheapSheet.ok, false, "an elite RFA cannot sign a minimum offer sheet");
+  if (!cheapSheet.ok) assert.match(cheapSheet.reason, /market value/);
   const own = { ...rfa, id: "bird-ui", rightsTeamId: "bos", rightsKind: "bird" as const };
   const birdLeague = { ...baseLeague([own]), faMarket: { ...emptyFaMarket(53), stage: "open" as const } };
   assert.equal(maxFreeAgentYears(birdLeague, own), 5);
