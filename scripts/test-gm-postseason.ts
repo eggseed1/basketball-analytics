@@ -4,7 +4,7 @@ import { stripTypeScriptTypes } from "node:module";
 import vm from "node:vm";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
-import { simulateGame } from "../src/gm/engine/simulate";
+import { simulateGame, actualShiftSnapshot } from "../src/gm/engine/simulate";
 import { recordBadgeBox } from "../src/gm/engine/badges";
 import { shiftSnapshot, rebalanceForInjuryChanges } from "../src/gm/engine/coaching";
 import { rollGameInjuries, tickInjuries } from "../src/gm/engine/progression";
@@ -28,7 +28,7 @@ const { actions, myLeagueAllowsSim } = vm.runInNewContext(code, {
   get: () => state, set: (partial: { league: GmLeagueState }) => Object.assign(state, partial),
   syncMyLeague: () => {}, withUpdate: (league: GmLeagueState) => league,
   uid: (prefix: string) => `${prefix}-postseason-${serial++}`,
-  simulateGame, recordBadgeBox, shiftSnapshot, rebalanceForInjuryChanges,
+  simulateGame, actualShiftSnapshot, recordBadgeBox, shiftSnapshot, rebalanceForInjuryChanges,
   rollGameInjuries, tickInjuries, buildChampionResult, buildPlayoffBracket,
   computeLotteryOrder, betterRecord, seriesHosts, applyPlayInResult,
   createPlayInBoard, playInDone, playInOpenGames, playoffSeeds, playoffTeamIdSet, teamName,
