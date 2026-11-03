@@ -1,6 +1,6 @@
 DRBL production code-only deploy request
 Target: main
-Includes league-wide 2026-27 player positions at 7a42236803f96d76716da3677168104127551758
-Evidence: 521 real NBA players; verified primary and secondary, 30 teams
-Validation: player position audit 41655022348, CI 41655022470, Franchise Lab 41655022351 (all successful)
+Includes Franchise Lab free-agency negotiation and acceptance fixes merged in PR #169
+Merge commit: fe0fb5a054850bc892bb43359909e349a43b5008
+Validation: CI, Franchise Lab simulation/balance/fidelity/browser, runtime parity, and two-seed five-year continuity (all successful)
 Requested on 2026-11-03
