@@ -46,6 +46,7 @@ const spearman=(a:number[],b:number[])=>pearson(rank(a),rank(b));
 const round=(v:number)=>Math.round(v*1000)/1000;
 type GameRow = {year:string;seed:number;team:string;realWins:number;simWins:number;simLosses:number;pointsFor:number;pointsAgainst:number};
 type CohortRow = {year:string;seed:number;games:number;homeWinRate:number;maeWins:number;rmseWins:number;rankCorrelation:number;winSd:number;minWins:number;maxWins:number;topSixOverlap:number;bottomSixOverlap:number;largestMisses:{team:string;real:number;sim:number;error:number}[]};
+async function main(){
 const rows:GameRow[]=[];
 const cohorts:CohortRow[]=[];
 Math.random=createRng(66554);
@@ -167,3 +168,6 @@ writeFileSync("artifacts/franchise-standings-realism.md",
 console.log("STANDINGS_AUDIT "+JSON.stringify(report.overall)+" YEARLY "+JSON.stringify(yearly));
 assert.equal(report.totalGames,7380);
 assert.ok(report.overall.avgRankCorrelation>-1 && report.overall.avgRankCorrelation<=1);
+
+}
+main().catch(error=>{console.error(error);process.exitCode=1;});
