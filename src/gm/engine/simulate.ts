@@ -263,7 +263,7 @@ export function simulateGame(
       const passing = off.filter(p => p.id !== shooter.id).reduce((n,p) => n+badges.get(p.id)!.passing,0) / Math.max(1,off.length-1);
       const badgeDefense = def.reduce((n,p) => n+badges.get(p.id)!.defense,0) / Math.max(1,def.length);
       const closeLate = (elapsed >= 2640) && Math.abs(homeScore-awayScore) <= 10;
-      const pct = (three ? r.threePct - 0.005 : r.twoPct * mods.two + shot.twoDelta - 0.008) * tired + playerForm.get(shooter.id)!.shot + teamForm[side]!.shot + (clamp(settings?.simShotAccuracy ?? 1, 0.75, 1.25) - 1) * 0.11 + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + clamp((projectedImpact[side]! - projectedImpact[1 - side]!) * 0.0028, -0.024, 0.024) + (closeLate ? badges.get(shooter.id)!.clutch : 0);
+      const pct = (three ? r.threePct - 0.005 : r.twoPct * mods.two + shot.twoDelta - 0.008) * tired + playerForm.get(shooter.id)!.shot + teamForm[side]!.shot + (clamp(settings?.simShotAccuracy ?? 1, 0.75, 1.25) - 1) * 0.11 + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + clamp((projectedImpact[side]! - projectedImpact[1 - side]!) * 0.0042, -0.030, 0.030) + (closeLate ? badges.get(shooter.id)!.clutch : 0);
       // Observed shooting percentages already include average blocked attempts.
       // Convert to an unblocked attempt probability; opponent block skill can then vary.
       const observedBlockShare = clamp(leagueBlockRate * blockWeight / averageBlockWeight, 0, 0.2);
