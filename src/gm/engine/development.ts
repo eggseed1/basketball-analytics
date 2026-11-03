@@ -1,6 +1,7 @@
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { regularSeasonComplete } from "@/gm/engine/schedule";
+import { discoverDevelopment, developmentProfileOf } from "@/gm/engine/development-profile";
 
 export const CAREER_CEILING_LIMIT = 4;
 export const MAX_TEAM_MENTORSHIPS = 2;
@@ -90,6 +91,25 @@ export function assignMentor(league: GmLeagueState, playerId: string, mentorId: 
 /** The same allowance funds every source. It persists through trades and new seasons. */
 export function raiseCeiling(player: GmPlayer, amount: number, season: number, source: "mentorship" | "breakout", reason: string): GmPlayer {
   if (!player.sheet || player.ceilingGrowth?.awards.some(award => award.season === season && award.source === source)) return player;
+  if (player.draftModel === 2) {
+    // An earned breakout discovers more of a rookie's development capacity;
+    // it never reveals or increases a predetermined final OVR. Repeated
+    // seasons have diminishing rewards rather than a shared +4 career cap.
+    const gain = clamp(Math.floor(amount), 0, 3);
+    if (!gain) return player;
+    const before = developmentProfileOf(player);
+    const after = discoverDevelopment(player, gain);
+    if (after.discovery <= before.discovery) return player;
+    return {
+      ...player,
+      developmentProfile: after,
+      ceilingGrowth: {
+        total: (player.ceilingGrowth?.total ?? 0) + gain,
+        reviewedSeason: player.ceilingGrowth?.reviewedSeason,
+        awards: [...(player.ceilingGrowth?.awards ?? []), { season, source, gain, reason }],
+      },
+    };
+  }
   const used = clamp(player.ceilingGrowth?.total ?? 0, 0, CAREER_CEILING_LIMIT);
   const gain = Math.max(0, Math.min(Math.floor(amount), CAREER_CEILING_LIMIT - used, 99 - player.sheet.potential.ceiling));
   if (!gain) return player;
@@ -128,7 +148,14 @@ export function reviewPlayerCeilings(league: GmLeagueState): GmLeagueState {
       player = raised;
     }
     for (const award of (player.ceilingGrowth?.awards ?? []).slice(raw.ceilingGrowth?.awards.length ?? 0)) {
-      notes.push({ id: `ceiling-${league.season}-${player.id}-${award.source}`, day: league.day, season: league.season, tone: "good", headline: `${player.name}: ${award.source} expands his outlook`, body: `Ceiling +${award.gain}. ${award.reason}` });
+      notes.push({
+        id: `ceiling-${league.season}-${player.id}-${award.source}`,
+        day: league.day, season: league.season, tone: "good",
+        headline: `${player.name}: ${award.source} expands his outlook`,
+        body: player.draftModel === 2
+          ? `Development possibilities improved. ${award.reason}`
+          : `Ceiling +${award.gain}. ${award.reason}`,
+      });
     }
     return player;
   });
