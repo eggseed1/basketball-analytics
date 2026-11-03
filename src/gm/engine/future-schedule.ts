@@ -170,10 +170,10 @@ function scheduleDates(season:number) {
   return days;
 }
 
-function placeFixtures(teams:GmTeam[],season:number,seed:number,groups:Groups){
+function placeFixtures(teams:GmTeam[],season:number,seed:number,groups:Groups,attempt:number){
   const {cups,regular}=allFixtures(teams,season,seed,groups);
   const days=scheduleDates(season);
-  const rng=createRng(seed+season*1009);
+  const rng=createRng(seed+season*1009+attempt*7919);
   const originalCupDays=cups.map(c=>Math.round(Date.parse(c.date)/MILLIS_DAY));
   const gamesByTeam=new Map<string,Array<{day:number;home:boolean;opponent:string}>>();
   for(const team of teams)gamesByTeam.set(team.id,[]);
@@ -273,8 +273,17 @@ export function generateFutureSchedule(
 ):GmScheduleGame[]{
   if(teams.length!==30||new Set(teams.map(t=>t.id)).size!==30)
     throw new Error("A future NBA schedule requires 30 distinct teams");
-  const fixtures=placeFixtures(teams,season,seed,groups)
-    .sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));
+  // A constrained matchup matrix can admit many legal calendars. If a
+  // greedy ordering leaves an unscheduled final pairing, retry with another
+  // deterministic priority ordering rather than breaking the NBA rest rules.
+  let placed:ReturnType<typeof placeFixtures>|null=null;
+  let lastError:unknown;
+  for(let attempt=0;attempt<12;attempt++){
+    try {placed=placeFixtures(teams,season,seed,groups,attempt);break;}
+    catch(error){lastError=error;}
+  }
+  if(!placed)throw lastError instanceof Error?lastError:new Error("Unable to generate NBA-style schedule");
+  const fixtures=placed.sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));
   const dates=[...new Set(fixtures.map(g=>g.date))];
   const dayByDate=new Map(dates.map((date,day)=>[date,day]));
   return fixtures.map(g=>({
