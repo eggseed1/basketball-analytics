@@ -1,4 +1,5 @@
 import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
+import { developmentProfileOf } from "@/gm/engine/development-profile";
 import { amateurSeason } from "@/gm/engine/draft-intel";
 import type {
   GmPlayer,
@@ -317,13 +318,22 @@ export type ProspectTier =
 /** Realistic draft pyramid - few true stars. */
 export function rollProspectTier(count: number, rng: () => number): ProspectTier[] {
   const tiers: ProspectTier[] = [];
-  // Target mix for a ~60-player pool (2 rounds + extras)
+  // Different years actually have different pools: an occasional loaded
+  // class, some good groups, ordinary years and thin classes. This controls
+  // *entry-level tools*, never a player's preassigned final rating.
+  const roll = rng();
+  const classType = roll < 0.10 ? "exceptional"
+    : roll < 0.29 ? "strong" : roll < 0.82 ? "typical" : "thin";
+  const superChance = { exceptional: 0.92, strong: 0.62, typical: 0.38, thin: 0.16 }[classType];
+  const starsAdded = { exceptional: 3, strong: 1, typical: 0, thin: -1 }[classType];
+  const startersAdded = { exceptional: 3, strong: 1, typical: 0, thin: -2 }[classType];
+  const depthAdded = { exceptional: -4, strong: -2, typical: 0, thin: 5 }[classType];
   const quotas: { tier: ProspectTier; n: number }[] = [
-    { tier: "superstar", n: rng() < 0.38 ? 1 : 0 },
-    { tier: "allstar", n: Math.max(1, Math.round(count * (0.035 + rng() * 0.025))) },
-    { tier: "starter", n: Math.max(6, Math.round(count * 0.15)) },
-    { tier: "rotation", n: Math.max(12, Math.round(count * 0.28)) },
-    { tier: "fringe", n: Math.max(12, Math.round(count * 0.28)) },
+    { tier: "superstar", n: rng() < superChance ? 1 : 0 },
+    { tier: "allstar", n: Math.max(1, Math.round(count * (0.035 + rng() * 0.025)) + starsAdded) },
+    { tier: "starter", n: Math.max(4, Math.round(count * 0.15) + startersAdded) },
+    { tier: "rotation", n: Math.max(10, Math.round(count * 0.28)) },
+    { tier: "fringe", n: Math.max(8, Math.round(count * 0.28) + depthAdded) },
     { tier: "depth", n: 0 },
   ];
   for (const q of quotas) {
@@ -680,6 +690,10 @@ export function createDraftClass(options: {
     // Some overlooked prospects have an unusual translatable skill. Their path
     // still can fail; no public nickname or badge identifies this latent upside.
     const overlooked=board>=24&&rng()<(board>=30?0.095:0.065);
+    // A truly rare overlooked talent has real, discoverable tools but a
+    // middling consensus rank. Not every sleeper is exceptional, and even a
+    // fast learner must get the right opportunity to turn into an NBA star.
+    const rareLateLearner = board >= 30 && rng() < 0.016;
     const potential={...sheet.potential};
     if(overlooked) {
       raw={...raw,personality:randInt(rng,12,25),ratings:{...raw.ratings,potential:randInt(rng,76,96)/10}};
@@ -691,7 +705,31 @@ export function createDraftClass(options: {
       potential.ceiling=randInt(rng,85,95);potential.trait=rng()<0.33?"star":"normal";
       const pathRoll=rng();potential.path=pathRoll<0.49?"boom":pathRoll>0.89?"bust":"average";
     }
-    const target=clamp(sheet.overall,54,tier==="superstar"?83:tier==="allstar"?79:tier==="starter"?76:73);
+    // An occasional second-rounder has overlooked NBA-level fundamentals.
+    // High learning responsiveness is NOT a fixed ceiling or a guaranteed
+    // breakout; scouts can notice the tools, then the GM must develop them.
+    const target=rareLateLearner
+      ? clamp(Math.max(sheet.overall, 70 + Math.floor(rng()*6)), 54, 77)
+      : clamp(sheet.overall,54,tier==="superstar"?83:tier==="allstar"?79:tier==="starter"?76:73);
+    if (rareLateLearner) {
+      raw = { ...raw, personality: Math.max(raw.personality, 20),
+        ratings: { ...raw.ratings, potential: Math.max(raw.ratings.potential, 7.7) } };
+      // One strength is visible on amateur tape; the exceptional ability to
+      // absorb training is only evident after meaningful professional reps.
+      attributes.freeThrow = Math.max(attributes.freeThrow, 82);
+      attributes.passAccuracy = Math.max(attributes.passAccuracy, 76);
+      const profile = developmentProfileOf(raw);
+      raw = { ...raw, developmentProfile: {
+        ...profile, learning: Math.max(1.36, profile.learning),
+        adaptability: Math.max(1.22, profile.adaptability),
+        discovery: 0.18,
+        aptitudes: Object.fromEntries(
+          Object.entries(profile.aptitudes).map(([key, value]) => [key, Math.max(1.14, value)])
+        ) as typeof profile.aptitudes,
+      } };
+      potential.path = "boom";
+      potential.trait = "star";
+    }
     raw={...raw,sheet:{...sheet,attributes,overall:target,overallOffset:target-overallFromAttributes(raw.position,attributes,{impact:raw.ratings.impact}),potential}};
     raw={...raw,amateur:amateurSeason(raw)};
     out.push(seal(raw, scoutLevel, board, rng));
