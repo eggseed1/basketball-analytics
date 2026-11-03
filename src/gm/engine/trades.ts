@@ -950,8 +950,11 @@ export function advanceTradeMarket(state: GmLeagueState): GmLeagueState {
     Math.max(15, deadline - 10),
   ];
   const lastWindow = previous?.lastCpuDealWindow ?? -1;
-  const dueWindow = windows.findIndex((day, index) =>
-    index > lastWindow && state.day >= day && state.day < deadline - 1);
+  // Late-loaded legacy saves should enter the current market window once,
+  // never backfill four missed windows on consecutive days.
+  const dueWindow = windows.reduce((current, day, index) =>
+    index > lastWindow && state.day >= day && state.day < deadline - 1
+      ? index : current, -1);
   if (dueWindow >= 0) {
     const traded = cpuDeadlineTrades(next, 1);
     next = {
