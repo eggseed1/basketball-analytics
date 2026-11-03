@@ -8,6 +8,7 @@ import { ClubMark } from "@/gm/ui/club-mark";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useGmStore } from "@/gm/state/gm-store";
 import { exportFranchise, franchiseNeeds, franchisePlan } from "@/gm/engine/franchise";
+import { careerLegacyLeaders } from "@/gm/engine/career-legacy";
 import { suggestedMinutePlan } from "@/gm/engine/coaching";
 import { displayPlayerName } from "@/gm/lib/selectors";
 import type { GmAttributes, GmLeagueState, GmPlayer } from "@/gm/types";
@@ -83,6 +84,7 @@ export function GmFranchiseDesk({ settingsOnly = false }: { settingsOnly?: boole
   const selected = league.players.find(p => p.id === editId) ?? roster[0];
   const years = [...(league.history ?? [])].sort((a, b) => b.season - a.season);
   const people = [...new Map(years.flatMap(y => y.players).map(p => [p.id, p])).values()].sort((a, b) => a.name.localeCompare(b.name));
+  const greats = careerLegacyLeaders(league.history, 8);
   const career = careerId || people[0]?.id;
   const assetText = (assets: NonNullable<GmLeagueState["tradeTalks"]>[number]["youSend"]) => assets.map(a => a.type === "player" ? league.players.find(p => p.id === a.id)?.name ?? "Former player" : a.type === "cash" ? `$${a.cashM}M cash` : (() => { const pick = league.teams.flatMap(t => t.draftPicks).find(p => p.id === a.id); return pick ? `${pick.season} round ${pick.round} pick` : "Draft pick"; })()).join(", ");
   return <div className="flex flex-col gap-8">
@@ -119,11 +121,20 @@ export function GmFranchiseDesk({ settingsOnly = false }: { settingsOnly?: boole
       </SectionFrame>
     </>}
     {tab === "history" && <>
+      {greats.length > 0 && <SectionFrame title="All-time greats" description="Ranked by career achievements, not just peak rating. Select a player to see their seasons below.">
+        <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-sm">
+          <thead><tr className="border-b border-border text-muted-foreground"><th className="py-2">Player</th><th>Peak OVR</th><th>MVP</th><th>Titles</th><th>All-NBA</th><th>Seasons</th></tr></thead>
+          <tbody>{greats.map((p, index) => <tr key={p.id} className="border-b border-border/50">
+            <td className="py-2 pr-4"><span className="mr-2 text-muted-foreground">{index + 1}.</span><button type="button" className="font-semibold hover:underline" onClick={() => setCareerId(p.id)}>{p.name}</button></td>
+            <td>{p.peakOverall}</td><td>{p.mvps}</td><td>{p.championships}</td><td>{p.allNba}</td><td>{p.seasons}</td>
+          </tr>)}</tbody>
+        </table></div>
+      </SectionFrame>}
+      {people.length > 0 && <SectionFrame title="Player careers" bodySurface><select className={control} aria-label="Player career" value={career} onChange={e => setCareerId(e.target.value)}>{people.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select><div className="mt-3 overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th>Season</th><th>Team</th><th>OVR</th><th>GP</th><th>MPG</th><th>PPG</th></tr></thead><tbody>{[...years].reverse().flatMap(y => { const p = y.players.find(p => p.id === career); if (!p) return []; return <tr key={y.season} className="border-t border-border"><td className="py-2">{y.season - 1}-{String(y.season).slice(-2)}</td><td>{p.teamId?.toUpperCase() ?? "FA"}</td><td>{p.overall}</td><td>{p.line?.gp ?? 0}</td><td>{p.line?.gp ? (p.line.min / p.line.gp).toFixed(1) : "—"}</td><td>{p.line?.gp ? (p.line.pts / p.line.gp).toFixed(1) : "—"}</td></tr>; })}</tbody></table></div></SectionFrame>}
       <SectionFrame title="Season archive" description="Completed seasons keep their results, player statistics, awards, and transactions.">
         {!years.length && <p className="text-sm text-muted-foreground">Your first completed season will appear here when free agency opens.</p>}
         {years.map(year => { const record = year.standings[year.userTeamId]; const mvp = year.players.find(p => p.id === year.champion?.finalsMvpId); return <details key={year.season} className="border-b border-border pb-4"><summary className="cursor-pointer font-semibold">{year.season - 1}-{String(year.season).slice(-2)} · {record?.wins ?? 0}-{record?.losses ?? 0}{year.champion ? ` · Champion: ${league.teams.find(t => t.id === year.champion?.teamId)?.city ?? year.champion.teamId}` : ""}</summary><p className="mt-3 text-sm text-muted-foreground">{mvp ? `Finals MVP: ${mvp.name}. ` : ""}{year.trades.length} completed trades. {year.awards?.races.length ?? 0} award races recorded.</p><div className="mt-3 overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th className="pb-2">Your roster</th><th>OVR</th><th>PPG</th><th>RPG</th><th>APG</th></tr></thead><tbody>{year.players.filter(p => p.teamId === year.userTeamId && p.line?.gp).sort((a, b) => b.overall - a.overall).map(p => <tr key={p.id} className="border-t border-border/50"><td className="py-2">{p.name}</td><td>{p.overall}</td><td>{(p.line!.pts / p.line!.gp).toFixed(1)}</td><td>{(p.line!.reb / p.line!.gp).toFixed(1)}</td><td>{(p.line!.ast / p.line!.gp).toFixed(1)}</td></tr>)}</tbody></table></div></details>; })}
       </SectionFrame>
-      {people.length > 0 && <SectionFrame title="Player careers" bodySurface><select className={control} aria-label="Player career" value={career} onChange={e => setCareerId(e.target.value)}>{people.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select><div className="mt-3 overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th>Season</th><th>Team</th><th>OVR</th><th>GP</th><th>MPG</th><th>PPG</th></tr></thead><tbody>{[...years].reverse().flatMap(y => { const p = y.players.find(p => p.id === career); if (!p) return []; return <tr key={y.season} className="border-t border-border"><td className="py-2">{y.season - 1}-{String(y.season).slice(-2)}</td><td>{p.teamId?.toUpperCase() ?? "FA"}</td><td>{p.overall}</td><td>{p.line?.gp ?? 0}</td><td>{p.line?.gp ? (p.line.min / p.line.gp).toFixed(1) : "—"}</td><td>{p.line?.gp ? (p.line.pts / p.line.gp).toFixed(1) : "—"}</td></tr>; })}</tbody></table></div></SectionFrame>}
     </>}
     {tab === "settings" && <>
       <SectionFrame title="Saves" bodySurface><div className="flex flex-wrap items-start gap-3"><button type="button" className={button} onClick={() => download(`franchise-${team.id}-${league.season}.json`, exportFranchise(league))}>Export this franchise</button><GmSaveImport /></div><p className="mt-3 text-sm text-muted-foreground">Imports open in a new slot. Keep an exported copy to move your franchise to another browser or device.</p></SectionFrame>
