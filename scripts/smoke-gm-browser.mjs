@@ -128,6 +128,9 @@ try {
   assert.ok(signedFa.contract?.yearsRemaining >= 1, "accepted FA deal must persist a real contract");
 
   // The same offer page must disable restricted sheets before open signing.
+  // The settings drawer is still open after exporting; close it so the next
+  // import helper can reopen its controls consistently.
+  await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
   await importJourney("rfa");
   await page.goto("http://127.0.0.1:3107/gm/free-agency/offer/" + encodeURIComponent(faManifest.playerId),
     { waitUntil: "domcontentloaded" });
