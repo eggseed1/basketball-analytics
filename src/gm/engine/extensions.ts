@@ -3,6 +3,8 @@ import { exceptionAmounts, maxSalaryForAge } from "@/gm/engine/cap";
 import { askingSalary } from "@/gm/engine/free-agency-ask";
 import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { cbaSeason } from "@/gm/engine/season-flow-state";
+import { teamOutlook } from "@/gm/engine/value";
+import { locationAppeal } from "@/gm/engine/fa-location";
 
 export type ExtensionQuote = { eligible: boolean; reason: string; kind: "rookie" | "veteran"; startsSeason: number; maxYears: number; maxSalaryM: number; askingSalaryM: number };
 const round = (value: number) => Math.round(value * 100) / 100;
@@ -13,7 +15,17 @@ export function extensionQuote(league: GmLeagueState, player: GmPlayer): Extensi
   const rookie = player.draftYear != null && (player.draftPick ?? 99) <= 30 && season - player.draftYear <= 4 && (player.serviceYears ?? 0) <= 4;
   const last = contract?.years?.at(-1);
   const ceiling = round(Math.min(maxSalaryForAge(player.age, league.settings), rookie ? Infinity : (last?.salaryM ?? contract?.annualSalaryM ?? 0) * (season >= 2024 ? 1.4 : 1.2)));
-  const ask = round(Math.max(exceptionAmounts(league.settings).minimumM, askingSalary(player, getCbaRules(season)) * (player.morale >= 70 ? 0.95 : player.morale < 45 ? 1.08 : 1) * (player.rolePromise?.status === "unmet" ? 1.08 : 1)));
+  // Small environment adjustment: contenders and cities the player
+  // prefers can secure modest discounts on *future* extension salary. Most
+  // of the decision remains money, morale, guaranteed role and legal rights.
+  const club = league.teams.find(t => t.id === player.teamId);
+  const environment = club ? 1 +
+    (0.5 - teamOutlook(league, club.id)) * .03 +
+    (60 - locationAppeal(player, club)) * .0002 : 1;
+  const ask = round(Math.max(exceptionAmounts(league.settings).minimumM,
+    askingSalary(player, getCbaRules(season)) *
+    (player.morale >= 70 ? 0.95 : player.morale < 45 ? 1.08 : 1) *
+    (player.rolePromise?.status === "unmet" ? 1.08 : 1) * environment));
   const quote: ExtensionQuote = { eligible: true, reason: "Adds future years. This season's salary stays in place.", kind: rookie ? "rookie" : "veteran", startsSeason: (last?.season ?? season + (contract?.yearsRemaining ?? 1) - 1) + 1, maxYears: rookie && season >= 2024 ? 5 : 4, maxSalaryM: ceiling, askingSalaryM: ask };
   const no = (reason: string): ExtensionQuote => ({ ...quote, eligible: false, reason });
   if (player.teamId !== league.userTeamId || !contract) return no("Only players under contract to your club can extend.");

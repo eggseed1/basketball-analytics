@@ -220,6 +220,30 @@ export function GmFreeAgencyHub() {
         ))}
       </nav>
 
+      {open && !market?.done ? <section aria-label="Free agency progress"
+        className="rounded-xl border border-border bg-secondary/25 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+              {faStageLabel(market)}
+            </p>
+            <p className="mt-1 text-sm">
+              {market?.stage === "re_signing" ? "Negotiate with your own expiring players before other clubs enter." :
+                market?.stage === "moratorium" ? "Agents can agree verbally, but deals do not sign until the moratorium ends." :
+                market?.stage === "open" ? "Players may sign now, or keep evaluating rival offers when you advance." :
+                market?.stage === "fill" ? "Late market: add needed depth and finish your roster." :
+                market?.stage === "options" ? "Resolve existing player and team options before negotiating." :
+                market?.stage === "qualifying_offers" ? "Choose which restricted players retain your matching rights." :
+                "Review expiring-player rights and cap holds before opening negotiations."}
+            </p>
+          </div>
+          <div className="flex gap-4 text-xs tabular-nums text-muted-foreground">
+            <span><strong className="text-foreground">{myOffers.length}</strong> of your offers pending</span>
+            <span><strong className="text-foreground">{myAgreements.length}</strong> verbal commitments</span>
+          </div>
+        </div>
+      </section> : null}
+
       {activeTab === "overview" ? (
         <section className="grid gap-3 sm:grid-cols-2">
           <div className="sports-card p-4">
