@@ -6,7 +6,7 @@ import {createGeneratedLeague} from "../src/gm/seed/create-league";
 import {prepareFranchise,exportFranchise,parseFranchise} from "../src/gm/engine/franchise";
 import {rotationForTeam,shiftSnapshot,validShiftPlan,autoBalanceRotation,rebalanceForInjuryChanges} from "../src/gm/engine/coaching";
 import {simulateGame} from "../src/gm/engine/simulate";
-import {POSITIONS} from "../src/gm/engine/lineup";
+import {POSITIONS,positionalMinutePlan,rotationMerit,withListedPositions,assignLeaguePositions} from "../src/gm/engine/lineup";
 import {listedPositionCorrections,splitPositionListing} from "../src/gm/engine/position-listings";
 import type {GmLeagueState,GmPlayer,GmTeam} from "../src/gm/types";
 
@@ -126,4 +126,34 @@ updated=state.league.teams.find(t=>t.id===team.id)!;
 assert.ok(updated.coaching!.minutes![backup.id]!>0);
 assert.ok(rotationForTeam(updated,state.league.players).openingIds.has(backup.id));
 assert.deepEqual(league.players.map(p=>p.sheet),prepareFranchise(JSON.parse(JSON.stringify(league))).players.map((p:GmPlayer)=>p.sheet),"saved ratings and potential do not change during rotation migration");
+// A highly rated sixth man must not lose his rotation slot to a weak
+// "natural backup" whose only advantage is matching one of five labels.
+const spareWing=roster.find(p=>p.position==="SF"&&!Object.values(team.starters).includes(p.id))!;
+const spareFour=roster.find(p=>p.position==="PF"&&!Object.values(team.starters).includes(p.id))!;
+const meritRoster=roster.map(p=>p.id===spareWing.id
+  ? {...p,minutesPreference:12,nbaSeason:undefined,priorLine:undefined,seasonLine:undefined,sheet:{...p.sheet!,overall:94}}
+  :p.id===spareFour.id
+    ? {...p,minutesPreference:28,nbaSeason:undefined,priorLine:undefined,seasonLine:undefined,sheet:{...p.sheet!,overall:62}}
+    :p);
+const best=meritRoster.find(p=>p.id===spareWing.id)!;
+const weak=meritRoster.find(p=>p.id===spareFour.id)!;
+const meritPlan=positionalMinutePlan(meritRoster,{starters:team.starters,depth:9});
+assert.ok(rotationMerit(best)>rotationMerit(weak)+20);
+assert.ok(meritPlan.minutes[best.id]!>meritPlan.minutes[weak.id]!, "strong wing gets minutes ahead of low-OVR positional reserve");
+assert.equal(Object.values(meritPlan.minutes).reduce((a,b)=>a+b,0),240,"merit-first allocation still sums to 240");
+const originalPositions=Object.fromEntries(meritRoster.map(p=>[p.id,p.position]));
+positionalMinutePlan(meritRoster,{starters:team.starters,depth:9});
+assert.deepEqual(Object.fromEntries(meritRoster.map(p=>[p.id,p.position])),originalPositions,"covering a court seat never rewrites natural positions");
+
+// A real roster may lack a player *listed* at a conventional seat. Do not
+// relabel a wing into PG/PF simply to make the displayed distribution pretty.
+const listedReal=meritRoster.slice(0,8).map(p=>({...p,nbaPlayerId:p.id,name:"Fixture "+p.id,
+  listedPosition:(p.position==="C"?"C":p.position==="PF"||p.position==="SF"?"SF":"SG") as GmPlayer["position"],
+  position:(p.position==="C"?"C":p.position==="PF"||p.position==="SF"?"SF":"SG") as GmPlayer["position"]}));
+const protectedPositions=assignLeaguePositions(listedReal);
+assert.equal(protectedPositions.filter(p=>p.position==="PG"||p.position==="PF").length,0,"no fake PG/PF listings for a real NBA roster");
+for(const [name,position] of [["Jayson Tatum","PF"],["Paul George","SF"],["Payton Pritchard","PG"],["Derrick White","SG"]] as const){
+  const prior={...roster[0]!,name,nbaPlayerId:"nba-"+name,position:"SF" as const,listedPosition:"SF" as const};
+  assert.equal(withListedPositions(prior).position,position,`${name} receives the verified primary role`);
+}
 console.log("Realistic rotations passed: 240 minutes, five unique players, coherent stints, planned/manual preview parity plus contextual substitutions, positional accounting, playoff depth, closing/OT, injuries, saved plans, NBA listings and starter edits.");
