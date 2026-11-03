@@ -127,16 +127,22 @@ try {
   assert.equal(signedFa?.teamId, "bos", "verbal agreement must become a signed BOS contract in the open window");
   assert.ok(signedFa.contract?.yearsRemaining >= 1, "accepted FA deal must persist a real contract");
 
-  // The same offer page must disable restricted sheets before open signing.
-  // The settings drawer is still open after exporting; close it so the next
-  // import helper can reopen its controls consistently.
+  // NBA exception: an outside restricted offer sheet can be filed during
+  // the moratorium, triggering the rights holder's two-day matching window.
+  // Close the export drawer before the next save import.
   await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
   await importJourney("rfa");
   await page.goto("http://127.0.0.1:3107/gm/free-agency/offer/" + encodeURIComponent(faManifest.playerId),
     { waitUntil: "domcontentloaded" });
   const sheetButton = page.getByRole("button", { name: "Submit offer sheet", exact: true });
-  assert.equal(await sheetButton.isDisabled(), true, "moratorium RFA offer sheet must be blocked");
-  await page.getByText(/Restricted offer sheets open when contracts can be signed/).first().waitFor();
+  assert.equal(await sheetButton.isEnabled(), true,
+    "a tendered RFA must be allowed to sign a legal offer sheet during the moratorium");
+  await sheetButton.click();
+  await page.getByRole("status").filter({ hasText: /Offer sheet filed/ }).waitFor();
+  await page.reload();
+  assert.equal(await page.getByRole("button", { name: "Submit offer sheet", exact: true }).isDisabled(),
+    true, "no duplicate sheet should be filed while the rights holder considers matching");
+  await page.getByText(/An offer sheet is already awaiting a match decision/).first().waitFor();
   await page.screenshot({ path: `${dir}/restricted-offer-sheet-mobile.png`, fullPage: true, animations: "disabled" });
   await importJourney("review");
   await page.getByRole("link", { name: "Season hub", exact: true }).click();
