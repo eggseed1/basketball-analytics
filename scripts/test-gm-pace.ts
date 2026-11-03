@@ -174,7 +174,11 @@ for (let game = 0; game < 20; game += 1) {
   // A star can legitimately lose a late shift when a game is out of reach.
   // Check for an implausible complete benching here, then enforce sustained
   // starter workload across the 20-game sample below.
-  assert.ok(line && line.minutes >= 20, `star was unexpectedly benched (${line?.minutes ?? 0} min)`);
+  // A sixth personal foul legitimately ends a starter's night early.
+  // Otherwise the rotation must keep him above the emergency floor.
+  const fouledOut = (line?.personalFouls ?? 0) >= 6;
+  assert.ok(line && (line.minutes >= 20 || fouledOut),
+    `star was unexpectedly benched in game ${game} (${line?.minutes ?? 0} min, ${line?.personalFouls ?? 0} fouls)`);
   for (const player of result.box.players) {
     if (player.teamId !== "bos") continue;
     totals.set(player.playerId, (totals.get(player.playerId) ?? 0) + player.minutes);
