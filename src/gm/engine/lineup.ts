@@ -912,7 +912,7 @@ function supportFunctionalUnits(
   for(let groupIndex=0;groupIndex<groups.length;groupIndex++){
     const group=groups[groupIndex]!;
     const other=groups[1-groupIndex]!;
-    for(let pass=0;pass<40&&total(group)<90;pass++){
+    for(let pass=0;pass<40&&total(group)<96;pass++){
       const receivers=pool.filter(p=>covers(p,group)&&
         (minutes[p.id]??0)+2<=Math.min(cap,38)&&
         (minutes[p.id]??0)-(original[p.id]??0)<8)
@@ -923,7 +923,7 @@ function supportFunctionalUnits(
           (minutes[p.id]??0)-2>=12&&
           (original[p.id]??0)-(minutes[p.id]??0)<8&&
           rotationMerit(p)<=rotationMerit(receiver)+4&&
-          (!covers(p,other)||total(other)>=92))
+          (!covers(p,other)||total(other)>=98))
           .sort((a,b)=>rotationMerit(a)-rotationMerit(b));
         if(!donors.length)continue;
         minutes[receiver.id]=(minutes[receiver.id]??0)+2;
