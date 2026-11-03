@@ -11,7 +11,7 @@ import {
   buildTradeMarket, marketForDisplay, tradeCompetitionMultiplier,
   tradeWindowDeadline, wantsTrade,
 } from "../src/gm/engine/trade-market";
-import type { GmLeagueState, GmPlayer, GmStandingsRow } from "../src/gm/types";
+import type { GmLeagueState, GmPlayer } from "../src/gm/types";
 
 const seeded = createGeneratedLeague({
   userTeamId: "bos", season: 2026, seed: 19,
