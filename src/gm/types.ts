@@ -324,6 +324,8 @@ export interface GmDevelopmentProfile {
   aptitudes: Record<"shooting" | "creation" | "defense" | "rebounding", number> & { finishing?: number };
   /** Positive performance/mentoring discoveries; soft acceleration, not a ceiling. */
   discovery: number;
+  /** Very rare nonlinear learner. 1 for the ordinary cohort; persisted, not a fixed OVR destination. */
+  learningSurge?: number;
 }
 
 export interface GmPlayer {
