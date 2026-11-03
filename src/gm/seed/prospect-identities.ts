@@ -717,8 +717,14 @@ export function createDraftClass(options: {
       ? clamp(Math.max(sheet.overall, 70 + Math.floor(rng()*6)), 54, 77)
       : clamp(sheet.overall,54,tier==="superstar"?83:tier==="allstar"?79:tier==="starter"?76:73);
     if (rareLateLearner) {
+      const rookieImpact = Math.max(raw.ratings.impact, -0.25 + rng() * 0.85);
       raw = { ...raw, personality: Math.max(raw.personality, 20),
-        ratings: { ...raw.ratings, potential: Math.max(raw.ratings.potential, 7.7) } };
+        ratings: { ...raw.ratings,
+          impact: rookieImpact,
+          offense: Math.max(raw.ratings.offense, rookieImpact * 0.65),
+          defense: Math.max(raw.ratings.defense, rookieImpact * 0.35),
+          potential: Math.max(raw.ratings.potential, 7.7),
+        } };
       // One strength is visible on amateur tape; the exceptional ability to
       // absorb training is only evident after meaningful professional reps.
       attributes.freeThrow = Math.max(attributes.freeThrow, 82);
