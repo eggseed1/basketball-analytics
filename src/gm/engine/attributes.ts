@@ -758,7 +758,13 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   const work=1+clamp(player.personality,-20,25)*0.004;
   const growthFriction=openPath?softGrowthFactor({...player,sheet},sheet.overall):1;
   const growthInput=openPath?Math.min(gap,14):gap;
-  const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*(0.85+rng()*0.3),0,5.5);
+  // Baseline practice must not turn nearly half of the second round into
+  // rotation players. Most learners advance patiently; unusually responsive
+  // rookies retain the chance to become genuinely surprising late gems.
+  const learningPace=openPath
+    ? clamp(0.86+Math.max(0,developmentProfileOf({...player,sheet}).learning-1.02)*0.55,0.86,1.08)
+    : 1;
+  const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;
   const budget=annual*pace*(1+clamp(opts.mentorBonus??0,0,0.18))*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
   const steps=Math.min(Math.max(0,ratingLimit-sheet.overall),Math.floor(budget));
