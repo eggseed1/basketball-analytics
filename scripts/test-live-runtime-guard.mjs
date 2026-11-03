@@ -32,6 +32,20 @@ test("missing or partial boards are restored", () => {
   assert.equal(snapshotRegressed("src/data/runtime/standings-snapshot.json", null, at(night, 5, 2)), true);
   assert.equal(snapshotRegressed("src/data/runtime/game-snapshot.json", games(stale, 10), games(night, 101)), true);
 });
+const boxes = (date, days) => ({
+  generatedAt: date,
+  teams: { "2026-27": { "2": days.map(d => [d, 93, 30, 75, 10, 30, 23, 25, 12, 29, 22, 7, 5, 12, 18]) } }
+});
+test("team-game statistics cannot fall back to October 27 after the next nightly run", () => {
+  const before = boxes(stale, ["2026-10-20", "2026-10-23", "2026-10-26"]);
+  const after = boxes(night, ["2026-10-20", "2026-10-23", "2026-10-26", "2026-11-02"]);
+  assert.equal(snapshotRegressed("src/data/runtime/team-game-box-snapshot.json", before, after), true);
+  assert.equal(snapshotRegressed("src/data/runtime/team-game-box-snapshot.json",
+    boxes("2026-11-04T16:00:00Z", ["2026-10-20", "2026-10-23", "2026-10-26", "2026-11-02", "2026-11-03"]),
+    after), false);
+  assert.equal(snapshotRegressed("src/data/runtime/team-game-box-snapshot.json",
+    boxes("2026-11-04T16:00:00Z", ["2026-10-20"]), after), true);
+});
 test("unverifiable nightly source fails closed", () => {
   assert.throws(() => snapshotRegressed("src/data/runtime/standings-snapshot.json", at(night, 5, 2), at("bad-date", 5, 2)));
 });
