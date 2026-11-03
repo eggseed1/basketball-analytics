@@ -171,13 +171,17 @@ for (let game = 0; game < 20; game += 1) {
     80 + game
   );
   const line = result.box.players.find((player) => player.playerId === star.id);
-  assert.ok(line && line.minutes >= 24, `star sat or played ${line?.minutes ?? 0}`);
+  // A star can legitimately lose a late shift when a game is out of reach.
+  // Check for an implausible complete benching here, then enforce sustained
+  // starter workload across the 20-game sample below.
+  assert.ok(line && line.minutes >= 20, `star was unexpectedly benched (${line?.minutes ?? 0} min)`);
   for (const player of result.box.players) {
     if (player.teamId !== "bos") continue;
     totals.set(player.playerId, (totals.get(player.playerId) ?? 0) + player.minutes);
   }
 }
 const starTotal = totals.get(star.id) ?? 0;
+assert.ok(starTotal / 20 >= 26, `star should average starter minutes across games (${(starTotal / 20).toFixed(1)} MPG)`);
 for (const [id, minutes] of totals) {
   if (id === star.id) continue;
   // Float noise over 20 games can be a fraction of a minute; star still leads.
