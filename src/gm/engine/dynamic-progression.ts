@@ -114,14 +114,14 @@ export function annualTraitDecision(league: GmLeagueState, player: GmPlayer): Tr
   return { before: current, after: current, reason: awards.reasons[0] ?? "Development assessment held steady" };
 }
 
-function changeRating(player: GmPlayer, target: number, label: string, checkpoint: DevelopmentCheckpoint): GmPlayer {
+function changeRating(player: GmPlayer, target: number, label: string, checkpoint: DevelopmentCheckpoint, league: GmLeagueState): GmPlayer {
   const old = ensurePlayerSheet(player);
   const sheet = old.sheet!;
   const before = sheet.overall;
   const step = target - before;
   const attrs = { ...sheet.attributes };
   const openPath = old.draftModel === 2;
-  const focus = developmentFocusSkill(old);
+  const focus = developmentFocusSkill(old, league);
   const chosen = openPath
     ? developmentSkillKeys(old.position, focus)
     : old.developmentFocus === "shooting" ? ["threePoint", "midrange", "freeThrow"]
@@ -142,8 +142,10 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
   const impactChange = step * 0.31;
   const oldRatings = old.ratings;
   const impact = clamp(Math.round((oldRatings.impact + impactChange) * 100) / 100, -4, 10);
-  const attacking = old.developmentFocus === "defense" ? 0.2
-    : old.developmentFocus === "rebounding" ? 0.4
+  // The same selected skill must govern attribute gains AND latent game impact.
+  // Preserve legacy players' original attacking allocation.
+  const attacking = (openPath ? focus === "defense" : old.developmentFocus === "defense") ? 0.2
+    : (openPath ? focus === "rebounding" : old.developmentFocus === "rebounding") ? 0.4
     : openPath && (focus === "shooting" || focus === "creation" || focus === "finishing") ? 0.86
     : 0.65;
   const offense = clamp(Math.round((oldRatings.offense + impactChange * attacking) * 100) / 100, -5, 12);
@@ -208,7 +210,7 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   // league's average. Preserve rare exceptional learning, but temper the
   // ordinary path; no prospect receives a fixed future OVR.
   const growthFriction = openPath
-    ? softGrowthFactor(withSheet, baseline) *
+    ? softGrowthFactor(withSheet, baseline, context.league) *
       ((profile?.learningSurge ?? 1) > 1 ? 1 : 0.9)
     : 1;
   const positive = ageDelta > 0 ? ageDelta * bonus * path * activity *
@@ -236,7 +238,7 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
       ? openPath ? "Offseason skill development: focus, learning, performance and environment"
         : "Offseason development: potential, performance, staff and accolades"
       : "In-season development checkpoint",
-    context.checkpoint
+    context.checkpoint, context.league
   );
   return {
     ...next,
