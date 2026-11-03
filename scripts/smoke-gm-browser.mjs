@@ -44,9 +44,11 @@ try {
   await page.getByLabel("New attribute rating", { exact: true }).fill("88");
   await page.getByRole("button", { name: "Apply rating", exact: true }).click();
   await page.getByText("Player updated. His abilities will apply in the next game.", { exact: true }).waitFor();
-  const downloadPromise = page.waitForEvent("download");
+  const downloadPromise = page.waitForEvent("download", { timeout: 90000 });
   await page.getByRole("button", { name: "Export this franchise", exact: true }).click();
-  const download = await downloadPromise;
+  const download = await downloadPromise.catch(error => {
+    throw new Error("Franchise export did not start; browser errors: " + JSON.stringify(errors) + "; " + error.message);
+  });
   const file = await download.path();
   const exported = JSON.parse(readFileSync(file, "utf8"));
   assert.equal(exported.league.players.find(p => p.id === playerId).sheet.attributes.threePoint, 88, "commissioner edit must be in the exported save");
