@@ -155,5 +155,6 @@ assert.equal(protectedPositions.filter(p=>p.position==="PG"||p.position==="PF").
 for(const [name,position] of [["Jayson Tatum","PF"],["Paul George","SF"],["Payton Pritchard","PG"],["Derrick White","SG"]] as const){
   const prior={...roster[0]!,name,nbaPlayerId:"nba-"+name,position:"SF" as const,listedPosition:"SF" as const};
   assert.equal(withListedPositions(prior).position,position,`${name} receives the verified primary role`);
+  assert.equal(withListedPositions({...prior,manualPosition:true}).position,"SF",`${name} respects a user-picked primary role`);
 }
 console.log("Realistic rotations passed: 240 minutes, five unique players, coherent stints, planned/manual preview parity plus contextual substitutions, positional accounting, playoff depth, closing/OT, injuries, saved plans, NBA listings and starter edits.");
