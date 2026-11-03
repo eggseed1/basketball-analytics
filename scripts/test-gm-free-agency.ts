@@ -24,7 +24,11 @@ import {
 } from "../src/gm/engine/fa-rfa";
 import { hasPendingOption } from "../src/gm/engine/fa-status";
 import { enterFreeAgency } from "../src/gm/engine/offseason";
-import { evaluateOfferUtility } from "../src/gm/engine/fa-utility";
+import { evaluateOfferUtility, faPlayerPriorities } from "../src/gm/engine/fa-utility";
+import { faLocationPreferences, locationAppeal } from "../src/gm/engine/fa-location";
+import { competingFreeAgentOffers, legalFreeAgentSalaryRange,
+  maxFreeAgentYears, projectFreeAgentResponse } from "../src/gm/engine/fa-offer-projection";
+import { evaluateSigning } from "../src/gm/engine/cap";
 import { getCbaRules } from "../src/gm/myleague/cba-registry";
 import type { GmLeagueState, GmPlayer, GmTeam } from "../src/gm/types";
 
@@ -475,6 +479,89 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   assert.equal(reasonable.ok, true, reasonable.ok ? "" : reasonable.reason);
   assert.equal(reasonable.ok && reasonable.state.players.find(p => p.id === star.id)?.teamId,
     "bos", "a legitimate star salary must still be accepted");
+}
+
+
+// ——— Contract UI and engine share exact CBA ceilings and a persistent agent
+// score. No salary slider may show an offer that the signing evaluator rejects.
+{
+  const target = player("negotiation-wing", null, 83, 27);
+  const league: GmLeagueState = {
+    ...baseLeague([target]),
+    faMarket: { ...emptyFaMarket(787), stage: "moratorium", day: 2 },
+  };
+  const range = legalFreeAgentSalaryRange(league, target, 3);
+  assert.ok(range.maxM >= range.minM && range.via, "an under-cap club must have a legal slider range");
+  assert.equal(evaluateSigning(league, "bos", target, range.maxM, 3).ok, true,
+    "slider ceiling must be a legally valid signing");
+  assert.equal(maxFreeAgentYears(league, target), 4);
+  assert.equal(evaluateSigning(league, "bos", target, range.maxM, 5).ok, false,
+    "a non-Bird team cannot offer five seasons");
+  const low = projectFreeAgentResponse(league, target, range.minM, 3);
+  const high = projectFreeAgentResponse(league, target, Math.min(range.maxM, 30), 3);
+  assert.equal(low.legal, true);
+  assert.ok(high.chance >= low.chance,
+    "higher same-team offers must not lower agent interest");
+  assert.deepEqual(high, projectFreeAgentResponse(structuredClone(league), target, Math.min(range.maxM, 30), 3),
+    "agent interest must not re-roll when the save is reopened");
+  assert.equal(competingFreeAgentOffers(league, target).length, 0, "never invent competing offers");
+  const rivalLeague: GmLeagueState = {
+    ...league,
+    faMarket: { ...league.faMarket!, pending: [
+      { id: "competing", playerId: target.id, teamId: "nyk", salaryM: 30,
+        years: 3, day: 2, kind: "interest" },
+    ] },
+  };
+  assert.equal(competingFreeAgentOffers(rivalLeague, target).length, 1,
+    "show actual market bids when teams place them");
+  const rivalInterest = projectFreeAgentResponse(rivalLeague, target, Math.min(range.maxM, 30), 3);
+  assert.ok(rivalInterest.rivalScore != null, "the competitor should affect the offer forecast");
+  assert.ok(rivalInterest.chance <= high.chance,
+    "adding a strong rival should not improve our winning chances");
+}
+
+// ——— Player preferences are real simulation weights, stable by player id,
+// but are shown as modeled agent beliefs, not claims about real people.
+{
+  const target = player("lifestyle-probe", null, 81, 26);
+  const priorities = faPlayerPriorities(target);
+  assert.ok(priorities.some(p => p.id === "location" && p.weight > 0));
+  assert.ok(Math.abs(priorities.reduce((sum, p) => sum + p.weight, 0) - 1) < 0.001,
+    "agent priorities must represent a complete normalized utility model");
+  assert.deepEqual(faLocationPreferences(target), faLocationPreferences({ ...target }),
+    "player location preferences must be stable across saves");
+  const warm = club("mia"), cold = club("bos");
+  assert.ok(locationAppeal(target, warm) >= 0 && locationAppeal(target, cold) <= 100);
+  const userLeague = { ...baseLeague([target]), faMarket: { ...emptyFaMarket(8), stage: "open" as const } };
+  const offer = evaluateOfferUtility(userLeague, target, userLeague.teams[0]!, 19, 3);
+  assert.equal(typeof offer.location, "number");
+}
+
+// ——— Restricted sheets must use at least two seasons; Bird re-signs can
+// reach five, but cap/exception-only deals are limited correctly.
+{
+  const rfa = player("rfa-ui", null, 78, 24,
+    { rightsTeamId: "nyk", rightsKind: "restricted", qoStatus: "tendered" });
+  const league = { ...baseLeague([rfa]), faMarket: { ...emptyFaMarket(51), stage: "open" as const } };
+  assert.equal(legalFreeAgentSalaryRange(league, rfa, 1).maxM, 0);
+  assert.equal(submitOfferSheet(league, rfa.id, "bos", 9, 1).ok, false);
+  const own = { ...rfa, id: "bird-ui", rightsTeamId: "bos", rightsKind: "bird" as const };
+  const birdLeague = { ...baseLeague([own]), faMarket: { ...emptyFaMarket(53), stage: "open" as const } };
+  assert.equal(maxFreeAgentYears(birdLeague, own), 5);
+  assert.equal(evaluateSigning(birdLeague, "bos", own, 9, 5).ok, true);
+  const overCap = { ...league, players: [
+    rfa,
+    ...Array.from({ length: 14 }, (_, i) =>
+      player("vet-" + i, "bos", 71, 29, {
+        contract: { yearsRemaining: 2, annualSalaryM: 14, birdRights: "none", signedSeason: 2026 },
+      })),
+  ] };
+  const depth = player("min-only", null, 70, 29);
+  const depthLeague = { ...overCap, players: [...overCap.players, depth] };
+  const minimum = legalFreeAgentSalaryRange(depthLeague, depth, 2).minM;
+  assert.equal(evaluateSigning(depthLeague, "bos", depth, minimum, 2).ok, true);
+  assert.equal(evaluateSigning(depthLeague, "bos", depth, minimum, 3).ok, false,
+    "the minimum exception cannot be used for three-year deals");
 }
 
 console.log("gm free agency ok");
