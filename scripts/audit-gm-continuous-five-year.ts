@@ -41,12 +41,17 @@ type SeasonResult={season:number;games:number;calendarDays:number;winSd:number;m
   cpuTrades:number;injuryEvents:number;topTeam:string;lastTeam:string;firstGames:string[];};
 const seasons:SeasonResult[]=[];
 const summers:any[]=[];
+let previousSeasonPlayerIds: Set<string> | null = null;
 async function main(){
   for(let cycle=0;cycle<5;cycle++){
     const season=league.season;
     const opening=new Map(league.teams.map(t=>[t.id,rosterIds(league,t.id)]));
     const openingQuality=new Map(league.teams.map(t=>[t.id,quality(league,t.id)]));
-    const initialPlayerIds=new Set(league.players.map(p=>p.id));
+    // Compare opening rosters/player pool across consecutive seasons, not
+    // against the same season's opening pool (which always returns zero).
+    const openingPlayerIds=new Set(league.players.map(p=>p.id));
+    const newSeasonPlayers=previousSeasonPlayerIds
+      ? [...openingPlayerIds].filter(id=>!previousSeasonPlayerIds.has(id)).length : 0;
     const openingTradeCount=league.tradeLog.length;
     league={...league,automation:{...league.automation,autoDraft:true,autoFreeAgency:true},
       seenCheckpoints:[...(league.seenCheckpoints??[]),"trade_deadline"]};
@@ -76,11 +81,12 @@ async function main(){
     const seasonResult:SeasonResult={season,games:counted.length,calendarDays:days,
       winSd:+winSd.toFixed(2),minWins:ordered[29]!.wins,maxWins:ordered[0]!.wins,
       meanStrengthWinCorrelation:+correlation(table.map(t=>t.quality),table.map(t=>t.wins)).toFixed(3),
-      teams:table,newIdCount:league.players.filter(p=>!initialPlayerIds.has(p.id)).length,
+      teams:table,newIdCount:newSeasonPlayers,
       cpuTrades:league.tradeLog.length-openingTradeCount,injuryEvents,topTeam:ordered[0]!.id,lastTeam:ordered[29]!.id,
       firstGames:league.schedule.filter(gameCounts).slice(0,24).map(g=>g.homeTeamId+":"+g.awayTeamId),
     };
     seasons.push(seasonResult);
+    previousSeasonPlayerIds=openingPlayerIds;
     console.log("FRANCHISE_YEAR "+JSON.stringify({season,games:1230,days,winSd:seasonResult.winSd,
       winRange:[seasonResult.minWins,seasonResult.maxWins],
       strengthWinCorrelation:seasonResult.meanStrengthWinCorrelation,
@@ -198,6 +204,8 @@ async function main(){
   assert.equal(seasons.length,5);
   assert.equal(summers.length,4);
   assert.ok(summers.every(s=>s.drafted>0),"draft picks must join teams every offseason");
+  assert.ok(seasons.slice(1).every(s=>s.newIdCount>=30),
+    "each future season must introduce a meaningful new draft/player cohort");
   assert.ok(seasons.every(s=>s.winSd>=7.5&&s.winSd<=17),"team records must preserve NBA-like parity");
   assert.ok(seasons.every(s=>s.minWins<=32&&s.maxWins>=53),
     "NBA-like seasons should feature genuine contenders and rebuilding clubs");
