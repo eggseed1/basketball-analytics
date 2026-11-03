@@ -76,13 +76,12 @@ export function projectFreeAgentResponse(
   const available = player.teamId == null &&
     (stage !== "re_signing" || player.rightsTeamId === league.userTeamId) &&
     !(league.faMarket?.agreements ?? []).some(o => o.playerId === player.id);
-  // The offer-sheet path in userOfferFreeAgent requires the open/fill signing
-  // window once the season journey exists. Keep the slider forecast and submit
-  // button aligned with that gate rather than advertising a sendable offer.
+  // NBA offer sheets are an exception to the usual moratorium signing
+  // restrictions. They may be filed in moratorium, open, and fill stages.
   const outsideRestricted = player.rightsKind === "restricted" &&
     player.rightsTeamId !== league.userTeamId;
-  const sheetWindowClosed = Boolean(league.seasonFlow) && outsideRestricted &&
-    stage !== "open" && stage !== "fill";
+  const sheetWindowClosed = outsideRestricted &&
+    !["moratorium", "open", "fill"].includes(stage ?? "");
   const sheetNotTendered = outsideRestricted &&
     (!player.rightsTeamId || player.qoStatus !== "tendered");
   const sheetPendingMatch = outsideRestricted && (league.faMarket?.offerSheets ?? [])
@@ -91,7 +90,7 @@ export function projectFreeAgentResponse(
       sheetNotTendered || sheetPendingMatch) {
     const reason = !marketOpen ? "Negotiations are not open in this market stage." :
       !available ? "This player is unavailable or already committed." :
-      sheetWindowClosed ? "Restricted offer sheets open when contracts can be signed." :
+      sheetWindowClosed ? "Restricted offer sheets open during the moratorium." :
       sheetNotTendered ? "He needs a tendered qualifying offer before an outside offer sheet." :
       sheetPendingMatch ? "An offer sheet is already awaiting a match decision." :
       verdict.ok ? null : verdict.reason;
