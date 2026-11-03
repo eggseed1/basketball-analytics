@@ -1,8 +1,7 @@
 DRBL production deployment request
 Target: main
-Reason: ship validated Franchise Lab open-ended player development overhaul
-Release PR: #172
-Release merge commit: a63ea5d9dba8dd6a0fd1f2930508d54aebfbd2dd
-Verification: CI, Franchise Lab, 100-draft-class cohort, two five-year simulations and runtime parity all passed
-Live NBA snapshots: preserve current main, do not overwrite standings or team game boxes
+Reason: release calibrated Franchise Lab draft class variability, rare late-pick development upside and measurable GM skill expression
+Reviewed merge: 5651897abdce18c6edfdcdf6ad88d6204519c43f
+Validated: 6,000-player cohorts; 10-year population; management A/B; full CI; browser; two complete five-season simulations
+Safety: code-only merge preserves current NBA results and team game boxes
 Requested: 2026-11-03
