@@ -792,7 +792,7 @@ export const useGmStore = create<GmStore>()(
           if (player.id !== playerId || player.teamId !== league.userTeamId) {
             return player;
           }
-          return { ...reassignPosition(player, position), listedPosition: position };
+          return { ...reassignPosition(player, position), listedPosition: position, manualPosition: true };
         });
         const teams = league.teams.map((t) => {
           if (t.id !== league.userTeamId) return t;
