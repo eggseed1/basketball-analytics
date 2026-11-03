@@ -721,6 +721,24 @@ export interface GmDeclinedOffer {
   day: number;
 }
 
+/** Trade rumors are front-office intelligence, not accepted offers. */
+export interface GmTradeMarketRumor {
+  playerId: string;
+  teamId: string;
+  signal: "listed" | "request" | "monitoring";
+  /** Other CPU front offices scouting a possible deal, not guaranteed bids. */
+  interestedTeamIds: string[];
+  urgency: "quiet" | "active" | "deadline";
+}
+
+export interface GmTradeMarket {
+  season: number;
+  lastPulseDay: number;
+  /** The last automated CPU-to-CPU trading window completed this season. */
+  lastCpuDealWindow?: number;
+  rumors: GmTradeMarketRumor[];
+}
+
 export interface GmTradeProposal {
   id: string;
   fromTeamId: string;
@@ -1016,6 +1034,8 @@ export interface GmLeagueState {
   /** Summer's cap year, separate from the completed playing season. */
   financialSeason?: number;
   tradeTalks?: Array<{ id: string; day: number; teamId: string; reason: string; youSend: GmTradeAsset[]; youReceive: GmTradeAsset[]; counter?: GmTradeAsset[] }>;
+  /** Save-compatible snapshot of the evolving in-season trade market. */
+  tradeMarket?: GmTradeMarket;
   franchise?: GmFranchisePlan;
   history?: GmSeasonArchive[];
   simulationBook?: number;
