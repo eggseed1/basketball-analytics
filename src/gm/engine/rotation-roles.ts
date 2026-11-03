@@ -20,7 +20,14 @@ export function roleFit(player: GmPlayer, spot: GmPosition): number {
 /** Dynamic assignment of five distinct players to five seats. */
 export function assignFive(players: GmPlayer[], desired?: Record<string, Partial<Record<GmPosition, number>>>): { score: number; starters: GmTeam["starters"] } {
   const count = Math.min(5, players.length);
-  const fits = players.map(p => SPOTS.map(spot => roleFit(p, spot) + Math.min(0.15, Math.max(0, desired?.[p.id]?.[spot] ?? 0) * 0.01)));
+  const fits = players.map(p => SPOTS.map(spot => {
+    const fit = roleFit(p, spot);
+    // Avoid assigning a PF to PG (or a small guard to C) just because the
+    // combined raw-fit sum is fractionally higher. Keep realistic secondary
+    // roles available: only clearly emergency (<0.80) seats pay this penalty.
+    const emergencyPenalty = fit < 0.80 ? 0.5 + (0.80 - fit) * 2.5 : 0;
+    return fit - emergencyPenalty + Math.min(0.15, Math.max(0, desired?.[p.id]?.[spot] ?? 0) * 0.01);
+  }));
   let best = -Infinity;
   let seats: GmTeam["starters"] = { PG: null, SG: null, SF: null, PF: null, C: null };
   function visit(index: number, used: number, score: number, current: GmTeam["starters"]) {
