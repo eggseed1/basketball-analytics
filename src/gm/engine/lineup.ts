@@ -893,15 +893,26 @@ function rotationPool(
       p.id,
       requirements.map(rule => roleFit(p, rule.seat) >= rule.fit),
     ]));
+    // Three forward/interior court seats need a combined 144 player-minutes.
+    // A team with four guards and zero wings can appear fine on individual PG/C
+    // checks while asking a point guard to cover SF for ten minutes per game.
+    const frontcourtEligible = new Map(roster.map(p => [
+      p.id,
+      (["SF", "PF", "C"] as const).some(seat => roleFit(p, seat) >= 0.84),
+    ]));
     const coveragePenalty = (group: GmPlayer[]) => {
       const total = group.reduce((n, p) => n + (projected.get(p.id) ?? 0), 0);
       if (!total) return 0;
-      return requirements.reduce((penalty, rule, index) => {
+      const seatPenalty = requirements.reduce((penalty, rule, index) => {
         const supply = group.reduce((n, p) =>
           n + (qualified.get(p.id)?.[index] ? projected.get(p.id) ?? 0 : 0), 0
         ) * 240 / total;
         return penalty + Math.max(0, rule.minutes - supply) * rule.weight;
       }, 0);
+      const frontcourtSupply = group.reduce((n, p) =>
+        n + (frontcourtEligible.get(p.id) ? projected.get(p.id) ?? 0 : 0), 0
+      ) * 240 / total;
+      return seatPenalty + Math.max(0, 150 - frontcourtSupply) * 0.85;
     };
     const protectedIds = new Set([
       ...Object.values(starters ?? {}).filter((id): id is string => Boolean(id)),
