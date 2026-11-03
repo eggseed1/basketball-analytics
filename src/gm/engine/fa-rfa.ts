@@ -90,6 +90,10 @@ export function submitOfferSheet(
   if (!player || player.teamId != null) {
     return { ok: false, reason: "Player is not on the market." };
   }
+  // 2023 NBA CBA: outside RFA sheets must cover at least two seasons.
+  if (!Number.isInteger(years) || years < 2) {
+    return { ok: false, reason: "Restricted offer sheets require at least two seasons." };
+  }
   if (player.rightsKind !== "restricted" || player.qoStatus !== "tendered") {
     return { ok: false, reason: "He is not a restricted free agent with a tendered QO." };
   }

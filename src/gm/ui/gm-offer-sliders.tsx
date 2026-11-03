@@ -24,7 +24,8 @@ export function GmOfferSliders({
   minYears: number; maxYears: number;
   chance: number; status: Signal; prefix: string; disabled?: boolean; interestLabel?: string;
 }) {
-  const enabled = !disabled && maxM >= minM && minM > 0;
+  const salaryEnabled = !disabled && maxM >= minM && minM > 0;
+  const termEnabled = !disabled && maxYears > minYears;
   const min = Math.max(.01, minM);
   const max = Math.max(min, maxM);
   const salary = Math.max(min, Math.min(max, salaryM));
@@ -40,7 +41,7 @@ export function GmOfferSliders({
             <p className="text-xs text-muted-foreground">per season</p></div>
         </div>
         <input id={prefix + "-salary"} aria-label="Annual salary offer" type="range" min={min} max={max}
-          step="0.01" value={salary} disabled={!enabled} onChange={event => setSalaryM(Number(event.target.value))}
+          step="0.01" value={salary} disabled={!salaryEnabled} onChange={event => setSalaryM(Number(event.target.value))}
           className="mt-4 h-2 w-full cursor-pointer appearance-none rounded-full disabled:cursor-not-allowed disabled:opacity-50"
           style={{ background: track, accentColor: color }} />
         <div className="mt-2 flex justify-between gap-4 text-xs text-muted-foreground">
@@ -53,7 +54,7 @@ export function GmOfferSliders({
           <span className="text-lg font-bold tabular-nums">{years} {years === 1 ? "year" : "years"}</span>
         </div>
         <input id={prefix + "-years"} aria-label="Contract length" type="range"
-          min={minYears} max={maxYears} step="1" value={years} disabled={!enabled || minYears >= maxYears}
+          min={minYears} max={maxYears} step="1" value={years} disabled={!termEnabled}
           onChange={event => setYears(Number(event.target.value))}
           className="mt-3 w-full cursor-pointer accent-foreground disabled:cursor-not-allowed disabled:opacity-50" />
         <div className="mt-1 flex justify-between text-xs text-muted-foreground">

@@ -230,6 +230,18 @@ export function evaluateSigning(
   if (years > 5) {
     return { ok: false, reason: "Deals run at most 5 years." };
   }
+  const ownBird = player.rightsTeamId === teamId &&
+    (player.rightsKind === "bird" || player.rightsKind === "restricted");
+  if (years > (ownBird ? 5 : 4)) {
+    return { ok: false, reason: ownBird ? "Bird contracts max out at 5 years." : "Only a Bird re-sign can run 5 years. Other contracts max out at 4." };
+  }
+  const viaWithYears = (via: GmSignVia): { ok: true; via: GmSignVia } | { ok: false; reason: string } => {
+    const maxYears = via === "bird" ? 5 :
+      via === "minimum" || via === "bae" || via === "taxpayer_mle" ? 2 : 4;
+    if (years > maxYears) return { ok: false, reason: `The ${via.replaceAll("_", " ")} exception allows at most ${maxYears} years.` };
+    if (via === "early_bird" && years < 2) return { ok: false, reason: "Early Bird deals require at least 2 years." };
+    return { ok: true, via };
+  };
   if (!Number.isFinite(salaryM) || !(salaryM > 0)) {
     return { ok: false, reason: "Salary has to be above zero." };
   }
@@ -277,21 +289,21 @@ export function evaluateSigning(
   const first = league.settings.firstApronM;
   const second = league.settings.secondApronM;
 
-  if (base + salaryM <= cap + 0.05) return { ok: true, via: "room" };
+  if (base + salaryM <= cap + 0.05 && years <= 4) return viaWithYears("room");
 
   const own = player.rightsTeamId === teamId;
   const last = player.lastSalaryM ?? 0;
   if (own && (player.rightsKind === "bird" || player.rightsKind === "restricted") && salaryM <= max + 0.05) {
-    return { ok: true, via: "bird" };
+    return viaWithYears("bird");
   }
   if (own && player.rightsKind === "early") {
     const ceiling = Math.min(max, Math.max(last * 1.75, amounts.nonTaxpayerMleM));
-    if (salaryM <= ceiling + 0.05) return { ok: true, via: "early_bird" };
+    if (salaryM <= ceiling + 0.05) return viaWithYears("early_bird");
   }
 
   const atMinimum = salaryM <= amounts.minimumM + 0.05;
   if (base >= second) {
-    if (atMinimum) return { ok: true, via: "minimum" };
+    if (atMinimum) return viaWithYears("minimum");
     return {
       ok: false,
       reason:
@@ -303,20 +315,20 @@ export function evaluateSigning(
       salaryM <= mleRemainingM + 0.05 &&
       base + salaryM <= first + 0.05
     ) {
-      return { ok: true, via: "mle" };
+      return viaWithYears("mle");
     }
     if (
       baeAvailable &&
       salaryM <= amounts.biAnnualM + 0.05 &&
       base + salaryM <= tax + 0.05
     ) {
-      return { ok: true, via: "bae" };
+      return viaWithYears("bae");
     }
   } else if (
     salaryM <= taxpayerMleRemainingM + 0.05 &&
     base + salaryM <= second + 0.05
   ) {
-    return { ok: true, via: "taxpayer_mle" };
+    return viaWithYears("taxpayer_mle");
   }
   if (atMinimum) return { ok: true, via: "minimum" };
   return {

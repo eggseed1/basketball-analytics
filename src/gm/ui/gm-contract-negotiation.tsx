@@ -178,7 +178,7 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
               minM={min} maxM={max} years={years}
               setYears={value => { setOfferYears(value); setOfferM(null); setFeedback(null); }}
               minYears={minYears} maxYears={maxYears} chance={chance} status={signal}
-              interestLabel={isExtension ? "Extension readiness" : "Estimated interest"} disabled={!playerAvailable || max < min}/>
+              interestLabel={isExtension ? "Extension readiness" : "Estimated interest"} disabled={!playerAvailable}/>
             <div className="mt-4 space-y-3">
               <div className="rounded-lg border border-border bg-secondary/30 p-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">From his agent</p>
