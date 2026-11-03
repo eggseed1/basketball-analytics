@@ -34,8 +34,8 @@ function rosterOf(teamId: string, players: GmPlayer[]): GmPlayer[] {
 
 function depthAt(roster: GmPlayer[], position: GmPosition): PosDepth {
   const at = roster
-    .filter((player) => player.position === position)
-    .map((player) => overallOf(player))
+    .filter((player) => player.position === position || player.secondaryPosition === position)
+    .map((player) => overallOf(player) - (player.position === position ? 0 : 4))
     .sort((a, b) => b - a);
   const best = at[0] ?? 0;
   const second = at[1] ?? 0;
