@@ -382,7 +382,28 @@ export function GmDraftNight() {
           yourTurn={yourTurn}
           onDraft={(id) => {
             setAuto(false);
+            const priorPick = league.draftPickIndex;
             draftPlayer(id);
+            // The user pick ceremony must not depend on a later log-diff
+            // effect: the draft board can re-mount as the clock advances.
+            const next = useGmStore.getState().league;
+            const chosen = next && next.draftPickIndex !== priorPick
+              ? draftPickLog(next).find(row => row.player.id === id && row.teamId === next.userTeamId)
+              : null;
+            if (chosen && next) {
+              logLenRef.current = draftPickLog(next).length;
+              setReveal({
+                pick: chosen.pick,
+                teamAbbr: next.teams.find(club => club.id === chosen.teamId)?.abbr ?? chosen.teamId.toUpperCase(),
+                teamId: chosen.teamId,
+                userTeam: true,
+                player: chosen.player,
+                codename: chosen.player.codename,
+                mockRank: chosen.mockRank,
+                sleeper: chosen.sleeper,
+                fall: chosen.fall,
+              });
+            }
           }}
           mockRank={
             selected
