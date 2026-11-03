@@ -7,6 +7,7 @@ import { amateurSeason, draftRead, draftScoutingOf, scoutingBudget, studyProspec
 import { draftAssetCatalog, executeDraftTrade, quoteDraftTrade, suggestDraftTrade } from "../src/gm/engine/draft-trades";
 import { resolveDraftOrder, rookieContractForPick } from "../src/gm/engine/draft-order";
 import { advanceDraftPastAi, finishDraftWithAi, runDraftPick } from "../src/gm/engine/progression";
+import { developmentProfileOf } from "../src/gm/engine/development-profile";
 import { progressSheet } from "../src/gm/engine/attributes";
 import { ensureProspectIdentities, scoutPotentialView, trajectoryRead } from "../src/gm/engine/scouting";
 import type { GmLeagueState } from "../src/gm/types";
@@ -103,6 +104,17 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   const before=league.teams.find(team=>team.id==="bos")!.draftPicks.length;
   const selected=runDraftPick(league,"bos",league.draftPool[0]!);
   assert.equal(selected.teams.find(team=>team.id==="bos")!.draftPicks.length,before-1);
+  const selectedRookie=selected.players.find(player=>player.id===league.draftPool[0])!;
+  assert.equal(selectedRookie.draftModel,2,"new draft prospects use open development");
+  assert.ok(selectedRookie.developmentProfile,"the learning profile must be sealed at draft selection");
+  const trained={...selectedRookie,sheet:{...selectedRookie.sheet!,attributes:{
+    ...selectedRookie.sheet!.attributes,threePoint:selectedRookie.sheet!.attributes.threePoint+8,
+  }}};
+  assert.deepEqual(developmentProfileOf(trained),selectedRookie.developmentProfile,
+    "changing skills in camp must not reroll a rookie's natural learning profile");
+  const reloaded= parseFranchise(exportFranchise(selected));
+  assert.deepEqual(reloaded.players.find(player=>player.id===selectedRookie.id)?.developmentProfile,
+    selectedRookie.developmentProfile,"rookie learning DNA survives franchise export/reload");
   assert.equal(runDraftPick(selected,"bos",league.draftPool[0]!),selected);
   assert.equal(runDraftPick(league,"det",league.draftPool[0]!),league);
   const beyond={...league,draftPickIndex:60};
