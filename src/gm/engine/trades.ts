@@ -96,7 +96,9 @@ function firstSeasons(
   for (const pick of team.draftPicks) {
     if (pick.round !== 1) continue;
     const traded = sentIds.has(pick.id);
-    if (!traded || (pick.protectionTopN ?? 0) > 0) seasons.add(pick.season);
+    // A protected outgoing first can still convey. It cannot be counted as a
+    // guaranteed retained pick for Stepien coverage.
+    if (!traded) seasons.add(pick.season);
   }
   for (const pick of received) {
     if (pick.round === 1) seasons.add(pick.season);
@@ -115,12 +117,12 @@ export function stepienViolation(
   );
   const before = [...firstSeasons(team, new Set(), [])].sort((a, b) => a - b);
   const after = firstSeasons(team, sentIds, receivedPicks);
-  for (let i = 0; i < before.length - 1; i += 1) {
-    const year = before[i]!;
-    const next = before[i + 1]!;
-    if (next !== year + 1) continue;
-    if (year < season) continue;
-    if (!after.has(year) && !after.has(next)) return true;
+  // Check the post-trade calendar rather than only consecutive picks on the
+  // original list. A club already missing one year cannot trade the next.
+  const last = Math.max(season + 7, ...before, ...after);
+  for (let year = season; year < last; year += 1) {
+    if ((before.has(year) || before.has(year + 1)) &&
+        !after.has(year) && !after.has(year + 1)) return true;
   }
   return false;
 }
@@ -143,6 +145,7 @@ export function evaluateTrade(
       seenAssets.add(key);
       if (asset.type === "player" && !state.players.some(p => p.id === asset.id && p.teamId === teamId)) return invalid("A team can only trade players on its roster.");
       if (asset.type === "pick" && !allPicks.some(p => p.id === asset.id && p.ownerTeamId === teamId)) return invalid("A team can only trade picks it owns.");
+      if (asset.type === "pick" && allPicks.some(p => p.id === asset.id && p.frozen)) return invalid("This draft pick is frozen and cannot be traded.");
     }
   }
   const fromSal = fromAssets.reduce(
@@ -598,8 +601,8 @@ export function findPlayerPackages(
     }
     if (best) {
       hits.push({ partnerId: club.id, youSend: offered, youReceive: best });
-      // Eight partners is enough for the desk; stop hammering every club.
-      if (hits.length >= 8) break;
+      // Rank all clubs before selecting the best eight; otherwise the
+      // trade finder overweights alphabetical team order.
     }
   }
   hits.sort(
