@@ -1,0 +1,41 @@
+name: Franchise actual season standings
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-gm-production-standings.ts'
+      - 'src/gm/engine/progression.ts'
+      - 'src/gm/engine/pace.ts'
+      - '.github/workflows/franchise-production-standings.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gm-production-standings
+  cancel-in-progress: true
+
+jobs:
+  season:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Simulate actual Franchise Lab season progression
+        run: npm run audit:franchise-production-standings
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: franchise-real-season-standings
+          path: |
+            artifacts/franchise-production-standings.json
+            artifacts/franchise-production-standings.md
+          if-no-files-found: warn
