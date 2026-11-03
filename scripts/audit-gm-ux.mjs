@@ -416,11 +416,14 @@ try {
     }
     await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
     await campDialog.getByRole("button", { name: "Run camp", exact: true }).click();
+    assert.equal(await campSection.evaluate(el => el.open), true, "camp results should stay expanded in the active phase");
     await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
     const afterCamp = await exportedLeague();
     assert.equal(afterCamp.seasonFlow.campResults.filter(row => campers.some(p => p.id === row.playerId)).length, 2);
     await page.reload({ waitUntil: "domcontentloaded" });
-    await page.locator("summary").filter({ hasText: "Training camp" }).click();
+    if (!(await campSection.evaluate(el => el.open))) {
+      await campSection.locator("summary").click();
+    }
     await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
     assert.deepEqual((await exportedLeague()).seasonFlow.campResults, afterCamp.seasonFlow.campResults, "reloading preserves camp results without rerolling risk");
     assert.equal(await page.getByRole("button", { name: "Run individual camp", exact: true }).count(), 0);
