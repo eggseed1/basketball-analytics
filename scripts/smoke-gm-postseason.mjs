@@ -55,13 +55,21 @@ try {
     await page.getByTestId("gm-game-score").waitFor();
     const watchPath = new URL(page.url()).pathname;
     await page.getByRole("button", { name: "Pause", exact: true }).click();
+    // Seeking to the early game makes this pause/resume test independent of
+    // runner speed: a fast CI browser can finish an entire replay before
+    // the next assertion and correctly show Replay instead of Play.
+    const gameTime = page.getByRole("slider", { name: "Game time", exact: true });
+    await gameTime.fill("120");
     const pausedScore = await page.getByTestId("gm-game-score").innerText();
     await page.waitForTimeout(300);
     assert.equal(await page.getByTestId("gm-game-score").innerText(), pausedScore, "watch mode pauses its scoreboard");
-    await page.getByRole("button", { name: "Play", exact: true }).click();
+    const resume = page.getByRole("button", { name: "Play", exact: true });
+    if (await resume.count()) await resume.click();
+    else await page.getByRole("button", { name: "Replay", exact: true }).click();
+    await page.getByRole("button", { name: "Pause", exact: true }).waitFor();
     await page.waitForTimeout(500);
     await page.getByRole("button", { name: "Pause", exact: true }).click();
-    assert.ok(Number(await page.getByRole("slider", { name: "Game time", exact: true }).inputValue()) > 0, "playback resumes and advances the game clock");
+    assert.ok(Number(await gameTime.inputValue()) > 0, "playback resumes and advances the game clock");
     await page.screenshot({ path: `${dir}/watch-${width}.png`, fullPage: true });
     await page.getByRole("link", { name: "View final box score", exact: true }).click();
     await page.waitForURL(url => url.pathname === watchPath && !url.search);
