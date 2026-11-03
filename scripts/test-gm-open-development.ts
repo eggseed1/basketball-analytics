@@ -11,7 +11,7 @@ import {
   developmentProfileOf, developmentOutlook, developmentSkillKeys,
   softGrowthFactor,
 } from "../src/gm/engine/development-profile";
-import { raiseCeiling } from "../src/gm/engine/development";
+import { raiseCeiling, breakoutEvidence, reviewPlayerCeilings } from "../src/gm/engine/development";
 import { simulationRates } from "../src/gm/engine/player-profile";
 import type { GmDevelopmentProfile, GmLeagueState, GmPlayer } from "../src/gm/types";
 
@@ -116,6 +116,38 @@ const reloaded = parseFranchise(exportFranchise(context(sustained))).players.fin
 )!;
 assert.deepEqual(reloaded.developmentProfile, sustained.developmentProfile);
 assert.deepEqual(reloaded.ceilingGrowth, sustained.ceilingGrowth);
+
+// A productive 28-year-old generated player can still discover a new gear;
+// this must not allow ordinary late-career volume to manufacture superstars.
+const late = {
+  ...rookie,
+  age: 28,
+  seasonLine: {
+    season: "2027", team: "BOS", gp: 65, min: 1950,
+    pts: 1900, ast: 450, reb: 300, stl: 100, blk: 40,
+    tov: 210, fgm: 690, fga: 1300, tpm: 175, tpa: 480, ftm: 345, fta: 420,
+  },
+} as GmPlayer;
+assert.equal(breakoutEvidence(late, 2027).eligible, true,
+  "an exceptional sustained age-28 season should open a late breakout");
+assert.equal(breakoutEvidence({ ...late, age: 30 }, 2027).eligible, false,
+  "late breakthroughs do not extend indefinitely through a career");
+assert.equal(breakoutEvidence({ ...late, draftModel: undefined }, 2027).eligible, false,
+  "legacy NBA growth retains its established breakout-age rules");
+assert.equal(breakoutEvidence({ ...late, seasonLine: {
+  ...late.seasonLine!, gp: 20, min: 600,
+} }, 2027).eligible, false,
+  "small samples cannot unlock late breakouts");
+const lateLeague = {
+  ...context(late),
+  schedule: league.schedule.map(game => ({ ...game, played: true })),
+};
+const lateReviewed = reviewPlayerCeilings(lateLeague);
+const lateAfter = lateReviewed.players.find(row => row.id === late.id)!;
+assert.ok((lateAfter.developmentProfile?.discovery ?? 0) > (late.developmentProfile?.discovery ?? 0),
+  "season review must persist late-breakout discovery in the actual league");
+assert.equal(reviewPlayerCeilings(lateReviewed), lateReviewed,
+  "late-breakout review cannot be reapplied on reload");
 
 const minutes = (mpg: number): GmPlayer => ({
   ...rookie,
