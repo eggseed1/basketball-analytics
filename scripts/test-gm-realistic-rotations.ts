@@ -3,6 +3,7 @@ import {readFileSync} from "node:fs";
 import {stripTypeScriptTypes} from "node:module";
 import vm from "node:vm";
 import {createGeneratedLeague} from "../src/gm/seed/create-league";
+import {createRng} from "../src/gm/engine/rng";
 import {prepareFranchise,exportFranchise,parseFranchise} from "../src/gm/engine/franchise";
 import {rotationForTeam,shiftSnapshot,validShiftPlan,autoBalanceRotation,rebalanceForInjuryChanges} from "../src/gm/engine/coaching";
 import {simulateGame,actualShiftSnapshot} from "../src/gm/engine/simulate";
@@ -11,6 +12,9 @@ import {listedPositionCorrections,splitPositionListing} from "../src/gm/engine/p
 import {assignFive,roleFit} from "../src/gm/engine/rotation-roles";
 import type {GmLeagueState,GmPlayer,GmTeam} from "../src/gm/types";
 
+// The fixture uses uid() for player IDs; seed those too so substitution
+// choices and rotation snapshots do not change between CI runs.
+Math.random=createRng(726421);
 const league=prepareFranchise(createGeneratedLeague({userTeamId:"bos",season:2028,seed:23}));
 const team=league.teams.find(t=>t.id==="bos")!;
 const roster=league.players.filter(p=>p.teamId===team.id);
@@ -72,6 +76,7 @@ for(let slot=0;slot<24;slot++){
   if(slot===0)assert.deepEqual(actual,expected,"opening tip respects starters");
   if([...expected].every(id=>actual.has(id)))matchingFrames++;
 }
+console.log(`Rotation preview matched ${matchingFrames}/24 simulated two-minute shifts (seeded fixture).`);
 assert.ok(matchingFrames>=16,"planned shifts remain dominant, while contextual bench/foul-out changes are permitted");
 const regulationMinutes=result.box.players.filter(p=>p.teamId===team.id).reduce((n,p)=>n+p.minutes,0);
 assert.equal(regulationMinutes,240+(result.box.overtime??0)*25,"contextual substitutions preserve 240 regulation minutes");
