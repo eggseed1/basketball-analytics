@@ -182,7 +182,7 @@ async function main(){
     transitions.push({from:before.season,to:after.season,
       winCorrelation:+winCorrelation.toFixed(3),
       averageAbsWinChange:+mean(changes.map(c=>Math.abs(c.delta))).toFixed(2),
-      25plusSwings:changes.filter(c=>Math.abs(c.delta)>=25).length,
+      "25plusSwings":changes.filter(c=>Math.abs(c.delta)>=25).length,
       unpromptedLargeSwings:changes.filter(c=>Math.abs(c.delta)>=25&&c.retention>=.8&&Math.abs(c.qualityDelta)<2.5),
       clubs:changes});
   }
