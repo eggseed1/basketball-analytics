@@ -12,6 +12,7 @@ import {
   softGrowthFactor,
 } from "../src/gm/engine/development-profile";
 import { raiseCeiling } from "../src/gm/engine/development";
+import { simulationRates } from "../src/gm/engine/player-profile";
 import type { GmDevelopmentProfile, GmLeagueState, GmPlayer } from "../src/gm/types";
 
 const league = prepareFranchise(createGeneratedLeague({
@@ -69,6 +70,8 @@ assert.ok((grown.sheet?.attributes.threePoint ?? 0) > (rookie.sheet?.attributes.
   "shooting focus must improve an actual basketball skill");
 assert.deepEqual(grown.developmentProfile, strong,
   "hidden player profile persists through individual skill progression");
+assert.ok(simulationRates(grown).threeShare > simulationRates(rookie).threeShare,
+  "developing a shooter must change his simulated shot mix, not only his OVR");
 
 const defender = { ...rookie, developmentFocus: "defense" as const };
 const defended = advanceDynamicProgression(defender, {
