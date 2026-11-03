@@ -5,7 +5,7 @@ import vm from "node:vm";
 import {createGeneratedLeague} from "../src/gm/seed/create-league";
 import {prepareFranchise,exportFranchise,parseFranchise} from "../src/gm/engine/franchise";
 import {rotationForTeam,shiftSnapshot,validShiftPlan,autoBalanceRotation,rebalanceForInjuryChanges} from "../src/gm/engine/coaching";
-import {simulateGame} from "../src/gm/engine/simulate";
+import {simulateGame,actualShiftSnapshot} from "../src/gm/engine/simulate";
 import {POSITIONS,positionalMinutePlan,rotationMerit,withListedPositions,assignLeaguePositions} from "../src/gm/engine/lineup";
 import {listedPositionCorrections,splitPositionListing} from "../src/gm/engine/position-listings";
 import type {GmLeagueState,GmPlayer,GmTeam} from "../src/gm/types";
@@ -31,6 +31,25 @@ for(const row of original.rows)for(let s=0;s<24;s++)if(row.on[s]&&(s===0||!row.o
 assert.ok(isolated<stints/3,`continuous stints replace checkerboard substitutions (${isolated}/${stints})`);
 const result=simulateGame(game,league.teams,league.players,712);
 const side=game.homeTeamId===team.id?"home":"away";
+
+for(const teamId of [game.homeTeamId,game.awayTeamId]){
+  const actual=actualShiftSnapshot(result.box,teamId);
+  const sideKey=game.homeTeamId===teamId?"home":"away";
+  assert.equal(actual.reduce((n,row)=>n+row.on.filter(Boolean).length,0),120,
+    "each team must record exactly 120 player-shift blocks in regulation");
+  for(let slot=0;slot<24;slot++){
+    assert.deepEqual(
+      new Set(actual.filter(row=>row.on[slot]).map(row=>row.playerId)),
+      new Set(result.box.stints![slot]![sideKey]),
+      "postgame shift chart must show the actual court unit, not a planned preview"
+    );
+  }
+  for(const row of actual){
+    assert.equal(row.on.length,24);
+    assert.equal(row.playerName,result.box.players.find(p=>p.playerId===row.playerId)?.playerName);
+  }
+}
+
 let matchingFrames=0;
 for(let slot=0;slot<24;slot++){
   const actual=new Set(result.box.stints![slot]![side]);
