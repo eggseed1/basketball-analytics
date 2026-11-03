@@ -54,8 +54,14 @@ export function developmentProfileOf(player: GmPlayer): GmDevelopmentProfile {
       0.67, 1.32
     ) * 1000) / 1000;
   }
+  // Some unheralded prospects genuinely learn at an exceptional rate.
+  // This is independent of draft rank, not an assigned final overall.
+  // Extra rolls are appended after existing aptitudes to keep prior saves
+  // and previously generated identities deterministic.
+  const learningSurge = rng() < 0.012 ? 2.45 : 1;
   return {
     version: 1,
+    learningSurge,
     learning: Math.round(learning * 1000) / 1000,
     adaptability: Math.round(adaptability * 1000) / 1000,
     aptitudes,
@@ -100,8 +106,8 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
   // Elite skills and OVR have progressively diminishing returns. These are
   // soft friction, never a hard OVR destiny tied to the draft lottery.
   const ovrDrag = overall < 77 ? 1 : overall < 82 ? 0.89
-    : overall < 86 ? 0.72 : overall < 90 ? 0.48
-    : overall < 94 ? 0.27 : 0.12;
+    : overall < 86 ? 0.72 : overall < 90 ? 0.67
+    : overall < 94 ? 0.29 : 0.12;
   const skillDrag = skill < 82 ? 1 : skill < 89 ? 0.88
     : skill < 94 ? 0.68 : 0.44;
   const newSkillTax = skill < 57 ? (0.82 + (profile.adaptability - 0.7) * 0.17) : 1;
@@ -109,8 +115,8 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
     (0.74 + (profile.aptitudes[focus] ?? mean(profile.aptitudes.creation, profile.aptitudes.shooting)) * 0.26) *
     (0.82 + profile.adaptability * 0.18);
   return clamp(
-    disposition * (1 + profile.discovery) * ovrDrag * skillDrag * newSkillTax,
-    0.035, 1.65
+    disposition * (profile.learningSurge ?? 1) * (1 + profile.discovery) * ovrDrag * skillDrag * newSkillTax,
+    0.035, profile.learningSurge && profile.learningSurge > 1 ? 3.3 : 1.65
   );
 }
 

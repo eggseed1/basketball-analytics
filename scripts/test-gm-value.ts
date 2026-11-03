@@ -11,6 +11,7 @@ import { evaluateTrade } from "../src/gm/engine/trades";
 import {
   contractSurplusM,
   draftSlotTradePoints,
+  publicDraftClassMultiplier,
   pickStars,
   playerStars,
   projectedSlot,
@@ -68,13 +69,13 @@ function team(id: string, goal: "contend" | "tank" = "contend"): GmTeam {
   } as GmTeam;
 }
 
-test("draft slot curve prices #1 far above the rest of the lottery", () => {
+test("lottery picks command a premium without an automatic 2x markup", () => {
   const one = draftSlotTradePoints(1);
   const two = draftSlotTradePoints(2);
   const ten = draftSlotTradePoints(10);
   const thirty = draftSlotTradePoints(30);
-  assert.ok(one / two >= 1.8, `#1 should be ~2× #2 (got ${one}/${two})`);
-  assert.ok(one / ten >= 5, `#1 should be ≥5× #10 (got ${one}/${ten})`);
+  assert.ok(one / two >= 1.3 && one / two <= 1.8, `#1 is a premium but not an automatic 2x #2 (got ${one}/${two})`);
+  assert.ok(one / ten >= 4, `#1 should cost materially more than #10 (got ${one}/${ten})`);
   assert.ok(one / thirty >= 15, `#1 should dwarf a late first (got ${one}/${thirty})`);
   assert.ok(two > draftSlotTradePoints(5));
   assert.ok(draftSlotTradePoints(5) > ten);
@@ -120,6 +121,23 @@ test("a bad team's pick projects earlier than a good team's pick", () => {
     tradeLog: [],
     settings: { salaryCapM: 165, luxuryTaxM: 180, firstApronM: 190, secondApronM: 200, maxRoster: 15, minRoster: 14, seasonLength: 82 },
   } as unknown as GmLeagueState;
+  assert.equal(publicDraftClassMultiplier(league, 2028), 1,
+    "future classes remain unknowable in pick negotiations");
+  const projections = (consensus: number) => ({
+    ...league,
+    draftPool: Array.from({length:8},(_,index)=>"test-prospect-"+index),
+    players:[...league.players,...Array.from({length:8},(_,index)=>({
+      ...player("test-prospect-"+index,"",75,19),
+      teamId:null, draftYear:2027, consensusRank:index+1,
+      consensus
+    }))],
+  }) as GmLeagueState;
+  assert.ok(publicDraftClassMultiplier(projections(1.5),2027) > publicDraftClassMultiplier(projections(-0.5),2027),
+    "public stronger classes should make current lottery picks more valuable");
+  const drafted = projections(1.5);
+  drafted.draftPool = drafted.draftPool.slice(3);
+  assert.equal(publicDraftClassMultiplier(drafted,2027), publicDraftClassMultiplier(projections(1.5),2027),
+    "class strength and current-year pick price must not drift as selections come off the board");
   const badPick = bad.draftPicks[0]!;
   const goodPick = good.draftPicks[0]!;
   assert.ok(projectedSlot(league, badPick) < projectedSlot(league, goodPick));

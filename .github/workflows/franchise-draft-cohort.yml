@@ -8,6 +8,7 @@ on:
       - 'src/gm/seed/prospect-identities.ts'
       - 'scripts/test-gm-draft-class.ts'
       - 'scripts/test-gm-systems-pass.ts'
+      - 'scripts/test-gm-skill-expression.ts'
       - 'scripts/test-gm-pace.ts'
   workflow_dispatch:
 permissions:
@@ -31,6 +32,8 @@ jobs:
         run: npx tsx scripts/test-gm-systems-pass.ts
       - name: Star workload and foul-out rotation regression
         run: npx tsx scripts/test-gm-pace.ts
+      - name: Human choices versus passive development and class variety
+        run: npx tsx scripts/test-gm-skill-expression.ts
       - name: Open-ended development and saved-profile compatibility
         run: npx tsx scripts/test-gm-open-development.ts
       - name: Save draft cohort distribution

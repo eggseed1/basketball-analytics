@@ -751,7 +751,7 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   let opportunity=0.72+Math.min(minutes,24)/24*0.4;
   if(player.developmentPlan==="practice") {opportunity=minutes<18?0.94+coach*0.05:0.91;reasons.push("Skills work preserves a path while rotation minutes are limited");}
   else if(player.developmentPlan==="rotation") {opportunity=0.5+Math.min(minutes,26)/26*0.7;reasons.push(minutes>=16?"Regular game reps support the role plan":"The rotation plan needs more game reps");}
-  if(minutes>34) {opportunity*=0.94;reasons.push("Heavy minutes add workload, not extra development credit");}
+  if(minutes>34) {opportunity*=0.82;reasons.push("Heavy minutes add fatigue, not extra development credit");}
   if(player.injury) {opportunity*=0.72;reasons.push("Injury limited development work");}
   if ((opts.mentorBonus??0)>0) reasons.push("A veteran teammate supports focused development work");
   const staff=(1+coach*0.06)*clamp(opts.devStaff??1,0.85,1.25);
@@ -761,8 +761,10 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   // Baseline practice must not turn nearly half of the second round into
   // rotation players. Most learners advance patiently; unusually responsive
   // rookies retain the chance to become genuinely surprising late gems.
-  const learningPace=openPath
-    ? clamp(0.81+Math.max(0,developmentProfileOf({...player,sheet}).learning-1.02)*0.55,0.81,1.08)
+  const profile = openPath ? developmentProfileOf({...player,sheet}) : null;
+  const learningPace=openPath && profile
+    ? clamp(0.78+Math.max(0,profile.learning-1.02)*0.55,0.78,1.08) *
+      (profile.learningSurge ?? 1)
     : 1;
   const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;

@@ -318,12 +318,17 @@ export type ProspectTier =
 export function rollProspectTier(count: number, rng: () => number): ProspectTier[] {
   const tiers: ProspectTier[] = [];
   // Target mix for a ~60-player pool (2 rounds + extras)
+  // Class-wide strength is sampled once, not assigned to every prospect.
+  // Weak years, average years and unusually strong classes now have
+  // materially different top-end depth, while the long-run mean stays stable.
+  const classRoll = rng();
+  const classStrength = classRoll < 0.17 ? -1 : classRoll > 0.85 ? 1 : 0;
   const quotas: { tier: ProspectTier; n: number }[] = [
-    { tier: "superstar", n: rng() < 0.38 ? 1 : 0 },
-    { tier: "allstar", n: Math.max(1, Math.round(count * (0.035 + rng() * 0.025))) },
-    { tier: "starter", n: Math.max(6, Math.round(count * 0.15)) },
-    { tier: "rotation", n: Math.max(12, Math.round(count * 0.28)) },
-    { tier: "fringe", n: Math.max(12, Math.round(count * 0.28)) },
+    { tier: "superstar", n: rng() < (classStrength === 1 ? 0.68 : classStrength === -1 ? 0.12 : 0.36) ? 1 : 0 },
+    { tier: "allstar", n: Math.max(0, Math.round(count * (0.03 + rng() * 0.025) + classStrength * 1.2)) },
+    { tier: "starter", n: Math.max(4, Math.round(count * (0.145 + rng() * 0.025) + classStrength * 2.5)) },
+    { tier: "rotation", n: Math.max(9, Math.round(count * (0.26 + rng() * 0.04) + classStrength * 1.5)) },
+    { tier: "fringe", n: Math.max(9, Math.round(count * (0.26 + rng() * 0.04) - classStrength)) },
     { tier: "depth", n: 0 },
   ];
   for (const q of quotas) {

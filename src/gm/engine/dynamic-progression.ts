@@ -204,7 +204,13 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   if (withSheet.injury) activity *= 0.78;
   const professionalism = 0.9 + workEthicOf(withSheet) / 1000;
   const staff = clamp(1 + (context.coach ?? 0) * 0.07 + ((context.staff ?? 1) - 1) * 0.12 + (context.mentor ?? 0), 0.85, 1.4);
-  const growthFriction = openPath ? softGrowthFactor(withSheet, baseline) : 1;
+  // Across 10+ draft classes an unconditional bonus slowly inflates the
+  // league's average. Preserve rare exceptional learning, but temper the
+  // ordinary path; no prospect receives a fixed future OVR.
+  const growthFriction = openPath
+    ? softGrowthFactor(withSheet, baseline) *
+      ((profile?.learningSurge ?? 1) > 1 ? 1 : 0.9)
+    : 1;
   const positive = ageDelta > 0 ? ageDelta * bonus * path * activity *
     availability * professionalism * staff * growthFriction : ageDelta;
   const performance = signal * (isSummer ? 1.1 : 0.52);

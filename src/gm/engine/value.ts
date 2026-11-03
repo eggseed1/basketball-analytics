@@ -157,13 +157,13 @@ export function projectedSlot(league: GmLeagueState, pick: GmDraftPick): number 
  */
 export function draftSlotTradePoints(slot: number): number {
   const n = clamp(Math.round(slot), 1, 60);
-  // Explicit top of the board — #1 is a franchise cornerstone, not "a bit
-  // better than #2". Ratios track modern trade charts: ~2× #2, ~5× #10.
-  if (n === 1) return 58;
-  if (n === 2) return 30;
-  if (n === 3) return 23;
-  if (n === 4) return 19;
-  if (n === 5) return 16.5;
+  // Exceptional #1s command a premium, but an average #1 should not
+  // automatically be worth twice #2 regardless of draft class.
+  if (n === 1) return 49;
+  if (n === 2) return 34;
+  if (n === 3) return 26;
+  if (n === 4) return 22;
+  if (n === 5) return 19;
   if (n === 6) return 14.5;
   if (n === 7) return 13;
   if (n === 8) return 12;
@@ -183,7 +183,8 @@ export function pickStars(league: GmLeagueState, pick: GmDraftPick): number {
   if (cached != null) return cached;
   const slot = projectedSlot(league, pick);
   const points = draftSlotTradePoints(slot);
-  // Same 0.5–5 scale as players. #1 lands at 5; #2 ~4; mid-first ~2–3; seconds ~1.
+  // UI keeps its intentionally coarse 0.5–5 scale; offers use
+  // unrounded points and a class-aware premium instead.
   const stars = clamp(Math.round((points / 11.6) * 2) / 2, 0.5, 5);
   cache.pickStars.set(pick.id, stars);
   return stars;
@@ -292,10 +293,31 @@ export function playerTradePoints(player: GmPlayer, league?: GmLeagueState): num
   return Math.max(1, Math.round((talent * age * control + potential + surplus) * availability));
 }
 
+/**
+ * Only the current year's public scouting board can change draft value.
+ * Future classes remain unknown. This reads consensus rather than hidden
+ * development DNA, so the CPU never cheats in pre-draft trade negotiations.
+ */
+export function publicDraftClassMultiplier(league: GmLeagueState, season: number): number {
+  if (season !== league.season) return 1;
+  const top = league.players
+    // Keep already-selected prospects in the public class evaluation: a
+    // pick-price curve must not change merely because draft night advanced.
+    .filter(player => player.draftYear === season && player.consensusRank != null && player.consensus != null)
+    .sort((a,b) => (a.consensusRank ?? 99) - (b.consensusRank ?? 99))
+    .slice(0, 8);
+  if (top.length < 6) return 1;
+  const avg = top.reduce((total,p)=>total+(p.consensus ?? 0),0)/top.length;
+  return clamp(1+(avg-0.25)*0.4,0.78,1.24);
+}
+
 export function pickTradePoints(league: GmLeagueState, pick: GmDraftPick): number {
-  // Use the slot curve directly so #1 stays expensive in package math,
-  // not flattened by the 5-star display cap.
-  return Math.round(draftSlotTradePoints(projectedSlot(league, pick)));
+  // A known strong/weak class moves *this year's* projected lottery price;
+  // distant picks get no magically prescient certainty.
+  const slot = projectedSlot(league,pick);
+  const classFactor = publicDraftClassMultiplier(league,pick.season);
+  const leverage = pick.round === 1 ? 1 : 0.35;
+  return Math.round(draftSlotTradePoints(slot) * (1+(classFactor-1)*leverage));
 }
 
 export function formatStars(stars: number): string {
