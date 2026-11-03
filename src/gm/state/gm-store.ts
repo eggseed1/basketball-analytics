@@ -122,7 +122,6 @@ import { claimOpeningRosters } from "@/gm/seed/opening-roster";
 import {
   autoBalanceRotation as buildBalancedMinutes,
   coachingOf,
-  shiftSnapshot,
   rebalanceForInjuryChanges,
   resetBalancedRotation,
 } from "@/gm/engine/coaching";
