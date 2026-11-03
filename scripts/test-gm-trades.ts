@@ -13,6 +13,7 @@ import {
   stepienViolation,
 } from "../src/gm/engine/trades";
 import { pickStars } from "../src/gm/engine/value";
+import { tradeDeskRead } from "../src/gm/engine/trade-desk";
 
 const league = createGeneratedLeague({
   userTeamId: "bos",
@@ -59,6 +60,34 @@ const blocked = evaluateTrade(
 assert.equal(blocked.ok, false);
 
 const partnerPlayer = league.players.find((p) => p.teamId === "nyk")!;
+
+const frozen = firsts[0]!;
+const frozenLeague = {
+  ...league,
+  teams: league.teams.map(team =>
+    team.id === "bos" ? { ...team, draftPicks: team.draftPicks.map(p =>
+      p.id === frozen.id ? { ...p, frozen: true } : p) } : team),
+};
+assert.match(evaluateTrade(frozenLeague, "bos", "nyk",
+  [{ type: "pick", id: frozen.id }], [{ type: "player", id: partnerPlayer.id }]).reason ?? "",
+  /frozen/, "second-apron frozen picks cannot be traded");
+assert.equal(evaluateTrade(league, "bos", "nyk",
+  [{ type: "pick", id: frozen.id }], []).ok, false,
+  "every trade must exchange consideration between two clubs");
+const beforeProtected = { ...bos, draftPicks: bos.draftPicks.map(p =>
+  p.id === firsts[0]!.id ? { ...p, protectionTopN: 4 } : p) };
+assert.equal(stepienViolation(beforeProtected, [both[0]!, both[1]!], [], league.season), true,
+  "protected outgoing firsts must not be counted as guaranteed retained picks");
+assert.equal(stepienViolation(bos, both, [{ ...firsts[0]!, protectionTopN: 4 }], league.season), true,
+  "an incoming protected first is not guaranteed Stepien coverage");
+const emptyRead = tradeDeskRead(league, "nyk", [], []);
+assert.equal(emptyRead.status, "incomplete");
+assert.match(emptyRead.need, /pick|need|help|upgrade/i);
+const rulesRead = tradeDeskRead(frozenLeague, "nyk",
+  [{ type: "pick", id: frozen.id }], [{ type: "player", id: partnerPlayer.id }]);
+assert.equal(rulesRead.status, "rules", "the trade desk must explain actual engine legality");
+assert.match(rulesRead.detail, /frozen/);
+
 const pack = findTradePackage(league, "bos", "nyk", partnerPlayer.id);
 if (pack) {
   const verdict = evaluateTrade(
@@ -69,6 +98,9 @@ if (pack) {
     [{ type: "player", id: partnerPlayer.id }]
   );
   assert.equal(verdict.ok, true, verdict.ok ? "" : verdict.reason);
+  assert.equal(tradeDeskRead(league, "nyk", pack,
+    [{ type: "player", id: partnerPlayer.id }]).status, "ready",
+    "the desk forecast and accepted trade must use one evaluator");
 }
 
 const tooMuchCash = evaluateTrade(

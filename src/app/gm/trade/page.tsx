@@ -26,10 +26,10 @@ import {
   playerStars,
   projectedSlot,
   stanceLabel,
-  stanceNote,
   tradeStance,
 } from "@/gm/engine/value";
 import { offerIsFair } from "@/gm/engine/offers";
+import { tradeDeskRead } from "@/gm/engine/trade-desk";
 import { playerSheet } from "@/gm/engine/attributes";
 import { scoutPotentialView } from "@/gm/engine/scouting";
 import { entrySeasonIsCurrentSaveYear } from "@/gm/lib/career-overlay";
@@ -188,6 +188,7 @@ function DealLane({
                     inspectedId === asset.id && "border-foreground/40 bg-secondary"
                   )}
                 >
+                  {player && <GmPlayerPortrait player={player} size="sm" />}
                   <span className="min-w-0 flex-1 truncate font-medium">
                     {assetChipLabel(league, asset)}
                   </span>
@@ -364,13 +365,7 @@ function OfferEditor({
       null
   );
   const fair = offerIsFair(league, offer.fromTeamId, offer.toTeamId, receive, send);
-  const preview = evaluateTrade(
-    league,
-    league.userTeamId,
-    offer.fromTeamId,
-    send,
-    receive
-  );
+  const read = tradeDeskRead(league, offer.fromTeamId, send, receive);
   const mine = league.players.filter(
     (player) => player.teamId === league.userTeamId && player.contract
   );
@@ -408,15 +403,9 @@ function OfferEditor({
         onInspect={setInspectedId}
       />
 
-      <div className="rounded-lg border border-border bg-background/70 px-3 py-2 text-sm">
-        <p>
-          On their board, you send {formatNumber(preview.fromValue, 1)} and they
-          send {formatNumber(preview.toValue, 1)}.
-          {dirty ? " (edited from the original offer)" : ""}
-        </p>
-        <p className="mt-0.5 text-muted-foreground">
-          {fair.ok ? "They will do this deal." : fair.reason}
-        </p>
+      <div role="status" className="rounded-lg border border-border bg-background/70 px-3 py-3 text-sm">
+        <p className="font-semibold">{fair.ok ? "Ready to accept" : read.headline}{dirty ? " · Edited terms" : ""}</p>
+        <p className="mt-1 text-muted-foreground">{fair.ok ? "Both teams agree to these terms." : fair.reason ?? read.detail}</p>
       </div>
 
       {inspected ? (
@@ -575,7 +564,9 @@ function TradeBody() {
   const declineIncomingOffer = useGmStore((s) => s.declineIncomingOffer);
   const setTradeStatus = useGmStore((s) => s.setTradeStatus);
   const setPickProtection = useGmStore((s) => s.setPickProtection);
-  const [partnerId, setPartnerId] = useState("nyk");
+  const [partnerChoice, setPartnerChoice] = useState<string | null>(null);
+  const partnerId = league?.teams.find(t => t.id === partnerChoice && t.id !== league.userTeamId)?.id ??
+    league?.teams.find(t => t.id !== league.userTeamId && !t.id.startsWith("as-"))?.id ?? "";
   const [give, setGive] = useState<GmTradeAsset[]>([]);
   const [get, setGet] = useState<GmTradeAsset[]>([]);
   const [cashSend, setCashSend] = useState(0);
@@ -601,7 +592,6 @@ function TradeBody() {
   if (!league) return null;
   const team = userTeam(league);
   const partner = league.teams.find((t) => t.id === partnerId) ?? team;
-  const limit = cashLimitM(league.settings);
   const available = teamCashM(team, league.settings);
   const machineInspected = machineInspectId
     ? league.players.find((player) => player.id === machineInspectId) ?? null
@@ -626,36 +616,38 @@ function TradeBody() {
     fromAssets,
     toAssets
   );
+  const desk = tradeDeskRead(league, partnerId, fromAssets, toAssets);
+  const talks = (league.tradeTalks ?? []).filter(talk => talk.teamId === partnerId).slice(0, 2);
+  if (league.incomingOffer) {
+    return <div className="flex flex-col gap-4">
+      <header><h1 className="text-2xl font-bold tracking-tight">Incoming trade offer</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Review the offer, adjust its terms, or decline before continuing the season.</p></header>
+      <IncomingOffer league={league} onAccept={acceptIncomingOffer} onDecline={declineIncomingOffer} />
+    </div>;
+  }
 
   return (
     <div className="flex flex-col gap-4">
-      {league.incomingOffer ? (
-        <IncomingOffer
-          league={league}
-          onAccept={acceptIncomingOffer}
-          onDecline={declineIncomingOffer}
-        />
-      ) : null}
-      <h2 className="text-lg font-semibold">{t("tradeTitle")}</h2>
-      <p className="text-sm text-muted-foreground">
-        Picks can be protected. Cash is capped at ${formatNumber(limit, 1)}M
-        and you have ${formatNumber(available, 1)}M left. Untouchables cannot
-        move. Two consecutive years without a first is refused.
-      </p>
-      <label className="flex max-w-xs flex-col gap-1 text-sm">
-        Partner
+      <header className="space-y-1">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Front office</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("tradeTitle")}</h1>
+        <p className="text-sm text-muted-foreground">Choose players, review the deal, then talk to the other GM.</p>
+      </header>
+      <label className="flex max-w-sm flex-col gap-1.5 text-sm font-medium">
+        Trade partner
         <select
           className="rounded-md border border-border bg-background px-2 py-2"
           value={partnerId}
           onChange={(e) => {
-            setPartnerId(e.target.value);
+            setPartnerChoice(e.target.value);
             setGet([]);
             setCashReceive(0);
             setPackages(null);
+            setMessage(null);
           }}
         >
           {league.teams
-            .filter((t) => t.id !== team.id)
+            .filter((t) => t.id !== team.id && !t.id.startsWith("as-"))
             .map((t) => (
               <option key={t.id} value={t.id}>
                 {t.abbr} - {t.city} ({stanceLabel(tradeStance(league, t.id))})
@@ -663,10 +655,11 @@ function TradeBody() {
             ))}
         </select>
       </label>
-      <p className="text-sm text-muted-foreground">
-        {stanceNote(partner.city, tradeStance(league, partner.id))} You are{" "}
-        {stanceLabel(tradeStance(league, team.id))}.
+      <p className="text-xs text-muted-foreground">
+        <ClubMark teamId={partner.id} label={partner.abbr} /> is {stanceLabel(tradeStance(league, partner.id))}. {desk.need}
       </p>
+      <DealBox league={league} receive={toAssets} send={fromAssets}
+        onInspect={setMachineInspectId} inspectedId={machineInspectId} />
 
       {machineInspected ? (
         <TradePlayerPeek
@@ -677,7 +670,7 @@ function TradeBody() {
       ) : null}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="flex flex-col gap-3">
+        <div data-testid="trade-my-players" className="flex flex-col gap-3">
           <PlayerList
             title={`You send (${team.abbr})`}
             players={myPlayers}
@@ -687,44 +680,41 @@ function TradeBody() {
             onToggle={(player) =>
               setGive(toggleAsset(give, { type: "player", id: player.id }))
             }
-            statusOf={(player) =>
-              (team.untouchables ?? []).includes(player.id)
-                ? "untouchable"
-                : (team.tradeBlock ?? []).includes(player.id)
-                  ? "block"
-                  : "open"
-            }
-            onStatus={(player, status) => setTradeStatus(player.id, status)}
           />
-          <PickList
-            title="Your picks"
-            picks={team.draftPicks}
-            selected={give}
-            league={league}
-            onToggle={(pick) =>
-              setGive(toggleAsset(give, { type: "pick", id: pick.id }))
-            }
-            onProtect={(pick, topN) => setPickProtection(pick.id, topN)}
-          />
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="flex items-center gap-2">
-              Cash you send ($M)
-              <input
-                type="number"
-                min={0}
-                max={available}
-                step={0.5}
-                value={cashSend}
-                onChange={(event) => setCashSend(Number(event.target.value))}
-                className="w-24 rounded-md border border-border bg-background px-2 py-1"
-              />
-            </span>
-            <span className="text-xs text-muted-foreground">
-              Sweetener only. Cash does not count toward salary matching.
-            </span>
-          </label>
+          <details className="rounded-xl border border-border p-3">
+            <summary className="cursor-pointer text-sm font-semibold">Trade block and untouchables</summary>
+            <div className="mt-3 max-h-56 divide-y divide-border overflow-y-auto">
+              {myPlayers.map(player => <div key={player.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <span className="min-w-0 truncate">{player.name}</span>
+                <select aria-label={player.name + " trade status"}
+                  className="max-w-32 rounded-md border border-border bg-background px-2 py-1 text-xs"
+                  value={(team.untouchables ?? []).includes(player.id) ? "untouchable" :
+                    (team.tradeBlock ?? []).includes(player.id) ? "block" : "open"}
+                  onChange={event => setTradeStatus(player.id, event.target.value as "open" | "block" | "untouchable")}>
+                  <option value="open">Available</option>
+                  <option value="block">Shop player</option>
+                  <option value="untouchable">Untouchable</option>
+                </select>
+              </div>)}
+            </div>
+          </details>
+          <details className="rounded-xl border border-border p-3">
+            <summary className="cursor-pointer text-sm font-semibold">Add your picks or cash</summary>
+            <div className="mt-3 space-y-3">
+              <PickList title="Your picks" picks={team.draftPicks} selected={give} league={league}
+                onToggle={pick => setGive(toggleAsset(give, { type: "pick", id: pick.id }))}
+                onProtect={(pick, topN) => setPickProtection(pick.id, topN)} />
+              <label className="flex flex-wrap items-center gap-2 text-sm">
+                Cash ($M)
+                <input aria-label="Cash you send" type="number" min={0} max={available} step={0.5}
+                  value={cashSend} onChange={event => setCashSend(Number(event.target.value))}
+                  className="w-24 rounded-md border border-border bg-background px-2 py-1" />
+              </label>
+              <p className="text-xs text-muted-foreground">Cash does not count toward salary matching. ${formatNumber(available, 1)}M available.</p>
+            </div>
+          </details>
         </div>
-        <div className="gm-club-panel flex flex-col gap-3" style={teamColorStyle(partner.id)}>
+        <div data-testid="trade-partner-players" className="gm-club-panel flex flex-col gap-3" style={teamColorStyle(partner.id)}>
           <PlayerList
             title={
               <>
@@ -739,55 +729,76 @@ function TradeBody() {
               setGet(toggleAsset(get, { type: "player", id: player.id }))
             }
           />
-          <PickList
-            title={`${partner.abbr} picks`}
-            picks={partner.draftPicks}
-            selected={get}
-            league={league}
-            onToggle={(pick) =>
-              setGet(toggleAsset(get, { type: "pick", id: pick.id }))
-            }
-          />
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="flex items-center gap-2">
-              Cash they send ($M)
-              <input
-                type="number"
-                min={0}
-                max={cashLimitM(league.settings)}
-                step={0.5}
-                value={cashReceive}
-                onChange={(event) => setCashReceive(Number(event.target.value))}
-                className="w-24 rounded-md border border-border bg-background px-2 py-1"
-              />
-            </span>
-            <span className="text-xs text-muted-foreground">
-              Yearly cash-in-trades limit. Not salary matching.
-            </span>
-          </label>
+          <details className="rounded-xl border border-border p-3">
+            <summary className="cursor-pointer text-sm font-semibold">Ask for picks or cash</summary>
+            <div className="mt-3 space-y-3">
+              <PickList title={`${partner.abbr} picks`} picks={partner.draftPicks} selected={get} league={league}
+                onToggle={pick => setGet(toggleAsset(get, { type: "pick", id: pick.id }))} />
+              <label className="flex flex-wrap items-center gap-2 text-sm">
+                Cash ($M)
+                <input aria-label="Cash they send" type="number" min={0} max={cashLimitM(league.settings)} step={0.5}
+                  value={cashReceive} onChange={event => setCashReceive(Number(event.target.value))}
+                  className="w-24 rounded-md border border-border bg-background px-2 py-1" />
+              </label>
+              <p className="text-xs text-muted-foreground">Cash is a trade sweetener, not salary matching.</p>
+            </div>
+          </details>
         </div>
       </div>
 
-      <div className="rounded-xl border border-border p-3 text-sm">
-        <p>
-          On {partner.abbr}&apos;s board, you send {formatNumber(preview.fromValue, 1)} and they
-          send {formatNumber(preview.toValue, 1)}.
-        </p>
-        <p className="text-muted-foreground">
-          {fromAssets.length === 0 && toAssets.length === 0
-            ? "Add players, picks, or cash."
-            : preview.ok
-              ? "Partner would accept this package."
-              : preview.reason}
-        </p>
-      </div>
+      <section data-testid="trade-gm-response" role="status" aria-live="polite"
+        className="rounded-xl border border-border bg-card p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">From the {partner.abbr} front office</p>
+            <h2 className="mt-1 text-lg font-bold">{desk.headline}</h2>
+          </div>
+          <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold",
+            desk.status === "ready" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+            desk.status === "value" ? "bg-amber-500/15 text-amber-700 dark:text-amber-400" :
+            "bg-secondary text-muted-foreground")}>
+            {desk.status === "ready" ? "Ready" : desk.status === "value" ? "Negotiable" :
+              desk.status === "rules" ? "League rule" : "Building"}
+          </span>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">{desk.detail}</p>
+        <div className="mt-3 grid gap-2 border-t border-border pt-3 text-xs text-muted-foreground sm:grid-cols-2">
+          <p>Salary sent: <strong className="text-foreground">${formatNumber(desk.sendsSalaryM, 1)}M</strong></p>
+          <p>Salary received: <strong className="text-foreground">${formatNumber(desk.receivesSalaryM, 1)}M</strong></p>
+        </div>
+        {desk.status === "value" && <p className="mt-2 text-xs text-muted-foreground">
+          Send the proposal to hear their counter. You can keep negotiating here.
+        </p>}
+        {desk.status === "rules" && <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+          {preview.reason}
+        </p>}
+      </section>
+      {talks.length > 0 && <section aria-label="Recent negotiations" className="rounded-xl border border-border p-4">
+        <h2 className="text-sm font-semibold">Recent negotiations with {partner.abbr}</h2>
+        <div className="mt-2 space-y-3">
+          {talks.map(talk => <div key={talk.id} className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3 text-sm">
+            <div className="min-w-0 flex-1">
+              <p className="font-medium">{talk.reason}</p>
+              <p className="mt-1 text-xs text-muted-foreground">You offered {assetNames(league, talk.youSend)} for {assetNames(league, talk.youReceive)}.</p>
+              {talk.counter && <p className="mt-1 text-xs text-muted-foreground">They want: {assetNames(league, talk.counter)}.</p>}
+            </div>
+            {talk.counter && <Button size="sm" variant="outline" onClick={() => {
+              setGive(talk.counter!.filter(a => a.type !== "cash"));
+              setGet(talk.youReceive.filter(a => a.type !== "cash"));
+              setCashSend(talk.counter!.filter(a => a.type === "cash").reduce((sum, a) => sum + (a.cashM ?? 0), 0));
+              setCashReceive(talk.youReceive.filter(a => a.type === "cash").reduce((sum, a) => sum + (a.cashM ?? 0), 0));
+              setMessage("Counteroffer loaded. Review it before proposing.");
+            }}>Load counteroffer</Button>}
+          </div>)}
+        </div>
+      </section>}
 
       <div className="flex flex-wrap gap-2">
         <Button
-          disabled={!fromAssets.length && !toAssets.length}
+          disabled={!fromAssets.length || !toAssets.length || desk.status === "rules" || league.tradeDeadlinePassed}
           onClick={() => {
             const res = proposeTrade(partnerId, fromAssets, toAssets);
-            setMessage(res.ok ? "Trade accepted." : res.reason ?? "Rejected");
+            setMessage(res.ok ? "Trade completed." : (res.reason ?? "Declined") + " Review their response above.");
             if (res.ok) {
               setGive([]);
               setGet([]);
@@ -797,7 +808,7 @@ function TradeBody() {
             }
           }}
         >
-          Propose trade
+          {desk.status === "value" ? "Ask for a counter" : "Propose trade"}
         </Button>
         <Button
           variant="outline"
@@ -812,11 +823,15 @@ function TradeBody() {
             const target = (mine[0] ?? theirs[0])!;
             const found = findPlayerPackages(league, league.userTeamId, target.id);
             setPackages(found);
-            setMessage(found.length === 0 ? "No package works for them." : null);
+            setMessage(found.length === 0 ? "No legal package found for this player. Try a different trade partner or adjust the offer." : null);
           }}
         >
-          Find a package
+          Find deals
         </Button>
+        <Button variant="ghost" onClick={() => {
+          setGive([]); setGet([]); setCashSend(0); setCashReceive(0);
+          setPackages(null); setMessage(null);
+        }}>Clear</Button>
       </div>
       {packages && packages.length > 0 ? (
         <ul className="flex flex-col gap-2">
@@ -828,7 +843,7 @@ function TradeBody() {
                   type="button"
                   className="w-full rounded-lg border border-border px-3 py-2 text-left text-sm hover:bg-muted"
                   onClick={() => {
-                    setPartnerId(pack.partnerId);
+                    setPartnerChoice(pack.partnerId);
                     setGive(pack.youSend.filter((asset) => asset.type !== "cash"));
                     setGet(pack.youReceive.filter((asset) => asset.type !== "cash"));
                     setCashSend(pack.youSend.find((asset) => asset.type === "cash")?.cashM ?? 0);
@@ -894,15 +909,14 @@ function PlayerList({
               />
               <GmPlayerPortrait player={player} />
               <span className="min-w-0 flex-1 truncate">
-                {player.name}
-                {" · "}
-                {player.position} · {displayOverall(player)}
+                <span className="block truncate font-medium">{player.name}</span>
+                <span className="block text-xs text-muted-foreground">
+                  {player.position}{player.secondaryPosition ? "/" + player.secondaryPosition : ""} · {displayOverall(player)} OVR ·
+                  ${player.contract?.annualSalaryM.toFixed(1) ?? "-"}M
+                </span>
               </span>
-              <StarValue stars={playerStars(player)} />
-              <Surplus player={player} />
-              <span className="tabular-nums text-muted-foreground">
-                ${player.contract?.annualSalaryM.toFixed(1) ?? "-"}M
-              </span>
+              <span className="hidden sm:inline"><StarValue stars={playerStars(player)} /></span>
+              <span className="hidden lg:inline"><Surplus player={player} /></span>
             </label>
             {onInspect ? (
               <button

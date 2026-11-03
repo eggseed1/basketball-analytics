@@ -29,6 +29,23 @@ import {
 
 const CASH_ANCHOR = 140.588;
 
+// The trade finder evaluates thousands of bundles against the same saved
+// league. Cache the immutable club profile by league identity so role-aware
+// pricing does not re-scan every roster for each candidate.
+const boardProfiles = new WeakMap<GmLeagueState, Map<string, ReturnType<typeof rosterProfile>>>();
+function boardProfile(state: GmLeagueState, teamId: string) {
+  let byTeam = boardProfiles.get(state);
+  if (!byTeam) {
+    byTeam = new Map();
+    boardProfiles.set(state, byTeam);
+  }
+  const cached = byTeam.get(teamId);
+  if (cached) return cached;
+  const profile = rosterProfile(state, teamId);
+  byTeam.set(teamId, profile);
+  return profile;
+}
+
 export function cashLimitM(settings: { salaryCapM: number }): number {
   return Math.round((7 * settings.salaryCapM) / CASH_ANCHOR * 10) / 10;
 }
@@ -55,12 +72,28 @@ export function boardValue(
   assets: GmTradeAsset[]
 ): number {
   const picks = state.teams.flatMap((team) => team.draftPicks);
+  const profile = boardProfile(state, viewerId);
   return assets.reduce((sum, asset) => {
     const player =
       asset.type === "player" ? state.players.find((entry) => entry.id === asset.id) : undefined;
     const pick = asset.type === "pick" ? picks.find((entry) => entry.id === asset.id) : undefined;
     const base = assetValue(asset, state.players, picks, state);
-    return sum + Math.round(base * stanceMultiplier(state, viewerId, asset, player, pick));
+    let roleFactor = 1;
+    if (player) {
+      // A weak guard group wants a real guard upgrade more than a third
+      // similar wing. Primary and genuine secondary roles both matter.
+      const positions = [player.position, player.secondaryPosition].filter(Boolean);
+      const rank = Math.min(...positions.map(pos => profile.needs.indexOf(pos!)));
+      const bestAt = Math.max(0, ...positions.map(pos =>
+        profile.depth.find(row => row.position === pos)?.best ?? 0));
+      const established = overallOf(player) >= bestAt - 2;
+      if (player.teamId === viewerId && rank <= 1 && established) roleFactor = 1.10;
+      else if (player.teamId !== viewerId && rank <= 1 && established) roleFactor = 1.08;
+      else if (player.teamId !== viewerId && rank >= 3 &&
+        overallOf(player) < bestAt - 5) roleFactor = 0.94;
+    }
+    return sum + Math.round(base * roleFactor *
+      stanceMultiplier(state, viewerId, asset, player, pick));
   }, 0);
 }
 
@@ -96,10 +129,13 @@ function firstSeasons(
   for (const pick of team.draftPicks) {
     if (pick.round !== 1) continue;
     const traded = sentIds.has(pick.id);
-    if (!traded || (pick.protectionTopN ?? 0) > 0) seasons.add(pick.season);
+    // A protected outgoing first can still convey. It cannot be counted as a
+    // guaranteed retained pick for Stepien coverage.
+    if (!traded) seasons.add(pick.season);
   }
   for (const pick of received) {
-    if (pick.round === 1) seasons.add(pick.season);
+    // Incoming lottery-protected picks may not convey, either.
+    if (pick.round === 1 && !(pick.protectionTopN ?? 0)) seasons.add(pick.season);
   }
   return seasons;
 }
@@ -113,14 +149,14 @@ export function stepienViolation(
   const sentIds = new Set(
     sent.filter((asset) => asset.type === "pick").map((asset) => asset.id)
   );
-  const before = [...firstSeasons(team, new Set(), [])].sort((a, b) => a - b);
+  const before = firstSeasons(team, new Set(), []);
   const after = firstSeasons(team, sentIds, receivedPicks);
-  for (let i = 0; i < before.length - 1; i += 1) {
-    const year = before[i]!;
-    const next = before[i + 1]!;
-    if (next !== year + 1) continue;
-    if (year < season) continue;
-    if (!after.has(year) && !after.has(next)) return true;
+  // Check the post-trade calendar rather than only consecutive picks on the
+  // original list. A club already missing one year cannot trade the next.
+  const last = Math.max(season, ...before, ...after);
+  for (let year = season; year < last; year += 1) {
+    if ((before.has(year) || before.has(year + 1)) &&
+        !after.has(year) && !after.has(year + 1)) return true;
   }
   return false;
 }
@@ -135,6 +171,7 @@ export function evaluateTrade(
   const allPicks = state.teams.flatMap((t) => t.draftPicks);
   const invalid = (reason: string) => ({ ok: false, reason, fromValue: 0, toValue: 0 });
   if (fromTeamId === toTeamId || !state.teams.some(t => t.id === fromTeamId) || !state.teams.some(t => t.id === toTeamId)) return invalid("Choose two different teams.");
+  if (!fromAssets.length || !toAssets.length) return invalid("Each team must send at least one asset.");
   const seenAssets = new Set<string>();
   for (const [teamId, assets] of [[fromTeamId, fromAssets], [toTeamId, toAssets]] as const) {
     for (const asset of assets) {
@@ -143,6 +180,7 @@ export function evaluateTrade(
       seenAssets.add(key);
       if (asset.type === "player" && !state.players.some(p => p.id === asset.id && p.teamId === teamId)) return invalid("A team can only trade players on its roster.");
       if (asset.type === "pick" && !allPicks.some(p => p.id === asset.id && p.ownerTeamId === teamId)) return invalid("A team can only trade picks it owns.");
+      if (asset.type === "pick" && allPicks.some(p => p.id === asset.id && p.frozen)) return invalid("This draft pick is frozen and cannot be traded.");
     }
   }
   const fromSal = fromAssets.reduce(
@@ -598,8 +636,8 @@ export function findPlayerPackages(
     }
     if (best) {
       hits.push({ partnerId: club.id, youSend: offered, youReceive: best });
-      // Eight partners is enough for the desk; stop hammering every club.
-      if (hits.length >= 8) break;
+      // Rank all clubs before selecting the best eight; otherwise the
+      // trade finder overweights alphabetical team order.
     }
   }
   hits.sort(
