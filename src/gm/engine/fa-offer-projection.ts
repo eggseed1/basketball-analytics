@@ -79,13 +79,21 @@ export function projectFreeAgentResponse(
   // The offer-sheet path in userOfferFreeAgent requires the open/fill signing
   // window once the season journey exists. Keep the slider forecast and submit
   // button aligned with that gate rather than advertising a sendable offer.
-  const sheetWindowClosed = Boolean(league.seasonFlow) &&
-    player.rightsKind === "restricted" && player.rightsTeamId !== league.userTeamId &&
+  const outsideRestricted = player.rightsKind === "restricted" &&
+    player.rightsTeamId !== league.userTeamId;
+  const sheetWindowClosed = Boolean(league.seasonFlow) && outsideRestricted &&
     stage !== "open" && stage !== "fill";
-  if (!verdict.ok || !marketOpen || !available || sheetWindowClosed) {
+  const sheetNotTendered = outsideRestricted &&
+    (!player.rightsTeamId || player.qoStatus !== "tendered");
+  const sheetPendingMatch = outsideRestricted && (league.faMarket?.offerSheets ?? [])
+    .some(sheet => sheet.playerId === player.id && sheet.status === "pending_match");
+  if (!verdict.ok || !marketOpen || !available || sheetWindowClosed ||
+      sheetNotTendered || sheetPendingMatch) {
     const reason = !marketOpen ? "Negotiations are not open in this market stage." :
-      sheetWindowClosed ? "Restricted offer sheets open when contracts can be signed." :
       !available ? "This player is unavailable or already committed." :
+      sheetWindowClosed ? "Restricted offer sheets open when contracts can be signed." :
+      sheetNotTendered ? "He needs a tendered qualifying offer before an outside offer sheet." :
+      sheetPendingMatch ? "An offer sheet is already awaiting a match decision." :
       verdict.ok ? null : verdict.reason;
     return { chance: 0, level: "unlikely", note: reason ?? "Cannot offer now.",
       legal: false, reason, score: 0, rivalScore: null };
