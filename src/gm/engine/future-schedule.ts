@@ -244,8 +244,8 @@ function placeFixtures(teams:GmTeam[],season:number,seed:number,groups:Groups){
       if(best<0)break;
       const g=remaining.splice(best,1)[0]!;
       today.add(g.home);today.add(g.away);
-      gamesByTeam.get(g.home)!.push({day,home:true,opponent:g.away});
-      gamesByTeam.get(g.away)!.push({day,home:false,opponent:g.home});
+      gamesByTeam.get(g.home)!.push({day:date,home:true,opponent:g.away});
+      gamesByTeam.get(g.away)!.push({day:date,home:false,opponent:g.home});
       assigned.push({id:g.id,home:g.home,away:g.away,date:dayOf(date*MILLIS_DAY)});
     }
   }
