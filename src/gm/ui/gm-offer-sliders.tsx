@@ -16,13 +16,13 @@ const colors: Record<Signal,string> = {
  */
 export function GmOfferSliders({
   salaryM, setSalaryM, minM, maxM, years, setYears, minYears, maxYears,
-  chance, status, prefix, disabled = false,
+  chance, status, prefix, disabled = false, interestLabel = "Agent interest forecast",
 }: {
   salaryM: number; setSalaryM: (value: number) => void;
   minM: number; maxM: number;
   years: number; setYears: (value: number) => void;
   minYears: number; maxYears: number;
-  chance: number; status: Signal; prefix: string; disabled?: boolean;
+  chance: number; status: Signal; prefix: string; disabled?: boolean; interestLabel?: string;
 }) {
   const enabled = !disabled && maxM >= minM && minM > 0;
   const min = Math.max(.01, minM);
@@ -67,7 +67,7 @@ export function GmOfferSliders({
           <p className="text-xl font-bold tabular-nums">${(salary * years).toFixed(2)}M</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-muted-foreground">Agent interest forecast</p>
+          <p className="text-xs text-muted-foreground">{interestLabel}</p>
           <p className="text-lg font-bold tabular-nums" style={{ color }}>{chance}% · <span className="capitalize">{status}</span></p>
         </div>
       </div>
