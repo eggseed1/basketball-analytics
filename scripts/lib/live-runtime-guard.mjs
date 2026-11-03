@@ -2,6 +2,7 @@
 export const LIVE_BOARD_FILES = [
   "src/data/runtime/standings-snapshot.json",
   "src/data/runtime/game-snapshot.json",
+  "src/data/runtime/team-game-box-snapshot.json",
 ];
 
 const timestamp = (value) => {
@@ -9,7 +10,7 @@ const timestamp = (value) => {
   return Number.isFinite(parsed) ? parsed : -1;
 };
 const latestSeason = (value) => {
-  const seasons = Array.isArray(value?.seasons) ? value.seasons : Object.keys(value?.seasons ?? {});
+  const seasons = Array.isArray(value?.seasons) ? value.seasons : Object.keys(value?.seasons ?? value?.teams ?? {});
   return seasons.filter(x => /^20\d\d-\d\d$/.test(x)).sort().at(-1) ?? null;
 };
 const standingRows = (data, season) =>
@@ -39,6 +40,17 @@ export function snapshotRegressed(file, current, nightly) {
   if (file.endsWith("/game-snapshot.json")) {
     const sourceFinals = finals(nightly, season);
     return finals(current, season) < sourceFinals;
+  }
+  if (file.endsWith("/team-game-box-snapshot.json")) {
+    const sources = Object.entries(nightly.teams?.[season] ?? {});
+    if (!sources.length) throw new Error(`Nightly team boxes for ${season} have no teams`);
+    const actual = current?.teams?.[season] ?? {};
+    return sources.some(([team, rows]) => {
+      const got = actual[team] ?? [];
+      if (got.length < rows.length) return true;
+      const lastDate = rows.at(-1)?.[0] ?? "";
+      return lastDate > (got.at(-1)?.[0] ?? "");
+    });
   }
   throw new Error(`Unrecognized live board: ${file}`);
 }
