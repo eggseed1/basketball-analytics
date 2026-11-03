@@ -1,4 +1,5 @@
 DRBL production code-only deploy request
 Target: main
-Includes Franchise Lab rotation overhaul through cff92bfcfc03d8bd9a6860dd3bab4388043e3700
-Requested on 2026-11-02
+Includes validated Franchise Lab fixes through 34561448c0eb45fe9c5488c3fe55f2958f32e672
+Checks: CI 41644711802 (117/117); Franchise Lab 41644711907 (all jobs successful)
+Requested on 2026-11-03
