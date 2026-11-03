@@ -167,6 +167,11 @@ export function GmIndividualTraining({ roster, season }: { roster: GmPlayer[]; s
         </p>
         <p className="mt-1 text-xs text-muted-foreground">{descriptions[focus]}</p>
         <p className="mt-1 text-xs text-muted-foreground">{outlook.detail}</p>
+        {player.sheet?.developmentReport?.gains.some(gain => gain.includes("+")) ? (
+          <p className="mt-2 text-xs font-medium" data-testid="development-last-checkin">
+            Last check-in: {player.sheet.developmentReport.gains.slice(0, 4).join(" · ")}
+          </p>
+        ) : null}
       </div>
       {Math.round(overall - previous) !== 0 ? <span className="text-sm font-bold tabular-nums text-primary">
         {overall >= previous ? "+" : ""}{Math.round(overall - previous)} OVR this season
