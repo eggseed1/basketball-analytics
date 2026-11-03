@@ -14,7 +14,6 @@ import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { createRealSeasonLeague } from "../src/gm/seed/create-real-season-league";
 import { fetchLeagueDepthCharts } from "../src/gm/seed/real-depth";
-import type { GmPosition, GmPlayer } from "../src/gm/types";
 
 const POS = ["PG", "SG", "SF", "PF", "C"] as const;
 type Pos = typeof POS[number];
@@ -98,7 +97,6 @@ async function main() {
     else if (b) { after=b.position; reason="2025-26 listing, low-minute sample"; confidence="low"; }
     // Respect a deliberate, explicit NBA source over a broad G/F estimate
     // where both independent five-spot references are missing.
-    const excluded=[after];
     const secondaryCandidates=POS.filter(pos=>pos!==after && (
       (b && b.percentages[pos]>=18) || depth.includes(pos)
     )).sort((a,c)=>((b?.percentages[c]??0)+(e?.get(c)??0)*14)-((b?.percentages[a]??0)+(e?.get(a)??0)*14));
