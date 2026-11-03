@@ -105,7 +105,7 @@ export function raiseCeiling(player: GmPlayer, amount: number, season: number, s
       developmentProfile: after,
       ceilingGrowth: {
         total: (player.ceilingGrowth?.total ?? 0) + gain,
-        reviewedSeason: player.ceilingGrowth?.reviewedSeason,
+        ...(player.ceilingGrowth?.reviewedSeason != null ? { reviewedSeason: player.ceilingGrowth.reviewedSeason } : {}),
         awards: [...(player.ceilingGrowth?.awards ?? []), { season, source, gain, reason }],
       },
     };
