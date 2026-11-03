@@ -188,6 +188,7 @@ function DealLane({
                     inspectedId === asset.id && "border-foreground/40 bg-secondary"
                   )}
                 >
+                  {player && <GmPlayerPortrait player={player} size="sm" />}
                   <span className="min-w-0 flex-1 truncate font-medium">
                     {assetChipLabel(league, asset)}
                   </span>
