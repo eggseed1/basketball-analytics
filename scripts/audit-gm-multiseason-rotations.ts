@@ -239,7 +239,7 @@ const report={
   perTeamSeason:results.map(summary),
   outlierRosters:rosterProfiles.filter(profile=>{
     const row=results.find(result=>result.team===profile.team&&result.season===profile.season);
-    return row && row.emergencySeatMinutes/Math.max(1,row.activeSeatMinutes)>0.05;
+    return row && row.emergencySeatMinutes/Math.max(1,row.activeSeatMinutes)>0.03;
   }),
   errors,
 };
@@ -279,8 +279,13 @@ const qualityInversions=aggregate.rankInversions/Math.max(1,aggregate.rankPairs)
 const minuteMae=aggregate.absoluteError/Math.max(1,aggregate.playerGames);
 // Broad guardrails prevent a future positional-coverage regression without
 // demanding rigid five-position quota rotations or exact clock-level parity.
-assert.ok(emergencyShare<0.018,`Emergency seat share regressed: ${(emergencyShare*100).toFixed(2)}%`);
+assert.ok(emergencyShare<0.01,`Emergency seat share regressed: ${(emergencyShare*100).toFixed(2)}%`);
 assert.ok(avoidableShare<0.002,`Avoidable automatic seat assignments regressed: ${(avoidableShare*100).toFixed(2)}%`);
-assert.ok(qualityInversions<0.025,`Merit-first minute rankings regressed: ${(qualityInversions*100).toFixed(2)}%`);
-assert.ok(minuteMae<1.4,`Planned-versus-actual minutes regressed: ${minuteMae.toFixed(2)} MAE`);
+assert.ok(qualityInversions<0.023,`Merit-first minute rankings regressed: ${(qualityInversions*100).toFixed(2)}%`);
+assert.ok(minuteMae<1.2,`Planned-versus-actual minutes regressed: ${minuteMae.toFixed(2)} MAE`);
+const maxTeamEmergency=Math.max(...results.map(row=>
+  row.emergencySeatMinutes/Math.max(1,row.activeSeatMinutes)));
+assert.ok(maxTeamEmergency<0.05,
+  `A team still has ${(100*maxTeamEmergency).toFixed(2)}% emergency-position minutes`);
+
 
