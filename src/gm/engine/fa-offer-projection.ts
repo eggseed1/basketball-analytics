@@ -76,8 +76,15 @@ export function projectFreeAgentResponse(
   const available = player.teamId == null &&
     (stage !== "re_signing" || player.rightsTeamId === league.userTeamId) &&
     !(league.faMarket?.agreements ?? []).some(o => o.playerId === player.id);
-  if (!verdict.ok || !marketOpen || !available) {
+  // The offer-sheet path in userOfferFreeAgent requires the open/fill signing
+  // window once the season journey exists. Keep the slider forecast and submit
+  // button aligned with that gate rather than advertising a sendable offer.
+  const sheetWindowClosed = Boolean(league.seasonFlow) &&
+    player.rightsKind === "restricted" && player.rightsTeamId !== league.userTeamId &&
+    stage !== "open" && stage !== "fill";
+  if (!verdict.ok || !marketOpen || !available || sheetWindowClosed) {
     const reason = !marketOpen ? "Negotiations are not open in this market stage." :
+      sheetWindowClosed ? "Restricted offer sheets open when contracts can be signed." :
       !available ? "This player is unavailable or already committed." :
       verdict.ok ? null : verdict.reason;
     return { chance: 0, level: "unlikely", note: reason ?? "Cannot offer now.",
