@@ -123,13 +123,14 @@ export function GmIndividualTraining({ roster, season }: { roster: GmPlayer[]; s
   if (!player) return <p className="text-sm text-muted-foreground">No players available.</p>;
   const focus = player.developmentFocus ?? "balanced";
   const labels: Record<NonNullable<GmPlayer["developmentFocus"]>, string> = {
-    balanced: "Balanced", shooting: "Shooting", creation: "Shot creation",
+    balanced: "Balanced", shooting: "Shooting", creation: "Shot creation", finishing: "Finishing",
     defense: "Defense", rebounding: "Rebounding",
   };
   const descriptions: Record<NonNullable<GmPlayer["developmentFocus"]>, string> = {
-    balanced: "Build his existing strengths with broad skill work.",
+    balanced: "Work on the core skills for his natural position.",
     shooting: "Develop shotmaking and consistency from the line.",
     creation: "Train handle, passing and on-ball control.",
+    finishing: "Improve layups and drives, or inside touch and post finishing for bigs.",
     defense: "Build the defensive skills suited to his position.",
     rebounding: "Work on positioning, strength and securing the glass.",
   };

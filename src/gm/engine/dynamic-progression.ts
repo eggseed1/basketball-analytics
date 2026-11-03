@@ -126,12 +126,14 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
     ? developmentSkillKeys(old.position, focus)
     : old.developmentFocus === "shooting" ? ["threePoint", "midrange", "freeThrow"]
     : old.developmentFocus === "creation" ? ["passAccuracy", "ballHandle", "speedWithBall"]
+    : old.developmentFocus === "finishing" ? developmentSkillKeys(old.position, "finishing")
     : old.developmentFocus === "defense" ? ["perimeterDefense", "interiorDefense", "steal", "block"]
     : old.developmentFocus === "rebounding" ? ["offReb", "defReb", "strength"]
     : old.position === "C" || old.position === "PF" ? ["interiorDefense", "defReb", "strength", "closeShot"]
     : ["threePoint", "perimeterDefense", "ballHandle", "midrange"];
   const swing = checkpoint === "summer" ? Math.max(1, Math.min(3, Math.abs(step))) : step === 0 ? 0 : 1;
-  const affinity = openPath ? developmentProfileOf(old).aptitudes[focus] : 1;
+  const aptitude = developmentProfileOf(old).aptitudes;
+  const affinity = openPath ? aptitude[focus] ?? ((aptitude.shooting + aptitude.creation) / 2) : 1;
   const attributeSteps = step === 0 ? 0 : Math.max(1, Math.round(swing * affinity));
   for (const name of chosen) {
     const key = name as keyof typeof attrs;
@@ -142,7 +144,7 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
   const impact = clamp(Math.round((oldRatings.impact + impactChange) * 100) / 100, -4, 10);
   const attacking = old.developmentFocus === "defense" ? 0.2
     : old.developmentFocus === "rebounding" ? 0.4
-    : openPath && (focus === "shooting" || focus === "creation") ? 0.86
+    : openPath && (focus === "shooting" || focus === "creation" || focus === "finishing") ? 0.86
     : 0.65;
   const offense = clamp(Math.round((oldRatings.offense + impactChange * attacking) * 100) / 100, -5, 12);
   const defense = clamp(Math.round((oldRatings.defense + impactChange * (1 - attacking)) * 100) / 100, -5, 10);

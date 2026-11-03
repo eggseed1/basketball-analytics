@@ -769,7 +769,7 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   const budget=annual*pace*(1+clamp(opts.mentorBonus??0,0,0.18))*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
   const steps=Math.min(Math.max(0,ratingLimit-sheet.overall),Math.floor(budget));
   const carry=gap>0?budget-Math.floor(budget):0;
-  const focusKeys:Record<string,Array<keyof GmAttributes>>={shooting:["threePoint","midrange","freeThrow"],creation:["passAccuracy","ballHandle","speedWithBall","drivingLayup"],defense:["interiorDefense","perimeterDefense","steal","block"],rebounding:["offReb","defReb","strength"]};
+  const focusKeys:Record<string,Array<keyof GmAttributes>>={shooting:["threePoint","midrange","freeThrow"],creation:["passAccuracy","ballHandle","speedWithBall","drivingLayup"],finishing:player.position==="C"||player.position==="PF"?["closeShot","standingDunk","postControl"]:["drivingLayup","closeShot","drivingDunk"],defense:["interiorDefense","perimeterDefense","steal","block"],rebounding:["offReb","defReb","strength"]};
   const keys=focusKeys[player.developmentFocus??"balanced"]??GROW_KEYS[player.position];
   const attributes={...sheet.attributes},gains:string[]=[];
   for(const key of keys) {
@@ -787,7 +787,7 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   const impact=steps?Math.round(high*100)/100:player.ratings.impact;
   const overall=clamp(offset+overallFromAttributes(player.position,attributes,{impact,drbl100:player.drbl100}),25,ratingLimit);
   const delta=impact-player.ratings.impact;
-  const offenseShare=player.developmentFocus==="defense"?0.15:player.developmentFocus==="rebounding"?0.35:0.75;
+  const offenseShare=player.developmentFocus==="defense"?0.15:player.developmentFocus==="rebounding"?0.35:player.developmentFocus==="finishing"?0.9:0.75;
   if(gap<=2) reasons.push("Limited headroom slows further gains");
   else reasons.push(age<=23?"Young player with skills still to develop":"Growth slows as the player approaches his prime");
   if(!steps&&gap>2) reasons.push("Small gains accumulate between reports");
@@ -886,7 +886,7 @@ export function progressSheet(
                 ? -1
                 : 0;
   let attributes = sheet.attributes;
-  const focusKeys: Record<string, Array<keyof GmAttributes>> = { shooting: ["threePoint", "midrange", "freeThrow"], creation: ["passAccuracy", "ballHandle", "drivingLayup"], defense: ["interiorDefense", "perimeterDefense", "steal", "block"], rebounding: ["offReb", "defReb", "strength"] };
+  const focusKeys: Record<string, Array<keyof GmAttributes>> = { shooting: ["threePoint", "midrange", "freeThrow"], creation: ["passAccuracy", "ballHandle", "drivingLayup"], finishing: player.position === "C" || player.position === "PF" ? ["closeShot","standingDunk","postControl"] : ["drivingLayup","closeShot","drivingDunk"], defense: ["interiorDefense", "perimeterDefense", "steal", "block"], rebounding: ["offReb", "defReb", "strength"] };
   if (ticks > 0) attributes = addKeys(attributes, focusKeys[player.developmentFocus ?? "balanced"] ?? GROW_KEYS[player.position], ticks);
   if (ticks < 0) {
     attributes = addKeys(attributes, DECLINE_KEYS, ticks);
@@ -898,7 +898,7 @@ export function progressSheet(
       );
     }
   }
-  const offenseShare = player.developmentFocus === "shooting" || player.developmentFocus === "creation" ? 0.9 : player.developmentFocus === "defense" ? 0.15 : player.developmentFocus === "rebounding" ? 0.35 : delta > 0 ? 0.62 : 0.45;
+  const offenseShare = player.developmentFocus === "shooting" || player.developmentFocus === "creation" || player.developmentFocus === "finishing" ? 0.9 : player.developmentFocus === "defense" ? 0.15 : player.developmentFocus === "rebounding" ? 0.35 : delta > 0 ? 0.62 : 0.45;
   // Impact tracks development, but at a damped rate so long saves do not
   // turn every rotation guy into a +1.5 board name.
   const impactDelta = delta * (delta > 0 ? 0.45 : 0.7);

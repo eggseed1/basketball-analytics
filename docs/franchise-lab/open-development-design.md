@@ -53,6 +53,10 @@ finishing at an exact OVR.
   implementation to avoid rewriting real-world ratings overnight.
 - Development UI leads with a player and a skill-direction selector, then a
   concise observed-status summary; the playing-time plan is optional.
+- Finishing is now a distinct focus: guards and wings develop drives and layups,
+  while bigs develop inside touch, standing finishes and post control. Older
+  persisted four-skill learning profiles remain valid with deterministic
+  fallback affinity; no preexisting save needs a reset.
 - The season tracker and generated-player page do not advertise a hidden
   ceiling; historic upgrades remain visible as development milestones.
 
