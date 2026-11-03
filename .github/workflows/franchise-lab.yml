@@ -47,6 +47,8 @@ jobs:
       - run: npm run test:franchise-dynamic-progression
       - run: npm run test:franchise-calendar
       - run: npm run test:franchise-flow
+      - name: Six-season free-agency offer and acceptance audit
+        run: npx tsx scripts/test-gm-free-agency.ts
       - run: npm run test:franchise-ux
       - run: npm run test:franchise-saves
       - run: npm run test:franchise-draft
