@@ -27,7 +27,7 @@ import {
   POSITION_BOOK_VERSION,
   withListedPositions,
 } from "@/gm/engine/lineup";
-import { applyBalancedRotations } from "@/gm/engine/coaching";
+import { applyBalancedRotations, coachingOf } from "@/gm/engine/coaching";
 import { coachForTeam, openCoachMarket, trainerForLevel } from "@/gm/seed/coaches";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
@@ -616,7 +616,7 @@ export function buildLeagueFromPlayerSeasons(
       return {
         ...team,
         coaching: {
-          ...team.coaching,
+          ...coachingOf(team),
           rotationDepth: 11 as const,
           minutes: book.minutes,
           coverSlot: book.coverSlot,
