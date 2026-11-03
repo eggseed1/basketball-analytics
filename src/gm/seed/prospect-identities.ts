@@ -587,6 +587,10 @@ export function createDraftClass(options: {
   const used = new Set<string>();
   const out: GmPlayer[] = [];
   const usedNames=new Set<string>();
+  // Some classes are notably deep at a specific position; the bias is
+  // small enough that every class still contains all five roster roles.
+  const deepPosition = pick(rng, POSITIONS);
+  const positionalClass = rng() < 0.28;
 
   // Pyramid first, then board chaos: stars can slide, and a sleeper can climb.
   const ranked = rollProspectTier(count, rng)
@@ -615,7 +619,8 @@ export function createDraftClass(options: {
       60,
       Math.max(1, Math.round((board * 59) / Math.max(1, count - 1)) + 1)
     );
-    const position = pick(rng, POSITIONS);
+    const position = positionalClass && board < 22 && rng() < 0.42
+      ? deepPosition : pick(rng, POSITIONS);
     let age = ageForSlot(slot, rng);
     const pipeRoll = rng();
     const pipeline: GmPlayer["pipeline"] =
