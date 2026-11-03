@@ -37,8 +37,12 @@ const neglected=mean(outcomes.map(x=>x.poor));
 const advantage=managed-neglected;
 assert.ok(advantage>=1.0,
   `Development skill must matter: ${advantage.toFixed(2)} OVR advantage over passive management`);
-assert.ok(outcomes.filter(x=>x.good>x.poor).length>outcomes.length*0.5,
+assert.ok(outcomes.filter(x=>x.good>x.poor).length>outcomes.length*0.7,
   "Good development should outperform passive management for most players, not just one jackpot");
+const managedRotation = outcomes.filter(x=>x.good>=74).length/outcomes.length;
+const neglectedRotation = outcomes.filter(x=>x.poor>=74).length/outcomes.length;
+assert.ok(managedRotation>neglectedRotation+0.04,
+  "better development decisions must increase useful rotation hits, not only mean OVR");
 const sorted=[...classStars].sort((a,b)=>a-b);
 assert.ok(sorted[14]! < sorted[134]!,
   "Draft classes need genuinely different high-readiness talent densities");
@@ -47,6 +51,6 @@ assert.ok(special.length>=1 && special.length<outcomes.length*0.04,
   "Exceptional learning DNA should be rare but occur in large draft populations");
 console.log("Development skill test passed",JSON.stringify({
   prospects:outcomes.length,managed:+managed.toFixed(2),neglected:+neglected.toFixed(2),
-  meanAdvantage:+advantage.toFixed(2),exceptionalLearners:special.length,
+  meanAdvantage:+advantage.toFixed(2),managedRotation:+managedRotation.toFixed(3),neglectedRotation:+neglectedRotation.toFixed(3),exceptionalLearners:special.length,
   draftReadyP10:sorted[14],draftReadyP90:sorted[134],
 }));
