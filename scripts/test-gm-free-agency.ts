@@ -25,6 +25,7 @@ import {
 } from "../src/gm/engine/fa-rfa";
 import { hasPendingOption } from "../src/gm/engine/fa-status";
 import { enterFreeAgency } from "../src/gm/engine/offseason";
+import { offseasonRosterLimit } from "../src/gm/engine/season-flow-state";
 import { evaluateOfferUtility, faPlayerPriorities } from "../src/gm/engine/fa-utility";
 import { faLocationPreferences, locationAppeal } from "../src/gm/engine/fa-location";
 import { competingFreeAgentOffers, legalFreeAgentSalaryRange,
@@ -685,8 +686,8 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
         `${year}: elite player ${candidate.id} signed a deeply under-market contract`);
     }
     for (const team of final.teams) {
-      assert.ok(final.players.filter(p => p.teamId === team.id).length <= final.settings.maxRoster,
-        `${year}: ${team.id} exceeds the offseason market roster cap`);
+      assert.ok(final.players.filter(p => p.teamId === team.id).length <= offseasonRosterLimit(final),
+        `${year}: ${team.id} exceeds the actual 21-player summer roster limit`);
     }
     summaries.push({
       season: year, signed: signed.length, eliteSigned,
