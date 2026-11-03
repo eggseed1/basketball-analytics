@@ -182,6 +182,34 @@ function main() {
   assert.ok(!cold.some((row) => row.season === "2026-27"));
   assert.ok(cold.some((row) => row.season === "2025-26"));
 
+
+  // A saved 2026-27 season with NYK must survive a trade to BOS in 2027-28.
+  // The priorLine fallback must not overwrite archived team identity.
+  const traded = player({
+    id: "traded", name: "Test Traded Player", teamId: "bos",
+    priorLine: line({ season: "2027", team: "nyk", gp: 70, min: 2000, pts: 1100, ast: 310 }),
+    seasonLine: line({ season: "2028", team: "bos", gp: 10, min: 280, pts: 180, ast: 45 }),
+  });
+  const older = line({ season: "2026", team: "mia", gp: 60, min: 1500, pts: 800, ast: 170 });
+  const older2 = line({ season: "2027", team: "nyk", gp: 70, min: 2000, pts: 1100, ast: 310 });
+  const history = {
+    ...league, season: 2028, players: [traded], boxScores: [],
+    history: [
+      { season: 2026, players: [{ id: traded.id, name: traded.name, teamId: "mia", age: 24, overall: 72, line: older }] },
+      { season: 2027, players: [{ id: traded.id, name: traded.name, teamId: "nyk", age: 25, overall: 75, line: older2 }] },
+    ],
+  } as GmLeagueState;
+  const seasons = overlaySimCareerSeasons([], history, traded);
+  assert.deepEqual(seasons.map(row => row.season), ["2027-28", "2026-27", "2025-26"],
+    "a traded player must keep all three simulated seasons");
+  assert.deepEqual(seasons.map(row => row.teamAbbreviation), ["BOS", "NYK", "MIA"],
+    "prior season team identities must persist after trades");
+  assert.deepEqual(seasons.map(row => row.points), [180, 1100, 800]);
+  // Legacy saves without an archive still display the last recorded season,
+  // using the seasonLine team rather than today's club.
+  const legacyRows = overlaySimCareerSeasons([], { ...history, history: [] }, traded);
+  assert.equal(legacyRows.find(row => row.season === "2026-27")?.teamAbbreviation, "NYK");
+
   console.log("career overlay ok");
 }
 
