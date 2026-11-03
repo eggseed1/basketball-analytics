@@ -61,9 +61,9 @@ async function main() {
   const workbookSources = JSON.parse(readFileSync(
     "artifacts/gm-bref-position-source-2026.json", "utf8"
   )) as Record<string,{rows:BRef[];error:string|null}>;
-  const aliases:Record<string,string>={BRK:"BKN",CHO:"CHA",PHO:"PHX"};
+  // Source extractor uses Basketball-Reference team aliases BRK/CHO/PHO.
   const results = await Promise.all(teams.map(async abbr=>{
-    const source = workbookSources[aliases[abbr]??abbr];
+    const source = workbookSources[abbr];
     if(source?.rows.length) return {abbr,rows:source.rows,error:null};
     try { return {abbr,rows:await fetchBRef(abbr),error:null}; }
     catch(error) {return {abbr,rows:[] as BRef[],error:String(source?.error??error)};}
