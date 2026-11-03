@@ -26,7 +26,6 @@ import {
   playerStars,
   projectedSlot,
   stanceLabel,
-  stanceNote,
   tradeStance,
 } from "@/gm/engine/value";
 import { offerIsFair } from "@/gm/engine/offers";
@@ -604,7 +603,6 @@ function TradeBody() {
   if (!league) return null;
   const team = userTeam(league);
   const partner = league.teams.find((t) => t.id === partnerId) ?? team;
-  const limit = cashLimitM(league.settings);
   const available = teamCashM(team, league.settings);
   const machineInspected = machineInspectId
     ? league.players.find((player) => player.id === machineInspectId) ?? null
@@ -847,7 +845,7 @@ function TradeBody() {
                   type="button"
                   className="w-full rounded-lg border border-border px-3 py-2 text-left text-sm hover:bg-muted"
                   onClick={() => {
-                    setPartnerId(pack.partnerId);
+                    setPartnerChoice(pack.partnerId);
                     setGive(pack.youSend.filter((asset) => asset.type !== "cash"));
                     setGet(pack.youReceive.filter((asset) => asset.type !== "cash"));
                     setCashSend(pack.youSend.find((asset) => asset.type === "cash")?.cashM ?? 0);
