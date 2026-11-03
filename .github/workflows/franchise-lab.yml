@@ -1,5 +1,14 @@
 name: Franchise Lab
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/gm/**'
+      - 'src/app/gm/**'
+      - 'scripts/*gm*'
+      - 'scripts/test-franchise-systems.mjs'
+      - 'package.json'
+      - '.github/workflows/franchise-lab.yml'
   pull_request:
     paths:
       - 'src/gm/**'
