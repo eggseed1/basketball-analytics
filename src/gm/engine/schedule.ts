@@ -1,14 +1,10 @@
 import type { GmLeagueState, GmScheduleGame, GmTeam } from "@/gm/types";
 import { uid } from "@/gm/engine/rng";
+import { generateFutureSchedule } from "@/gm/engine/future-schedule";
 import { emptyStandings } from "@/gm/engine/standings";
 import template from "@/gm/seed/nba-schedule-2026-27.json";
 
-/**
- * 2026-27 regular season as published (ESPN team schedules, Oct 20–Apr 11).
- * 1,200 games, 80 a team. The NBA adds the last 2 after the Cup group stage.
- * Later seasons reuse this rest pattern, flip home court every other year,
- * and fill those two games in without a third straight night.
- */
+/** Published 2026-27 NBA slate is used only for opening-year saves. */
 type Tip = { id: string; date: string; home: string; away: string };
 
 const TIPS = template as Tip[];
@@ -25,11 +21,6 @@ function formatUtc(ms: number): string {
 
 function addDays(iso: string, days: number): string {
   return formatUtc(parseIso(iso) + days * 86_400_000);
-}
-
-function shiftYears(iso: string, years: number): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  return formatUtc(Date.UTC((y ?? 2026) + years, (m ?? 1) - 1, d ?? 1));
 }
 
 function toGames(rows: Tip[], season: number): GmScheduleGame[] {
@@ -53,26 +44,19 @@ export function officialSchedule(season = OPENING_SEASON): GmScheduleGame[] {
   return toGames(TIPS, season);
 }
 
-/**
- * 2026-27 is the published NBA schedule, 80 games a team.
- * Later years keep that rest pattern. The NBA Cup knockout and the last
- * two games are added once group play is finished.
- */
+/** 2026-27 uses the real NBA calendar; future years are freshly constructed. */
 export function generateSchedule(
-  _teams: GmTeam[],
+  teams: GmTeam[],
   season: number,
-  _seed = 42
+  seed = 42,
+  cupGroups?: { East: string[][]; West: string[][] }
 ): GmScheduleGame[] {
   if (season === OPENING_SEASON) return officialSchedule(season);
-  const years = season - OPENING_SEASON;
-  const flip = years % 2 === 1;
-  const shifted: Tip[] = TIPS.map((tip) => ({
-    id: `${season}_${tip.id}`,
-    date: shiftYears(tip.date, years),
-    home: flip ? tip.away : tip.home,
-    away: flip ? tip.home : tip.away,
-  }));
-  return toGames(shifted, season);
+  const groups = cupGroups ?? {
+    East: [0, 1, 2].map(i => teams.filter(t => t.conference === "East").sort((a,b)=>a.id.localeCompare(b.id)).slice(i*5,i*5+5).map(t=>t.id)),
+    West: [0, 1, 2].map(i => teams.filter(t => t.conference === "West").sort((a,b)=>a.id.localeCompare(b.id)).slice(i*5,i*5+5).map(t=>t.id)),
+  };
+  return generateFutureSchedule(teams,season,seed,groups);
 }
 
 /** The open 2026-27 save was built on a packed calendar. Swap in the NBA slate. */
