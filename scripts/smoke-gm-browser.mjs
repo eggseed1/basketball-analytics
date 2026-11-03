@@ -34,6 +34,27 @@ try {
   await overview.locator("summary").click();
   assert.equal(await overview.evaluate(node => node.open), true, "overview remains available");
 
+  // The regular trade desk should work like a two-sided trade machine,
+  // with a clear live response and optional details on a narrow viewport.
+  await page.goto("http://127.0.0.1:3107/gm/trade", { waitUntil: "domcontentloaded" });
+  const gmRead = page.getByTestId("trade-gm-response");
+  await gmRead.getByRole("heading", { name: "Build a two-sided offer" }).waitFor();
+  await page.getByTestId("trade-my-players").getByRole("checkbox").first().check();
+  await page.getByTestId("trade-partner-players").getByRole("checkbox").first().check();
+  assert.equal(await gmRead.getByRole("heading", { name: "Build a two-sided offer" }).count(), 0,
+    "adding assets on both sides must update the live trade response");
+  await page.getByRole("button", { name: "Find deals", exact: true }).click();
+  await page.getByText("Check one player, on your club or theirs.", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "Clear", exact: true }).click();
+  await gmRead.getByRole("heading", { name: "Build a two-sided offer" }).waitFor();
+  assert.equal(await page.getByRole("button", { name: "Propose trade", exact: true }).isDisabled(), true);
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2),
+    "trade desk overflows the mobile viewport");
+  await page.screenshot({ path: `${dir}/trade-desk-mobile.png`, fullPage: true, animations: "disabled" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: `${dir}/trade-desk-desktop.png`, fullPage: true, animations: "disabled" });
+
   await page.goto("http://127.0.0.1:3107/gm/franchise", { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "Development and roles", exact: true }).waitFor();
   await page.screenshot({ path: `${dir}/desktop.png`, fullPage: true });
