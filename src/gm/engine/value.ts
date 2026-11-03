@@ -185,7 +185,9 @@ export function pickStars(league: GmLeagueState, pick: GmDraftPick): number {
   if (cached != null) return cached;
   const points = pickTradePoints(league, pick);
   // Same 0.5–5 scale as players. #1 lands at 5; #2 ~4; mid-first ~2–3; seconds ~1.
-  const stars = clamp(Math.round((points / 11.6) * 2) / 2, 0.5, 5);
+  // A square-root display scale preserves the #1 ceiling while giving #2 a
+  // visible 3.5–4 stars instead of misleadingly collapsing it to 2.5.
+  const stars = clamp(Math.round((0.5 + 4.5 * Math.sqrt(points / 58)) * 2) / 2, 0.5, 5);
   cache.pickStars.set(pick.id, stars);
   return stars;
 }
