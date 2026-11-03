@@ -8,6 +8,7 @@ import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
 import { advanceDynamicProgression } from "../src/gm/engine/dynamic-progression";
 import { progressSheet } from "../src/gm/engine/attributes";
+import { campSkillChanges } from "../src/gm/engine/season-development";
 import {
   developmentProfileOf, developmentOutlook, developmentSkillKeys,
   softGrowthFactor,
@@ -97,6 +98,8 @@ assert.ok(finishingSkills.some(key => finished.sheet!.attributes[key] > finisher
   "a slasher's finishing focus must improve real inside-scoring attributes");
 assert.equal(finished.sheet!.attributes.threePoint, finisher.sheet!.attributes.threePoint,
   "finishing work must not secretly improve three-point shooting");
+assert.deepEqual(campSkillChanges(context(finisher), finisher, "finishing").map(row => row.key), finishingSkills,
+  "camp and yearlong finishing focus must use the same position-appropriate basketball skills");
 assert.ok(Number.isFinite(finished.sheet!.overall),
   "older saved learning profiles without a finishing aptitude must still develop");
 assert.equal(
