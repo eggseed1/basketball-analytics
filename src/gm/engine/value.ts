@@ -309,11 +309,11 @@ export function draftClassQuality(league: GmLeagueState, season: number): { labe
   if (ranked.length >= 40) {
     const top = ranked.slice(0, 12);
     const consensus = top.reduce((n, player) => n + (player.consensus ?? 0), 0) / top.length;
-    const multiplier = clamp(1 + (consensus - 0.3) * 0.46, 0.84, 1.18);
-    const label = multiplier >= 1.10 ? "Loaded class"
-      : multiplier >= 1.035 ? "Strong class"
-      : multiplier <= 0.92 ? "Thin class"
-      : multiplier < 0.975 ? "Below-average class" : "Balanced class";
+    const multiplier = clamp(1 + (consensus - 0.08) * 0.62, 0.82, 1.22);
+    const label = multiplier >= 1.17 ? "Loaded class"
+      : multiplier >= 1.07 ? "Strong class"
+      : multiplier <= 0.89 ? "Thin class"
+      : multiplier < 0.97 ? "Below-average class" : "Balanced class";
     value = { label, multiplier: Math.round(multiplier * 1000) / 1000 };
   }
   cache.classQuality.set(season, value);
