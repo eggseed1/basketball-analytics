@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 
 import {
   advanceFaDayDetailed,
+  askingSalary,
   applyOptionDecision,
   emptyFaMarket,
   fillMinimums,
@@ -578,6 +579,99 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   assert.equal(evaluateSigning(depthLeague, "bos", depth, minimum, 2).ok, true);
   assert.equal(evaluateSigning(depthLeague, "bos", depth, minimum, 3).ok, false,
     "the minimum exception cannot be used for three-year deals");
+}
+
+
+// ——— Repeated full-market acceptance audit (six offseasons, distinct seeds).
+// This is a controlled offer-response benchmark; the persistent five-year
+// franchise audit separately tests player, roster and schedule continuity.
+{
+  const summaries: Array<{
+    season: number; signed: number; eliteSigned: number;
+    eliteUnsigned: number; weakInterest: number; fullInterest: number;
+  }> = [];
+  for (let year = 2027; year <= 2032; year++) {
+    const roster = ["bos", "nyk", "det"].flatMap(teamId =>
+      Array.from({ length: 12 }, (_, index) =>
+        player(`${teamId}-${year}-${index}`, teamId, 70 + index % 8, 24 + index % 9, {
+          contract: { yearsRemaining: 2, annualSalaryM: 3.2 + index * 0.15,
+            birdRights: "none", signedSeason: year - 1 },
+        }))
+    );
+    const ownStar = player(`home-star-${year}`, null, 87, 27 + (year % 3), {
+      rightsTeamId: "bos", rightsKind: "bird", lastSalaryM: 30,
+    });
+    const awayStar = player(`away-star-${year}`, null, 86, 27 + (year % 4), {
+      lastSalaryM: 28,
+    });
+    const candidates = [
+      ownStar, awayStar,
+      ...Array.from({ length: 12 }, (_, index) =>
+        player(`available-${year}-${index}`, null, 71 + index % 12,
+          23 + index % 10, { lastSalaryM: 3 + index * 1.5 }))
+    ];
+    const start = {
+      ...baseLeague([...roster, ...candidates]),
+      season: year,
+      faMarket: { ...emptyFaMarket(year * 101), stage: "moratorium" as const, day: 0 },
+      automation: { autoDraft: false, autoFreeAgency: false },
+    };
+    const ask = askingSalary(ownStar, start);
+    const range = legalFreeAgentSalaryRange(start, ownStar, 4);
+    assert.ok(range.maxM + 0.05 >= ask,
+      `${year}: Bird home team must be allowed to meet the legal asking salary`);
+    const bargain = Math.max(range.minM, Math.min(range.maxM, Math.round(ask * 0.25 * 100) / 100));
+    const weak = projectFreeAgentResponse(start, ownStar, bargain, 4);
+    const full = projectFreeAgentResponse(start, ownStar, ask, 4);
+    assert.equal(weak.legal, true);
+    assert.equal(full.legal, true);
+    assert.ok(full.chance > weak.chance,
+      `${year}: a much stronger legal offer should materially improve projected interest`);
+    const lowOffer = userOfferFreeAgent(start, ownStar.id, bargain, 4);
+    const afterLow = lowOffer.ok ? lowOffer.state : lowOffer.state ?? start;
+    assert.equal(afterLow.players.find(p => p.id === ownStar.id)?.teamId, null,
+      `${year}: an elite player must not sign for an extreme discount`);
+    assert.ok(!(afterLow.faMarket?.agreements ?? []).some(o => o.playerId === ownStar.id),
+      `${year}: an extreme lowball must not produce a verbal agreement`);
+    const fairOffer = userOfferFreeAgent(afterLow, ownStar.id, ask, 4);
+    assert.equal(fairOffer.ok, true, fairOffer.ok ? "" : fairOffer.reason);
+    if (!fairOffer.ok) continue;
+    assert.ok(fairOffer.state.faMarket?.agreements.some(o => o.playerId === ownStar.id),
+      `${year}: near-ask Bird contract should reach a verbal agreement`);
+    assert.equal(fairOffer.state.players.find(p => p.id === ownStar.id)?.teamId, null,
+      `${year}: moratorium promises must not sign contracts immediately`);
+    const final = runFaPeriod(fairOffer.state, 35);
+    assert.equal(final.faMarket?.done, true, `${year}: free agency must finish`);
+    const signedHome = final.players.find(p => p.id === ownStar.id)!;
+    assert.equal(signedHome.teamId, "bos", `${year}: recorded verbal deal must become a signing`);
+    assert.equal(signedHome.contract?.annualSalaryM, ask,
+      `${year}: signed terms must match the player's accepted offer`);
+    assert.equal(signedHome.contract?.yearsRemaining, 4);
+    const signed = candidates.filter(p => final.players.find(row => row.id === p.id)?.teamId != null);
+    const eliteSigned = signed.filter(p => (p.sheet?.overall ?? 0) >= 86).length;
+    for (const candidate of candidates) {
+      const result = final.players.find(p => p.id === candidate.id)!;
+      if (result.teamId == null || (candidate.sheet?.overall ?? 0) < 86) continue;
+      const salary = result.contract?.annualSalaryM ?? 0;
+      const floor = askingSalary(candidate, start) * .8;
+      assert.ok(salary + .06 >= floor,
+        `${year}: elite player ${candidate.id} signed a deeply under-market contract`);
+    }
+    for (const team of final.teams) {
+      assert.ok(final.players.filter(p => p.teamId === team.id).length <= final.settings.maxRoster,
+        `${year}: ${team.id} exceeds the offseason market roster cap`);
+    }
+    summaries.push({
+      season: year, signed: signed.length, eliteSigned,
+      eliteUnsigned: candidates.filter(p =>
+        (p.sheet?.overall ?? 0) >= 86 && final.players.find(row => row.id === p.id)?.teamId == null).length,
+      weakInterest: weak.chance, fullInterest: full.chance,
+    });
+  }
+  assert.equal(summaries.length, 6, "audit must cover all six free-agency periods");
+  assert.ok(summaries.every(s => s.signed >= 1 && s.eliteSigned >= 1),
+    "every period must resolve a premium legal offer into an actual signing");
+  console.log("MULTI_PERIOD_FREE_AGENCY " + JSON.stringify(summaries));
 }
 
 console.log("gm free agency ok");
