@@ -13,7 +13,7 @@ import type { GmAttributes, GmDevelopmentProfile, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 
 export type DevelopmentSkill = keyof GmDevelopmentProfile["aptitudes"];
-const SKILLS: DevelopmentSkill[] = ["shooting", "creation", "defense", "rebounding"];
+const SKILLS: DevelopmentSkill[] = ["shooting", "creation", "defense", "rebounding", "finishing"];
 
 function stableHash(value: string): number {
   let hash = 2166136261;
@@ -29,6 +29,7 @@ function initialSkill(player: GmPlayer, focus: DevelopmentSkill): number {
   switch (focus) {
     case "shooting": return mean(a.threePoint, a.midrange, a.freeThrow);
     case "creation": return mean(a.ballHandle, a.passAccuracy, a.speedWithBall);
+    case "finishing": return mean(a.closeShot, a.drivingLayup, a.standingDunk, a.drivingDunk);
     case "defense": return mean(a.perimeterDefense, a.interiorDefense, a.steal, a.block);
     case "rebounding": return mean(a.offReb, a.defReb, a.strength);
   }
@@ -80,6 +81,9 @@ export function developmentSkillKeys(
   switch (focus) {
     case "shooting": return ["threePoint", "midrange", "freeThrow"];
     case "creation": return ["ballHandle", "passAccuracy", "speedWithBall"];
+    case "finishing": return position === "C" || position === "PF"
+      ? ["closeShot", "standingDunk", "postControl"]
+      : ["drivingLayup", "closeShot", "drivingDunk"];
     case "defense": return position === "C" || position === "PF"
       ? ["interiorDefense", "block", "defReb"]
       : ["perimeterDefense", "steal", "agility"];
@@ -102,7 +106,7 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
     : skill < 94 ? 0.68 : 0.44;
   const newSkillTax = skill < 57 ? (0.82 + (profile.adaptability - 0.7) * 0.17) : 1;
   const disposition = profile.learning *
-    (0.74 + profile.aptitudes[focus] * 0.26) *
+    (0.74 + (profile.aptitudes[focus] ?? mean(profile.aptitudes.creation, profile.aptitudes.shooting)) * 0.26) *
     (0.82 + profile.adaptability * 0.18);
   return clamp(
     disposition * (1 + profile.discovery) * ovrDrag * skillDrag * newSkillTax,
