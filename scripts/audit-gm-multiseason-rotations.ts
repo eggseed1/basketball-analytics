@@ -71,6 +71,7 @@ const summary = (t:Totals) => ({
 });
 const seasons=[2027,2028,2029];
 const results:Totals[]=[];
+const rosterProfiles:Array<{season:number;team:string;players:Array<{name:string;ovr:number;position:string;minutes:number;pg:number;sg:number;pf:number;c:number}>}>=[];
 let totalGames=0,failedGames=0;
 const errors:string[]=[];
 const sum=(values:number[])=>values.reduce((a,b)=>a+b,0);
@@ -80,6 +81,16 @@ for(const season of seasons){
   assert.equal(league.schedule.filter(gameCounts).length,1200,"initial published schedule has 80 games per team");
   const teams=new Map(league.teams.map(t=>[t.id,t]));
   const byTeam=new Map(league.teams.map(t=>[t.id,blank(t.id,season)]));
+  for(const team of league.teams){
+    const roster=league.players.filter(p=>p.teamId===team.id);
+    const plan=rotationForTeam(team,league.players);
+    rosterProfiles.push({season,team:team.id,players:roster.map(p=>({
+      name:p.name,ovr:overallOf(p),position:p.position,
+      minutes:plan.minutes[p.id]??0,
+      pg:+roleFit(p,"PG").toFixed(2),sg:+roleFit(p,"SG").toFixed(2),
+      pf:+roleFit(p,"PF").toFixed(2),c:+roleFit(p,"C").toFixed(2),
+    })).sort((a,b)=>b.ovr-a.ovr)});
+  }
   const counts=new Map<string,number>();
   let gameIndex=0;
   // Cup knockout and makeup games are generated only after group results exist.
@@ -221,6 +232,10 @@ const report={
   aggregate:summary(aggregate),
   perSeason:seasons.map(season=>{const v=blank("ALL",season);for(const r of results.filter(x=>x.season===season))add(v,r);return summary(v);}),
   perTeamSeason:results.map(summary),
+  outlierRosters:rosterProfiles.filter(profile=>{
+    const row=results.find(result=>result.team===profile.team&&result.season===profile.season);
+    return row && row.emergencySeatMinutes/Math.max(1,row.activeSeatMinutes)>0.05;
+  }),
   errors,
 };
 mkdirSync("artifacts",{recursive:true});
