@@ -25,7 +25,7 @@ import {
 } from "../src/gm/engine/fa-rfa";
 import { hasPendingOption } from "../src/gm/engine/fa-status";
 import { enterFreeAgency } from "../src/gm/engine/offseason";
-import { offseasonRosterLimit } from "../src/gm/engine/season-flow-state";
+import { financialSettings, offseasonRosterLimit } from "../src/gm/engine/season-flow-state";
 import { evaluateOfferUtility, faPlayerPriorities } from "../src/gm/engine/fa-utility";
 import { faLocationPreferences, locationAppeal } from "../src/gm/engine/fa-location";
 import { competingFreeAgentOffers, legalFreeAgentSalaryRange,
@@ -638,9 +638,11 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
         player(`available-${year}-${index}`, null, 71 + index % 12,
           23 + index % 10, { lastSalaryM: 3 + index * 1.5 }))
     ];
+    const yearBase = baseLeague([...roster, ...candidates]);
     const start = {
-      ...baseLeague([...roster, ...candidates]),
+      ...yearBase,
       season: year,
+      settings: financialSettings(year, yearBase.settings),
       faMarket: { ...emptyFaMarket(year * 101), stage: "moratorium" as const, day: 0 },
       automation: { autoDraft: false, autoFreeAgency: false },
     };
