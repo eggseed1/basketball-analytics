@@ -9,11 +9,12 @@
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { ensureNbaCup } from "../src/gm/engine/cup";
 import { simulateGame, actualShiftSnapshot } from "../src/gm/engine/simulate";
 import { rotationForTeam } from "../src/gm/engine/coaching";
 import { overallOf } from "../src/gm/engine/lineup";
 import { roleFit } from "../src/gm/engine/rotation-roles";
-import type { GmPlayer, GmTeam } from "../src/gm/types";
+import type { GmPlayer } from "../src/gm/types";
 
 type Totals = {
   team: string; season: number; games: number; playerGames: number;
@@ -60,22 +61,24 @@ let totalGames=0,failedGames=0;
 const errors:string[]=[];
 const sum=(values:number[])=>values.reduce((a,b)=>a+b,0);
 for(const season of seasons){
-  const league=createGeneratedLeague({userTeamId:"bos",season,seed:season*17+23});
+  let league=ensureNbaCup(createGeneratedLeague({userTeamId:"bos",season,seed:season*17+23}));
   assert.equal(league.teams.length,30,"requires thirty teams");
-  const regular=league.schedule.filter(g=>!g.exhibition);
-  assert.equal(regular.length,1230,"requires an 82-game schedule for every team");
+  assert.equal(league.schedule.filter(g=>!g.exhibition).length,1200,"initial published schedule has 80 games per team");
   const teams=new Map(league.teams.map(t=>[t.id,t]));
   const byTeam=new Map(league.teams.map(t=>[t.id,blank(t.id,season)]));
-  const roster=new Map(league.teams.map(t=>[t.id,league.players.filter(p=>p.teamId===t.id)]));
   const counts=new Map<string,number>();
-  for(const game of regular)for(const id of [game.homeTeamId,game.awayTeamId])
-    counts.set(id,(counts.get(id)??0)+1);
-  for(const [id,n] of counts)assert.equal(n,82,`${id}: expected 82 scheduled games`);
-  for(let gameIndex=0;gameIndex<regular.length;gameIndex++){
-    const game=regular[gameIndex]!;
+  let gameIndex=0;
+  // Cup knockout and makeup games are generated only after group results exist.
+  while(true){
+    const pending=league.schedule.filter(g=>!g.played).sort((a,b)=>a.day-b.day||a.id.localeCompare(b.id));
+    if(!pending.length)break;
+    const slate=pending.filter(g=>g.day===pending[0]!.day);
+    for(const game of slate){
+      const countsForStandings=!game.exhibition;
+      if(countsForStandings)for(const id of [game.homeTeamId,game.awayTeamId]) counts.set(id,(counts.get(id)??0)+1);
     // Independently inject an injury into a healthy starting player in
     // approximately one of every 19 games. No save mutation across games.
-    const inject=gameIndex%19===0;
+    const inject=countsForStandings&&gameIndex%19===0;
     const injuredTeam=teams.get(game.homeTeamId)!;
     const injuredId=inject?Object.values(injuredTeam.starters).find((id):id is string=>Boolean(id)):null;
     const players=injuredId?league.players.map(p=>p.id===injuredId
@@ -86,12 +89,13 @@ for(const season of seasons){
       [game.awayTeamId,players.filter(p=>p.teamId===game.awayTeamId)],
     ]);
     try{
-      const box=simulateGame(game,league.teams,players,500000+season*1300+gameIndex).box;
-      totalGames++;
+      const simulated=simulateGame(game,league.teams,players,500000+season*1300+gameIndex);
+      const box=simulated.box;
+      if(countsForStandings)totalGames++;
       for(const teamId of [game.homeTeamId,game.awayTeamId]){
         const team=teams.get(teamId)!;
         const total=byTeam.get(teamId)!;
-        total.games++;
+        if(countsForStandings)total.games++;
         const members=activeByTeam.get(teamId)!;
         const plan=rotationForTeam(team,players);
         const lines=box.players.filter(p=>p.teamId===teamId);
@@ -158,18 +162,28 @@ for(const season of seasons){
           }
         }
       }
+      league={...league,schedule:league.schedule.map(g=>g.id===game.id?simulated.game:g)};
     }catch(e){
       failedGames++;
+      league={...league,schedule:league.schedule.map(g=>g.id===game.id?{...g,played:true,homeScore:0,awayScore:1}:g)};
       errors.push(`${season} ${game.id}: ${e instanceof Error?e.message:String(e)}`);
-      if(errors.length>30)throw new Error("More than 30 simulation errors; aborting audit");
+      if(errors.length>30)break;
     }
+    gameIndex++;
+    }
+    if(errors.length>30)break;
+    league=ensureNbaCup(league);
+  }
+  for(const team of league.teams){
+    const n=counts.get(team.id)??0;
+    if(n!==82)errors.push(`${season} ${team.id}: ${n} standings games, expected 82`);
   }
   for(const x of byTeam.values())results.push(x);
-  console.log(`Simulated ${season}: ${regular.length} games, ${byTeam.size} teams`);
+  console.log(`Simulated ${season}: ${[...counts.values()].reduce((n,v)=>n+v,0)/2} standings games across ${byTeam.size} teams`);
 }
 const aggregate=blank("ALL",0);for(const row of results)add(aggregate,row);
 const report={
-  methodology:"Three independent seeded full regular seasons (not three consecutive franchise rollovers); seeded injuries injected into a sample of home games. Rank inversion compares ACTUAL box-score minutes among rotation players with >=8 OVR separation. Overtime excluded from minute-error denominator. Substitution count is changed on-court players at each two-minute transition.",
+  methodology:"Three independent seeded full 82-game regular seasons, with NBA Cup and makeup games added after group play (not consecutive franchise rollovers); injected starter injuries. Rank inversion compares actual box-score minutes among rotation players with >=8 OVR separation. Overtime excluded from minute-error denominator. Substitution count is changed players at two-minute transitions.",
   seasons,scheduledGames:3690,simulatedGames:totalGames,failedGames,
   aggregate:summary(aggregate),
   perSeason:seasons.map(season=>{const v=blank("ALL",season);for(const r of results.filter(x=>x.season===season))add(v,r);return summary(v);}),
@@ -197,6 +211,8 @@ ${metrics}
 `);
 console.log(JSON.stringify({aggregate:report.aggregate,failedGames,firstErrors:errors.slice(0,5)},null,2));
 assert.equal(failedGames,0,"Every full-schedule game must simulate");
+assert.equal(totalGames,3690,"Expected 3 x 1,230 standings games, including Cup and makeup games");
+assert.ok(errors.length===0,errors.slice(0,5).join("\n"));
 assert.equal(aggregate.minuteFailures,0,"Every team's box must reconcile to regulation plus OT");
 assert.equal(aggregate.stintFailures,0,"Every regulation block has five distinct players");
 assert.equal(aggregate.positionFailures,0,"All player minutes must be assigned a position");
