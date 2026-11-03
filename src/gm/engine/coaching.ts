@@ -505,7 +505,19 @@ export function rotationForTeam(team:GmTeam,players:GmPlayer[],playoff=false){
     const cover=floor.map(p=>coaching.coverSlot?.[p.id]);
     const declaredCover=floor.length===5&&cover.every(spot=>spot&&spots.includes(spot))&&new Set(cover).size===5;
     const coverSeats=declaredCover?Object.fromEntries(floor.map((p,index)=>[cover[index]!,p.id])) as GmTeam["starters"]:null;
-    const seats=declaredStart?{...starters}:declaredClosing?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:coverSeats??assignFive(floor,desired).starters;
+    const dynamicSeats=assignFive(floor,desired).starters;
+    const declaredSeats=declaredStart?{...starters}:declaredClosing?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:coverSeats??dynamicSeats;
+    const emergencyCount=(seats:GmTeam["starters"])=>spots.filter(spot=>{
+      const p=byId.get(seats[spot]??"");
+      return p&&roleFit(p,spot)<0.8;
+    }).length;
+    // Preserve explicit user shift/closing positions. For automatic units,
+    // never retain a stale positional seat map if a more credible assignment
+    // exists among the exact same five players. This changes no playing time.
+    const explicit=Boolean(manual)||coaching.rotationMode==="manual"||
+      Boolean(declaredClosing&&coaching.closingLineup);
+    const seats=!explicit&&emergencyCount(dynamicSeats)<emergencyCount(declaredSeats)
+      ?dynamicSeats:declaredSeats;
     for(const spot of spots){const id=seats[spot];if(id)positionMinutes[id]={...positionMinutes[id],[spot]:(positionMinutes[id]?.[spot]??0)+2};}
     return seats;
   });
