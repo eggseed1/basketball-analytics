@@ -252,3 +252,15 @@ assert.equal(aggregate.positionFailures,0,"All player minutes must be assigned a
 assert.equal(aggregate.shiftFailures,0,"Postgame chart must match recorded stints");
 assert.equal(aggregate.injuredAppearances,0,"Injured players cannot appear");
 assert.equal(aggregate.injuredReplacementFailures,0,"Injured starters must be replaced");
+
+const emergencyShare=aggregate.emergencySeatMinutes/Math.max(1,aggregate.activeSeatMinutes);
+const avoidableShare=aggregate.avoidableAssignmentMinutes/Math.max(1,aggregate.games*240);
+const qualityInversions=aggregate.rankInversions/Math.max(1,aggregate.rankPairs);
+const minuteMae=aggregate.absoluteError/Math.max(1,aggregate.playerGames);
+// Broad guardrails prevent a future positional-coverage regression without
+// demanding rigid five-position quota rotations or exact clock-level parity.
+assert.ok(emergencyShare<0.018,`Emergency seat share regressed: ${(emergencyShare*100).toFixed(2)}%`);
+assert.ok(avoidableShare<0.002,`Avoidable automatic seat assignments regressed: ${(avoidableShare*100).toFixed(2)}%`);
+assert.ok(qualityInversions<0.025,`Merit-first minute rankings regressed: ${(qualityInversions*100).toFixed(2)}%`);
+assert.ok(minuteMae<1.4,`Planned-versus-actual minutes regressed: ${minuteMae.toFixed(2)} MAE`);
+
