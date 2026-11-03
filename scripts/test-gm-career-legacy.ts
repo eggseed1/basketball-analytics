@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { careerLegacyLeaders } from "../src/gm/engine/career-legacy";
+import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
 import type { GmSeasonArchive } from "../src/gm/types";
 
 const line=(season:number,pts:number,gp=72)=>({
@@ -46,6 +48,10 @@ assert.deepEqual(careerLegacyLeaders([...years,years[0]!]),leaders,
   "duplicate archived seasons cannot duplicate titles, MVPs or points");
 assert.deepEqual(careerLegacyLeaders(JSON.parse(JSON.stringify(years)) as GmSeasonArchive[]),leaders,
   "legacy calculations must remain save/export compatible");
+const live=createGeneratedLeague({userTeamId:"bos",season:2036,seed:181});
+const restored=parseFranchise(exportFranchise({...live,history:years}));
+assert.deepEqual(careerLegacyLeaders(restored.history,10),leaders,
+  "retired-player records and awards must survive the actual franchise save/import path");
 assert.deepEqual(careerLegacyLeaders([],8),[]);
 assert.deepEqual(careerLegacyLeaders([years[0]!],8),[]);
 assert.equal(careerLegacyLeaders(years,1).length,1);
