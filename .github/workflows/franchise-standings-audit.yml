@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/audit-gm-standings-realism.ts'
+      - 'scripts/audit-gm-standings-availability.ts'
       - 'src/gm/engine/simulate.ts'
       - 'src/gm/engine/game-context.ts'
       - 'src/gm/engine/player-profile.ts'
@@ -35,6 +36,8 @@ jobs:
         run: npm run test:franchise-outcome-realism
       - name: Full real-season standings cohort
         run: npm run audit:franchise-standings
+      - name: Historical availability comparison
+        run: npm run audit:franchise-availability
       - uses: actions/upload-artifact@v6
         if: always()
         with:
@@ -42,5 +45,7 @@ jobs:
           path: |
             artifacts/franchise-standings-realism.json
             artifacts/franchise-standings-realism.md
+            artifacts/franchise-standings-availability.json
+            artifacts/franchise-standings-availability.md
           if-no-files-found: warn
           retention-days: 60
