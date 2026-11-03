@@ -119,7 +119,7 @@ export function stepienViolation(
   const after = firstSeasons(team, sentIds, receivedPicks);
   // Check the post-trade calendar rather than only consecutive picks on the
   // original list. A club already missing one year cannot trade the next.
-  const last = Math.max(season + 7, ...before, ...after);
+  const last = Math.max(season, ...before, ...after);
   for (let year = season; year < last; year += 1) {
     if ((before.has(year) || before.has(year + 1)) &&
         !after.has(year) && !after.has(year + 1)) return true;
@@ -137,6 +137,7 @@ export function evaluateTrade(
   const allPicks = state.teams.flatMap((t) => t.draftPicks);
   const invalid = (reason: string) => ({ ok: false, reason, fromValue: 0, toValue: 0 });
   if (fromTeamId === toTeamId || !state.teams.some(t => t.id === fromTeamId) || !state.teams.some(t => t.id === toTeamId)) return invalid("Choose two different teams.");
+  if (!fromAssets.length || !toAssets.length) return invalid("Each team must send at least one asset.");
   const seenAssets = new Set<string>();
   for (const [teamId, assets] of [[fromTeamId, fromAssets], [toTeamId, toAssets]] as const) {
     for (const asset of assets) {
