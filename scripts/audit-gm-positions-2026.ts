@@ -105,13 +105,15 @@ async function main() {
     // and wing assignments, not generic position-count quotas.
     const vetted:Record<string,Pos>={
       "Jayson Tatum":"PF", "Payton Pritchard":"PG",
-      "Derrick White":"SG", "Paul George":"SF", "AK Okereke":"PF"
+      "Derrick White":"SG", "Paul George":"SF", "AK Okereke":"PF", "Ronald Holland II":"SF"
     };
     if(vetted[player.name]) {
       after=vetted[player.name]!;
       reason=player.name==="AK Okereke"
         ? "2026-27 listed NBA forward, PF-sized 6ft7 244lb rookie without NBA season minutes"
-        : "reviewed NBA primary role (both historical and current usage)";
+        : player.name==="Ronald Holland II"
+          ? "2025-26 Basketball-Reference SF listing; ESPN forward depth"
+          : "reviewed NBA primary role (both historical and current usage)";
       confidence=player.name==="AK Okereke" ? "medium" : "high";
     }
     // Respect a deliberate, explicit NBA source over a broad G/F estimate
@@ -119,7 +121,7 @@ async function main() {
     const secondaryCandidates=POS.filter(pos=>pos!==after && (
       (b && b.percentages[pos]>=18) || depth.includes(pos)
     )).sort((a,c)=>((b?.percentages[c]??0)+(e?.get(c)??0)*14)-((b?.percentages[a]??0)+(e?.get(a)??0)*14));
-    const secondary=player.name==="AK Okereke" ? "SF" : secondaryCandidates[0]??null;
+    const secondary=player.name==="AK Okereke" ? "SF" : player.name==="Ronald Holland II" ? "PF" : secondaryCandidates[0]??null;
     evidence.push({id:player.nbaPlayerId??player.id,name:player.name,team:player.teamId,
       before:player.position,after,secondary,bref:b?{position:b.position,percentages:b.percentages,minutes:b.minutes,seasonTeam:b.seasonTeam}:null,
       espn:depth,reason,confidence});

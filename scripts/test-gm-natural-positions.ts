@@ -175,6 +175,7 @@ async function realLeagueChecks() {
     "Payton Pritchard": "PG",
     "Derrick White": "SG",
     "AK Okereke": "PF",
+    "Ronald Holland II": "SF",
     "Draymond Green": "PF",
     "Nikola Jokic": "C",
     "Stephen Curry": "PG",

@@ -2219,11 +2219,11 @@
     "confidence": "high"
   },
   "1641842": {
-    "position": "PF",
-    "secondaryPosition": "SG",
+    "position": "SF",
+    "secondaryPosition": "PF",
     "name": "Ronald Holland II",
-    "source": "current ESPN depth chart",
-    "confidence": "medium"
+    "source": "2025-26 Basketball-Reference SF listing; ESPN forward depth",
+    "confidence": "high"
   },
   "1641854": {
     "position": "PG",

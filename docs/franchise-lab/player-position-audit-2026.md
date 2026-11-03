@@ -31,6 +31,12 @@ Boston's full audited primary-position distribution is **3 PG, 2 SG, 4 SF,
 3 PF and 5 C**. It arises from individual verified players, not a
 quota that artificially promotes guards/forwards.
 
+The last fringe-player exceptions received individual checks: AK Okereke
+is a PF-sized rookie forward (PF/SF) and Ronald Holland II is listed
+by Basketball-Reference as an SF (SF/PF), rather than the unusual
+PF/SG combination inferred from an ESPN lineup chart. Ben Simmons'
+PG/PF versatility remains intentional.
+
 ## Save migration and scope
 
 The versioned position book is applied at new 2026–27 league creation,
