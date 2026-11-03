@@ -300,9 +300,10 @@ export function playerTradePoints(player: GmPlayer, league?: GmLeagueState): num
  */
 export function publicDraftClassMultiplier(league: GmLeagueState, season: number): number {
   if (season !== league.season) return 1;
-  const current = new Set(league.draftPool);
   const top = league.players
-    .filter(player => current.has(player.id) && player.draftYear === season && player.consensus != null)
+    // Keep already-selected prospects in the public class evaluation: a
+    // pick-price curve must not change merely because draft night advanced.
+    .filter(player => player.draftYear === season && player.consensusRank != null && player.consensus != null)
     .sort((a,b) => (a.consensusRank ?? 99) - (b.consensusRank ?? 99))
     .slice(0, 8);
   if (top.length < 6) return 1;
