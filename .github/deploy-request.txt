@@ -1,6 +1,8 @@
 DRBL production deployment request
 Target: main
-Reason: restore verified November 3 live NBA analytics data after an older Franchise Lab merge reverted it
-Restored data commit: 14ac6822820a2b15a84c0b328deb8809b83b70f0
-Celtics 2026-27 record: 5-2 (November 2 loss at Houston)
+Reason: ship validated Franchise Lab open-ended player development overhaul
+Release PR: #172
+Release merge commit: a63ea5d9dba8dd6a0fd1f2930508d54aebfbd2dd
+Verification: CI, Franchise Lab, 100-draft-class cohort, two five-year simulations and runtime parity all passed
+Live NBA snapshots: preserve current main, do not overwrite standings or team game boxes
 Requested: 2026-11-03
