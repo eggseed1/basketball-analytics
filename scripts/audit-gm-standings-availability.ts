@@ -79,9 +79,9 @@ for(const [year,realRecords] of Object.entries(HISTORICAL)){
         const availableIds=new Set<string>();
         for(const id of [game.homeTeamId,game.awayTeamId]){
           const roster=rosterByTeam.get(id)!;
-          const selected=roster.filter(p=>availabilityRng()<Math.min(1,Math.max(0.08,(p.seasonLine?.gp??82)/82)));
+          const selected=roster.filter(p=>availabilityRng()<Math.min(1,Math.max(0.08,(p.nbaSeason?.gp??82)/82)));
           if(selected.length<5){
-            for(const p of [...roster].sort((a,b)=>(b.seasonLine?.gp??82)-(a.seasonLine?.gp??82))){
+            for(const p of [...roster].sort((a,b)=>(b.nbaSeason?.gp??82)-(a.nbaSeason?.gp??82))){
               if(selected.length>=5)break;
               if(!selected.includes(p))selected.push(p);
             }
