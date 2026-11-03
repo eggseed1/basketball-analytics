@@ -30,6 +30,7 @@ import {
 } from "@/gm/engine/value";
 import { offerIsFair } from "@/gm/engine/offers";
 import { tradeDeskRead } from "@/gm/engine/trade-desk";
+import { marketForDisplay, tradeDaysRemaining } from "@/gm/engine/trade-market";
 import { playerSheet } from "@/gm/engine/attributes";
 import { scoutPotentialView } from "@/gm/engine/scouting";
 import { entrySeasonIsCurrentSaveYear } from "@/gm/lib/career-overlay";
@@ -588,6 +589,7 @@ function TradeBody() {
         : [],
     [league, partnerId]
   );
+  const market = useMemo(() => league ? marketForDisplay(league) : null, [league]);
 
   if (!league) return null;
   const team = userTeam(league);
@@ -618,6 +620,25 @@ function TradeBody() {
   );
   const desk = tradeDeskRead(league, partnerId, fromAssets, toAssets);
   const talks = (league.tradeTalks ?? []).filter(talk => talk.teamId === partnerId).slice(0, 2);
+  const selectedRumor = market?.rumors.find(row =>
+    row.teamId === partnerId &&
+    toAssets.some(asset => asset.type === "player" && asset.id === row.playerId));
+  const loadMarketPlayer = (playerId: string, ownerId: string) => {
+    const asset: GmTradeAsset = { type: "player", id: playerId };
+    setGive(ownerId === league.userTeamId ? [asset] : []);
+    setGet(ownerId !== league.userTeamId ? [asset] : []);
+    setCashSend(0);
+    setCashReceive(0);
+    const suggested = findPlayerPackages(league, league.userTeamId, playerId);
+    setPackages(suggested);
+    if (ownerId !== league.userTeamId) setPartnerChoice(ownerId);
+    setMessage(suggested.length
+      ? "Trade Finder has options below. Choose a package or build your own."
+      : "No ready-made offers. You can still build a package.");
+    document.getElementById("trade-builder")?.scrollIntoView({
+      block: "start", behavior: "smooth",
+    });
+  };
   if (league.incomingOffer) {
     return <div className="flex flex-col gap-4">
       <header><h1 className="text-2xl font-bold tracking-tight">Incoming trade offer</h1>
@@ -633,6 +654,43 @@ function TradeBody() {
         <h1 className="text-2xl font-bold tracking-tight">{t("tradeTitle")}</h1>
         <p className="text-sm text-muted-foreground">Choose players, review the deal, then talk to the other GM.</p>
       </header>
+      {league.phase === "regular" && !league.tradeDeadlinePassed &&
+        <section data-testid="trade-market" aria-label="Trade market" className="rounded-xl border border-border p-3 sm:p-4">
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-sm font-bold">Around the league</h2>
+            <p className="text-xs text-muted-foreground">{tradeDaysRemaining(league)} days until the trade deadline</p>
+          </div>
+          {market?.rumors.length ? (
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+              {market.rumors.slice(0, 4).map(rumor => {
+                const player = league.players.find(row => row.id === rumor.playerId);
+                const owner = league.teams.find(row => row.id === rumor.teamId);
+                if (!player || !owner) return null;
+                const interest = rumor.interestedTeamIds.length;
+                return <article key={player.id} className="flex flex-col gap-2 rounded-lg border border-border/70 bg-secondary/20 p-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <GmPlayerPortrait player={player} />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold">{player.name}</p>
+                      <p className="text-xs text-muted-foreground">{owner.abbr} · {player.position} · {displayOverall(player)} OVR</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {rumor.signal === "request" ? "Player requested a trade" :
+                      rumor.signal === "listed" ? "Available for trade" :
+                        "Teams monitoring"}
+                    {interest > 0 ? ` · ${interest} ${interest === 1 ? "team" : "teams"} interested` : ""}
+                  </p>
+                  <Button size="sm" variant="outline" block onClick={() => loadMarketPlayer(player.id, owner.id)}>
+                    {owner.id === league.userTeamId ? "Find trade partners" : "Explore a deal"}
+                  </Button>
+                </article>;
+              })}
+            </div>
+          ) : <p className="text-xs text-muted-foreground">No active leads. Choose a team below to build an offer.</p>}
+          <p className="mt-2 text-[11px] text-muted-foreground">Interest reflects team needs and scouting, not confirmed offers.</p>
+        </section>}
+      <div id="trade-builder" className="scroll-mt-6">
       <label className="flex max-w-sm flex-col gap-1.5 text-sm font-medium">
         Trade partner
         <select
@@ -660,6 +718,7 @@ function TradeBody() {
       </p>
       <DealBox league={league} receive={toAssets} send={fromAssets}
         onInspect={setMachineInspectId} inspectedId={machineInspectId} />
+      </div>
 
       {machineInspected ? (
         <TradePlayerPeek
@@ -762,6 +821,10 @@ function TradeBody() {
           </span>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">{desk.detail}</p>
+        {selectedRumor && selectedRumor.interestedTeamIds.length >= 2 &&
+          <p className="mt-2 text-xs font-medium text-amber-700 dark:text-amber-400">
+            {selectedRumor.interestedTeamIds.length} other clubs are monitoring this player. Competition raises the asking price.
+          </p>}
         <div className="mt-3 grid gap-2 border-t border-border pt-3 text-xs text-muted-foreground sm:grid-cols-2">
           <p>Salary sent: <strong className="text-foreground">${formatNumber(desk.sendsSalaryM, 1)}M</strong></p>
           <p>Salary received: <strong className="text-foreground">${formatNumber(desk.receivesSalaryM, 1)}M</strong></p>
