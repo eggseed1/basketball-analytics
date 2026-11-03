@@ -307,7 +307,7 @@ export function publicDraftClassMultiplier(league: GmLeagueState, season: number
     .slice(0, 8);
   if (top.length < 6) return 1;
   const avg = top.reduce((total,p)=>total+(p.consensus ?? 0),0)/top.length;
-  return clamp(1+(avg-0.5)*0.16,0.83,1.18);
+  return clamp(1+(avg-0.25)*0.4,0.78,1.24);
 }
 
 export function pickTradePoints(league: GmLeagueState, pick: GmDraftPick): number {
