@@ -38,8 +38,9 @@ assert.ok(Math.max(...rows.map(row=>row.entry))<=84);
 assert.ok(mean(first.map(row=>row.peak-row.entry))>=6,"good prospects must have room for a meaningful career arc");
 assert.ok(rate(top.map(row=>row.peak>=85))>=0.35&&rate(top.map(row=>row.peak>=85))<0.85,"top picks have an advantage, not a guaranteed star outcome");
 assert.ok(rate(second.map(row=>row.peak>=74))>0.07&&rate(second.map(row=>row.peak>=74))<0.3,"second rounds need useful hits as well as misses");
-assert.ok(rate(second.map(row=>row.peak>=85))>0&&rate(second.map(row=>row.peak>=85))<0.04);
-assert.ok(rate(second.map(row=>row.peak>=90))<0.01,"MVP-level late hits cannot appear in every class");
+assert.ok(rate(second.map(row=>row.peak>=85))>=0.008&&rate(second.map(row=>row.peak>=85))<0.04,"late picks must have real but unusual star careers");
+assert.ok(rate(band(15,30).map(row=>row.peak>=85))>=rate(second.map(row=>row.peak>=85)),"late first-round selections should retain higher expected star value than second-round selections");
+assert.ok(rate(second.map(row=>row.peak>=90))>0&&rate(second.map(row=>row.peak>=90))<0.005,"an occasional second-round MVP-level outlier must actually occur, but never be routine");
 assert.ok(mean(first.map(row=>row.age))<mean(second.map(row=>row.age)));
 assert.ok(mean(first.map(row=>row.peak))>mean(second.map(row=>row.peak))+8);
 // A rolling talent stock also exercises replacement, limited rotation jobs and
@@ -60,7 +61,7 @@ for(let year=2007;year<2047;year++){
 }
 assert.ok(population.every(year=>year.mean>=69&&year.mean<=80),"replacement and decline must prevent a steady rise in league ratings");
 assert.ok(population.every(year=>year.stars>=5&&year.stars<=90),"the rolling talent stock needs stars without making them ordinary");
-assert.ok(population.every(year=>year.elite<=25));
+assert.ok(population.every(year=>year.elite>=1&&year.elite<=25),"a mature NBA talent stock needs a persistent, scarce superstar tier");
 assert.ok(Math.abs(population.at(-1)!.mean-population[0]!.mean)<3,"the mature talent stock should remain stable across a decade");
 const report={classes,prospects:rows.length,method:"22 MPG, ordinary coach, two in-season checks plus summer to age 28",groups,entryMean:mean(rows.map(row=>row.entry)),maxEntry:Math.max(...rows.map(row=>row.entry)),populationMethod:"40 annual classes, 450 retained players, 240 major rotation jobs, age-37 exits; no contracts or games",population};
 mkdirSync("/tmp/franchise-draft-calibration",{recursive:true});
