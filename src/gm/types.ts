@@ -879,6 +879,8 @@ export type GmFaUtilityBreakdown = {
   role: number;
   continuity: number;
   fit: number;
+  /** Modeled location / market taste; optional on older saved bids. */
+  location?: number;
   noise: number;
 };
 
