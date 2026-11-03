@@ -95,14 +95,51 @@ async function main() {
     let after:Pos=player.position;
     let reason="current roster listing / physical fallback";
     let confidence:Evidence["confidence"]="low";
-    const strong=b && b.minutes >= 300 && largest >= 48;
-    const close=b && b.minutes >= 200 && largest < 48 && depth.length
-      && b.percentages[depth[0]!] >= largest - 12;
-    if (strong) { after=most!; reason="2025-26 on-court position majority"; confidence="high"; }
-    else if (close) { after=depth[0]!; reason="2025-26 split role corroborated by 2026-27 ESPN depth"; confidence="high"; }
-    else if (b && b.minutes >= 100) { after=most!; reason="2025-26 on-court plurality"; confidence="medium"; }
-    else if(depth.length) { after=depth[0]!; reason="current ESPN depth chart"; confidence="medium"; }
-    else if (b) { after=b.position; reason="2025-26 listing, low-minute sample"; confidence="low"; }
+    // Position Estimate describes temporary on-court deployment. The
+    // independent source's five-spot Pos listing describes a player's normal
+    // primary identity, which can differ (a PF filling in at center, etc.).
+    // Use the listed primary when corroborated by a substantial share of
+    // minutes or current ESPN depth, instead of recasting every utility wing
+    // as the position at which he logged 51% of one injury-shortened season.
+    const listedShare=b ? b.percentages[b.position] : 0;
+    const listedSupported=b && (listedShare >= 24 || depth.includes(b.position));
+    const overwhelmingOther=b && most!==b.position && largest>=85 && listedShare<10 && depth.includes(most!);
+    if (b && b.minutes>=200 && listedSupported && !overwhelmingOther) {
+      after=b.position;
+      reason="2025-26 independent primary listing supported by season roles";
+      confidence=depth.includes(after) ? "high" : "medium";
+    } else if (b && b.minutes>=300 && largest>=60) {
+      after=most!;
+      reason="2025-26 dominant on-court role";
+      confidence=depth.includes(after) ? "high" : "medium";
+    } else if (b && b.minutes>=100 && depth.length && b.percentages[depth[0]!] >= largest-12) {
+      after=depth[0]!;
+      reason="2025-26 split on-court role corroborated by 2026-27 ESPN depth";
+      confidence="high";
+    } else if (b && b.minutes>=100) {
+      after=b.position;
+      reason="2025-26 independent primary listing";
+      confidence="medium";
+    } else if(depth.length) {
+      after=depth[0]!;
+      reason="current ESPN depth chart";
+      confidence="medium";
+    } else if(b) {
+      after=b.position;
+      reason="2025-26 independent primary listing; limited minutes";
+      confidence="low";
+    }
+    // Four repeatedly verified roles are a final check on flexible Celtics
+    // and wing assignments, not generic position-count quotas.
+    const vetted:Record<string,Pos>={
+      "Jayson Tatum":"PF", "Payton Pritchard":"PG",
+      "Derrick White":"SG", "Paul George":"SF"
+    };
+    if(vetted[player.name]) {
+      after=vetted[player.name]!;
+      reason="reviewed NBA primary role (both historical and current usage)";
+      confidence="high";
+    }
     // Respect a deliberate, explicit NBA source over a broad G/F estimate
     // where both independent five-spot references are missing.
     const secondaryCandidates=POS.filter(pos=>pos!==after && (
