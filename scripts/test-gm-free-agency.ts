@@ -8,6 +8,7 @@ import {
   advanceFaDayDetailed,
   applyOptionDecision,
   emptyFaMarket,
+  fillMinimums,
   resignOwnFreeAgent,
   runFaPeriod,
   userOfferFreeAgent,
@@ -24,6 +25,7 @@ import {
 import { hasPendingOption } from "../src/gm/engine/fa-status";
 import { enterFreeAgency } from "../src/gm/engine/offseason";
 import { evaluateOfferUtility } from "../src/gm/engine/fa-utility";
+import { getCbaRules } from "../src/gm/myleague/cba-registry";
 import type { GmLeagueState, GmPlayer, GmTeam } from "../src/gm/types";
 
 function club(id: string, goal: GmTeam["ownerGoal"] = "contend"): GmTeam {
@@ -399,6 +401,59 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   };
   const result = resignOwnFreeAgent(league, "own");
   assert.equal(result.ok, true, result.ok ? "" : result.reason);
+}
+
+
+
+// ——— MyNBA pain point: illegal top offer cannot block a legal competing bid ———
+{
+  const star = player("star-market", null, 88, 28, { lastSalaryM: 29 });
+  const roster = Array.from({ length: 15 }, (_, index) =>
+    player("full-" + index, "bos", 68, 27, {
+      contract: { yearsRemaining: 2, annualSalaryM: 5, birdRights: "none", signedSeason: 2026 },
+    })
+  );
+  const league = baseLeague([star, ...roster]);
+  const invalid = evaluateOfferUtility(league, star, league.teams[0]!, 200, 4);
+  const legal = evaluateOfferUtility(league, star, league.teams[1]!, 38, 4);
+  const offered: GmLeagueState = {
+    ...league,
+    teams: league.teams.filter(team => team.id !== "det"),
+    faMarket: { ...emptyFaMarket(42), stage: "open", day: 4, pending: [
+      { id: "invalid", playerId: star.id, teamId: "bos", salaryM: 200, years: 4, day: 4,
+        kind: "interest", utility: { ...invalid, total: 999 } },
+      { id: "legal", playerId: star.id, teamId: "nyk", salaryM: 38, years: 4, day: 4,
+        kind: "interest", utility: legal },
+    ] },
+  };
+  const result = advanceFaDayDetailed(offered).state;
+  const signed = result.players.find(row => row.id === star.id)!;
+  assert.equal(signed.teamId, "nyk", "invalid top bid must not strand a star when a legal offer exists");
+  assert.equal(signed.contract?.annualSalaryM, 38, "accept the legal contract, not an invalid amount");
+}
+
+// ——— MyNBA pain point: the CPU must never use minimum filler to poach
+// undrafted exclusive-rights rookies or discount elite free agents ———
+{
+  const players = [
+    player("exclusive", null, 98, 19, { pendingRookieContract: true, rightsKind: "exclusive_draft" }),
+    player("elite", null, 91, 28),
+    player("restricted", null, 83, 24, { rightsKind: "restricted", rightsTeamId: "nyk", qoStatus: "tendered" }),
+    player("depth1", null, 76, 25),
+    player("depth2", null, 74, 26),
+    player("depth3", null, 71, 27),
+  ];
+  const league = baseLeague(players);
+  const state = { ...league, settings: { ...league.settings, minRoster: 1 } };
+  const filled = fillMinimums(state, getCbaRules(2027)).state;
+  for (const team of filled.teams) {
+    assert.equal(filled.players.filter(row => row.teamId === team.id).length, 1,
+      team.id + " must sign available legal depth even if the top free agent is unavailable");
+  }
+  for (const id of ["exclusive", "elite", "restricted"]) {
+    assert.equal(filled.players.find(row => row.id === id)!.teamId, null,
+      id + " cannot be signed by automatic roster-minimum cleanup");
+  }
 }
 
 console.log("gm free agency ok");
