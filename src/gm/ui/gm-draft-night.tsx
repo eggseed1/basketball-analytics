@@ -89,6 +89,9 @@ export function GmDraftNight() {
     if (!added.length) return;
     const yours = added.find((row) => row.teamId === league.userTeamId);
     const jackpotRow = added.find((row) => {
+      // Generated prospects don't come with a knowable career verdict.
+      // Do not pause CPU draft jumps based on a hidden growth seed.
+      if (row.player.draftModel === 2) return false;
       const trait = playerDevTrait(row.player);
       return trait === "xfactor" || trait === "superstar";
     });
@@ -97,7 +100,8 @@ export function GmDraftNight() {
     if (added.length > 2 && !yours && !jackpotRow) return;
     const focus = yours ?? jackpotRow ?? sleeper ?? added[added.length - 1]!;
     const trait = playerDevTrait(focus.player);
-    const jackpot = trait === "xfactor" || trait === "superstar";
+    const jackpot = focus.player.draftModel !== 2 &&
+      (trait === "xfactor" || trait === "superstar");
     const isYours = focus.teamId === league.userTeamId;
     // Ceremony for your pick, jackpots, and sleepers. Ordinary CPU picks stay on the ticker.
     if (!isYours && !jackpot && !focus.sleeper) return;
