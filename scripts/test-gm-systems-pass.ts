@@ -249,17 +249,25 @@ const stretched = {
 };
 const natural = {
   ...homeBalanced,
-  coaching: { ...homeBalanced.coaching!, coverSlot: naturalCover },
+  coaching: { ...homeBalanced.coaching!, rotationMode: "manual" as const, coverSlot: naturalCover },
 };
-const oopPlan=rotationForTeam(stretched,allPlayers);
-assert.ok(oopPlan.frames.some(frame=>homePlayers.find(p=>p.id===frame.PG)?.position==="C"),"cover requests change actual on-court assignments");
-const oopBox=simulateGame(game,[stretched,away],allPlayers,3).box;
+// Auto rotations repair an impossible C-at-PG cover request. Manual position
+// coverage can still force it, with an actual on-court fit penalty.
+const repairedPlan=rotationForTeam(stretched,allPlayers);
+assert.ok(!repairedPlan.frames.some(frame=>homePlayers.find(p=>p.id===frame.PG)?.position==="C"),
+  "auto coverage must not force a center to play point guard");
+const manuallyStretched={...stretched,
+  coaching:{...stretched.coaching,rotationMode:"manual" as const}};
+const oopPlan=rotationForTeam(manuallyStretched,allPlayers);
+assert.ok(oopPlan.frames.some(frame=>homePlayers.find(p=>p.id===frame.PG)?.position==="C"),
+  "explicit manual cover must change actual on-court assignments");
+const oopBox=simulateGame(game,[manuallyStretched,away],allPlayers,3).box;
 assert.ok(oopBox.players.some(p=>p.teamId==="home"&&homePlayers.find(player=>player.id===p.playerId)?.position==="C"&&(p.positionMinutes?.PG??0)>0),"box position minutes record the actual stretch");
 let natPts = 0;
 let oopPts = 0;
 for (let seed = 1; seed <= 24; seed++) {
   natPts += simulateGame(game, [natural, away], allPlayers, seed).game.homeScore ?? 0;
-  oopPts += simulateGame(game, [stretched, away], allPlayers, seed).game.homeScore ?? 0;
+  oopPts += simulateGame(game, [manuallyStretched, away], allPlayers, seed).game.homeScore ?? 0;
 }
 assert.ok(
   natPts > oopPts,

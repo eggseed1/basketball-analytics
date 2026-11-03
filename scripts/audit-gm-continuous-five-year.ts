@@ -241,6 +241,8 @@ async function main(){
   assert.ok(seasons.every(s=>s.winSd>=7.5&&s.winSd<=17),"team records must preserve NBA-like parity");
   assert.ok(seasons.every(s=>s.minWins<=32&&s.maxWins>=53),
     "NBA-like seasons should feature genuine contenders and rebuilding clubs");
+  assert.ok(seasons.every(s=>s.unsigned85Plus<=1),
+    "elite free agents should not routinely remain unsigned after offseasons");
   assert.ok(seasons.every(s=>s.meanStrengthWinCorrelation>=0.45),
     "team talent must matter to season results");
   assert.ok(transitions.every(t=>t.winCorrelation>=0.3&&t.winCorrelation<=0.96),

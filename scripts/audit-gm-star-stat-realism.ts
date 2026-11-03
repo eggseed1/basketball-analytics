@@ -74,6 +74,13 @@ async function main() {
     starsBelow80PctRealPpg: rows.filter(r => r.simPpg < 0.8 * r.realPpg).length,
     starsAt25SimPpg: rows.filter(r => r.simPpg >= 25).length,
   };
+  // Historical distribution guardrails, not per-player win/stat scripting.
+  assert.ok(Math.abs(summary.meanSimStarPpg - summary.meanRealStarPpg) <= 1.25,
+    "scoring leaders collectively under/overproduce against NBA evidence");
+  assert.ok(summary.starPpgMae <= 3.1 && summary.starFgaMae <= 1.8,
+    "star scoring and shot-attempt distributions drifted");
+  assert.ok(Math.abs(summary.meanStarMpgBias) <= 2 && summary.starsOver38SimMpg <= 3,
+    "star workloads must remain realistic during scoring calibration");
   mkdirSync("artifacts", { recursive: true });
   writeFileSync("artifacts/franchise-star-stat-realism.json",
     JSON.stringify({ methodology: "Static 2025-26 real rosters, every third published matchup, seeded independent games, no repeated injuries or midseason roster movement", summary, rows }, null, 2) + "\n");
