@@ -1,7 +1,6 @@
-DRBL production code-only deploy request
+DRBL production deployment request
 Target: main
-Includes Franchise Lab living trade market merged in PR #171
-Merge commit: ed62c97a5b844c280a766f7a56cf4358bec0ad27
-Validation: CI, Franchise Lab simulation/balance/fidelity/browser, runtime parity and two-seed five-year continuity (8/8 passed)
-Trade activity audit: 67 CPU trades across 10 simulated seasons, no unexplained large win swings
-Requested on 2026-11-03
+Reason: restore verified November 3 live NBA analytics data after an older Franchise Lab merge reverted it
+Restored data commit: 14ac6822820a2b15a84c0b328deb8809b83b70f0
+Celtics 2026-27 record: 5-2 (November 2 loss at Houston)
+Requested: 2026-11-03
