@@ -18,7 +18,7 @@ import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { createRng, uid } from "@/gm/engine/rng";
 import { cbaSeason, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 import type { CBARules } from "@/gm/myleague/types";
-import { askingSalary, askingYears } from "@/gm/engine/free-agency-ask";
+import { askingSalary, askingYears, minimumCredibleSalaryRatio } from "@/gm/engine/free-agency-ask";
 import {
   defaultFaConfig,
   emptyFaMarket,
@@ -411,11 +411,7 @@ function resolvePlayers(
         row !== null &&
         evaluateSigning(next, row.team.id, player, row.offer.salaryM, row.offer.years).ok &&
         row.offer.salaryM + 0.05 >=
-          askingSalary(player, rules) *
-          (overallOf(player) >= 86 ? 0.80 :
-            overallOf(player) >= 83 ? 0.67 :
-            overallOf(player) >= 80 ? 0.54 :
-            overallOf(player) >= 78 ? 0.42 : 0)
+          askingSalary(player, rules) * minimumCredibleSalaryRatio(player)
       )
       .sort(
         (a, b) =>
