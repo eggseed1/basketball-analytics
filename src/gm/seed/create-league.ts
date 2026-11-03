@@ -39,13 +39,14 @@ const LAST = [
 ];
 const POSITIONS: GmPosition[] = ["PG", "SG", "SF", "PF", "C"];
 
-function makeRatings(rng: () => number, starChance: number): GmRatings {
+function makeRatings(rng: () => number, starChance: number, qualityTilt = 0): GmRatings {
   const star = rng() < starChance;
-  const impact = star
+  const baseImpact = star
     ? 2 + rng() * 5
     : rng() < 0.15
       ? 0.5 + rng() * 2
       : -1.5 + rng() * 2.5;
+  const impact = clamp(baseImpact + qualityTilt, -5, 10);
   // OVR reads offense + defense, so the split must sum to impact.
   const offenseShare = 0.58 + (rng() - 0.5) * 0.3;
   const offense = impact * offenseShare + (rng() - 0.5) * 1.2;
@@ -83,9 +84,10 @@ function makePlayer(
   scoutLevel: number,
   starChance: number,
   season: number,
-  forcedPosition?: GmPosition
+  forcedPosition?: GmPosition,
+  qualityTilt = 0
 ): GmPlayer {
-  const ratings = makeRatings(rng, starChance);
+  const ratings = makeRatings(rng, starChance, qualityTilt);
   const age = randInt(rng, 19, 36);
   const rolledPosition = pick(rng, POSITIONS);
   const pos = forcedPosition ?? rolledPosition;
@@ -158,10 +160,16 @@ export function createGeneratedLeague(options?: {
 
   const players: GmPlayer[] = [];
   for (const team of teams) {
-    const starChance = team.ownerGoal === "contend" ? 0.18 : 0.08;
+    // Generated leagues should have a genuine contender/middle/rebuild
+    // talent spectrum. Previously every team had nearly identical odds of
+    // landing a star, compressing 82-game outcomes into 25-55 wins.
+    // This changes roster quality, not game outcomes, and still lets any
+    // franchise outperform its talent through trades and development.
+    const starChance = team.ownerGoal === "contend" ? 0.23 : team.ownerGoal === "retool" ? 0.11 : 0.025;
+    const qualityTilt = team.ownerGoal === "contend" ? 0.55 : team.ownerGoal === "retool" ? -0.05 : -0.80;
     for (let i = 0; i < 15; i++) {
       players.push(
-        makePlayer(rng, team.id, team.staff.scoutLevel, starChance, season, i < 10 ? POSITIONS[i % 5] : undefined)
+        makePlayer(rng, team.id, team.staff.scoutLevel, starChance, season, i < 10 ? POSITIONS[i % 5] : undefined, qualityTilt)
       );
     }
   }
