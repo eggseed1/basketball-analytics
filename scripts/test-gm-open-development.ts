@@ -82,6 +82,12 @@ assert.ok(defenseSkills.some(key => defended.sheet!.attributes[key] > defender.s
   "defensive development must improve position-appropriate defensive skills");
 assert.equal(defended.sheet?.attributes.threePoint, defender.sheet?.attributes.threePoint,
   "focused defensive work does not silently grant the same shooting gains");
+const shootingOffShare = (grown.ratings.offense - rookie.ratings.offense) /
+  Math.max(0.01, grown.ratings.impact - rookie.ratings.impact);
+const defenseOffShare = (defended.ratings.offense - defender.ratings.offense) /
+  Math.max(0.01, defended.ratings.impact - defender.ratings.impact);
+assert.ok(shootingOffShare > defenseOffShare,
+  "skill direction must change latent offense/defense, not just card attributes");
 
 const insufficient = { ...rookie, developmentProfile: undefined };
 const natural = developmentProfileOf(insufficient);
