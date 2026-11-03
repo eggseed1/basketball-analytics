@@ -140,7 +140,10 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
   const impactChange = step * 0.31;
   const oldRatings = old.ratings;
   const impact = clamp(Math.round((oldRatings.impact + impactChange) * 100) / 100, -4, 10);
-  const attacking = old.developmentFocus === "defense" ? 0.2 : old.developmentFocus === "rebounding" ? 0.4 : 0.65;
+  const attacking = old.developmentFocus === "defense" ? 0.2
+    : old.developmentFocus === "rebounding" ? 0.4
+    : openPath && (focus === "shooting" || focus === "creation") ? 0.86
+    : 0.65;
   const offense = clamp(Math.round((oldRatings.offense + impactChange * attacking) * 100) / 100, -5, 12);
   const defense = clamp(Math.round((oldRatings.defense + impactChange * (1 - attacking)) * 100) / 100, -5, 10);
   const rating = { ...oldRatings, impact, offense, defense };
