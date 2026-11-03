@@ -1,0 +1,205 @@
+/**
+ * Three complete 30-team regular-season simulation cohorts (3 x 1,230 games).
+ * Fresh seeded leagues are used so cohort effects are separated from offseason
+ * trades/progression; this is NOT a continuous three-year franchise save.
+ *
+ * Run: npx tsx scripts/audit-gm-multiseason-rotations.ts
+ * Writes artifacts/franchise-rotation-audit.json and .md.
+ */
+import assert from "node:assert/strict";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { simulateGame, actualShiftSnapshot } from "../src/gm/engine/simulate";
+import { rotationForTeam } from "../src/gm/engine/coaching";
+import { overallOf } from "../src/gm/engine/lineup";
+import { roleFit } from "../src/gm/engine/rotation-roles";
+import type { GmPlayer, GmTeam } from "../src/gm/types";
+
+type Totals = {
+  team: string; season: number; games: number; playerGames: number;
+  planned: number; actual: number; absoluteError: number; errorSquared: number;
+  overSix: number; rankPairs: number; rankInversions: number;
+  substitutions: number; subTransitions: number; emergencySeatMinutes: number;
+  coverageSeatMinutes: number; activeSeatMinutes: number;
+  injuredAppearances: number; minuteFailures: number; stintFailures: number;
+  positionFailures: number; shiftFailures: number; injuredStarterGames: number;
+  injuredReplacementGames: number; injuredReplacementFailures: number;
+};
+const blank = (team:string,season:number): Totals => ({
+  team,season,games:0,playerGames:0,planned:0,actual:0,absoluteError:0,
+  errorSquared:0,overSix:0,rankPairs:0,rankInversions:0,substitutions:0,
+  subTransitions:0,emergencySeatMinutes:0,coverageSeatMinutes:0,
+  activeSeatMinutes:0,injuredAppearances:0,minuteFailures:0,stintFailures:0,
+  positionFailures:0,shiftFailures:0,injuredStarterGames:0,
+  injuredReplacementGames:0,injuredReplacementFailures:0,
+});
+const add = (a:Totals,b:Totals) => {
+  for(const key of Object.keys(a) as (keyof Totals)[]){
+    if(key==="team"||key==="season")continue;
+    (a[key] as number)+=b[key] as number;
+  }
+};
+const summary = (t:Totals) => ({
+  team:t.team,season:t.season,games:t.games,
+  meanAbsMinuteError: +(t.absoluteError/Math.max(1,t.playerGames)).toFixed(3),
+  minuteRmse:+Math.sqrt(t.errorSquared/Math.max(1,t.playerGames)).toFixed(3),
+  pctPlayerGamesOverSix:+(100*t.overSix/Math.max(1,t.playerGames)).toFixed(2),
+  qualityRankInversionPct:+(100*t.rankInversions/Math.max(1,t.rankPairs)).toFixed(2),
+  substitutionsPerGame:+(t.substitutions/Math.max(1,t.games)).toFixed(2),
+  emergencySeatMinutePct:+(100*t.emergencySeatMinutes/Math.max(1,t.activeSeatMinutes)).toFixed(2),
+  usableSeatMinutePct:+(100*t.coverageSeatMinutes/Math.max(1,t.activeSeatMinutes)).toFixed(2),
+  injuredStarterGames:t.injuredStarterGames,
+  injuredReplacementFailures:t.injuredReplacementFailures,
+  minuteFailures:t.minuteFailures,stintFailures:t.stintFailures,
+  positionFailures:t.positionFailures,shiftFailures:t.shiftFailures,
+  injuredAppearances:t.injuredAppearances,
+});
+const seasons=[2027,2028,2029];
+const results:Totals[]=[];
+let totalGames=0,failedGames=0;
+const errors:string[]=[];
+const sum=(values:number[])=>values.reduce((a,b)=>a+b,0);
+for(const season of seasons){
+  const league=createGeneratedLeague({userTeamId:"bos",season,seed:season*17+23});
+  assert.equal(league.teams.length,30,"requires thirty teams");
+  const regular=league.schedule.filter(g=>!g.exhibition);
+  assert.equal(regular.length,1230,"requires an 82-game schedule for every team");
+  const teams=new Map(league.teams.map(t=>[t.id,t]));
+  const byTeam=new Map(league.teams.map(t=>[t.id,blank(t.id,season)]));
+  const roster=new Map(league.teams.map(t=>[t.id,league.players.filter(p=>p.teamId===t.id)]));
+  const counts=new Map<string,number>();
+  for(const game of regular)for(const id of [game.homeTeamId,game.awayTeamId])
+    counts.set(id,(counts.get(id)??0)+1);
+  for(const [id,n] of counts)assert.equal(n,82,`${id}: expected 82 scheduled games`);
+  for(let gameIndex=0;gameIndex<regular.length;gameIndex++){
+    const game=regular[gameIndex]!;
+    // Independently inject an injury into a healthy starting player in
+    // approximately one of every 19 games. No save mutation across games.
+    const inject=gameIndex%19===0;
+    const injuredTeam=teams.get(game.homeTeamId)!;
+    const injuredId=inject?Object.values(injuredTeam.starters).find((id):id is string=>Boolean(id)):null;
+    const players=injuredId?league.players.map(p=>p.id===injuredId
+      ? {...p,injury:{type:"Audit scratch",gamesRemaining:2,reinjuryRisk:0} as NonNullable<GmPlayer["injury"]>}
+      :p):league.players;
+    const activeByTeam=new Map<string,GmPlayer[]>([
+      [game.homeTeamId,players.filter(p=>p.teamId===game.homeTeamId)],
+      [game.awayTeamId,players.filter(p=>p.teamId===game.awayTeamId)],
+    ]);
+    try{
+      const box=simulateGame(game,league.teams,players,500000+season*1300+gameIndex).box;
+      totalGames++;
+      for(const teamId of [game.homeTeamId,game.awayTeamId]){
+        const team=teams.get(teamId)!;
+        const total=byTeam.get(teamId)!;
+        total.games++;
+        const members=activeByTeam.get(teamId)!;
+        const plan=rotationForTeam(team,players);
+        const lines=box.players.filter(p=>p.teamId===teamId);
+        const lineById=new Map(lines.map(p=>[p.playerId,p]));
+        const minutes=sum(lines.map(p=>p.minutes));
+        const expected=240+25*(box.overtime??0);
+        if(Math.abs(minutes-expected)>0.01)total.minuteFailures++;
+        const injured=members.filter(p=>p.injury&&p.injury.gamesRemaining>0);
+        total.injuredAppearances+=lines.filter(l=>injured.some(p=>p.id===l.playerId)).length;
+        if(injuredId&&teamId===injuredTeam.id){
+          total.injuredStarterGames++;
+          if(!plan.openingIds.has(injuredId)&&!lineById.has(injuredId))total.injuredReplacementGames++;
+          else total.injuredReplacementFailures++;
+        }
+        for(const member of members){
+          const planned=plan.minutes[member.id]??0;
+          const actual=lineById.get(member.id)?.minutes??0;
+          // Compare regulation-only minutes: box includes extra 5-minute periods.
+          // In OT games the per-player minutes error is not directly comparable.
+          if(box.overtime)continue;
+          const diff=actual-planned;
+          total.playerGames++;
+          total.planned+=planned;total.actual+=actual;
+          total.absoluteError+=Math.abs(diff);
+          total.errorSquared+=diff*diff;
+          if(Math.abs(diff)>6)total.overSix++;
+        }
+        const available=members.filter(p=>!p.injury||p.injury.gamesRemaining<=0);
+        const qualified=available.filter(p=>(plan.minutes[p.id]??0)>0);
+        for(let i=0;i<qualified.length;i++)for(let j=i+1;j<qualified.length;j++){
+          const a=qualified[i]!,b=qualified[j]!;
+          const d=overallOf(a)-overallOf(b);
+          if(Math.abs(d)<8)continue;
+          total.rankPairs++;
+          const gap=(plan.minutes[a.id]??0)-(plan.minutes[b.id]??0);
+          if(d*gap<0)total.rankInversions++;
+        }
+        const side=box.homeTeamId===teamId?"home":"away";
+        const shifts=actualShiftSnapshot(box,teamId);
+        for(let slot=0;slot<24;slot++){
+          const stint=box.stints?.[slot];
+          if(!stint){total.stintFailures++;continue;}
+          const ids=stint[side];
+          if(ids.length!==5||new Set(ids).size!==5)total.stintFailures++;
+          const chartIds=shifts.filter(r=>r.on[slot]).map(r=>r.playerId);
+          if(chartIds.length!==5||chartIds.some(id=>!ids.includes(id)))total.shiftFailures++;
+          if(slot>0){
+            total.subTransitions++;
+            const last=new Set(box.stints![slot-1]![side]);
+            total.substitutions+=ids.filter(id=>!last.has(id)).length;
+          }
+        }
+        for(const line of lines){
+          const seated=sum(Object.values(line.positionMinutes??{}).map(v=>v??0));
+          if(Math.abs(seated-line.minutes)>0.01)total.positionFailures++;
+          const player=members.find(p=>p.id===line.playerId);
+          if(!player)continue;
+          for(const [seat,m] of Object.entries(line.positionMinutes??{})){
+            const minutes=Number(m??0);
+            const fit=roleFit(player,seat as GmPlayer["position"]);
+            total.activeSeatMinutes+=minutes;
+            if(fit>=0.84)total.coverageSeatMinutes+=minutes;
+            if(fit<0.80)total.emergencySeatMinutes+=minutes;
+          }
+        }
+      }
+    }catch(e){
+      failedGames++;
+      errors.push(`${season} ${game.id}: ${e instanceof Error?e.message:String(e)}`);
+      if(errors.length>30)throw new Error("More than 30 simulation errors; aborting audit");
+    }
+  }
+  for(const x of byTeam.values())results.push(x);
+  console.log(`Simulated ${season}: ${regular.length} games, ${byTeam.size} teams`);
+}
+const aggregate=blank("ALL",0);for(const row of results)add(aggregate,row);
+const report={
+  methodology:"Three independent seeded full regular seasons (not three consecutive franchise rollovers); seeded injuries injected into a sample of home games. Rank inversion compares planned minutes among rotation players with >=8 OVR separation. Overtime excluded from minute-error denominator. Substitution count is changed on-court players at each two-minute transition.",
+  seasons,scheduledGames:3690,simulatedGames:totalGames,failedGames,
+  aggregate:summary(aggregate),
+  perSeason:seasons.map(season=>{const v=blank("ALL",season);for(const r of results.filter(x=>x.season===season))add(v,r);return summary(v);}),
+  perTeamSeason:results.map(summary),
+  errors,
+};
+mkdirSync("artifacts",{recursive:true});
+writeFileSync("artifacts/franchise-rotation-audit.json",JSON.stringify(report,null,2)+"\n");
+const metrics=report.perTeamSeason.map(r=>`| ${r.season} | ${r.team} | ${r.meanAbsMinuteError} | ${r.qualityRankInversionPct}% | ${r.substitutionsPerGame} | ${r.emergencySeatMinutePct}% | ${r.injuredReplacementFailures} |`).join("\n");
+writeFileSync("artifacts/franchise-rotation-audit.md",`# Franchise Lab rotation audit
+
+${report.methodology}
+
+Games simulated: ${totalGames} / 3690; failures: ${failedGames}.
+
+## Aggregate
+\`\`\`json
+${JSON.stringify(report.aggregate,null,2)}
+\`\`\`
+
+## Per team and season
+| Season | Team | Minute MAE | Rank inversions | Substitutions/game | Emergency position minutes | Injury replacement failures |
+|---|---|---:|---:|---:|---:|---:|
+${metrics}
+`);
+console.log(JSON.stringify({aggregate:report.aggregate,failedGames,firstErrors:errors.slice(0,5)},null,2));
+assert.equal(failedGames,0,"Every full-schedule game must simulate");
+assert.equal(aggregate.minuteFailures,0,"Every team's box must reconcile to regulation plus OT");
+assert.equal(aggregate.stintFailures,0,"Every regulation block has five distinct players");
+assert.equal(aggregate.positionFailures,0,"All player minutes must be assigned a position");
+assert.equal(aggregate.shiftFailures,0,"Postgame chart must match recorded stints");
+assert.equal(aggregate.injuredAppearances,0,"Injured players cannot appear");
+assert.equal(aggregate.injuredReplacementFailures,0,"Injured starters must be replaced");
