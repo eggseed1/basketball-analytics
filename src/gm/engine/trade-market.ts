@@ -123,7 +123,10 @@ export function buildTradeMarket(league: GmLeagueState): GmTradeMarket {
     season: league.season,
     lastPulseDay: league.day,
     lastCpuDealWindow: league.tradeMarket?.lastCpuDealWindow,
-    rumors: rumors.slice(0, 7).map(({ priority: _priority, ...row }) => row),
+    rumors: rumors.slice(0, 7).map(row => ({
+      playerId: row.playerId, teamId: row.teamId, signal: row.signal,
+      interestedTeamIds: row.interestedTeamIds, urgency: row.urgency,
+    })),
   };
 }
 
