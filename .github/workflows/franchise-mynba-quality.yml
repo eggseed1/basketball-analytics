@@ -14,6 +14,8 @@ on:
       - 'scripts/test-gm-dynamic-progression.ts'
       - 'scripts/test-gm-draft-accessibility.ts'
       - 'scripts/test-gm-save-slots.mjs'
+      - 'scripts/test-gm-career-overlay.ts'
+      - 'src/gm/lib/career-overlay.ts'
       - 'scripts/audit-gm-star-stat-realism.ts'
       - '.github/workflows/franchise-mynba-quality.yml'
 permissions:
@@ -45,6 +47,8 @@ jobs:
         run: npm run test:franchise-saves
       - name: Offseason phase continuity
         run: npm run test:franchise-flow
+      - name: Career statistics history and historical team identity
+        run: npx tsx scripts/test-gm-career-overlay.ts
       - name: Real-roster game statistics calibration
         run: npm run test:franchise-calibration
       - name: Individual game outcomes and player stat variance
