@@ -1,0 +1,30 @@
+name: Franchise all-player position audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-gm-positions-2026.ts'
+      - '.github/workflows/franchise-player-positions.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Compare 2025-26 positional minutes with current ESPN depth charts for every player
+        run: npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-positions-2026.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: franchise-all-player-position-evidence
+          path: artifacts/gm-player-position-*.json
+          if-no-files-found: ignore
+          retention-days: 30
