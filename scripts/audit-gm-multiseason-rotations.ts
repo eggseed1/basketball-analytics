@@ -9,7 +9,7 @@
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
-import { ensureNbaCup } from "../src/gm/engine/cup";
+import { ensureNbaCup, gameCounts } from "../src/gm/engine/cup";
 import { simulateGame, actualShiftSnapshot } from "../src/gm/engine/simulate";
 import { rotationForTeam } from "../src/gm/engine/coaching";
 import { overallOf } from "../src/gm/engine/lineup";
@@ -63,7 +63,7 @@ const sum=(values:number[])=>values.reduce((a,b)=>a+b,0);
 for(const season of seasons){
   let league=ensureNbaCup(createGeneratedLeague({userTeamId:"bos",season,seed:season*17+23}));
   assert.equal(league.teams.length,30,"requires thirty teams");
-  assert.equal(league.schedule.filter(g=>!g.exhibition).length,1200,"initial published schedule has 80 games per team");
+  assert.equal(league.schedule.filter(gameCounts).length,1200,"initial published schedule has 80 games per team");
   const teams=new Map(league.teams.map(t=>[t.id,t]));
   const byTeam=new Map(league.teams.map(t=>[t.id,blank(t.id,season)]));
   const counts=new Map<string,number>();
@@ -74,7 +74,7 @@ for(const season of seasons){
     if(!pending.length)break;
     const slate=pending.filter(g=>g.day===pending[0]!.day);
     for(const game of slate){
-      const countsForStandings=!game.exhibition;
+      const countsForStandings=gameCounts(game);
       if(countsForStandings)for(const id of [game.homeTeamId,game.awayTeamId]) counts.set(id,(counts.get(id)??0)+1);
     // Independently inject an injury into a healthy starting player in
     // approximately one of every 19 games. No save mutation across games.
