@@ -6,7 +6,7 @@
 import type { GmDevTrait, GmLeagueState, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { developmentSeed, workEthicOf } from "@/gm/engine/development";
-import { ensurePlayerSheet, overallFromAttributes, simpleCategoryMeans } from "@/gm/engine/attributes";
+import { ATTRIBUTE_LABEL, ensurePlayerSheet, overallFromAttributes, simpleCategoryMeans } from "@/gm/engine/attributes";
 import { pathFromTrait } from "@/gm/engine/dev-traits";
 import {
   developmentProfileOf, developmentFocusSkill, developmentSkillKeys,
@@ -148,6 +148,13 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
   const defense = clamp(Math.round((oldRatings.defense + impactChange * (1 - attacking)) * 100) / 100, -5, 10);
   const rating = { ...oldRatings, impact, offense, defense };
   const offset = target - overallFromAttributes(old.position, attrs, { impact, offense, defense });
+  const skillGains = openPath && step > 0 ? chosen
+    .filter(key => attrs[key as keyof typeof attrs] > sheet.attributes[key as keyof typeof attrs])
+    .slice(0, 3)
+    .map(key => {
+      const ratingKey = key as keyof typeof attrs;
+      return `${ATTRIBUTE_LABEL[ratingKey]} +${attrs[ratingKey] - sheet.attributes[ratingKey]}`;
+    }) : [];
   return {
     ...old,
     ratings: rating,
@@ -155,7 +162,7 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
       ...sheet, overall: target, attributes: attrs, overallOffset: offset,
       priorOverall: before, priorSimple: simpleCategoryMeans(sheet.attributes),
       developmentReport: { age: old.age, before, after: target,
-        reasons: [label], gains: step ? [`Overall ${step > 0 ? "+" : ""}${step}`] : ["Skill maintenance"] },
+        reasons: [label], gains: step ? [`Overall ${step > 0 ? "+" : ""}${step}`, ...skillGains] : ["Skill maintenance"] },
     },
   };
 }
