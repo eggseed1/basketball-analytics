@@ -225,7 +225,7 @@ export function GmSeasonCalendar({
   const lossWash = "var(--data-negative)";
 
   return (
-    <section className={cn("gm-cal sports-card flex flex-col gap-3 overflow-hidden p-4", running && "is-running")}>
+    <section data-current-date={cursor ?? ""} className={cn("gm-cal sports-card flex flex-col gap-3 overflow-hidden p-4", running && "is-running")}>
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
