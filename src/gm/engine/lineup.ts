@@ -914,9 +914,14 @@ function supportFunctionalUnits(
   const covers=(p:GmPlayer,index:number)=>eligible[index]!.has(p.id);
   const total=(index:number)=>pool.reduce((n,p)=>
     n+(covers(p,index)?minutes[p.id]??0:0),0);
+  // Opening/halftime/closing units often overlap two capable guards plus a
+  // guard-capable wing. A bare 96-minute backcourt budget can therefore strand
+  // shifts with no handler despite having enough talent on the roster.
+  // Account for that overlap without requiring a reserve at every position.
+  const targets=[108,100] as const;
   for(let groupIndex=0;groupIndex<groups.length;groupIndex++){
     const otherIndex=1-groupIndex;
-    for(let pass=0;pass<40&&total(groupIndex)<96;pass++){
+    for(let pass=0;pass<40&&total(groupIndex)<targets[groupIndex]!;pass++){
       const receivers=pool.filter(p=>covers(p,groupIndex)&&
         (minutes[p.id]??0)+2<=Math.min(cap,38)&&
         (minutes[p.id]??0)-(original[p.id]??0)<8)
@@ -927,7 +932,7 @@ function supportFunctionalUnits(
           (minutes[p.id]??0)-2>=12&&
           (original[p.id]??0)-(minutes[p.id]??0)<8&&
           rotationMerit(p)<=rotationMerit(receiver)+4&&
-          (!covers(p,otherIndex)||total(otherIndex)>=98))
+          (!covers(p,otherIndex)||total(otherIndex)>=targets[otherIndex]!+2))
           .sort((a,b)=>rotationMerit(a)-rotationMerit(b));
         if(!donors.length)continue;
         minutes[receiver.id]=(minutes[receiver.id]??0)+2;
