@@ -544,22 +544,26 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   const rfa = player("rfa-ui", null, 78, 24,
     { rightsTeamId: "nyk", rightsKind: "restricted", qoStatus: "tendered" });
   const league = { ...baseLeague([rfa]), faMarket: { ...emptyFaMarket(51), stage: "open" as const } };
-  // Season-journey RFA offer sheets cannot be submitted until open signing.
-  // The live agent forecast must flag that same restriction as illegal.
+  // RFA sheets are a real NBA moratorium exception: they can be filed before
+  // most other free-agent contracts can be formally signed.
   const preSigning = {
     ...league,
     seasonFlow: { stage: "free_agency" } as GmLeagueState["seasonFlow"],
     faMarket: { ...league.faMarket!, stage: "moratorium" as const },
   };
-  const blockedForecast = projectFreeAgentResponse(preSigning, rfa, 9, 2);
-  assert.equal(blockedForecast.legal, false,
-    "the slider must not allow a restricted offer sheet before open signing");
-  assert.match(blockedForecast.reason ?? "", /offer sheets open/i);
-  assert.equal(userOfferFreeAgent(preSigning, rfa.id, 9, 2).ok, false,
-    "the offer engine must reject the same premature sheet");
+  const moratoriumForecast = projectFreeAgentResponse(preSigning, rfa, 9, 2);
+  assert.equal(moratoriumForecast.legal, true,
+    "the slider must allow a tendered restricted offer sheet during moratorium");
+  const moratoriumSheet = userOfferFreeAgent(preSigning, rfa.id, 9, 2);
+  assert.equal(moratoriumSheet.ok, true,
+    moratoriumSheet.ok ? "" : moratoriumSheet.reason);
+  if (moratoriumSheet.ok) {
+    assert.equal(moratoriumSheet.state.faMarket?.offerSheets?.[0]?.status, "pending_match",
+      "a moratorium offer sheet triggers the matching clock immediately");
+  }
   const signingOpen = { ...preSigning, faMarket: { ...preSigning.faMarket!, stage: "open" as const } };
   assert.equal(projectFreeAgentResponse(signingOpen, rfa, 9, 2).legal, true,
-    "the forecast must unlock the offer sheet once signing opens");
+    "the forecast must keep the offer sheet available in open signing");
   const noTender = { ...rfa, qoStatus: "eligible" as const };
   const noTenderLeague = { ...signingOpen, players: [noTender] };
   const untendered = projectFreeAgentResponse(noTenderLeague, noTender, 9, 2);
