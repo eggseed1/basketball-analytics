@@ -214,7 +214,7 @@ async function main(){
   const seasonal=seasons.map(s=>"| "+s.season+" | "+s.minWins+"-"+s.maxWins+" | "+s.winSd+" | "+s.meanStrengthWinCorrelation+" | "+s.cpuTrades+" | "+s.injuryEvents+" | "+s.unsigned80Plus+" | "+s.unsigned85Plus+" | "+s.underMinimumClubs+" |").join("\n");
   const delta=transitions.map(s=>"| "+s.from+"-"+s.to+" | "+s.winCorrelation+" | "+s.averageAbsWinChange+" | "+s["25plusSwings"]+" | "+s.unpromptedLargeSwings.map((x:any)=>x.team).join(", ")+" |").join("\n");
   writeFileSync("artifacts/franchise-continuous-five-year.md",
-    "# Five-year continuous Franchise Lab audit\n\n"+report.method+"\n\n## Seasons\n| Year | Win range | Win SD | Team quality vs wins | CPU trades | Injury events |\n|---|---|---:|---:|---:|---:|\n"+seasonal+
+    "# Five-year continuous Franchise Lab audit\n\n"+report.method+"\n\n## Seasons\n| Year | Win range | Win SD | Team quality vs wins | CPU trades | Injury events | Unsigned 80+ | Unsigned 85+ | Clubs below min |\n|---|---|---:|---:|---:|---:|---:|---:|---:|\n"+seasonal+
     "\n\n## Year-over-year movement\n| Transition | Record correlation | Average win change | 25+ win swings | Unexplained swings |\n|---|---:|---:|---:|---|\n"+delta+"\n");
   assert.equal(seasons.length,5);
   assert.equal(summers.length,4);
