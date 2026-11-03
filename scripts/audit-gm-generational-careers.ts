@@ -86,7 +86,7 @@ for(let offset=0;offset<YEARS;offset++){
     const rating=p.sheet!.overall;
     const existing=peak.get(p.id);
     if(!existing||rating>existing.peak)peak.set(p.id,{
-      id:p.id,name:p.name,draft:p.draftYear??season,pick:p.draftPick??0,
+      id:p.id,name:p.name,draft:p.draftYear??season,pick:p.consensusRank??p.draftPick??0,
       age:p.age,peak:rating,surge:(developmentProfileOf(p).learningSurge??1)>1
     });
   }
@@ -119,9 +119,18 @@ console.log("GENERATIONAL_CAREER_CALIBRATION "+JSON.stringify({
   peak98:count(98),peak99:count(99),rareLearners:report.rareLearners,
   top:top.slice(0,8),matureYears:mature.length,
   matureMean:[Math.min(...mature.map(r=>r.mean)),Math.max(...mature.map(r=>r.mean))],
+  matureStar85:[Math.min(...mature.map(r=>r.star85)),Math.max(...mature.map(r=>r.star85))],
+  matureElite90:[Math.min(...mature.map(r=>r.elite90)),Math.max(...mature.map(r=>r.elite90))],
   mature95:[Math.min(...mature.map(r=>r.generational95)),Math.max(...mature.map(r=>r.generational95))],
   mature98:[Math.min(...mature.map(r=>r.historic98)),Math.max(...mature.map(r=>r.historic98))]
 }));
+// Historical outliers must be possible under default, unmodified player
+// development, yet cannot become an annual occurrence.
+assert.ok(count(95)>=7&&count(95)<=45,"50-year career stock must produce scarce 95+ peaks");
+assert.ok(count(98)>=1&&count(98)<=15,"98+ peaks must exist without becoming routine");
+assert.ok(count(99)>=1&&count(99)<=10,"99 OVR should be a possible historic outlier");
+assert.ok(careers.some(p=>p.peak>=98&&!p.surge),
+  "extraordinary peak growth cannot depend exclusively on hidden surge DNA");
 assert.ok(mature.every(row=>row.mean>=67&&row.mean<=81),"long-run average OVR must not inflate");
 assert.ok(mature.every(row=>row.elite90<=45),"90+ players must remain exceptional");
 assert.ok(mature.every(row=>row.generational95<=12),"95+ talent must stay scarce");
