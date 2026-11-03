@@ -698,7 +698,7 @@ export function createDraftClass(options: {
     // A truly rare overlooked talent has real, discoverable tools but a
     // middling consensus rank. Not every sleeper is exceptional, and even a
     // fast learner must get the right opportunity to turn into an NBA star.
-    const rareLateLearner = board >= 30 && rng() < 0.016;
+    const rareLateLearner = board >= 14 && rng() < (board >= 30 ? 0.016 : 0.018);
     const potential={...sheet.potential};
     if(overlooked) {
       raw={...raw,personality:randInt(rng,12,25),ratings:{...raw.ratings,potential:randInt(rng,76,96)/10}};
@@ -731,11 +731,11 @@ export function createDraftClass(options: {
       attributes.passAccuracy = Math.max(attributes.passAccuracy, 76);
       const profile = developmentProfileOf(raw);
       raw = { ...raw, developmentProfile: {
-        ...profile, learning: Math.max(1.36, profile.learning),
-        adaptability: Math.max(1.22, profile.adaptability),
-        discovery: 0.18,
+        ...profile, learning: Math.max(1.26, profile.learning),
+        adaptability: Math.max(1.16, profile.adaptability),
+        discovery: 0.08,
         aptitudes: Object.fromEntries(
-          Object.entries(profile.aptitudes).map(([key, value]) => [key, Math.max(1.14, value)])
+          Object.entries(profile.aptitudes).map(([key, value]) => [key, Math.max(1.10, value)])
         ) as typeof profile.aptitudes,
       } };
       potential.path = "boom";
