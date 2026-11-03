@@ -88,7 +88,7 @@ const regulationMinutes=result.box.players.filter(p=>p.teamId===team.id).reduce(
 assert.equal(regulationMinutes,240+(result.box.overtime??0)*25,"contextual substitutions preserve 240 regulation minutes");
 for(const row of result.box.players.filter(p=>p.teamId===team.id)){
   const regulation=original.minutes[row.playerId]??0;
-  assert.ok(Math.abs(row.minutes-regulation)<=8+(result.box.overtime??0)*5,"nightly shifts may only move a bounded number of minutes");
+  assert.ok(Math.abs(row.minutes-regulation)<=8+(result.box.overtime??0)*5,`nightly minute deviation: ${row.playerName} planned ${regulation}, played ${row.minutes}, fouls ${row.personalFouls??0}, score ${result.box.homeScore}-${result.box.awayScore}, OT ${result.box.overtime??0}`);
   assert.equal(Object.values(row.positionMinutes??{}).reduce((a,b)=>a+b,0),row.minutes);
   assert.equal(row.started,original.openingIds.has(row.playerId));
 }
