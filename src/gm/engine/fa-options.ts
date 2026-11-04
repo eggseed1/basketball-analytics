@@ -145,7 +145,9 @@ export function resolveAutomatedOptions(state: GmLeagueState): GmLeagueState {
     }
     // Team option: user club waits unless automation; CPU decides now.
     if (row.teamId === next.userTeamId) continue;
-    const exercise = cpuShouldExerciseTeamOption(row.player) && rng() > 0.08;
+    // CPU never waives a valuable affordable star on an arbitrary 8% die roll.
+    const exercise = cpuShouldExerciseTeamOption(row.player) &&
+      (overallOf(row.player) >= 84 || rng() > 0.08);
     const players = next.players.map((player) => {
       if (player.id !== row.player.id) return player;
       return exercise
