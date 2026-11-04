@@ -83,7 +83,7 @@ assert.equal(offerExtension(extensionLeague, extender.id, Math.min(q.maxSalaryM,
 const free = { ...base, id: "free-player", teamId: null, contract: null,
   rightsTeamId: "bos", rightsKind: "bird" as const, age: 28 };
 const faLeague: GmLeagueState = { ...league, phase: "free_agency",
-  players: [...league.players, free], freeAgents: [...league.freeAgents, free.id],
+  players: [...league.players.filter(p => p.id !== base.id), free], freeAgents: [...league.freeAgents, free.id],
   faMarket: { ...emptyFaMarket(12), stage: "open" } };
 const range = legalFreeAgentSalaryRange(faLeague, free, 3);
 assert.ok(range.maxM > range.minM + 1);
