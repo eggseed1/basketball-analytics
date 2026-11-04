@@ -331,7 +331,7 @@ try {
   assert.equal(await page.getByTestId("lottery-revealed-order").count(), 0,
     "lottery must not spoil the pick order before the reveal");
   await page.getByTestId("lottery-start").click();
-  await page.getByRole("heading", { name: /The drum is spinning/ }).waitFor();
+  await page.getByText("Balls in motion").waitFor();
   await page.getByTestId("lottery-skip").click();
   assert.ok((await page.getByTestId("lottery-revealed-order").locator("li").count()) >= 14);
   await page.reload();

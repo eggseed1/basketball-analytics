@@ -22,6 +22,10 @@ assert.equal(result.lotteryCount, 16);
 assert.equal(new Set(result.order).size, modern.teams.length);
 assert.equal(result.order.length, modern.teams.length);
 assert.equal(result.draws.length, 16);
+assert.equal(result.ballPool?.length,37,"the modern lottery uses exactly 37 individual balls");
+assert.ok(result.draws.every(draw=>draw.attempts?.at(-1)?.accepted &&
+  draw.attempts.at(-1)?.ballId === draw.balls[0]),
+  "the saved ball number must match the actual accepted physical extraction");
 assert.deepEqual(drawDraftLottery(lotteryBase), result, "same save and standings cannot re-roll lottery");
 assert.deepEqual(computeLotteryOrder(lotteryBase), result.order);
 assert.ok(result.draws.every(d=>d.startingRank>=1 && d.startingRank<=16));
