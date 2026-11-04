@@ -111,10 +111,13 @@ export function projectFreeAgentResponse(
   const floor = minimumCredibleSalaryRatio(player);
   // Mirrors the NBA-style agent reservation and competitor comparisons.
   // Actual offers still go through userOfferFreeAgent / resolvePlayers.
-  let chance = clamp(46 + (salaryRatio - 1) * 95 + (offered.total - 46) * .55 +
-    (rival ? (offered.total - rival.total) * 1.1 : 9) +
-    (years - askYears) * 2, 4, 96);
-  if (salaryRatio + 0.001 < floor) chance = Math.min(chance, 8);
+  // The agent's interest must climb with each improvement to annual pay or
+  // guaranteed term. A strict "credible offer" reservation still affects the
+  // actual signing decision, but the preview must not abruptly jump 0 -> 100.
+  const belowMarket = Math.max(0, floor - salaryRatio);
+  let chance = clamp(42 + (salaryRatio - 1) * 65 + (offered.total - 46) * .45 +
+    (rival ? (offered.total - rival.total) * .70 : 8) +
+    (years - askYears) * 4.5 - belowMarket * 50, 3, 96);
   if (player.rightsKind === "restricted" && player.rightsTeamId !== league.userTeamId) {
     // His original team may still match an otherwise accepted offer sheet.
     chance = Math.min(chance, 80);
