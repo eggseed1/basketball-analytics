@@ -10,6 +10,7 @@ import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
 import { GmProspectFile, draftControl } from "@/gm/ui/gm-prospect-file";
 import { GmDraftTradeDesk } from "@/gm/ui/gm-draft-trade-desk";
 import { GmDraftReveal, type DraftRevealPayload } from "@/gm/ui/gm-draft-reveal";
+import { GmCombineHighlights } from "@/gm/ui/gm-combine-highlights";
 import { useGmStore } from "@/gm/state/gm-store";
 import { playerSheet } from "@/gm/engine/attributes";
 import { DRAFT_ROLES, DRAFT_TOOL_LABELS, draftRead, draftScoutingOf, draftSleeperSignals, sleeperRadar, marketBoard, scoutingBudget } from "@/gm/engine/draft-intel";
@@ -81,6 +82,7 @@ export function GmDraftWarRoom(){
   }
   return <div className="flex min-w-0 flex-col gap-4" data-testid="draft-war-room">
     {reveal ? <GmDraftReveal reveal={reveal} onClose={()=>setReveal(null)} /> : null}
+    {league.combineDone && !night ? <GmCombineHighlights league={league} compact /> : null}
     <header className="flex flex-wrap items-start justify-between gap-4"><div className="max-w-2xl"><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{league.season} draft class · {team.abbr} · {classRead}</p><h2 className="mt-1 text-2xl font-bold">{night?"Draft night":"Build your draft board"}</h2><p className="mt-2 text-sm text-muted-foreground">{night?"Make your pick or advance.":"Pick a prospect to scout."}</p></div><Link href="/gm/offseason" className={link}>Season hub</Link></header>
     {night?<SectionFrame title={yourTurn?"You are on the clock":"On the clock"} bodySurface>
       <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="flex items-center gap-2 text-xl font-bold">Pick #{index+1} · <ClubMark teamId={owner} label={`${club?.city ?? ""} ${club?.name ?? ""}`.trim() || owner || "Unknown club"} /></p><p className="mt-1 text-sm text-muted-foreground">{nextUser>=0?"Your next selection: #"+(nextUser+1):"You have no remaining picks. You can still trade into the draft."}</p></div><div className="flex flex-wrap gap-2"><Button className="min-h-11" variant="outline" disabled={yourTurn} onClick={()=>nextPick()}>Next pick</Button><Button className="min-h-11" variant="outline" disabled={yourTurn||watchedAtRisk} onClick={()=>jump()}>Sim to my pick</Button><GmConfirmAction label="Delegate remaining draft" title="Delegate your remaining selections?" confirmLabel="Delegate draft" onConfirm={()=>finish()}><p>Your saved board and draft strategy guide your selections. Other clubs choose from their own boards. The draft advances to the recap.</p></GmConfirmAction></div></div>
