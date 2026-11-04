@@ -76,9 +76,19 @@ try {
   await page.reload();
   await page.waitForFunction(() => document.documentElement.dataset.gmFull === "1");
   await checkFullscreenSurface();
+  // Chromium cannot resize a native fullscreen OS window. Drop only the
+  // browser Fullscreen API; keep the GM CSS fullscreen fallback enabled,
+  // which is the mode actually used after in-app route remounts.
+  await page.evaluate(async () => {
+    if (document.fullscreenElement) await document.exitFullscreen();
+  });
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.gmFull), "1",
+    "the full-screen CSS fallback must survive browser fullscreen exit");
   await page.setViewportSize({ width: 390, height: 844 });
   await checkFullscreenSurface();
+  await page.screenshot({ path: `${dir}/gm-fullscreen-mobile.png`, fullPage: true, animations: "disabled" });
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: `${dir}/gm-fullscreen-desktop.png`, fullPage: true, animations: "disabled" });
   await page.getByRole("button", { name: "Exit fullscreen", exact: true }).click();
   await page.waitForFunction(() => document.documentElement.dataset.gmFull !== "1");
 
