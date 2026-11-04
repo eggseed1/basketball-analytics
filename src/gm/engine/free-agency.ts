@@ -18,7 +18,7 @@ import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { createRng, uid } from "@/gm/engine/rng";
 import { cbaSeason, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 import type { CBARules } from "@/gm/myleague/types";
-import { askingSalary, askingYears, minimumCredibleSalaryRatio } from "@/gm/engine/free-agency-ask";
+import { askingSalary, askingYears, credibleFreeAgentSalaryFloor } from "@/gm/engine/free-agency-ask";
 import {
   defaultFaConfig,
   emptyFaMarket,
@@ -162,7 +162,7 @@ function bestLegalBid(
   rules: CBARules,
   aggressiveness: number
 ): { salaryM: number; years: number; via: GmSignVia } | null {
-  const ask = askingSalary(player, rules);
+  const ask = askingSalary(player, state);
   const years = askingYears(player, rules);
   const own = player.rightsTeamId === team.id;
   const tries = own
@@ -199,7 +199,8 @@ function teamTargets(state: GmLeagueState, team: GmTeam, rules: CBARules): GmPla
           (row) => row.playerId === player.id && row.teamId !== team.id
         )
     );
-  const own = pool.filter((player) => player.rightsTeamId === team.id);
+  const own = pool.filter((player) => player.rightsTeamId === team.id)
+    .sort((a,b)=>overallOf(b)-overallOf(a) || a.id.localeCompare(b.id));
   const rest = pool
     .filter((player) => player.rightsTeamId !== team.id)
     .sort((a, b) => {
@@ -214,7 +215,11 @@ function teamTargets(state: GmLeagueState, team: GmTeam, rules: CBARules): GmPla
       return sb - sa;
     });
   const stars = rest.filter((player) => overallOf(player) >= 82);
-  const board =
+  // Good unsigned players must remain on every GM's radar as leverage shifts,
+  // not vanish behind the original top three roster-fit suggestions.
+  const late = (state.faMarket?.day ?? 0) >= 8 &&
+    ["open","fill"].includes(state.faMarket?.stage ?? "");
+  const board = late ? [...own, ...stars, ...rest] :
     team.ownerGoal === "contend" ? [...own, ...stars, ...rest] : [...own, ...rest];
   const slots =
     size < state.settings.minRoster
@@ -224,7 +229,7 @@ function teamTargets(state: GmLeagueState, team: GmTeam, rules: CBARules): GmPla
         : team.ownerGoal === "retool"
           ? 2
           : 1;
-  return board.slice(0, slots);
+  return board.slice(0, late ? Math.max(4, slots) : slots);
 }
 
 function placeCpuOffers(state: GmLeagueState, rules: CBARules): GmLeagueState {
@@ -252,8 +257,16 @@ function placeCpuOffers(state: GmLeagueState, rules: CBARules): GmLeagueState {
       team.ownerGoal === "contend" ? 1.05 : team.ownerGoal === "tank" ? 0.72 : 0.9;
     for (const player of teamTargets(next, team, rules)) {
       if (market0.stage === "re_signing" && player.rightsTeamId !== team.id) continue;
-      if (rng() > (overallOf(player) >= 84 ? 0.92 : overallOf(player) >= 78 ? 0.72 : 0.5))
-        continue;
+      const ovr = overallOf(player);
+      const homeRights = player.rightsTeamId === team.id &&
+        ["bird","early","restricted"].includes(player.rightsKind ?? "");
+      // Don't randomly let 90 OVR Bird-rights stars leave with no bid.
+      // Later market days increase outreach to still-available talent.
+      const attempt = homeRights && ovr >= 88 ? 1 :
+        homeRights && ovr >= 82 ? .96 :
+        ovr >= 84 ? .92 : ovr >= 78 ? .72 : .5;
+      const lateMarket = market0.day >= 8 && ["open","fill"].includes(market0.stage);
+      if (rng() > (lateMarket ? Math.max(.92, attempt) : attempt)) continue;
       const key = `${team.id}:${player.id}`;
       if (taken.has(key)) continue;
       const market = ensureFaMarket(next);
@@ -296,7 +309,9 @@ function placeCpuOffers(state: GmLeagueState, rules: CBARules): GmLeagueState {
         }
         continue;
       }
-      const bid = bestLegalBid(next, team, player, rules, aggression);
+      const bid = bestLegalBid(next, team, player, rules,
+        player.rightsTeamId === team.id && overallOf(player) >= 84
+          ? 1.0 : lateMarket && overallOf(player) >= 82 ? 1 : aggression);
       if (!bid) continue;
       pending.push({
         id: uid("fa"),
@@ -410,8 +425,7 @@ function resolvePlayers(
       .filter((row): row is NonNullable<typeof row> =>
         row !== null &&
         evaluateSigning(next, row.team.id, player, row.offer.salaryM, row.offer.years).ok &&
-        row.offer.salaryM + 0.05 >=
-          askingSalary(player, rules) * minimumCredibleSalaryRatio(player)
+        row.offer.salaryM + 0.05 >= credibleFreeAgentSalaryFloor(player, next)
       )
       .sort(
         (a, b) =>
@@ -420,16 +434,17 @@ function resolvePlayers(
     const winner = ranked[0];
     if (!winner) continue;
     const ovr = overallOf(player);
-    const ask = askingSalary(player, rules);
+    const ask = askingSalary(player, next);
     if (mode === "agree") {
-      if (ovr >= 86 && winner.offer.salaryM + 0.05 < ask * 0.95) continue;
-      if (ovr >= 84 && winner.offer.salaryM + 0.05 < ask * 0.9) continue;
-      if (ovr >= 80 && ranked.length < 2 && winner.offer.salaryM < ask * 0.92) continue;
-      if (ovr >= 76 && ranked.length < 2 && winner.offer.salaryM < ask * 0.88) continue;
-      const birdHome =
-        player.rightsTeamId === winner.team.id &&
-        winner.offer.salaryM + 0.05 >= ask * 0.9;
-      if (!birdHome && ovr >= 78 && ranked.length < 2) continue;
+      // Players can accept an attractive, lone legal offer. A competing offer
+      // is not a prerequisite for a free agent finding employment.
+      const ownBird = player.rightsTeamId === winner.team.id &&
+        (player.rightsKind === "bird" || player.rightsKind === "early" ||
+         player.rightsKind === "restricted");
+      const late = next.faMarket?.day != null && next.faMarket.day >= 8;
+      const nearAsk = winner.offer.salaryM + .05 >= ask *
+        (ovr >= 86 ? (late ? .90 : .95) : ovr >= 80 ? (late ? .86 : .92) : .86);
+      if (!nearAsk && !(ownBird && winner.offer.salaryM >= ask*.9)) continue;
 
       if (!evaluateSigning(next, winner.team.id, player, winner.offer.salaryM, winner.offer.years).ok) continue;
       const reservation = {
