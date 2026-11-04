@@ -106,9 +106,18 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
   const skill = attrs ? mean(...selected.map(key => attrs[key])) : 70;
   // Elite skills and OVR have progressively diminishing returns. These are
   // soft friction, never a hard OVR destiny tied to the draft lottery.
+  // A small, genuinely exceptional group should be able to become elite
+  // through sustained practice and playing opportunity. Normal prospects
+  // retain the existing population-calibrated drag, so the league does not
+  // fill with 95 OVR players after ten seasons. This is a learning trait,
+  // not a hidden fixed potential or an automatic generational jump.
+  const rareLearner = player.draftModel === 2 &&
+    ((profile.learningSurge ?? 1) > 1 ||
+      (profile.learning >= 1.20 && (profile.aptitudes[focus] ?? 1) >= 1.16));
   const ovrDrag = overall < 77 ? 1 : overall < 82 ? 0.89
-    : overall < 86 ? 0.72 : overall < 90 ? 0.67
-    : overall < 94 ? 0.29 : 0.12;
+    : overall < 86 ? (rareLearner ? 0.88 : 0.72)
+    : overall < 90 ? (rareLearner ? 0.84 : 0.67)
+    : overall < 94 ? (rareLearner ? 0.45 : 0.29) : 0.12;
   const skillDrag = skill < 82 ? 1 : skill < 89 ? 0.88
     : skill < 94 ? 0.68 : 0.44;
   const newSkillTax = skill < 57 ? (0.82 + (profile.adaptability - 0.7) * 0.17) : 1;
