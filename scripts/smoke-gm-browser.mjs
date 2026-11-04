@@ -43,7 +43,42 @@ try {
     "sim-through-injuries preference survives reload");
   await page.getByRole("checkbox", { name: /Sim through injuries/ }).uncheck();
 
-  // Development should make one clear skill choice prominent, without
+  // Fictional social reactions are integrated into the same saved league,
+  // accessible on narrow screens, and can be liked/followed without any API.
+  await page.goto("http://127.0.0.1:3107/gm/timeline", { waitUntil: "domcontentloaded" });
+  const timeline = page.getByTestId("gm-social-timeline");
+  await timeline.getByRole("heading", { name: "The Timeline" }).waitFor();
+  assert.ok(await timeline.locator("[data-social-post]").count() >= 1);
+  assert.ok(await timeline.getByText("Fictional in-game accounts", { exact: false }).count() > 0 ||
+    await timeline.getByText("fictional NBA social feed", { exact: false }).count() > 0);
+  const reportPost = timeline.locator("[data-social-post]").first();
+  const postId = await reportPost.getAttribute("data-social-post");
+  await reportPost.getByRole("button", { name: /Like .* post/ }).click();
+  assert.equal(await reportPost.getByRole("button", { name: /Unlike .* post/ }).getAttribute("aria-pressed"), "true");
+  await reportPost.getByRole("button", { name: "Follow", exact: true }).click();
+  await page.reload();
+  await timeline.locator('[data-social-post="' + postId + '"]').waitFor();
+  const kept = timeline.locator('[data-social-post="' + postId + '"]');
+  assert.equal(await kept.getByRole("button", { name: /Unlike .* post/ }).getAttribute("aria-pressed"), "true",
+    "likes must survive browser reload");
+  assert.equal(await kept.getByRole("button", { name: "Following", exact: true }).getAttribute("aria-pressed"), "true",
+    "account follows must survive browser reload");
+  await timeline.getByRole("button", { name: "Liked", exact: true }).click();
+  assert.ok(await timeline.locator("[data-social-post]").count() >= 1);
+  await timeline.getByRole("button", { name: "For you", exact: true }).click();
+  const expand = timeline.getByRole("button", { name: /Show replies to/ }).first();
+  if (await expand.count()) {
+    await expand.click();
+    assert.ok(await timeline.locator("[data-social-post]").count() >= 2, "replies should unfold on demand");
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2),
+    "timeline must fit a narrow mobile screen");
+  await page.screenshot({ path: `${dir}/timeline-mobile.png`, fullPage: true, animations: "disabled" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: `${dir}/timeline-desktop.png`, fullPage: true, animations: "disabled" });
+
+    // Development should make one clear skill choice prominent, without
   // exposing a hard-coded final OVR. The focus persists after a page reload.
   await page.goto("http://127.0.0.1:3107/gm/development", { waitUntil: "domcontentloaded" });
   const development = page.getByTestId("development-path");
