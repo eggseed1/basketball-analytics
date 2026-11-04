@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { BADGES, BADGE_LEVELS, badgeCap, badgeLevel, ensureBadges } from "@/gm/engine/badges";
-import { activeMentor, mentorEligible, mentorshipBonus, mentorshipSlots } from "@/gm/engine/development";
+import { activeMentor, mentorEligible, mentorProfile, mentorshipBonus, mentorshipSlots } from "@/gm/engine/development";
 import { useGmStore } from "@/gm/state/gm-store";
 import { developmentOutlook } from "@/gm/engine/development-profile";
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
@@ -22,7 +22,7 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <h2 className="text-lg font-bold">Mentorship</h2>
-        <p className="text-xs text-muted-foreground">Two pairs max. Veterans improve training and help teach badges.</p>
+        <p className="text-xs text-muted-foreground">Two pairs max. Experience and years of service matter more than OVR.</p>
       </div>
       <span className="text-xs font-semibold text-muted-foreground">
         {slots.filter(Boolean).length}/2 active
@@ -34,7 +34,8 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
         const chosenId = draftMentees[slot] ?? current?.id ?? "";
         const mentee = eligibleMentees.find(player => player.id === chosenId);
         const mentor = mentee && current?.id === mentee.id ? activeMentor(current, league.players) : undefined;
-        const possibleMentors = mentee ? roster.filter(veteran => mentorEligible(mentee, veteran)) : [];
+        const possibleMentors = mentee ? roster.filter(veteran => mentorEligible(mentee, veteran))
+          .sort((a, b) => mentorProfile(b).quality - mentorProfile(a).quality || b.age - a.age) : [];
         const other = slots[slot === 0 ? 1 : 0];
         const teachable = mentee && mentor
           ? BADGES.filter(badge => {
@@ -82,7 +83,7 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
                 <option value="">{mentee ? "Choose veteran mentor" : "Choose a mentee first"}</option>
                 {possibleMentors.map(veteran => <option key={veteran.id} value={veteran.id}
                   disabled={other?.mentorship?.mentorId === veteran.id}>
-                  {veteran.name} · {Math.round(veteran.sheet?.overall ?? 0)} OVR
+                  {veteran.name} · {mentorProfile(veteran).service} seasons · {mentorProfile(veteran).tier} mentor · {Math.round(veteran.sheet?.overall ?? 0)} OVR
                 </option>)}
               </select>
             </label>
@@ -92,6 +93,7 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
               <GmPlayerPortrait player={mentee} size="sm" />
               <div className="min-w-0 text-xs">
                 <p className="font-semibold">{mentee.name} + {mentor.name}</p>
+                <p className="mt-1 text-muted-foreground">{mentorProfile(mentor).tier} mentor · {mentorProfile(mentor).service} years of service · age {mentor.age}</p>
                 <p className="mt-1 text-muted-foreground">
                   +{Math.round(mentorshipBonus(mentee, league.players) * 100)}% training pace · {mentee.mentorship?.sharedGames ?? 0} games together
                 </p>
