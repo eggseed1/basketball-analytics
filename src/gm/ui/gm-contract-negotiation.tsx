@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils";
 import { useGmStore } from "@/gm/state/gm-store";
 import { displayOverall, displayPlayerName } from "@/gm/lib/selectors";
 import { overallOf } from "@/gm/engine/lineup";
-import { extensionQuote } from "@/gm/engine/extensions";
+import { extensionQuote, extensionInterest, extensionSalaryTarget } from "@/gm/engine/extensions";
+import { GmContractSigningCelebration } from "@/gm/ui/gm-contract-signing-celebration";
 import { exceptionAmounts } from "@/gm/engine/cap";
 import { askingSalary, askingYears } from "@/gm/engine/free-agency-ask";
 import { faPlayerPriorities, evaluateOfferUtility, faPersonality } from "@/gm/engine/fa-utility";
@@ -33,6 +34,7 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
   const [offerM, setOfferM] = useState<number | null>(null);
   const [offerYears, setOfferYears] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ ok: boolean; message: string } | null>(null);
+  const [celebration, setCelebration] = useState<{ salaryM: number; years: number; extension: boolean } | null>(null);
 
   const player = league?.players.find(p => p.id === playerId) ?? null;
   const userTeam = league?.teams.find(t => t.id === league.userTeamId) ?? null;
@@ -63,12 +65,11 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
   const rivals = league && player && !isExtension ? competingFreeAgentOffers(league, player) : [];
   const projection = league && player && !isExtension
     ? projectFreeAgentResponse(league, player, salary, years) : null;
-  const ready = isExtension ? Boolean(quote?.eligible && salary + .05 >= ask && salary <= max + .05) :
+  const ready = isExtension ? Boolean(quote?.eligible && salary >= min && salary <= max + .05) :
     Boolean(projection?.legal && range && range.maxM >= range.minM);
-  const extensionReadiness = ready ? 100 : quote?.eligible ? 8 : 0;
-  const chance = isExtension ? extensionReadiness : projection?.chance ?? 0;
-  const signal = isExtension ? ready ? "strong" : "unlikely" :
-    projection?.level ?? "unlikely";
+  const chance = isExtension && quote && player && league
+    ? extensionInterest(league, player, quote, salary, years) : projection?.chance ?? 0;
+  const signal = chance >= 66 ? "strong" : chance >= 34 ? "possible" : "unlikely";
   const stage = league?.faMarket?.stage;
   const verbal = stage === "re_signing" || stage === "moratorium";
   const isRfa = !isExtension && Boolean(player?.rightsKind === "restricted" &&
@@ -102,8 +103,10 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
     projection?.reason ?? range?.reason;
   const agentNote = isExtension
     ? !quote?.eligible ? quote?.reason ?? "The extension window is closed." :
-      salary + .05 >= ask ? "His extension salary requirement is satisfied. He can sign immediately." :
-        "He will not extend at this number. Move the salary to his asking range."
+      salary + .05 >= extensionSalaryTarget(quote, years)
+        ? "This offer meets his term-adjusted asking price. He is ready to extend."
+        : "He wants around $" + extensionSalaryTarget(quote, years).toFixed(1) +
+          "M per year for this term. More salary or more guaranteed years helps."
     : projection?.note ?? "Review the contract rules before sending an offer.";
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -112,15 +115,27 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
     if (isExtension) {
       const result = extendPlayer(playerId, salary, years);
       setFeedback({ ok: result.ok, message: result.reason });
+      if (result.ok && useGmStore.getState().league?.players.find(p => p.id === playerId)?.contract?.extension) {
+        setCelebration({ salaryM: salary, years, extension: true });
+      }
     } else {
       const result = signFreeAgent(playerId, salary, years);
       // A rejected *immediate* offer can still be recorded on the league
       // market as pending, so do not discard the game engine's response.
       setFeedback({ ok: result.ok, message: result.note ?? result.reason ?? "Offer recorded." });
+      // A pending offer or verbal promise is not a signed contract. Celebrate
+      // only once the actual league state has the new player-team contract.
+      if (result.ok && useGmStore.getState().league?.players.find(p => p.id === playerId)?.teamId === league.userTeamId) {
+        setCelebration({ salaryM: salary, years, extension: false });
+      }
     }
   }
 
   return <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+    {celebration ? <GmContractSigningCelebration player={player} teamId={userTeam.id}
+      teamName={userTeam.city + " " + userTeam.name} salaryM={celebration.salaryM}
+      years={celebration.years} extension={celebration.extension}
+      onClose={() => setCelebration(null)} /> : null}
     <div className="flex items-center justify-between gap-3">
       <Link href={back} className="text-sm font-semibold text-muted-foreground underline underline-offset-4 hover:text-foreground">
         ← Back to {isExtension ? "contracts" : "free agency"}
@@ -176,7 +191,7 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
             <GmOfferSliders prefix={isExtension ? "extension" : "fa"} salaryM={salary}
               setSalaryM={value => { setOfferM(value); setFeedback(null); }}
               minM={min} maxM={max} years={years}
-              setYears={value => { setOfferYears(value); setOfferM(null); setFeedback(null); }}
+              setYears={value => { setOfferYears(value); setFeedback(null); }}
               minYears={minYears} maxYears={maxYears} chance={chance} status={signal}
               interestLabel={isExtension ? "Extension readiness" : "Estimated interest"} disabled={!playerAvailable}/>
             <div className="mt-4 space-y-3">
@@ -187,7 +202,7 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
               <Button type="submit" className="w-full" size="lg" disabled={!canSend}>{submitLabel}</Button>
               {!ready || !playerAvailable ? <p className="text-xs text-amber-600 dark:text-amber-400">{disabledNote ?? "This offer is below his requirements or outside your legal signing capacity."}</p> : null}
               {isExtension ? <p className="text-xs text-muted-foreground">
-                Your current-year salary remains in place; the extension starts in {quote?.startsSeason}. An eligible extension at or above his asking salary signs immediately.
+                Your current-year salary remains in place; the extension starts in {quote?.startsSeason}. Salary and guaranteed years both affect his willingness to extend.
               </p> : <p className="text-xs text-muted-foreground">
                 {isRfa ? "Restricted free agents can sign offer sheets during the moratorium. The rights holder gets two market days to match." :
                   verbal ? "During the moratorium most accepted proposals are verbal agreements, not signed contracts. They reserve room until signing opens." :
