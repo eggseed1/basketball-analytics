@@ -403,7 +403,7 @@ export function GmFreeAgencyHub() {
                     <span className="inline-flex items-center gap-2">
                       <GmPlayerPortrait player={player} />{displayPlayerName(player)} · {player.rightsKind ?? "UFA"} · hold $
                       {(player.lastSalaryM ?? 0).toFixed(1)}M · ask $
-                      {askingSalary(player, rules).toFixed(1)}M per year / {askingYears(player, rules)} years
+                      {askingSalary(player, league).toFixed(1)}M per year / {askingYears(player, rules)} years
                       {preview.ok ? (
                         <span className="ml-1 text-[12px] text-muted-foreground">
                           (renounce → room ${preview.roomAfterM.toFixed(1)}M)
@@ -500,7 +500,7 @@ export function GmFreeAgencyHub() {
                             {displayPlayerName(p)}
                           </Link>
                           <span className="ml-2 text-muted-foreground">
-                            {displayOverall(p)} · ${askingSalary(p, rules).toFixed(1)}M
+                            {displayOverall(p)} · ${askingSalary(p, league).toFixed(1)}M
                           </span>
                         </li>
                       ))}
@@ -535,7 +535,7 @@ export function GmFreeAgencyHub() {
                     const agreed = (market?.agreements ?? []).find(
                       (row) => row.playerId === p.id
                     );
-                    const ask = askingSalary(p, rules);
+                    const ask = askingSalary(p, league);
                     const askY = askingYears(p, rules);
                     const watched = (market?.watchlist ?? []).includes(p.id);
                     return (
