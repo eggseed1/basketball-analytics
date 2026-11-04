@@ -78,7 +78,40 @@ try {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.screenshot({ path: `${dir}/timeline-desktop.png`, fullPage: true, animations: "disabled" });
 
-    // Development should make one clear skill choice prominent, without
+    // Reconcile the linked 240-minute allocator with the same save used by
+  // Timeline and mentorship; sliders transfer minutes instead of creating more.
+  await page.goto("http://127.0.0.1:3107/gm/lineup", { waitUntil: "domcontentloaded" });
+  const minuteBudget = page.getByTestId("rotation-minute-budget");
+  await minuteBudget.waitFor();
+  assert.match(await minuteBudget.innerText(), /240\s*\/\s*240/,
+    "the actual rotation UI must start with one valid 240-minute budget");
+  const rotationSliders = page.locator('.gm-rot__slider input[type="range"]:not([disabled])');
+  const beforeMinutes = await rotationSliders.evaluateAll(nodes => nodes.map(el => Number(el.value)));
+  assert.ok(beforeMinutes.length >= 5);
+  const firstSlider = rotationSliders.first();
+  assert.ok(Number(await firstSlider.inputValue()) >= 2);
+  await firstSlider.focus();
+  await firstSlider.press("ArrowLeft");
+  await page.waitForFunction(before => {
+    const current = [...document.querySelectorAll('.gm-rot__slider input[type="range"]:not([disabled])')]
+      .map(el => Number(el.value));
+    return current.length === before.length && current.some((value, index) => value !== before[index]);
+  }, beforeMinutes);
+  const afterMinutes = await rotationSliders.evaluateAll(nodes => nodes.map(el => Number(el.value)));
+  assert.equal(afterMinutes.reduce((sum, n) => sum + n, 0), 240,
+    "the minute book cannot gain or lose minutes on an edit");
+  assert.equal(afterMinutes[0], beforeMinutes[0] - 2,
+    "the selected player's minutes move by one linked two-minute block");
+  assert.ok(afterMinutes.slice(1).some((minutes, index) => minutes > beforeMinutes[index + 1]),
+    "a teammate must receive the moved minutes");
+  assert.match(await minuteBudget.innerText(), /240\s*\/\s*240/);
+  await page.reload();
+  await minuteBudget.waitFor();
+  const savedMinutes = await page.locator('.gm-rot__slider input[type="range"]:not([disabled])')
+    .evaluateAll(nodes => nodes.map(el => Number(el.value)));
+  assert.deepEqual(savedMinutes, afterMinutes, "linked minute changes survive reload");
+
+  // Development should make one clear skill choice prominent, without
   // exposing a hard-coded final OVR. The focus persists after a page reload.
   await page.goto("http://127.0.0.1:3107/gm/development", { waitUntil: "domcontentloaded" });
   const development = page.getByTestId("development-path");
