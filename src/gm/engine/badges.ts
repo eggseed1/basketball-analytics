@@ -1,5 +1,6 @@
 import type { GmAttributes, GmBadgeId, GmBoxScore, GmPlayer } from "@/gm/types";
 import { activeMentor } from "@/gm/engine/development";
+import { athleticTools } from "@/gm/engine/combine-evaluation";
 
 export const BADGE_LEVELS = ["Locked", "Bronze", "Silver", "Gold", "Hall of Fame", "Legend"] as const;
 export const BADGE_XP = [0, 120, 360, 900, 1800, 3200] as const;
@@ -17,6 +18,9 @@ export const BADGES: readonly Badge[] = [
   { id: "glass_cleaner", name: "Glass cleaner", category: "rebounding", attributes: ["offReb", "defReb"], action: "Rebounds: 2 XP each", effect: "+2.5% rebound weight per level" },
   { id: "defensive_anchor", name: "Defensive anchor", category: "defense", attributes: ["perimeterDefense", "interiorDefense"], action: "One XP per four minutes when opponents shoot 48% or less", effect: "Opponent shot accuracy reduced by up to 0.5 percentage points across the lineup" },
   { id: "clutch_scorer", name: "Clutch scorer", category: "balanced", attributes: ["midrange", "threePoint"], action: "Made shots in the last four minutes or overtime, score within 10: 6 XP each", effect: "+0.3 percentage points to shot accuracy per level in close late-game possessions" },
+  { id: "aerial_assault", name: "Aerial assault", category: "finishing", attributes: ["drivingDunk", "vertical"], action: "Made two-pointers: 2 XP each", effect: "Exceptional leapers unlock +0.2 percentage points to two-point finishing per level" },
+  { id: "chase_down", name: "Chase-down artist", category: "defense", attributes: ["block", "speed", "vertical"], action: "Blocks: 8 XP each", effect: "Fast, explosive rim recoveries: +1.5% block rate per level" },
+  { id: "explosive_first_step", name: "Explosive first step", category: "creation", attributes: ["speedWithBall", "speed", "agility"], action: "Successful creation possessions: up to 10 XP", effect: "Rare downhill creators reduce live-ball turnovers by 0.6% per level" },
 ];
 
 export function badgeSkill(player: GmPlayer, id: GmBadgeId): number {
@@ -26,6 +30,10 @@ export function badgeSkill(player: GmPlayer, id: GmBadgeId): number {
   return ["glass_cleaner", "defensive_anchor", "clutch_scorer"].includes(id) ? Math.max(...values) : values.reduce((a,b) => a+b,0) / values.length;
 }
 export function badgeCap(player: GmPlayer, id: GmBadgeId): number {
+  const tools = athleticTools(player);
+  if (id === "aerial_assault" && !tools.leaping) return 0;
+  if (id === "chase_down" && !tools.chaser) return 0;
+  if (id === "explosive_first_step" && !tools.burst) return 0;
   const skill = badgeSkill(player, id);
   return BADGE_REQUIREMENTS.reduce<number>((rank, gate, index) => skill >= gate ? index : rank, 0);
 }
@@ -86,6 +94,9 @@ export function recordBadgeGame(player: GmPlayer, box: GmBoxScore, players: GmPl
     floor_general: line.assists*3, secure_handle: Math.max(0,Math.min(12,line.fga+line.assists-3*line.turnovers)),
     passing_lanes: line.steals*6, rim_guardian: line.blocks*6, glass_cleaner: line.rebounds*2,
     defensive_anchor: opponentPct <= 0.48 ? Math.floor(line.minutes/4) : 0, clutch_scorer: clutch*6,
+    aerial_assault: Math.max(0,line.fgm-line.tpm)*2,
+    chase_down: line.blocks*8,
+    explosive_first_step: Math.max(0,Math.min(10,line.fga+line.assists-line.turnovers*2)),
   };
   const focus = defaultBadgeFocus(player);
   const mentor = activeMentor(player,players);
@@ -115,10 +126,10 @@ export function recordBadgeGame(player: GmPlayer, box: GmBoxScore, players: GmPl
 /** Pure bounded effects used by the possession engine and inspected by regression tests. */
 export function badgeEffects(player: GmPlayer) {
   const level = (id: GmBadgeId) => badgeLevel(player,id);
-  return { two: level("inside_touch")*0.003, three: level("deep_range")*0.003, ft: level("free_throw")*0.004,
+  return { two: level("inside_touch")*0.003 + level("aerial_assault")*0.002, three: level("deep_range")*0.003, ft: level("free_throw")*0.004,
     ast: 1+level("floor_general")*0.02, passing: level("floor_general")*0.001,
-    tov: 1-level("secure_handle")*0.012, stl: 1+level("passing_lanes")*0.025,
-    blk: 1+level("rim_guardian")*0.025, reb: 1+level("glass_cleaner")*0.025,
+    tov: 1-level("secure_handle")*0.012-level("explosive_first_step")*0.006, stl: 1+level("passing_lanes")*0.025,
+    blk: 1+level("rim_guardian")*0.025+level("chase_down")*0.015, reb: 1+level("glass_cleaner")*0.025,
     defense: level("defensive_anchor")*0.001, clutch: level("clutch_scorer")*0.003 };
 }
 
