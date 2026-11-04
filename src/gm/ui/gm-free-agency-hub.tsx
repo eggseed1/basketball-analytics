@@ -27,6 +27,7 @@ import {
   userTeam,
 } from "@/gm/lib/selectors";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { GmContractSigningCelebration } from "@/gm/ui/gm-contract-signing-celebration";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { useGmStore } from "@/gm/state/gm-store";
 import type { GmFaStage, GmPlayer, GmPosition } from "@/gm/types";
@@ -69,6 +70,24 @@ export function GmFreeAgencyHub() {
   const [pos, setPos] = useState<GmPosition | "ALL">("ALL");
   const [onlyMine, setOnlyMine] = useState(false);
   const [onlyWatch, setOnlyWatch] = useState(false);
+  const [celebrations, setCelebrations] = useState<Array<{ player: GmPlayer; salaryM: number; years: number }>>([]);
+
+  function runMarketAction(action: () => void) {
+    const before = useGmStore.getState().league;
+    action();
+    const after = useGmStore.getState().league;
+    if (!before || !after || before.id !== after.id) return;
+    const newSignings = after.players.filter(player => {
+      const previous = before.players.find(p => p.id === player.id);
+      return previous && previous.teamId !== after.userTeamId &&
+        player.teamId === after.userTeamId && Boolean(player.contract);
+    }).map(player => {
+      const agreed = before.faMarket?.agreements.find(o => o.playerId === player.id && o.teamId === after.userTeamId);
+      return { player, salaryM: agreed?.salaryM ?? player.contract!.annualSalaryM,
+        years: agreed?.years ?? player.contract!.yearsRemaining };
+    });
+    if (newSignings.length) setCelebrations(current => [...current, ...newSignings]);
+  }
 
   const agents = useMemo(() => {
     if (!league) return [] as GmPlayer[];
@@ -127,6 +146,11 @@ export function GmFreeAgencyHub() {
 
   return (
     <div className="flex flex-col gap-4">
+      {celebrations[0] ? <GmContractSigningCelebration
+        player={celebrations[0].player} teamId={league.userTeamId}
+        teamName={team.city + " " + team.name} salaryM={celebrations[0].salaryM}
+        years={celebrations[0].years} extension={false}
+        onClose={() => setCelebrations(current => current.slice(1))} /> : null}
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-2xl">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -150,10 +174,10 @@ export function GmFreeAgencyHub() {
             )
           ) : market?.done ? <Link className={buttonVariants()} href="/gm/offseason">Continue summer</Link> : (
             <>
-              <Button onClick={() => advanceFaDay()} disabled={Boolean(market?.done)}>
+              <Button onClick={() => runMarketAction(advanceFaDay)} disabled={Boolean(market?.done)}>
                 Continue
               </Button>
-              <Button variant="outline" onClick={() => runCpuSignings()}>
+              <Button variant="outline" onClick={() => runMarketAction(runCpuSignings)}>
                 Sim window
               </Button>
             </>
