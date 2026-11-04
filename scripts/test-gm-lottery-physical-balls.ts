@@ -1,6 +1,7 @@
 /** Exact statistical/physical draw audit for the 2027 NBA 3-2-1 lottery. */
 import assert from "node:assert/strict";
 import { createRng } from "../src/gm/engine/rng";
+import { createLotteryHoleScene, LOTTERY_HOLE, simulateLotteryHoleExit } from "../src/gm/engine/lottery-hole-physics";
 import { legalNew321PickProtection } from "../src/gm/engine/lottery-balls";
 import { draw321PhysicalUrn, build321BallPool } from "../src/gm/engine/lottery-balls";
 import { drawDraftLottery } from "../src/gm/engine/standings";
@@ -45,6 +46,36 @@ assert.ok(first.draws.every(draw => draw.attempts.every(event =>
 assert.ok(first.draws.slice(12).every(draw => !relegated.has(draw.teamId)),
   "the bottom three must never be selected #13–16");
 
+// The physical exit, NOT a separate weighted result, must decide every draw.
+// Rebuild the same chamber from the saved seed and prove each extraction
+// crossed the ball-sized top opening with the same physics frame.
+const remainingTeams = new Set(teams);
+let totalCollisions = 0;
+for (const pick of first.draws) {
+  const surviving = pool.filter(ball => remainingTeams.has(ball.teamId));
+  for (const attempt of pick.attempts) {
+    assert.ok(Number.isInteger(attempt.physicsSeed), "every pull saves its physics seed");
+    assert.ok((attempt.exitFrame ?? 0) >= LOTTERY_HOLE.openFrame);
+    const replay = simulateLotteryHoleExit(surviving, attempt.physicsSeed!);
+    assert.equal(replay.ballId, attempt.ballId, "physics must select the persisted numbered ball");
+    assert.equal(replay.frame, attempt.exitFrame, "the exit frame must survive serialization");
+    totalCollisions += replay.collisions;
+    const scene = createLotteryHoleScene(surviving, attempt.physicsSeed!);
+    for (let t = 0; t < replay.frame; t++) scene.step();
+    assert.equal(scene.exit?.ballId, attempt.ballId);
+    const escaped = scene.particles.find(ball => ball.id === attempt.ballId)!;
+    assert.ok(Math.abs(escaped.x - LOTTERY_HOLE.center) <
+      LOTTERY_HOLE.gapWidth / 2 - LOTTERY_HOLE.ballRadius + 1,
+      "the extracted ball must fit through the actual ball-sized hole");
+    assert.ok(Math.hypot(escaped.x - LOTTERY_HOLE.center,
+      escaped.y - LOTTERY_HOLE.center) > LOTTERY_HOLE.radius - LOTTERY_HOLE.ballRadius,
+      "the ball must really cross the chamber boundary");
+  }
+  remainingTeams.delete(pick.teamId);
+}
+assert.ok(totalCollisions > 100, "the draw must actually simulate ball-to-ball collisions");
+
+
 const restricted = one(99, first.draws[0]!.teamId,
   new Set(first.draws.slice(0, 5).map(draw => draw.teamId)));
 assert.notEqual(restricted.draws[0]!.teamId, first.draws[0]!.teamId);
@@ -61,11 +92,14 @@ for (const draw of restricted.draws) {
 assert.ok(restricted.draws.every(draw => draw.attempts.length >= 1));
 
 const counts = new Map(teams.map(id => [id, 0]));
+const ballCounts = new Map(pool.map(ball => [ball.id, 0]));
 const samples = 8000;
 for (let i = 1; i <= samples; i++) {
   const result = one(i * 1664525 + 1013904223);
   const winner = result.draws[0]!.teamId;
   counts.set(winner, counts.get(winner)! + 1);
+  const number = result.draws[0]!.balls[0]!;
+  ballCounts.set(number, ballCounts.get(number)! + 1);
 }
 // Without prior-year restrictions, exact first-draw theoretical odds are
 // proportional to physical balls: 2/37, 3/37 or 1/37.
@@ -78,6 +112,12 @@ for (const id of teams) {
 }
 assert.ok(counts.get(teams[3]!)! > counts.get(teams[15]!)! * 1.9,
   "three balls must be materially better than one");
+for (const [ballId, count] of ballCounts) {
+  assert.ok(Math.abs(count / samples - 1 / 37) < 0.012,
+    "ball labels and teams must not bias which physical ball escapes: " +
+    JSON.stringify({ ballId, count, samples }));
+}
+
 
 const league = prepareFranchise(createGeneratedLeague({ userTeamId: "bos", season: 2028, seed: 424 }));
 const state = { ...league, playIn: createPlayInBoard(league) ?? undefined };
@@ -104,4 +144,4 @@ assert.equal(classic.format, "classic");
 assert.equal(classic.draws.length, 4);
 assert.ok(classic.draws.every(d => d.balls.length === 4 &&
   new Set(d.balls).size === 4 && d.balls.every(n => n >= 1 && n <= 14)));
-console.log("37-ball urn: exact weights, 8000-draw first-pick odds, individual ball traces, eligibility, relegation floor, no repeat winners, classic combinations and save reload passed.");
+console.log("37-ball physics: 8000 full-lottery draws, fair ball odds, actual hole exits, collisions, exact seeded replays, legal restrictions and save compatibility passed.");
