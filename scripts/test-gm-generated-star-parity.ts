@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise } from "../src/gm/engine/franchise";
 import { simulationRates } from "../src/gm/engine/player-profile";
+import { simulateGame } from "../src/gm/engine/simulate";
 import { developmentProfileOf, softGrowthFactor } from "../src/gm/engine/development-profile";
 import { advanceDynamicProgression } from "../src/gm/engine/dynamic-progression";
 
@@ -56,4 +57,38 @@ assert.equal(first.sheet!.overall - exceptional.sheet.overall <= 5, true,
   "elite growth remains bounded per offseason");
 assert.deepEqual(advanceDynamicProgression(exceptional, context), first,
   "elite progression remains deterministic for saved franchises");
-console.log("Generated superstar usage and rare earned elite progression passed.");
+// Confirm the same skill level yields a comparable simulated box-score
+// scoring rate, not merely a higher unused FGA/min profile field.
+const clubs = league.teams.filter(team => league.players.filter(p => p.teamId === team.id).length >= 8).slice(0, 2);
+assert.equal(clubs.length, 2);
+const starters = clubs.map(team => league.players.filter(p => p.teamId === team.id && p.contract)
+  .sort((a, b) => (b.sheet?.overall ?? 0) - (a.sheet?.overall ?? 0))[0]!);
+assert.ok(starters.every(Boolean));
+const built = starters.map((p, index) => ({ ...p, age: 25,
+  draftModel: index === 0 ? 2 as const : undefined,
+  nbaPlayerId: index === 1 ? "simulated-nba-usage-control" : undefined,
+  sheet: { ...elite.sheet, attributes: { ...elite.sheet.attributes } },
+  ratings: { ...elite.ratings },
+  simProfile: { ...elite.simProfile, source: index === 0 ? "estimated" as const : "nba" as const,
+    rates: { ...elite.simProfile.rates, fga: index === 0 ? 0.27 : 0.70 } },
+}));
+const players = league.players.map(p => built.find(star => star.id === p.id) ?? p);
+const tallies = [ { pts: 0, min: 0 }, { pts: 0, min: 0 } ];
+for (let i = 0; i < 24; i++) {
+  const fixture = { ...league.schedule[0]!, id: "elite-generated-parity-" + i,
+    homeTeamId: clubs[i % 2]!.id, awayTeamId: clubs[1 - (i % 2)]!.id,
+    played: false, neutral: i % 3 === 0 };
+  const box = simulateGame(fixture, league.teams, players, 25000 + i, undefined, league.settings).box;
+  built.forEach((star, index) => {
+    const row = box.players.find(p => p.playerId === star.id)!;
+    tallies[index]!.pts += row?.points ?? 0;
+    tallies[index]!.min += row?.minutes ?? 0;
+  });
+}
+assert.ok(tallies.every(row => row.min > 400), "both stars must receive a real rotation role");
+const genP36 = tallies[0]!.pts / tallies[0]!.min * 36;
+const realP36 = tallies[1]!.pts / tallies[1]!.min * 36;
+assert.ok(genP36 >= realP36 * 0.70 && genP36 <= realP36 * 1.50,
+  "equal-skill generated scorers must produce similar PPG to real-profile players, not half their points: " +
+  JSON.stringify({ genP36, realP36 }));
+console.log("Generated superstar usage and rare earned elite progression and actual scoring parity passed.");
