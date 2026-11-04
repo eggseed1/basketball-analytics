@@ -113,6 +113,15 @@ export function simulationRates(player: GmPlayer): GmSimProfile["rates"] {
     const scoringSkill = clamp((skill - 79) / 20, 0, 1);
     const scoringImpact = clamp((player.ratings.offense - 2) / 8, 0, 1);
     rates.fga *= 1 + 0.48 * starRole + 0.18 * scoringSkill + 0.10 * scoringImpact;
+    // A 70 OVR rookie can start with just 0.25 FGA/min. Multiplying that
+    // tiny entry prior forever still leaves a 90+ OVR scorer around 15 PPG.
+    // Real star-volume players need a FLOOR tied to their *current* scoring
+    // skill and role, not to the random amount they shot on draft night.
+    // Defense-first 90 OVR bigs receive less usage than elite shot creators.
+    const scorer = clamp((skill - 75) / 20, 0, 1);
+    const trainedFloor = 0.25 + clamp(overall - 72, 0, 25) * 0.019 *
+      (0.65 + 0.35 * scorer) + 0.04 * scoringImpact + 0.035 * scorer;
+    rates.fga = Math.max(rates.fga, trainedFloor);
   }
   rates.ast *= clamp(1 + delta("passAccuracy") * 0.018, 0.4, 1.7);
   rates.orb *= clamp(1 + delta("offReb") * 0.018 + delta("strength") * 0.003, 0.4, 1.7);
