@@ -1,7 +1,6 @@
 DRBL production deployment request
 Target: main
-Reason: ship Franchise Lab permanent generated-player identities, zero-cost SVG portraits, geographic names/backgrounds, and team-aware jerseys
-Reviewed merge: 19a9f096cb5e5440c86f84fce32f6b48c770ccf6 (PR #181)
-Validated: five successful PR workflows, full browser gallery, all 30 team palettes, same-face trade transitions, draft cohort and long-horizon balance, runtime parity
-Safety: deploy-site workflow resyncs live NBA snapshots and repairs against stale merges; code-only deployment
-Requested: 2026-11-03
+Reason: release Franchise Lab Timeline, open-ended mentorship, linked 240-minute rotations, multi-asset trade finder, and sim-through-injuries
+Validated commit: 86fe0d39e06bd27461826bba11a68dbd076c678a (integration PR #185)
+Validation: CI, Franchise Lab browser/simulation/fidelity/balance, social Timeline suite, generated identities, five-year continuity on both seeds, runtime parity
+Data safety: use deploy-site workflow's live snapshot sync and protect-live-runtime guard
