@@ -10,6 +10,11 @@
  * These are the actual persisted draws that the animation replays. The 2-D
  * bouncing-ball visuals never pick a second winner.
  */
+/** For new trades, NBA rules beginning with the 2027 Draft bar top-12, 13, 14 and 15 protection. */
+export function legalNew321PickProtection(draftSeason: number, topN: number | null | undefined): boolean {
+  return topN == null || topN <= 0 || draftSeason <= 2026 || topN < 12 || topN > 15;
+}
+
 export interface LotteryBall { id: number; teamId: string }
 export interface LotteryAttempt {
   ballId: number;

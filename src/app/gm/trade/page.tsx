@@ -13,6 +13,7 @@ import {
   teamCashM,
   type PlayerPackage,
 } from "@/gm/engine/trades";
+import { legalNew321PickProtection } from "@/gm/engine/lottery-balls";
 import { findSelectedTradePackages } from "@/gm/engine/trade-finder";
 import { Button } from "@/components/ui/button";
 import { ClubMark } from "@/gm/ui/club-mark";
@@ -1072,7 +1073,11 @@ function PickList({
                 <option value={0}>Unprotected</option>
                 <option value={4}>Top 4</option>
                 <option value={8}>Top 8</option>
-                <option value={14}>Lottery</option>
+                {legalNew321PickProtection(pick.season,14)
+                  ? <option value={14}>Lottery (top 14)</option>
+                  : pick.protectionTopN === 14
+                    ? <option value={14} disabled>Legacy lottery-protected</option>
+                    : null}
               </select>
             ) : null}
           </li>

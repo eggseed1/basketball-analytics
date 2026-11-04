@@ -1,12 +1,21 @@
 /** Exact statistical/physical draw audit for the 2027 NBA 3-2-1 lottery. */
 import assert from "node:assert/strict";
 import { createRng } from "../src/gm/engine/rng";
+import { legalNew321PickProtection } from "../src/gm/engine/lottery-balls";
 import { draw321PhysicalUrn, build321BallPool } from "../src/gm/engine/lottery-balls";
 import { drawDraftLottery } from "../src/gm/engine/standings";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, parseFranchise, exportFranchise } from "../src/gm/engine/franchise";
 import { createPlayInBoard } from "../src/gm/engine/play-in";
 
+assert.ok(legalNew321PickProtection(2026,14), "historical pre-2027 lottery protection is unchanged");
+for (const topN of [12,13,14,15]) {
+  assert.equal(legalNew321PickProtection(2027,topN),false,
+    "NBA prohibits attaching new protections from top-12 through top-15");
+}
+assert.ok(legalNew321PickProtection(2027,4));
+assert.ok(legalNew321PickProtection(2027,8));
+assert.ok(legalNew321PickProtection(2027,null));
 const teams = Array.from({ length: 16 }, (_, i) => "team-" + (i + 1));
 const weight = new Map(teams.map((id, i) => [id, i < 3 ? 2 : i < 10 ? 3 : i < 14 ? 2 : 1]));
 const relegated = new Set(teams.slice(0, 3));

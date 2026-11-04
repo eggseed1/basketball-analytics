@@ -1,4 +1,5 @@
 "use client";
+import { legalNew321PickProtection } from "@/gm/engine/lottery-balls";
 import { listedPositionCorrections } from "@/gm/engine/position-listings";
 import { assignFive } from "@/gm/engine/rotation-roles";
 import { POSITIONS } from "@/gm/engine/lineup";
@@ -1465,6 +1466,9 @@ export const useGmStore = create<GmStore>()(
       setPickProtection: (pickId, topN) => {
         const league = get().league;
         if (!league) return;
+        const pick = league.teams.flatMap(team => team.draftPicks)
+          .find(item => item.id === pickId && item.ownerTeamId === league.userTeamId);
+        if (!pick || !legalNew321PickProtection(pick.season, topN)) return;
         const teams = league.teams.map((team) => ({
           ...team,
           draftPicks: team.draftPicks.map((pick) =>
