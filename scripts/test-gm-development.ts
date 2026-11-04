@@ -64,9 +64,16 @@ const unmentored = progressSheet(student(), { pace: "season", speed: 0.5, minute
 const mentored = progressSheet(student(), { pace: "season", speed: 0.5, minutes: 24, mentorBonus: bonus });
 assert.ok((mentored.sheet!.developmentCarry ?? 0) > (unmentored.sheet!.developmentCarry ?? 0), "mentor work increases fractional development before a rating step");
 assert.ok(mentored.sheet!.overall >= unmentored.sheet!.overall);
-const box: GmBoxScore = { id: "mentor-box", gameId: "mentor-game", season: league.season, day: 1, homeTeamId: "bos", awayTeamId: "nyk", homeScore: 100, awayScore: 90, possessions: 100, players: [{ playerId: young.id, playerName: young.name, teamId: "bos", minutes: 28, points: 20, assists: 5, rebounds: 5, steals: 1, blocks: 0, turnovers: 2, fgm: 8, fga: 15, tpm: 2, tpa: 5, ftm: 2, fta: 2, plusMinus: 5, trueShootingPct: 0.6, usagePct: 0.2, gameScore: 18 }] };
+const box: GmBoxScore = { id: "mentor-box", gameId: "mentor-game", season: league.season, day: 1, homeTeamId: "bos", awayTeamId: "nyk", homeScore: 100, awayScore: 90, possessions: 100, players: [
+  { playerId: young.id, playerName: young.name, teamId: "bos", minutes: 28, points: 20, assists: 5, rebounds: 5, steals: 1, blocks: 0, turnovers: 2, fgm: 8, fga: 15, tpm: 2, tpa: 5, ftm: 2, fta: 2, plusMinus: 5, trueShootingPct: 0.6, usagePct: 0.2, gameScore: 18 },
+  { playerId: veteran.id, playerName: veteran.name, teamId: "bos", minutes: 24, points: 12, assists: 6, rebounds: 3, steals: 1, blocks: 0, turnovers: 2, fgm: 5, fga: 10, tpm: 1, tpa: 2, ftm: 1, fta: 2, plusMinus: 4, trueShootingPct: 0.58, usagePct: 0.18, gameScore: 11 },
+] };
+const solo = { ...box, gameId: "mentor-dnp", players: box.players.filter(row => row.playerId === young.id) };
+const noShared = recordSimGame(league.players, solo, []);
+assert.equal(noShared.find(p => p.id === young.id)?.mentorship?.sharedGames, 0,
+  "mentorship experience cannot increase when the veteran never plays");
 league = { ...league, players: recordSimGame(league.players, box, []) };
-assert.equal(student().mentorship?.sharedGames, 1);
+assert.equal(student().mentorship?.sharedGames, 1, "a same-game mentor appearance counts exactly once");
 assert.equal(recordSimGame(league.players, box, [box]).find(p => p.id === young.id)?.mentorship?.sharedGames, 1);
 assert.equal(student().developmentBaseline?.overall, 70);
 const saved = parseFranchise(exportFranchise(league));
@@ -129,4 +136,4 @@ const rested = tickInjuries(fatigued, 1, { teamIds: ["bos"], before: fatigued, t
 assert.equal(rested[0]?.campFatigueGames, 1);
 assert.equal(tickInjuries(rested, 1, { teamIds: ["nyk"], before: rested, trainerByTeam: {} })[0]?.campFatigueGames, 1);
 assert.equal(tickInjuries(rested, 1, { teamIds: ["bos"], before: rested, trainerByTeam: {} })[0]?.campFatigueGames, 0);
-console.log("Development checks passed: mentorship eligibility, growth, exposure, trade/reload guards, full-season breakouts, rare annual rolls, shared +4 career cap, camp limits and workload recovery.");
+console.log("Development checks passed: eligibility, practice bonuses, genuine co-appearances, badges, open discoveries, legacy cap, replay guards, training camp and recovery.");
