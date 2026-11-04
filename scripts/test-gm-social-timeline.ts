@@ -24,6 +24,11 @@ const sample: GmBoxScore = {
       plusMinus: -7, trueShootingPct: 0.55, usagePct: 0.21, gameScore: 16 },
   ],
 };
+const prior: GmBoxScore = {
+  ...sample, id: "box-story-38", gameId: "game-story-38", day: 38,
+  homeScore: 119, awayScore: 111,
+  players: sample.players.map(line => line.playerId === hero.id ? { ...line, points: 39, gameScore: 38 } : line),
+};
 const news: GmNewsItem[] = [
   { id: "draft-reveal-01", day: 41, season, tone: "good",
     headline: "BOS selects Niko Silva", body: "Pick #17. Overall 73. Development depends on opportunity." },
@@ -37,8 +42,8 @@ const injured = {
   injury: { type: "Sprained ankle", gamesRemaining: 7, reinjuryRisk: 0.1 },
 };
 const state: GmLeagueState = {
-  ...base, day: 45, news, boxScores: [sample], players: base.players.map(p => p.id === hero.id ? injured : p),
-  tradeLog: [{ id: "trade-real-01", fromTeamId: "bos", toTeamId: "lal",
+  ...base, day: 45, news, boxScores: [sample, prior], players: base.players.map(p => p.id === hero.id ? injured : p),
+  tradeLog: [{ id: "trade-real-01", season, day: 42, fromTeamId: "bos", toTeamId: "lal",
     fromAssets: [{ type: "player", id: hero.id }], toAssets: [{ type: "pick", id: "2029-1" }], status: "accepted" }],
 };
 const first = syncSocialTimeline(state);
@@ -62,6 +67,8 @@ for (const category of ["game", "draft", "trade", "injury", "news"]) {
 const report = posts.find(p => p.eventId === "social:game:box-story-40" && !p.replyTo)!;
 assert.ok(report.text.includes(hero.name));
 assert.ok(report.text.includes("48 PTS"));
+assert.ok(report.text.includes("consecutive recorded appearances"),
+  "context comes from actual previous player box scores, never a random heater claim");
 assert.ok(report.text.includes("Rookie " + hero.name + " was selected at pick #17"),
   "rookie breakout recognizes the draft year before the season, not the season end year");
 assert.ok(report.text.includes("126"));
@@ -74,6 +81,12 @@ assert.ok(!posts.some(p => /has been traded to LAL as confirmed by medical/.test
   "the generator never fabricates a transaction to fill a template");
 const trade = posts.find(p => p.eventId === "social:trade:trade-real-01" && !p.replyTo)!;
 assert.ok(trade.text.includes(hero.name) && trade.text.includes("2029-1"));
+assert.equal(trade.day, 42, "trade posts retain the actual transaction day, not the date the save was reloaded");
+const legacyTrade = syncSocialTimeline({
+  ...state, tradeLog: state.tradeLog.map(({ season: _season, day: _day, ...old }) => old),
+});
+assert.ok(!legacyTrade.socialPosts?.some(p => p.eventId === "social:trade:trade-real-01"),
+  "an undated legacy trade cannot be reported as a new transaction");
 const rookie = posts.find(p => p.eventId === "social:news:draft-reveal-01" && !p.replyTo)!;
 assert.ok(rookie.text.includes("Niko Silva"), "draft news uses only revealed identities");
 assert.ok(posts.some(p => p.accountId === "burner"), "parody burner posts about major events");
