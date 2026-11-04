@@ -121,9 +121,22 @@ export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
       if (change.after > change.before) gains.push(change.key + " +" + (change.after - change.before));
       attributes[change.key] = change.after;
     }
-    const extras = { impact: player.ratings.impact, drbl100: player.drbl100 };
-    const offset = sheet.overallOffset ?? sheet.overall - overallFromAttributes(player.position, sheet.attributes, extras);
-    const overall = clamp(offset + overallFromAttributes(player.position, attributes, extras), 25, 99);
+    // Camp only adds skills. Measure before and after with the SAME O/D
+    // latent-strength inputs used by the sheet, then add the nonnegative
+    // difference to the *saved* OVR. Recomputing from impact alone previously
+    // dropped OVR for players whose offense/defense split differed from impact
+    // (and persisted that drop as a new offset).
+    const extras = {
+      impact: player.ratings.impact,
+      offense: player.ratings.offense,
+      defense: player.ratings.defense,
+    };
+    const beforeRating = overallFromAttributes(player.position, sheet.attributes, extras);
+    const afterRating = overallFromAttributes(player.position, attributes, extras);
+    const overall = clamp(sheet.overall + Math.max(0, afterRating - beforeRating), 25, 99);
+    // Preserve the new overall across subsequent development/save cycles:
+    // the latent strength hasn't changed just because someone attended camp.
+    const offset = overall - afterRating;
     const rng = createRng(developmentSeed(player.id + ":camp:" + league.season));
     const healthy = league.players.filter(row => row.teamId === player.teamId && row.contract && !row.injury).length;
     const soreness = rng() < campSorenessRisk(league) && healthy >= 6 && !strainedTeams.has(player.teamId!);
