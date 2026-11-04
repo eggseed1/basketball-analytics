@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { ClubMark } from "@/gm/ui/club-mark";
+import { GmLotteryMachine } from "@/gm/ui/gm-lottery-machine";
 import { ATTRIBUTE_LABEL } from "@/gm/engine/attributes";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -50,6 +51,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
   const advance = useGmStore(state => state.advanceSeasonJourney);
   const decideRookie = useGmStore(state => state.decideRookieContract);
   const runCombine = useGmStore(state => state.runCombine);
+  const completeLotteryReveal = useGmStore(state => state.completeLotteryReveal);
   const delegateDraft = useGmStore(state => state.finishDraftBoard);
   const assign = useGmStore(state => state.setCampAssignment);
   const suggestCamps = useGmStore(state => state.suggestCampPlan);
@@ -96,7 +98,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
     <SectionFrame title={journey.title} bodySurface>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <p className="text-xs font-medium text-muted-foreground">{stageIndex >= 0 ? `Step ${stageIndex + 1} of ${OFFSEASON_STAGES.length} · ` : ""}{journey.period}</p>
-        {journey.primaryAction === "open_roster_fill" ? <Button onClick={findFreeAgents}>{journey.primaryLabel}</Button> : journey.primaryHref ? <Link className={buttonVariants()} href={journey.primaryHref}>{journey.primaryLabel}</Link> : <Button onClick={continueJourney} disabled={journey.blocked}>{journey.primaryLabel}</Button>}
+        {journey.primaryAction === "open_roster_fill" ? <Button onClick={findFreeAgents}>{journey.primaryLabel}</Button> : journey.primaryHref ? <Link className={buttonVariants()} href={journey.primaryHref}>{journey.primaryLabel}</Link> : <Button onClick={continueJourney} disabled={journey.blocked || (stage === "lottery" && !flow.lotteryRevealed)}>{stage === "lottery" && !flow.lotteryRevealed ? "Reveal lottery first" : journey.primaryLabel}</Button>}
       </div>
       {journey.tasks.some(task=>task.required) ? <div className="mt-3 flex flex-wrap gap-3 text-sm">{journey.tasks.filter(task=>task.required).map(task => task.action === "open_roster_fill" ? <button key={task.label} type="button" className={linkClass} onClick={findFreeAgents}>{task.label}</button> : <Link key={task.label} className={linkClass} href={task.href}>{task.label}</Link>)}</div> : null}
       {journey.blocked && journey.hint ? <p className="mt-2 text-sm text-muted-foreground">{journey.hint}</p> : null}
@@ -115,9 +117,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
       <Link className={linkClass} href="/gm/staff">Open staff desk</Link>
     </SectionFrame> : null}
 
-    {stage === "lottery" ? <SectionFrame title="Draft order" >
-      <ol className="grid max-h-80 list-inside list-decimal gap-2 overflow-y-auto text-sm sm:grid-cols-2">{(league.draftOrder ?? league.lotteryOrder ?? []).map((id, index) => <li key={index} className={cn(id === team.id && "font-bold text-primary")}>{league.teams.find(club => club.id === id)?.abbr}{id === team.id ? " · Your pick" : ""}</li>)}</ol>
-    </SectionFrame> : null}
+    {stage === "lottery" ? <GmLotteryMachine key={league.season} league={league} onFinish={completeLotteryReveal} /> : null}
 
     {stage === "scouting" ? <SectionFrame title="Prepare your board" >
       <div className="flex flex-wrap items-center gap-3"><Button variant="outline" onClick={() => runCombine()} disabled={league.combineDone}>{league.combineDone ? "Combine complete" : "Run draft combine"}</Button><Link className={linkClass} href="/gm/draft">Scouting board and workouts</Link></div>
