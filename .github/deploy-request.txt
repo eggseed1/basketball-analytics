@@ -1,6 +1,6 @@
 DRBL Cloudflare production deployment request
 Target: main
-Reason: Franchise Lab release PR #193: deterministic collision-based 37-ball lottery where the ball that passes through the single physical outlet determines the pick. Replay exact saved physics seeds and exit frames; preserve historical draws.
-Validated code commit: 0e8575f9012886eb5859d91fa058b1028538ec36
-Validation: dedicated 37-ball physical probability/exit/replay suite, browser extraction and normal-motion animation, season balance and fidelity were green prior to merge. Full general repository and Franchise Lab regressions were still running when deployment was requested.
-Data safety: code-only release; preserve live NBA runtime snapshots with the existing deploy guard and verify Cloudflare delivery and page-cache warm.
+Reason: Franchise Lab fullscreen restoration PR #194. The GM desk was transparent after the page atmosphere was hidden in fullscreen, exposing a black browser backdrop. Fullscreen now paints the ordinary themed background and retains a readable 80rem content width in desktop and mobile viewports.
+Validated release commit: 8a888e5e37fbc08d5826b30eacb3ca82a2dd413d
+Validation: fullscreen desktop/mobile/reload browser smoke passed; TypeScript and lint checks passed. Full general CI and simulation jobs were still running at the deployment request.
+Data safety: code-only production release; preserve up-to-date NBA runtime snapshots and run existing regression protection checks before Cloudflare deployment.
