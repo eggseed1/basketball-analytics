@@ -125,7 +125,7 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
       setFeedback({ ok: result.ok, message: result.note ?? result.reason ?? "Offer recorded." });
       // A pending offer or verbal promise is not a signed contract. Celebrate
       // only once the actual league state has the new player-team contract.
-      if (result.ok && useGmStore.getState().league?.players.find(p => p.id === playerId)?.teamId === userTeam.id) {
+      if (result.ok && useGmStore.getState().league?.players.find(p => p.id === playerId)?.teamId === league?.userTeamId) {
         setCelebration({ salaryM: salary, years, extension: false });
       }
     }
