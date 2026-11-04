@@ -57,6 +57,11 @@ assert.ok(NBA.tendencies.shootThree <= one.tendencies.shootThree,
 const unchanged = evolveTendencies({ ...chosen, tendencyCarry: { shootThree: 0.9 } }, attrs, "summer");
 assert.equal(unchanged.tendencies.shootThree, 32, "a no-op checkpoint must not cash in carry");
 assert.equal(unchanged.tendencyCarry?.shootThree, 0.9);
+const unrelated = evolveTendencies({ ...chosen, tendencyCarry: { shootThree: 0.9 } },
+  { ...attrs, perimeterDefense: attrs.perimeterDefense + 2 }, "season");
+assert.equal(unrelated.tendencies.shootThree, 32,
+  "a defensive workout cannot cash in pending shooting tendency progress");
+assert.equal(unrelated.tendencyCarry?.shootThree, 0.9);
 
 const creative = evolveTendencies(chosen, { ...attrs, passAccuracy: Math.min(99, attrs.passAccuracy + 8),
   ballHandle: Math.min(99, attrs.ballHandle + 8), speedWithBall: Math.min(99, attrs.speedWithBall + 6) }, "summer");
