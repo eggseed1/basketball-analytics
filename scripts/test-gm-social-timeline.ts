@@ -3,7 +3,6 @@ import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
 import { syncSocialTimeline, socialTimeline, socialAccount } from "../src/gm/engine/social-timeline";
 import { stepDay } from "../src/gm/engine/pace";
-import { runDraftPick } from "../src/gm/engine/progression";
 import type { GmBoxScore, GmLeagueState, GmNewsItem } from "../src/gm/types";
 
 const base = prepareFranchise(createGeneratedLeague({ userTeamId: "bos", season: 2028, seed: 919 }));
