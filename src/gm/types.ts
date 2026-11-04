@@ -1054,6 +1054,8 @@ export interface GmSeasonFlow {
   season: number;
   stage?: GmOffseasonStage;
   completed: GmOffseasonStage[];
+  /** Visual ceremony completion; lottery outcome is fixed before reveal. */
+  lotteryRevealed?: boolean;
   contractsRolled?: boolean;
   deadMoneyRolled?: boolean;
   progressionApplied?: boolean;
@@ -1130,6 +1132,9 @@ export interface GmLeagueState {
   playIn?: GmPlayInBoard;
   /** Full first-round pick order (lottery + reverse playoff). */
   lotteryOrder?: string[];
+  lotteryDraws?: Array<{ teamId: string; balls: number[]; startingRank: number; oddsPct: number }>;
+  lotteryCount?: number;
+  lotteryFormat?: "classic" | "321";
   /**
    * Flat pick schedule for this draft (usually 60). When set, each index is one
    * selection so draft-night trades can swap a single slot without moving both rounds.
