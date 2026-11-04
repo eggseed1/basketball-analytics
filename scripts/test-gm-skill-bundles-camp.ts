@@ -121,6 +121,37 @@ for (const focus of CAMP_FOCUSES.map(entry => entry.id)) {
     "OVR must survive export/reload");
 }
 
+
+// Training camp is an actual preseason decision: meaningful targeted skills,
+// a badge practice benefit, and diminishing returns for established veterans.
+{
+  const rookie: GmPlayer = { ...base, age: 20, sheet: { ...base.sheet!, overall: 72,
+    attributes: { ...base.sheet!.attributes, threePoint: 64, midrange: 65, freeThrow: 64 } },
+    badges: { version: 2, xp: {} } };
+  const coached = summer(rookie);
+  const gains = campSkillChanges(coached, rookie, "shooting");
+  assert.ok(gains[0]!.after - gains[0]!.before >= 3, "young players get a meaningful primary gain");
+  assert.ok(gains[1]!.after - gains[1]!.before >= 2, "the supporting skill also grows");
+  const selected = assignCamp(coached, base.id, "shooting");
+  const trainedLeague = applyTrainingCamp(selected.state);
+  const trained = trainedLeague.players.find(p => p.id === base.id)!;
+  const result = trainedLeague.seasonFlow!.campResults!.find(row => row.playerId === base.id)!;
+  assert.ok((result.badgeGains?.length ?? 0) > 0, "skill-specific camps provide badge practice");
+  assert.ok((trained.badges?.xp.deep_range ?? 0) > 0, "badge practice is persisted");
+  assert.ok(trained.sheet!.tendencies.shootThree >= rookie.sheet!.tendencies.shootThree,
+    "camp grows playing tendencies alongside actual skills");
+  assert.equal(applyTrainingCamp(trainedLeague), trainedLeague, "replay cannot farm badge XP");
+  assert.equal(parseFranchise(exportFranchise(trainedLeague)).players.find(p => p.id === base.id)!.badges?.xp.deep_range,
+    trained.badges?.xp.deep_range, "camp badge XP survives saving and reloading");
+  const older: GmPlayer = { ...rookie, age: 35, sheet: { ...rookie.sheet!, overall: 91,
+    attributes: { ...rookie.sheet!.attributes, threePoint: 93 } } };
+  const veteranGain = campSkillChanges(summer(older), older, "shooting");
+  assert.ok(veteranGain[0]!.after - veteranGain[0]!.before <= 1,
+    "an elite veteran cannot gain multiple points of an elite skill every camp");
+  const conditioning = applyTrainingCamp(assignCamp(summer(rookie), base.id, "conditioning").state);
+  assert.equal(conditioning.players.find(p => p.id === base.id)!.campFatigueGames, 0,
+    "conditioning has a distinct opening-night recovery benefit");
+}
 // An old affected save can be repaired when the stored camp report still
 // conclusively identifies the unintended drop; unrelated seasons untouched.
 const oldLoss = { ...base, sheet: { ...base.sheet!, overall: 72, priorOverall: 82,

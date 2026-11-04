@@ -1064,7 +1064,7 @@ export interface GmSeasonFlow {
   returnFromMarket?: "roster_check";
   progression?: Array<{ playerId: string; name: string; teamId: string | null; age: number; before: number; after: number; traitBefore?: GmDevTrait; traitAfter?: GmDevTrait; reason?: string }>;
   campAssignments?: Record<string, GmCampFocus>;
-  campResults?: Array<{ playerId: string; name: string; before: number; after: number; focus: GmCampFocus; gains: string[]; tradeoff?: string }>;
+  campResults?: Array<{ playerId: string; name: string; before: number; after: number; focus: GmCampFocus; gains: string[]; badgeGains?: string[]; tradeoff?: string }>;
   retiredPlayers?: Array<{ id: string; name: string; age: number; overall: number }>;
   summerLeague?: { skipped?: boolean; inviteeIds: string[]; games: Array<{ opponentId: string; scored: number; allowed: number; players: Array<{ playerId: string; minutes: number; points: number; rebounds: number; assists: number }> }> };
 }

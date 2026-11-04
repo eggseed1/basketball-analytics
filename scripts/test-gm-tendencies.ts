@@ -10,10 +10,10 @@ import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { advanceDynamicProgression } from "../src/gm/engine/dynamic-progression";
 import { applyTrainingCamp } from "../src/gm/engine/season-development";
 import { progressSheet } from "../src/gm/engine/attributes";
-import { exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
+import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
 import { simulationRates } from "../src/gm/engine/player-profile";
 
-const league = createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 618 });
+const league = prepareFranchise(createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 618 }));
 const source = league.players.find(p => p.teamId === "bos" && p.contract && p.sheet)!;
 assert.ok(source?.sheet, "a contract player with a ratings sheet exists");
 const sheet = source.sheet!;
