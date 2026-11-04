@@ -30,6 +30,7 @@ import {
 } from "@/gm/engine/value";
 import { offerIsFair } from "@/gm/engine/offers";
 import { tradeDeskRead } from "@/gm/engine/trade-desk";
+import { tradeWindowStatus } from "@/gm/engine/trade-window";
 import { marketForDisplay, tradeDaysRemaining } from "@/gm/engine/trade-market";
 import { playerSheet } from "@/gm/engine/attributes";
 import { scoutPotentialView } from "@/gm/engine/scouting";
@@ -619,6 +620,7 @@ function TradeBody() {
     toAssets
   );
   const desk = tradeDeskRead(league, partnerId, fromAssets, toAssets);
+  const trading = tradeWindowStatus(league);
   const talks = (league.tradeTalks ?? []).filter(talk => talk.teamId === partnerId).slice(0, 2);
   const selectedRumor = market?.rumors.find(row =>
     row.teamId === partnerId &&
@@ -656,7 +658,12 @@ function TradeBody() {
         <h1 className="text-2xl font-bold tracking-tight">{t("tradeTitle")}</h1>
         <p className="text-sm text-muted-foreground">Choose players, review the deal, then talk to the other GM.</p>
       </header>
-      {league.phase === "regular" && !league.tradeDeadlinePassed &&
+      <div role="status" className="rounded-lg border border-border bg-secondary/35 px-3 py-2 text-xs">
+        <span className="font-bold">{trading.label}</span>{trading.open
+          ? " · You can propose packages and find CPU deals right now."
+          : " · " + trading.reason}
+      </div>
+      {league.phase === "regular" && trading.open &&
         <section data-testid="trade-market" aria-label="Trade market" className="rounded-xl border border-border p-3 sm:p-4">
           <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-sm font-bold">Around the league</h2>
@@ -894,7 +901,7 @@ function TradeBody() {
 
       <div className="flex flex-wrap gap-2">
         <Button
-          disabled={!fromAssets.length || !toAssets.length || desk.status === "rules" || league.tradeDeadlinePassed}
+          disabled={!fromAssets.length || !toAssets.length || desk.status === "rules" || !trading.open}
           onClick={() => {
             const res = proposeTrade(partnerId, fromAssets, toAssets);
             setMessage(res.ok ? "Trade completed." : (res.reason ?? "Declined") + " Review their response above.");
@@ -911,7 +918,7 @@ function TradeBody() {
         </Button>
         <Button
           variant="outline"
-          disabled={league.tradeDeadlinePassed}
+          disabled={!trading.open}
           onClick={() => {
             const found = findSelectedTradePackages(
               league, league.userTeamId, fromAssets, toAssets, partnerId
