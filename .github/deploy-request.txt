@@ -1,7 +1,7 @@
 DRBL production deployment request
 Target: main
-Reason: release calibrated Franchise Lab draft class variability, rare late-pick development upside and measurable GM skill expression
-Reviewed merge: 5651897abdce18c6edfdcdf6ad88d6204519c43f
-Validated: 6,000-player cohorts; 10-year population; management A/B; full CI; browser; two complete five-season simulations
-Safety: code-only merge preserves current NBA results and team game boxes
+Reason: ship Franchise Lab permanent generated-player identities, zero-cost SVG portraits, geographic names/backgrounds, and team-aware jerseys
+Reviewed merge: 19a9f096cb5e5440c86f84fce32f6b48c770ccf6 (PR #181)
+Validated: five successful PR workflows, full browser gallery, all 30 team palettes, same-face trade transitions, draft cohort and long-horizon balance, runtime parity
+Safety: deploy-site workflow resyncs live NBA snapshots and repairs against stale merges; code-only deployment
 Requested: 2026-11-03
