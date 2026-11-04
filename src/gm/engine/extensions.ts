@@ -43,6 +43,26 @@ export function extensionQuote(league: GmLeagueState, player: GmPlayer): Extensi
   return quote;
 }
 
+/** A term-adjusted target: longer guaranteed deals can win a modest
+ * annual discount; one-year deals require a premium. Never bypass CBA caps. */
+export function extensionSalaryTarget(quote: ExtensionQuote, years: number): number {
+  return round(quote.askingSalaryM * (1 - 0.025 * (years - Math.min(3, quote.maxYears))));
+}
+
+/** Forecast is a continuously responsive INTEREST score, not a promise.
+ * Keep salary and guaranteed term monotonic inside the legal offer range. */
+export function extensionInterest(league: GmLeagueState, player: GmPlayer,
+  quote: ExtensionQuote, salaryM: number, years: number): number {
+  if (!quote.eligible || years < 1 || years > quote.maxYears ||
+      !Number.isFinite(salaryM) || salaryM < 0 || salaryM > quote.maxSalaryM + 0.05) return 0;
+  const target = extensionSalaryTarget(quote, years);
+  const ratio = salaryM / Math.max(0.5, target);
+  return Math.round(Math.max(3, Math.min(96,
+    64 + (ratio - 1) * 115 + (years - 1) * 3.5 +
+    (player.morale - 60) * 0.10
+  )));
+}
+
 export function offerExtension(league: GmLeagueState, playerId: string, salaryM: number, years: number): { ok: boolean; state: GmLeagueState; reason: string } {
   const player = league.players.find(row => row.id === playerId);
   const fail = (reason: string) => ({ ok: false, state: league, reason });
@@ -50,7 +70,11 @@ export function offerExtension(league: GmLeagueState, playerId: string, salaryM:
   const quote = extensionQuote(league, player);
   if (!quote.eligible) return fail(quote.reason);
   if (!Number.isInteger(years) || years < 1 || years > quote.maxYears) return fail("Choose between 1 and " + quote.maxYears + " added years.");
-  if (!Number.isFinite(salaryM) || salaryM < quote.askingSalaryM - 0.05) return fail("He is asking for $" + quote.askingSalaryM.toFixed(1) + "M per year.");
+  const target = extensionSalaryTarget(quote, years);
+  if (!Number.isFinite(salaryM) || salaryM < target - 0.05) return fail(
+    "He wants about $" + target.toFixed(1) + "M per year for " + years +
+    " added year(s). More guaranteed years can lower his annual target."
+  );
   if (salaryM > quote.maxSalaryM + 0.05) return fail("The extension ceiling is $" + quote.maxSalaryM.toFixed(1) + "M.");
   const contract = player.contract!;
   const existing = contract.years?.length ? [...contract.years] : Array.from({ length: contract.yearsRemaining }, (_, index) => ({ season: cbaSeason(league) + index, salaryM: contract.annualSalaryM }));
