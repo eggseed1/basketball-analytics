@@ -86,6 +86,15 @@ assert.deepEqual(restored.socialPosts, posts, "social posts survive the real sav
 
 // Old saves have no social arrays and must still display their actual history.
 const old = { ...state, socialPosts: undefined, socialFollowing: undefined, socialLikes: undefined };
+// Imported saves must never inject external links or unsafe custom accounts.
+const poisoned = { ...first, socialPosts: [
+  { ...posts[0]!, id: "social:bad-link", href: "javascript:alert(1)" },
+  { ...posts[0]!, id: "social:bad-account", accountId: "fake-insider" },
+  ...posts,
+] };
+const safe = socialTimeline(poisoned);
+assert.ok(!safe.some(p => p.id === "social:bad-link" || p.id === "social:bad-account"),
+  "untrusted saved posts may not inject navigable links or fake source identities");
 assert.ok(socialTimeline(old).length > 5);
 assert.equal(socialTimeline(old)[0]!.id, socialTimeline(old)[0]!.id,
   "backfilling an old save is deterministic");
