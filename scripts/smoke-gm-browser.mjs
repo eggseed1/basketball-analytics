@@ -234,7 +234,6 @@ try {
     await lengthSlider.press("ArrowLeft");
   }
   await page.getByRole("button", { name: "Offer extension", exact: true }).click();
-  await page.getByRole("status").filter({ hasText: /signed 3 added years/ }).waitFor();
   const signing = page.getByTestId("gm-contract-signed");
   await signing.waitFor();
   assert.equal(await signing.locator(".gm-sign-confetti").count(), 66,
@@ -244,6 +243,7 @@ try {
   await page.screenshot({ path: `${dir}/contract-signing-mobile.png`, animations: "disabled" });
   await signing.getByRole("button", { name: "Continue franchise" }).click();
   assert.equal(await signing.count(), 0);
+  await page.getByRole("status").filter({ hasText: /signed 3 added years/ }).waitFor();
   await page.reload();
   await page.getByRole("link", { name: "Back to contracts" }).first().click();
   await page.getByText(/Extended: 3 added years/).waitFor();
