@@ -90,6 +90,7 @@ export function advanceSeasonJourney(input: GmLeagueState): JourneyResult {
         ? { ...year, lotteryOrder: [...lotteryOrder] } : year);
       return result(moveStage({ ...league, teams, lotteryOrder, history,
         lotteryDraws: league.lotteryDraws ?? draw.draws,
+        lotteryBallPool: league.lotteryBallPool ?? draw.ballPool,
         lotteryCount: league.lotteryCount ?? draw.lotteryCount,
         lotteryFormat: league.lotteryFormat ?? draw.format,
         seasonFlow: { ...flow, lotteryRevealed: false },

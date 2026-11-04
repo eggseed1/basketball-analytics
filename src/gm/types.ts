@@ -1138,7 +1138,12 @@ export interface GmLeagueState {
   playIn?: GmPlayInBoard;
   /** Full first-round pick order (lottery + reverse playoff). */
   lotteryOrder?: string[];
-  lotteryDraws?: Array<{ teamId: string; balls: number[]; startingRank: number; oddsPct: number }>;
+  /** Persisted result of physical draw. Every replay uses these exact ball IDs. */
+  lotteryDraws?: Array<{ teamId: string; balls: number[]; startingRank: number; oddsPct: number;
+    attempts?: Array<{ ballId: number; teamId: string; accepted: boolean;
+      reason?: "consecutive-number-one" | "third-top-five" | "relegation-floor" }> }>;
+  /** 37 individually numbered balls for 2027+ 3-2-1 drafts. */
+  lotteryBallPool?: Array<{ id: number; teamId: string }>;
   lotteryCount?: number;
   lotteryFormat?: "classic" | "321";
   /**
