@@ -710,7 +710,7 @@ export function createDraftClass(options: {
     // a 90-three / 60-mid profile that could never pass the basic touch test.
     const bundled = bundleGeneratedAttributes(attributes);
     const target=clamp(sheet.overall,54,tier==="superstar"?83:tier==="allstar"?79:tier==="starter"?76:73);
-    raw={...raw,sheet:{...sheet,attributes:bundled,overall:target,overallOffset:target-overallFromAttributes(raw.position,bundled,{impact:raw.ratings.impact}),potential}};
+    raw={...raw,sheet:{...sheet,attributes:bundled,overall:target,overallOffset:target-overallFromAttributes(raw.position,attributes,{impact:raw.ratings.impact}),potential}};
     raw={...raw,amateur:amateurSeason(raw)};
     out.push(seal(raw, scoutLevel, board, rng));
   }
