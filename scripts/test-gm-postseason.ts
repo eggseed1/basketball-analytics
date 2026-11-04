@@ -9,7 +9,7 @@ import { recordBadgeBox } from "../src/gm/engine/badges";
 import { shiftSnapshot, rebalanceForInjuryChanges } from "../src/gm/engine/coaching";
 import { rollGameInjuries, tickInjuries } from "../src/gm/engine/progression";
 import { buildChampionResult } from "../src/gm/engine/finals-mvp";
-import { buildPlayoffBracket, computeLotteryOrder, betterRecord, seriesHosts } from "../src/gm/engine/standings";
+import { buildPlayoffBracket, computeLotteryOrder, drawDraftLottery, betterRecord, seriesHosts } from "../src/gm/engine/standings";
 import { applyPlayInResult, createPlayInBoard, playInDone, playInOpenGames, playoffSeeds, playoffTeamIdSet, teamName } from "../src/gm/engine/play-in";
 import { seriesGameBoxes, postseasonBox } from "../src/gm/engine/postseason";
 import type { GmLeagueState } from "../src/gm/types";
@@ -30,7 +30,7 @@ const { actions, myLeagueAllowsSim } = vm.runInNewContext(code, {
   uid: (prefix: string) => `${prefix}-postseason-${serial++}`,
   simulateGame, actualShiftSnapshot, recordBadgeBox, shiftSnapshot, rebalanceForInjuryChanges,
   rollGameInjuries, tickInjuries, buildChampionResult, buildPlayoffBracket,
-  computeLotteryOrder, betterRecord, seriesHosts, applyPlayInResult,
+  computeLotteryOrder, drawDraftLottery, betterRecord, seriesHosts, applyPlayInResult,
   createPlayInBoard, playInDone, playInOpenGames, playoffSeeds, playoffTeamIdSet, teamName,
   stampSeasonAwards: () => { throw new Error("Play-in must not restamp regular-season awards"); },
 });
