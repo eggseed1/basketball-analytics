@@ -32,7 +32,9 @@ export function GmDevelopment() {
   const changedPlayers = roster.map(player => ({ player, before: player.developmentBaseline?.season === league.season ? player.developmentBaseline.overall : player.sheet?.priorOverall ?? player.sheet?.overall ?? 0, after: player.sheet?.overall ?? 0 })).sort((a,b) => b.after-b.before-(a.after-a.before));
   const campOpen = flow.stage === "training_camp" && !flow.campResults;
   const assignments = roster.filter(p => !p.injury && flow.campAssignments?.[p.id]);
-  const awards = roster.flatMap(player => (player.ceilingGrowth?.awards ?? []).map(award => ({ ...award, player }))).sort((a,b) => b.season - a.season);
+  // Historical save key 'ceilingGrowth' also stores learning discoveries for
+  // new generated players. Never present those events as +OVR potential.
+  const milestones = roster.flatMap(player => (player.ceilingGrowth?.awards ?? []).map(award => ({ ...award, player }))).sort((a,b) => b.season - a.season);
   return <div className="flex min-w-0 flex-col gap-4" data-testid="development-desk">
     <header><h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight"><TeamLogo teamKey={league.userTeamId} size="sm" />Development</h1></header>
     
@@ -78,8 +80,8 @@ export function GmDevelopment() {
       </> : <p className="text-sm text-muted-foreground">Individual camp opens after summer league and before opening-night roster checks.</p>}
       <Link href="/gm/offseason" className="mt-4 inline-block text-sm font-semibold underline underline-offset-4">Open season hub</Link>
     </SectionFrame></div></details>
-    <details className="rounded-xl border border-border p-3 text-sm"><summary className="cursor-pointer font-semibold">Breakout history</summary><div id="development-history" className="scroll-mt-32"><SectionFrame title="Development milestones" description="Rare breakouts and mentoring can improve a young player's future growth. These are earned, not guaranteed.">
-      {awards.length ? <ul className="divide-y divide-border">{awards.map((award,index) => <li key={award.player.id + award.season + award.source + index} className="py-3 text-sm"><span className="inline-flex items-center gap-2"><GmPlayerPortrait player={award.player} /><strong>{award.player.name}</strong></span> · {award.season - 1}-{String(award.season).slice(-2)} · {award.source}{award.player.draftModel === 2 ? " · Outlook improved" : ` · Potential +${award.gain}`}<p className="mt-1 text-muted-foreground">{award.reason}</p></li>)}</ul> : <p className="text-sm text-muted-foreground">Season-end development discoveries will appear here. Extra minutes alone don&apos;t guarantee progress.</p>}
+    <details className="rounded-xl border border-border p-3 text-sm"><summary className="cursor-pointer font-semibold">Breakout history</summary><div id="development-history" className="scroll-mt-32"><SectionFrame title="Development milestones" description="Breakouts and veteran guidance can improve future learning. No guaranteed OVR jumps.">
+      {milestones.length ? <ul className="divide-y divide-border">{milestones.map((award,index) => <li key={award.player.id + award.season + award.source + index} className="py-3 text-sm"><span className="inline-flex items-center gap-2"><GmPlayerPortrait player={award.player} /><strong>{award.player.name}</strong></span> · {award.season - 1}-{String(award.season).slice(-2)} · {award.source === "mentorship" ? "Mentoring" : "Breakout"}{award.player.draftModel === 2 ? " · Learning breakthrough" : ` · Legacy ceiling +${award.gain}`}<p className="mt-1 text-muted-foreground">{award.reason}</p></li>)}</ul> : <p className="text-sm text-muted-foreground">Season-end development discoveries will appear here. Extra minutes alone don&apos;t guarantee progress.</p>}
     </SectionFrame></div></details>
   </div>;
 }
