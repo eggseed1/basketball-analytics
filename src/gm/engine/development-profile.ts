@@ -11,6 +11,7 @@
  */
 import type { GmAttributes, GmDevelopmentProfile, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
+import { athleticTools } from "@/gm/engine/combine-evaluation";
 
 export type DevelopmentSkill = keyof GmDevelopmentProfile["aptitudes"];
 const SKILLS: DevelopmentSkill[] = ["shooting", "creation", "defense", "rebounding", "finishing"];
@@ -114,8 +115,15 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
   const disposition = profile.learning *
     (0.74 + (profile.aptitudes[focus] ?? mean(profile.aptitudes.creation, profile.aptitudes.shooting)) * 0.26) *
     (0.82 + profile.adaptability * 0.18);
+  // Exceptional athletic tools widen the *opportunity* to learn explosive
+  // skills, not the eventual ceiling. Requires youth, chosen skill focus and
+  // the same performance, coaching and opportunity as every other prospect.
+  const athlete = athleticTools(player);
+  const physicalFocus = focus === "finishing" || focus === "defense" || focus === "creation";
+  const physicalBonus = player.age <= 26 && physicalFocus && athlete.score >= 84
+    ? 1 + Math.min(0.08, (athlete.score - 82) * 0.008) : 1;
   return clamp(
-    disposition * (profile.learningSurge ?? 1) * (1 + profile.discovery) * ovrDrag * skillDrag * newSkillTax,
+    disposition * physicalBonus * (profile.learningSurge ?? 1) * (1 + profile.discovery) * ovrDrag * skillDrag * newSkillTax,
     0.035, profile.learningSurge && profile.learningSurge > 1 ? 3.3 : 1.65
   );
 }
