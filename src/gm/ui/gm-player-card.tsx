@@ -273,7 +273,7 @@ export function GmPlayerCard({
             </>
           ) : (
             <p>
-              Ceiling {profile?.compCeiling ?? "Foggy"}
+              High-end comp {profile?.compCeiling ?? "Foggy"}
             </p>
           )}
           <p>
@@ -300,10 +300,10 @@ export function GmPlayerCard({
                 NBA comps
               </p>
               <p className="mt-1 text-sm font-semibold">
-                Ceiling {profile?.compCeiling ?? profile?.comps?.[0] ?? "Foggy"}
+                High-end comp {profile?.compCeiling ?? profile?.comps?.[0] ?? "Foggy"}
               </p>
               <p className="text-sm font-semibold">
-                Floor {profile?.compFloor ?? profile?.comps?.[1] ?? "Foggy"}
+                Low-end comp {profile?.compFloor ?? profile?.comps?.[1] ?? "Foggy"}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {trajectoryRead(player, scout)}
