@@ -45,6 +45,7 @@ jobs:
       - run: npm run test:franchise-calibration
       - run: npm run test:franchise-badges
       - run: npm run test:franchise-generated-identity
+      - run: npm run test:franchise-generated-jersey
       - run: npm run test:franchise-media
       - run: npm run test:franchise-development
       - run: npm run test:franchise-dynamic-progression
@@ -122,6 +123,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: npx tsx scripts/visualize-gm-generated-jerseys.ts
       - run: node scripts/smoke-react-state.mjs
       - run: node scripts/smoke-gm-browser.mjs
       - run: node --require ./scripts/lib/stub-server-only.cjs --import tsx scripts/smoke-gm-postseason.mjs
