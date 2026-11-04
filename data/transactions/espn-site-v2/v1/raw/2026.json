@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-03T21:50:33.263Z",
-  "apiCount": 428,
+  "fetchedAt": "2026-11-04T18:16:39.356Z",
+  "apiCount": 429,
   "rows": [
+    {
+      "date": "2026-11-03T08:00Z",
+      "description": "Waived F Enrique Freeman.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
     {
       "date": "2026-11-01T07:00Z",
       "description": "Exercised the third-year team options on Fs Kon Knueppel and Liam McNeeley.",

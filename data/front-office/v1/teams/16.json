@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-03",
-    "retrievedAt": "2026-11-03T21:56:52.845Z",
+    "snapshotDate": "2026-11-04",
+    "retrievedAt": "2026-11-04T18:27:22.332Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -352,29 +352,6 @@
           "href": "/players/1626168"
         },
         {
-          "playerId": "1642402",
-          "playerName": "Enrique Freeman",
-          "age": null,
-          "contractId": "cy-1642402-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642402-2026",
-              "playerId": "1642402",
-              "franchiseId": "16",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642402"
-        },
-        {
           "playerId": "1642911",
           "playerName": "Rocco Zikarsky",
           "age": null,
@@ -447,12 +424,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 216005045,
-          "playersUnderContract": 16
+          "totalSalaryDollars": 214638731,
+          "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 216005045,
-      "playersWithSalary": 16,
+      "playerSalaryCommitments": 214638731,
+      "playersWithSalary": 15,
       "playersWithoutSalary": 1
     },
     "draftAssets": {

@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-03",
-    "retrievedAt": "2026-11-03T21:56:52.845Z",
+    "snapshotDate": "2026-11-04",
+    "retrievedAt": "2026-11-04T18:27:22.332Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -260,6 +260,29 @@
           "href": "/players/1642260"
         },
         {
+          "playerId": "1631207",
+          "playerName": "Dalen Terry",
+          "age": null,
+          "contractId": "cy-1631207-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631207-2026",
+              "playerId": "1631207",
+              "franchiseId": "25",
+              "season": "2026-27",
+              "salary": 5399118,
+              "capHit": 5399118,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631207"
+        },
+        {
           "playerId": "1629026",
           "playerName": "Kenrich Williams",
           "age": null,
@@ -447,12 +470,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 218316223,
-          "playersUnderContract": 16
+          "totalSalaryDollars": 223715341,
+          "playersUnderContract": 17
         }
       ],
-      "playerSalaryCommitments": 218316223,
-      "playersWithSalary": 16,
+      "playerSalaryCommitments": 223715341,
+      "playersWithSalary": 17,
       "playersWithoutSalary": 1
     },
     "draftAssets": {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T20:44:12.108Z",
+  "generatedAt": "2026-11-04T18:29:39.486Z",
   "source": "https://en.wikipedia.org/wiki/List_of_NBA_retired_numbers",
   "idSource": "nba_api static player list (stats.nba.com PERSON_ID)",
   "policy": "Player banners only; future retirements, owners, coaches, broadcasters and fan banners are excluded from jerseys. bannerCounts counts every numbered banner except future ones. Names match NFD-stripped, lowercased, without . ' \" and with hyphens as spaces.",
@@ -24,7 +24,7 @@
     "min": 1,
     "nop": 1,
     "nyk": 9,
-    "okc": 2,
+    "okc": 1,
     "orl": 2,
     "phi": 10,
     "phx": 12,
@@ -945,13 +945,6 @@
       "number": "33",
       "playerName": "Patrick Ewing",
       "years": "1985–2000"
-    },
-    {
-      "nbaPlayerId": "201566",
-      "teamKey": "okc",
-      "number": "0",
-      "playerName": "Russell Westbrook",
-      "years": "2008–2019"
     },
     {
       "nbaPlayerId": "2555",
