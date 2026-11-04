@@ -151,29 +151,62 @@ export function suggestDraftTrade(
   const expectedAsk = draftSlotTradePoints(targetSlot + 1) *
     (targetSlot < 3 ? 1.2 : targetSlot < 14 ? 1.06 : 0.98) *
     clamp(state.settings.tradeDifficulty ?? 1, 0.65, 1.6);
+  // Over-cap sellers often cannot receive a contracted player for a draft
+  // pick alone. Return one affordable rotation/bench salary as matching
+  // consideration rather than telling the user that trading up is impossible.
+  // Only the user-facing desk is permitted to suggest returning contracted
+  // players; automatic CPU proposals remain pick-and-rights focused.
+  const sellerSalaryRows = fromTeamId === state.userTeamId
+    ? draftAssetCatalog(state, toTeamId).filter(row => row.available &&
+        row.asset.kind === "player" &&
+        state.players.some(p => p.id === (row.asset as {id:string}).id &&
+          p.contract && !p.pendingRookieContract && (p.sheet?.overall ?? 75) <= 83))
+    : [];
+  const offerSalary = (chosen: DraftAssetRow[]) => chosen.reduce((sum, row) => {
+    if (row.asset.kind !== "player") return sum;
+    return sum + (state.players.find(p => p.id === row.asset.id)?.contract?.annualSalaryM ?? 0);
+  }, 0);
   let best: DraftTradeProposal | null = null, bestCost = Infinity;
   let fallback: DraftTradeProposal | null = null, fallbackRatio = 0;
   let checks = 0;
+  const evaluate = (proposal: DraftTradeProposal, rough: number) => {
+    if (checks >= 1800) return;
+    const quote = quoteDraftTrade(state, proposal);
+    checks++;
+    if (quote.accepted) {
+      const cost = rough + proposal.send.filter(row => row.kind === "player").length * 0.2;
+      if (cost < bestCost) { bestCost = cost; best = proposal; }
+    } else if (options.allowCounter && quote.legal && quote.asking > 0) {
+      const ratio = quote.give / quote.asking;
+      if (ratio > fallbackRatio && ratio >= 0.25) { fallbackRatio = ratio; fallback = proposal; }
+    }
+  };
   const walk = (start: number, chosen: DraftAssetRow[]) => {
     if (chosen.length) {
-      // Avoid building expensive salary/roster quotes for obviously worthless
-      // combinations. This bound is intentionally conservative.
       const sorted = [...chosen].sort(byValue);
       const rough = sorted.reduce((sum, row, i) => sum + row.points * ([1, 0.9, 0.72, 0.5][i] ?? 0.3), 0);
-      if (rough >= expectedAsk * (options.allowCounter ? 0.35 : 0.82)) {
+      if (rough >= expectedAsk * (options.allowCounter ? 0.25 : 0.82)) {
         const proposal: DraftTradeProposal = {
           fromTeamId, toTeamId, clockIndex: state.draftPickIndex ?? 0,
           send: chosen.map(row => row.asset), receive: [{ kind: "slot", slot: targetSlot }],
           targetPlayerId,
         };
-        const quote = quoteDraftTrade(state, proposal);
-        checks++;
-        if (quote.accepted) {
-          const cost = rough + chosen.filter(row => row.asset.kind === "player").length * 0.2;
-          if (cost < bestCost) { bestCost = cost; best = proposal; }
-        } else if (options.allowCounter && quote.legal && quote.asking > 0) {
-          const ratio = quote.give / quote.asking;
-          if (ratio > fallbackRatio && ratio >= 0.35) { fallbackRatio = ratio; fallback = proposal; }
+        evaluate(proposal, rough);
+        if (offerSalary(chosen) > 0 && checks < 1800 && !best) {
+          // Closest salary exchanges are the most likely to pass both clubs'
+          // apron rules. The quote still independently checks salary, roster,
+          // Stepien, asset ownership, and the CPU's actual asking price.
+          const salary = offerSalary(chosen);
+          const salaryMatches = [...sellerSalaryRows].sort((a, b) => {
+            const salaryOf = (row: DraftAssetRow) => state.players.find(p =>
+              p.id === (row.asset as {id:string}).id)?.contract?.annualSalaryM ?? 0;
+            return Math.abs(salaryOf(a) - salary) - Math.abs(salaryOf(b) - salary) ||
+              a.points - b.points || a.key.localeCompare(b.key);
+          }).slice(0, 6);
+          for (const row of salaryMatches) {
+            if (checks >= 1800) break;
+            evaluate({ ...proposal, receive: [...proposal.receive, row.asset] }, rough);
+          }
         }
       }
     }
