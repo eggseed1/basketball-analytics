@@ -336,7 +336,8 @@ try {
       assert.ok(available.length > 0, "at least one badge has room to grow");
       await emphasis.selectOption(available[0]);
       await page.getByTestId("badge-board").scrollIntoViewIfNeeded();
-      assert.equal(await page.getByTestId("badge-board").locator("article").count(),10);
+      assert.equal(await page.getByTestId("badge-board").locator("article").count(),13,
+        "all ten core badges and three earned athletic badges should render");
       await capture(`badges-${width}`);
       const persisted = await exportedLeague();
       const learner = persisted.players.find(p => p.id === pupil.id);
