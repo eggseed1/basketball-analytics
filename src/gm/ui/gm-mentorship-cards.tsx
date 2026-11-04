@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
-import { BADGES, BADGE_LEVELS, badgeLevel, ensureBadges } from "@/gm/engine/badges";
+import { BADGES, BADGE_LEVELS, badgeCap, badgeLevel, ensureBadges } from "@/gm/engine/badges";
 import { activeMentor, mentorEligible, mentorshipBonus, mentorshipSlots } from "@/gm/engine/development";
 import { useGmStore } from "@/gm/state/gm-store";
 import { developmentOutlook } from "@/gm/engine/development-profile";
@@ -22,7 +22,7 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <h2 className="text-lg font-bold">Mentorship</h2>
-        <p className="text-xs text-muted-foreground">Pair up to two young players with same-position veterans.</p>
+        <p className="text-xs text-muted-foreground">Two pairs max. Veterans improve training and help teach badges.</p>
       </div>
       <span className="text-xs font-semibold text-muted-foreground">
         {slots.filter(Boolean).length}/2 active
@@ -39,7 +39,8 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
         const teachable = mentee && mentor
           ? BADGES.filter(badge => {
               const level = badgeLevel(ensureBadges(mentor), badge.id);
-              return level >= 2 && level > badgeLevel(ensureBadges(mentee), badge.id);
+              return level >= 2 && level > badgeLevel(ensureBadges(mentee), badge.id) &&
+                badgeCap(mentee, badge.id) > badgeLevel(mentee, badge.id);
             }).sort((a, b) =>
               badgeLevel(ensureBadges(mentor), b.id) - badgeLevel(ensureBadges(mentor), a.id))
           : [];
@@ -92,10 +93,13 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
               <div className="min-w-0 text-xs">
                 <p className="font-semibold">{mentee.name} + {mentor.name}</p>
                 <p className="mt-1 text-muted-foreground">
-                  +{Math.round(mentorshipBonus(mentee, league.players) * 100)}% growth · {mentee.mentorship?.sharedGames ?? 0} shared games
+                  +{Math.round(mentorshipBonus(mentee, league.players) * 100)}% training pace · {mentee.mentorship?.sharedGames ?? 0} games together
                 </p>
               </div>
             </div>
+            <p className="mt-2 text-xs text-muted-foreground">{mentee.draftModel === 2
+              ? "After 20 games together: small chance of a lasting learning breakthrough, never a fixed OVR ceiling."
+              : "After 20 games together: small chance to improve the legacy potential ceiling. No instant OVR."}</p>
             {teachable.length > 0 ? <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Mentor badges">
               {teachable.slice(0, 3).map(badge => <span key={badge.id}
                 className="rounded-md border border-border px-2 py-1 text-[11px]">
