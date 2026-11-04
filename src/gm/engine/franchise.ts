@@ -1,4 +1,6 @@
 import { pairCpuMentors } from "@/gm/engine/development";
+import { suggestedMinutePlan } from "@/gm/engine/coaching";
+import { normalizeMinuteBook, validMinuteBook } from "@/gm/engine/rotation-minute-budget";
 import { ensureBadges } from "@/gm/engine/badges";
 import { ensureDraftPickHorizon } from "@/gm/engine/draft-order";
 import type { GmFranchisePlan, GmLeagueState, GmPlayer, GmSeasonArchive } from "@/gm/types";
@@ -27,11 +29,35 @@ export function franchisePlan(league: GmLeagueState): GmFranchisePlan {
 export function prepareFranchise(league: GmLeagueState): GmLeagueState {
   const players = league.players.map(p => { const player=ensureBadges(ensureSimProfile(ensurePlayerSheet(withGeneratedPlayerIdentity(p, { preserveName: true })))); const index=league.draftPool.indexOf(p.id); return index>=0&&player.consensusRank==null?{...player,consensusRank:index+1}:player; });
   const prepared = pairCpuMentors(normalizeSeasonFlow(ensureDraftPickHorizon({ ...league, players, simulationBook: 1, franchise: franchisePlan({ ...league, players }), history: league.history ?? [] })));
-  const flow = prepared.seasonFlow;
+  // The old editor saved every independent 0–48 slider even when its sum
+  // exceeded 240. Repair the user's historical manual book once on load,
+  // preserving relative priorities. Keep CPU calibration and true shift
+  // books untouched; the simulator no longer needs to undo user overbooking.
+  const repaired = {
+    ...prepared,
+    teams: prepared.teams.map(team => {
+      const raw = team.coaching?.minutes;
+      if (team.id !== prepared.userTeamId || !raw || team.coaching?.shifts) return team;
+      const roster = prepared.players.filter(player => player.teamId === team.id);
+      if (roster.filter(player => !player.injury || player.injury.gamesRemaining <= 0).length < 5 ||
+          validMinuteBook(roster, raw)) return team;
+      const suggested = suggestedMinutePlan({ ...team, coaching: { ...team.coaching, minutes: undefined } }, prepared.players);
+      return {
+        ...team,
+        coaching: {
+          ...team.coaching!,
+          minutes: normalizeMinuteBook(roster, raw, suggested.minutes, team.coaching?.rotationDepth),
+          shifts: undefined,
+          positionMinutes: undefined,
+        },
+      };
+    }),
+  };
+  const flow = repaired.seasonFlow;
   if (flow?.stage === "training_camp" && !flow.campResults && Object.keys(flow.campAssignments ?? {}).length > 2) {
-    return { ...prepared, seasonFlow: { ...flow, campAssignments: Object.fromEntries(Object.entries(flow.campAssignments ?? {}).slice(0, 2)) } };
+    return { ...repaired, seasonFlow: { ...flow, campAssignments: Object.fromEntries(Object.entries(flow.campAssignments ?? {}).slice(0, 2)) } };
   }
-  return prepared;
+  return repaired;
 }
 
 export function archiveSeason(league: GmLeagueState): GmLeagueState {
