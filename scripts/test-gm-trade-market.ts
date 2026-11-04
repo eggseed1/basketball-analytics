@@ -131,6 +131,8 @@ assert.ok(findSelectedTradePackages(relaxed, "bos", [], []).length > 0,
 assert.deepEqual(findSelectedTradePackages({
   ...relaxed, tradeDeadlinePassed: true,
 }, "bos", [], []), [], "closed trade windows never recommend deals");
+assert.ok(findSelectedTradePackages({ ...relaxed, phase: "offseason", tradeDeadlinePassed: false }, "bos", [], []).length > 0,
+  "finder must honor the same open trading window as proposal submission outside the regular season");
 assert.deepEqual(findSelectedTradePackages(relaxed, "bos", [],
   [pick(rivalPicks[0]!.id), pick(ownPicks[0]!.id)], "nyk"), [],
   "finder cannot quietly assemble a cross-team package");
