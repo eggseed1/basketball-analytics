@@ -315,7 +315,7 @@ function renderEvent(event: Event): SocialPost[] {
     "fan:" + (event.teamId ?? "nba") : voice, text: event.fan, reply: true });
   if (event.analyst && (event.heat >= 70 || event.category === "trade"))
     entries.push({ account: event.category === "trade" ? "cap" : "film", text: event.analyst, reply: true });
-  if (event.heat >= 85 && event.category !== "injury") {
+  if (event.heat >= 80 && event.category !== "injury") {
     entries.push({ account: "burner", text: pick(event.key + ":alt", [
       "I'm not saying I called this. I'm saying scroll up.",
       "The group chat knew. The group chat was also wrong about the previous fourteen things.",
