@@ -310,7 +310,7 @@ export interface GmSeasonArchive {
   userTeamId: string;
 }
 
-export type GmBadgeId = "inside_touch" | "deep_range" | "free_throw" | "floor_general" | "secure_handle" | "passing_lanes" | "rim_guardian" | "glass_cleaner" | "defensive_anchor" | "clutch_scorer";
+export type GmBadgeId = "inside_touch" | "deep_range" | "free_throw" | "floor_general" | "secure_handle" | "passing_lanes" | "rim_guardian" | "glass_cleaner" | "defensive_anchor" | "clutch_scorer" | "aerial_assault" | "chase_down" | "explosive_first_step";
 
 /**
  * Hidden, persistent learning profile. Generated once from pre-draft inputs,
