@@ -16,6 +16,7 @@ import { emptyStandings } from "@/gm/engine/standings";
 import { applyBalancedRotations } from "@/gm/engine/coaching";
 import { coachForTeam, openCoachMarket, trainerForLevel } from "@/gm/seed/coaches";
 import { createDraftClass } from "@/gm/seed/prospect-identities";
+import { withGeneratedPlayerIdentity } from "@/gm/lib/generated-player-identity";
 import { sealProspect } from "@/gm/engine/scouting";
 import {
   defaultTeamDeveloper,
@@ -197,6 +198,11 @@ export function createGeneratedLeague(options?: {
       sealProspect(player, scoutLevel, boardIndex, r, userScout),
   });
   players.push(...prospects);
+  // Cosmetic identities use their own RNG domain. Naming never changes
+  // scouting, ratings, roster construction or the season schedule.
+  const usedNames = new Set(prospects.map(p => p.name));
+  const namedPlayers = players.map(p => p.id.startsWith("p_")
+    ? withGeneratedPlayerIdentity(p, { usedNames }) : p);
   const draftPool = prospects.map((p) => p.id);
   const scoutMarket = generateScoutMarket(seed + 777, 5);
   const developerMarket = generateDeveloperMarket(seed + 991, 5);
@@ -214,8 +220,8 @@ export function createGeneratedLeague(options?: {
       autoScout: true,
     },
     teams,
-    players,
-    freeAgents: players.filter((p) => p.teamId === null && !draftPool.includes(p.id)).map((p) => p.id),
+    players: namedPlayers,
+    freeAgents: namedPlayers.filter((p) => p.teamId === null && !draftPool.includes(p.id)).map((p) => p.id),
     draftPool,
     scoutMarket,
     developerMarket,
