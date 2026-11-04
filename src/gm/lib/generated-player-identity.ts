@@ -10,7 +10,7 @@ import { isFictionalGmPlayer } from "@/gm/lib/player-portrait-ids";
  */
 type Origin = { code: string; label: string; cities: readonly string[]; weight: number; competition?: string };
 const ORIGINS: readonly Origin[] = [
-  { code: "US", label: "United States", cities: ["Atlanta, GA", "Chicago, IL", "Houston, TX", "Los Angeles, CA", "New York, NY", "Brooklyn, NY", "Philadelphia, PA", "Memphis, TN", "New Orleans, LA", "Detroit, MI", "Dallas, TX", "Baltimore, MD", "Oakland, CA", "Charlotte, NC", "Seattle, WA", "Miami, FL", "Indianapolis, IN", "Cleveland, OH", "St. Louis, MO", "Washington, DC", "San Antonio, TX", "Minneapolis, MN", "Toronto, OH"], weight: 0 },
+  { code: "US", label: "United States", cities: ["Atlanta, GA", "Chicago, IL", "Houston, TX", "Los Angeles, CA", "New York, NY", "Brooklyn, NY", "Philadelphia, PA", "Memphis, TN", "New Orleans, LA", "Detroit, MI", "Dallas, TX", "Baltimore, MD", "Oakland, CA", "Charlotte, NC", "Seattle, WA", "Miami, FL", "Indianapolis, IN", "Cleveland, OH", "St. Louis, MO", "Washington, DC", "San Antonio, TX", "Minneapolis, MN", "Columbus, OH"], weight: 0 },
   { code: "CA", label: "Canada", cities: ["Toronto, Ontario", "Montreal, Quebec", "Vancouver, British Columbia", "Ottawa, Ontario"], weight: 13, competition: "Canadian basketball" },
   { code: "FR", label: "France", cities: ["Paris", "Lyon", "Marseille", "Strasbourg", "Bordeaux"], weight: 12, competition: "French Pro A" },
   { code: "RS", label: "Serbia", cities: ["Belgrade", "Novi Sad", "Niš", "Kragujevac"], weight: 8, competition: "Adriatic League" },
