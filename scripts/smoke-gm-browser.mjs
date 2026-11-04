@@ -276,9 +276,20 @@ try {
     "free-agent negotiation overflows mobile");
   await page.screenshot({ path: `${dir}/free-agency-offer-mobile.png`, fullPage: true, animations: "disabled" });
   await page.goto("http://127.0.0.1:3107/gm/free-agency", { waitUntil: "domcontentloaded" });
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  let witnessedFinalSigning = false;
+  for (let day = 0; day < 3; day++) {
+    await page.getByRole("button", { name: "Continue", exact: true }).click();
+    const ceremony = page.getByTestId("gm-contract-signed");
+    await ceremony.waitFor({ timeout: 1600 }).catch(() => undefined);
+    if (await ceremony.count()) {
+      witnessedFinalSigning = true;
+      assert.ok(await ceremony.getByLabel(faManifest.playerName + " fictional signature").isVisible(),
+        "moratorium commitment only celebrates once it becomes an actual contract");
+      await page.screenshot({ path: `${dir}/free-agency-signing-mobile.png`, animations: "disabled" });
+      await ceremony.getByRole("button", { name: "Continue franchise" }).click();
+    }
+  }
+  assert.ok(witnessedFinalSigning, "signed moratorium agreement triggers team-color signing celebration");
   await page.goto("http://127.0.0.1:3107/gm/franchise", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
   const faDownloadPromise = page.waitForEvent("download", { timeout: 90000 });
