@@ -1,6 +1,6 @@
 DRBL production deployment request
 Target: main
-Reason: Franchise Lab mentor wisdom based on service years, continuous salary/years interest, animated team-color contract signatures, and reopening offseason trades
-Reviewed and validated commit: a1d1f1d12be88128b0db8c3779c01d0eac9ace55 (PR #186)
-Validation: all six PR workflows passed; Franchise Lab engine/browser/fidelity/balance, six-season FA audit, two five-year seeds, general CI
+Reason: Franchise Lab generated skill correlations; training camp no-loss OVR fix; existing save compatibility and targeted camp loss repair
+Reviewed and validated commit: ce2c4a903abbb1d776f27e5a69f831e00d8eec82 (merged PR #187)
+Validation: all seven PR workflows passed; 100-class / 6,000-career cohort, browser, systems, general CI, fidelity, multiseason balance, and two five-year runs
 Data safety: deploy-site workflow syncs current NBA snapshots and protects live runtime results
