@@ -17,9 +17,13 @@ const league = createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 61
 const source = league.players.find(p => p.teamId === "bos" && p.contract && p.sheet)!;
 assert.ok(source?.sheet, "a contract player with a ratings sheet exists");
 const sheet = source.sheet!;
-const attrs = sheet.attributes;
+const attrs: GmAttributes = { ...sheet.attributes, closeShot: 70, threePoint: 70,
+  midrange: 66, ballHandle: 65, speedWithBall: 64, passAccuracy: 65,
+  steal: 65, block: 55, perimeterDefense: 65, interiorDefense: 60,
+  drivingLayup: 65, drivingDunk: 60, strength: 65, standingDunk: 55,
+  offReb: 55, postControl: 55 };
 const chosen = {
-  ...sheet,
+  ...sheet, attributes: attrs,
   tendencies: { ...sheet.tendencies, shootThree: 32, shootMid: 62, drive: 38,
     dish: 42, postUp: 24, steal: 45, foul: 52 },
 };
