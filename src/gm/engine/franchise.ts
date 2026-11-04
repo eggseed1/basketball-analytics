@@ -1,5 +1,5 @@
 import { pairCpuMentors } from "@/gm/engine/development";
-import { suggestedMinutePlan } from "@/gm/engine/coaching";
+import { coachingOf, suggestedMinutePlan } from "@/gm/engine/coaching";
 import { normalizeMinuteBook, validMinuteBook } from "@/gm/engine/rotation-minute-budget";
 import { ensureBadges } from "@/gm/engine/badges";
 import { ensureDraftPickHorizon } from "@/gm/engine/draft-order";
@@ -41,7 +41,7 @@ export function prepareFranchise(league: GmLeagueState): GmLeagueState {
       const roster = prepared.players.filter(player => player.teamId === team.id);
       if (roster.filter(player => !player.injury || player.injury.gamesRemaining <= 0).length < 5 ||
           validMinuteBook(roster, raw)) return team;
-      const suggested = suggestedMinutePlan({ ...team, coaching: { ...team.coaching, minutes: undefined } }, prepared.players);
+      const suggested = suggestedMinutePlan({ ...team, coaching: { ...coachingOf(team), minutes: undefined } }, prepared.players);
       return {
         ...team,
         coaching: {
