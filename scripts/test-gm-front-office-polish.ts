@@ -107,6 +107,7 @@ for (const salary of salaries) {
     "the actual decision utility must improve with the years slider");
 }
 
+assert.equal(tradeWindowStatus({ ...league, phase: "preseason", tradeDeadlinePassed: true }).open, true);
 assert.equal(tradeWindowStatus({ ...league, phase: "regular", tradeDeadlinePassed: false }).open, true);
 assert.equal(tradeWindowStatus({ ...league, phase: "regular", tradeDeadlinePassed: true }).open, false);
 assert.equal(tradeWindowStatus({ ...league, phase: "play_in", tradeDeadlinePassed: true }).open, false);
