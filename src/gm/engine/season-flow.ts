@@ -3,7 +3,7 @@ import type { GmLeagueState, GmOffseasonStage, GmPlayer } from "@/gm/types";
 import { archiveSeason } from "@/gm/engine/franchise";
 import { flowOf, normalizeSeasonFlow, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 import { ageStaff } from "@/gm/engine/staff";
-import { computeLotteryOrder } from "@/gm/engine/standings";
+import { drawDraftLottery } from "@/gm/engine/standings";
 import { isDraftComplete } from "@/gm/engine/draft-room";
 import { autoSetLineup } from "@/gm/engine/lineup";
 import { rosterCount } from "@/gm/engine/cap";
@@ -82,8 +82,14 @@ export function advanceSeasonJourney(input: GmLeagueState): JourneyResult {
     }
     case "staff": {
       const teams = league.teams.map(team => ({ ...team, staff: { ...team.staff, headCoach: team.staff.headCoach.walkYear ? { ...team.staff.headCoach, yearsLeft: 3, walkYear: false } : team.staff.headCoach, associate: team.staff.associate?.walkYear ? { ...team.staff.associate, yearsLeft: 2, walkYear: false } : team.staff.associate } }));
-      const lotteryOrder = league.lotteryOrder ?? computeLotteryOrder(league);
-      return result(moveStage({ ...league, teams, lotteryOrder, ...resolveDraftOrder(league, lotteryOrder) }, "lottery"), "Draft lottery results are ready.");
+      const draw = drawDraftLottery(league);
+      const lotteryOrder = league.lotteryOrder ?? draw.order;
+      return result(moveStage({ ...league, teams, lotteryOrder,
+        lotteryDraws: league.lotteryDraws ?? draw.draws,
+        lotteryCount: league.lotteryCount ?? draw.lotteryCount,
+        lotteryFormat: league.lotteryFormat ?? draw.format,
+        seasonFlow: { ...flow, lotteryRevealed: false },
+        ...resolveDraftOrder(league, lotteryOrder) }, "lottery"), "Lottery night is ready. Reveal the envelopes before scouting.");
     }
     case "lottery": return result(moveStage(league, "scouting"), "Review combine measurements and spend scouting looks before the draft.");
     case "scouting": {
