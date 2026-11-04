@@ -164,7 +164,8 @@ export function suggestDraftTrade(
     : [];
   const offerSalary = (chosen: DraftAssetRow[]) => chosen.reduce((sum, row) => {
     if (row.asset.kind !== "player") return sum;
-    return sum + (state.players.find(p => p.id === row.asset.id)?.contract?.annualSalaryM ?? 0);
+    const playerId = row.asset.id;
+    return sum + (state.players.find(p => p.id === playerId)?.contract?.annualSalaryM ?? 0);
   }, 0);
   let best: DraftTradeProposal | null = null, bestCost = Infinity;
   let fallback: DraftTradeProposal | null = null, fallbackRatio = 0;
