@@ -81,12 +81,42 @@ function gameEvents(league: GmLeagueState): Event[] {
     const high = Math.max(box.homeScore, box.awayScore), low = Math.min(box.homeScore, box.awayScore);
     const date = calendar.get(box.gameId)?.gameDate;
     const hero = p && monster ? p.playerName : undefined;
+    const heroLost = Boolean(p && p.teamId !== winnerId);
+    const tripleDouble = Boolean(p && p.points >= 10 && p.assists >= 10 && p.rebounds >= 10);
+    const rookie = hero ? league.players.find(player => player.id === p!.playerId &&
+      player.draftYear === league.season && player.draftPick != null) : undefined;
+    const decisive = league.playoffBracket?.find(series =>
+      series.done && series.games?.at(-1)?.gameId === box.gameId);
+    const special = decisive ? "Series-clinching night. " :
+      tripleDouble ? "Triple-double alert. " :
+      p && p.tpm >= 9 ? "Nine-plus made threes. " : "";
     const key = "game:" + box.id;
     const context = (playoff ? "Playoff result: " : "") + winning + " " + high + ", " + losing + " " + low + ".";
     const performance = hero ? " " + hero + ": " + p!.points + " PTS, " +
       p!.rebounds + " REB, " + p!.assists + " AST" + (p!.tpm >= 5 ? ", " + p!.tpm + " threes" : "") + "." : "";
-    const topic = context + performance;
-    const fan = clutch
+    const topic = special + context + performance +
+      (rookie ? " Rookie " + rookie.name + " was selected at pick #" + rookie.draftPick + "." : "");
+    const fan = heroLost && p!.points >= 40
+      ? pick(key + "sad", [
+          p!.points + " points and a loss. He brought the entire offense and they brought emotional damage.",
+          "Someone check whether one person is legally allowed to score all those points and still lose.",
+          "The plus-minus discourse is going to be unbearable after this.",
+          "Box score looked like a one-person group project. Result looked like the group project.",
+        ])
+      : rookie && p!.points >= 30
+      ? pick(key + "rookie", [
+          "I am buying imaginary rookie stock at a deeply irresponsible valuation.",
+          "Draft night takes are being deleted as we speak.",
+          "If this is a fluke, please let me enjoy it until tomorrow.",
+          "We need to have a conversation about that draft position immediately.",
+        ])
+      : decisive
+      ? pick(key + "series", [
+          "Someone is going to screenshot all of our predictions and we deserve it.",
+          "We have entered the part of the playoffs where every possession becomes family history.",
+          "The words 'legacy game' have been typed approximately twelve thousand times tonight.",
+        ])
+      : clutch
       ? pick(key + "close", [
           "My heart rate does not need to be tied to a basketball team. And yet.",
           "I aged a calendar year in the last four minutes.",
@@ -104,6 +134,8 @@ function gameEvents(league: GmLeagueState): Event[] {
           "The discourse will be completely normal about this, surely.",
           "My team's record is a personality trait now.",
           "I have already made a wildly irresponsible playoff prediction.",
+          "My agenda is winning and all opposing data is being sent to the shadow realm.",
+          "Putting this performance in a 38-tweet thread about why I know ball.",
         ]);
     const analyst = hero
       ? pick(key + "hero", [
@@ -111,6 +143,10 @@ function gameEvents(league: GmLeagueState): Event[] {
           "You can argue the eye test all night. " + p!.points + " points is a fairly large eye.",
           "Film session tomorrow: everyone else figuring out what to do about " + hero + ".",
           "One person was clearly operating on a different difficulty setting tonight.",
+          tripleDouble ? "A triple-double is a story. Doing it efficiently is a completely different story." :
+            "The play-by-play matters, but the final line will be in every argument tomorrow.",
+          heroLost ? "Individual offense was not the problem. The rest of that box score needs a meeting." :
+            "A performance worthy of a scouting report that just says 'do not let him get comfortable.'",
         ])
       : clutch ? "You can make a tactical case for either side. The last possession made the case louder."
       : "The final margin is not a substitute for watching the actual possessions. But it is persuasive.";
@@ -118,7 +154,8 @@ function gameEvents(league: GmLeagueState): Event[] {
       key, season: box.season, day: box.day,
       category: "game", teamId: winnerId, playerId: hero ? p!.playerId : undefined,
       href: "/gm/schedule" + (date ? "?date=" + encodeURIComponent(date) : ""),
-      heat: Math.min(100, 30 + (hero ? Math.min(30, p!.points - 20) : 0) + (clutch ? 24 : 0) + (playoff ? 20 : 0)),
+      heat: Math.min(100, 30 + (hero ? Math.min(30, p!.points - 20) : 0) +
+        (clutch ? 24 : 0) + (playoff ? 20 : 0) + (decisive ? 20 : 0)),
       account: "wire", topic, detail: playoff ? "Playoff basketball is not for the faint of heart." : "",
       fan, analyst,
     });
@@ -322,13 +359,13 @@ function allEvents(league: GmLeagueState): Event[] {
 export function syncSocialTimeline(league: GmLeagueState): GmLeagueState {
   const existing = (league.socialPosts ?? []).filter(p =>
     p && typeof p.id === "string" && typeof p.text === "string" && p.text.length <= 600
-  ).slice(0, 420);
+  ).slice(0, 1050);
   const seen = new Set(existing.map(p => p.id));
   const fresh = allEvents(league).flatMap(renderEvent).filter(p => !seen.has(p.id));
   if (!fresh.length && league.socialPosts) return league;
   const posts = [...fresh, ...existing].sort((a, b) =>
     b.season - a.season || b.day - a.day ||
-    b.heat - a.heat || a.id.localeCompare(b.id)).slice(0, 360);
+    b.heat - a.heat || a.id.localeCompare(b.id)).slice(0, 900);
   return { ...league, socialPosts: posts };
 }
 /** Covers old saves and the first home render before a league has been saved. */
