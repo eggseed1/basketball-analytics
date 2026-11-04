@@ -94,8 +94,15 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   // can obtain a top selection. The assistant must consider player assets.
   const star = {...expensive,age:24,position:"SG" as const,contract:{...expensive.contract!,annualSalaryM:1.5,yearsRemaining:4},
     sheet:{...expensive.sheet!,overall:96}};
-  const bidLeague={...early,players:early.players.map(p=>p.id===star.id?star:p)};
-  const seller=bidLeague.draftOrder![0]!;
+  const seller=early.draftOrder![0]!;
+  // Cap legality is not optional: a rebuilding seller with real cap room is
+  // a viable trade-up counterparty; an over-cap seller may require salary
+  // matching, which the suggestion engine also searches when available.
+  const bidLeague={...early,players:early.players.map(p=>{
+    if(p.id===star.id) return star;
+    if(p.teamId===seller&&p.contract) return {...p,contract:{...p.contract,annualSalaryM:Math.min(p.contract.annualSalaryM,2)}};
+    return p;
+  })};
   const tradeUp=suggestDraftTrade(bidLeague,"bos",seller,0,undefined,{allowCounter:true});
   assert.ok(tradeUp, "a premium asset must produce an actionable top-pick package or a legal counteroffer: " +
     JSON.stringify({seller, userAssets:draftAssetCatalog(bidLeague,"bos").filter(x=>x.available)
@@ -108,6 +115,10 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   assert.equal(upQuote.legal,true, "suggestions must always pass roster, salary, and Stepien rules");
   assert.ok(tradeUp!.send.some(asset=>asset.kind==="player") || upQuote.accepted,
     "the package finder should consider top players, not only three future picks");
+  assert.ok(upQuote.accepted,
+    "when a team with cap space can be paid with a genuinely elite young scorer, a top pick can change hands");
+  assert.equal(executeDraftTrade(bidLeague,tradeUp!).state.draftOrder![0],"bos",
+    "accepted top-pick trade ups must transfer pick ownership");
   const rights={...reserve,contract:null,pendingRookieContract:rookieContractForPick(early,45),draftYear:early.season,draftPick:45};
   assert.equal(quoteDraftTrade({...early,players:early.players.map(player=>player.id===rights.id?rights:player)},reserveOffer).accepted,false,"selecting a second-rounder does not instantly turn his rights into a lottery asset");
 }
