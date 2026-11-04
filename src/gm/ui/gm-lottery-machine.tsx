@@ -62,6 +62,9 @@ export function GmLotteryMachine({
     isDone ? "The lottery is official." :
     current ? "Pick #" + current.pick + " is next." : "The lottery is official.";
   const last = slots[shown - 1];
+  const lastDraw = last && league.lotteryDraws?.find(d=>d.teamId===last.origin);
+  const jump = lastDraw && last && lastDraw.startingRank > last.pick &&
+    (lastDraw.startingRank-last.pick>=3 || last.pick<=4);
 
   return <div data-testid="gm-lottery-ceremony" className="overflow-hidden rounded-2xl border border-border bg-background">
     <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-4 py-6 text-white sm:px-7 sm:py-8">
@@ -119,8 +122,15 @@ export function GmLotteryMachine({
             </div>
             {last.origin !== last.owner ? <p className="mt-2 text-xs text-slate-300">via {nameOf(last.origin)}&apos;s pick</p> : null}
             {last.owner === league.userTeamId ? <p className="mt-3 rounded-lg bg-emerald-500/20 px-3 py-2 font-bold text-emerald-200">YOUR TEAM IS ON THE CLOCK AT #{last.pick}!</p> : null}
-            {league.lotteryDraws?.some(d=>d.teamId === last.origin &&
-              d.startingRank - last.pick >= 3) ? <p className="mt-2 font-bold text-amber-300">Lottery jump! {nameOf(last.origin)} moves up.</p> : null}
+            {jump ? <div className="gm-lotto-shock relative mt-4 overflow-hidden rounded-xl border-2 border-amber-400/70 bg-gradient-to-r from-amber-500/25 to-orange-500/10 p-3">
+              {Array.from({length:20},(_,i)=><span aria-hidden="true" key={i}
+                className="gm-lotto-celebration absolute -top-3 h-3 w-2 rounded-sm"
+                style={{left:(i*47%100)+"%",background:i%2?"var(--team-primary)":"#fbbf24",
+                  animationDelay:(i*61%680)+"ms"} as CSSProperties}/>)}
+              <p className="text-[10px] font-black uppercase tracking-[.21em] text-amber-200">Lottery shock · into the spotlight</p>
+              <strong className="mt-1 block text-2xl font-black text-white">↑ {lastDraw!.startingRank-last.pick} spots!</strong>
+              <p className="mt-1 text-xs text-amber-100">{nameOf(last.origin)} climbs from projected #{lastDraw!.startingRank} to #{last.pick}.</p>
+            </div> : null}
           </div> : null}
         </div>
       </div>
@@ -147,11 +157,15 @@ export function GmLotteryMachine({
       @keyframes lotto-tumble { 0%{transform:translate(-50%,-50%) rotate(0)} 25%{transform:translate(calc(-50% + var(--lotto-x)),calc(-50% + var(--lotto-y))) rotate(130deg)} 50%{transform:translate(calc(-50% - var(--lotto-y)),calc(-50% + var(--lotto-x))) rotate(290deg)} 100%{transform:translate(-50%,-50%) rotate(720deg)} }
       @keyframes lotto-extract { 0%{opacity:0;transform:translateY(38px) scale(.35)} 55%{opacity:1;transform:translateY(-9px) scale(1.22)} 100%{opacity:1;transform:translateY(0) scale(1)} }
       @keyframes lotto-enter { from{opacity:0;transform:translateY(10px) scale(.94)} to{opacity:1;transform:translateY(0) scale(1)} }
+      @keyframes lotto-shock { from{opacity:.2;transform:scale(.85)} 65%{transform:scale(1.05)} to{opacity:1;transform:scale(1)} }
+      @keyframes lotto-celebration { from{opacity:1;transform:translateY(-12px) rotate(0deg)} to{opacity:0;transform:translateY(130px) rotate(540deg)} }
+      .gm-lotto-shock { animation:lotto-shock .6s cubic-bezier(.16,1,.3,1) both; }
+      .gm-lotto-celebration { animation:lotto-celebration 1.5s ease-in forwards; }
       .gm-lotto-ball { transform:translate(-50%,-50%); }
       .gm-lotto-ball.is-mixing { animation:lotto-tumble .93s ease-in-out infinite; }
       .gm-lotto-drawn { opacity:0;animation:lotto-extract .65s cubic-bezier(.16,1,.3,1) forwards; }
       .gm-lotto-team-in { animation:lotto-enter .5s ease-out both; }
-      @media(prefers-reduced-motion:reduce){.gm-lotto-ball.is-mixing,.gm-lotto-drawn,.gm-lotto-team-in{animation:none;opacity:1}}
+      @media(prefers-reduced-motion:reduce){.gm-lotto-ball.is-mixing,.gm-lotto-drawn,.gm-lotto-team-in,.gm-lotto-shock{animation:none;opacity:1}.gm-lotto-celebration{display:none}}
     `}</style>
   </div>;
 }
