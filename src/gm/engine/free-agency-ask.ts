@@ -25,7 +25,23 @@ export function askingSalary(
   const min = Math.min(max, Math.max(rules.minSalaryM || 0.5, exceptionAmounts({ salaryCapM: rules.salaryCapM }).minimumM));
   const like = (overallOf(player) - 76) / 2.35;
   const t = clamp((like + 1.5) / 8, 0, 1);
-  return Math.round((min + (max - min) * t * t) * 100) / 100;
+  const baseline = Math.round((min + (max - min) * t * t) * 100) / 100;
+  if ("players" in rulesOrLeague) {
+    const league = rulesOrLeague as GmLeagueState;
+    const market = league.faMarket;
+    // Market leverage decreases after a real stretch without a signature.
+    // A superstar remains expensive even on the final signing day.
+    if (player.teamId == null && market && !market.done &&
+        (market.stage === "open" || market.stage === "fill")) {
+      const daysUnclaimed = Math.max(0, market.day - 6);
+      const ovr = overallOf(player);
+      const maxDiscount = ovr >= 90 ? .16 : ovr >= 86 ? .20 : ovr >= 82 ? .24 :
+        ovr >= 78 ? .30 : .36;
+      const discount = Math.min(1, daysUnclaimed / 12) * maxDiscount;
+      return Math.round(Math.max(min, baseline * (1 - discount)) * 100) / 100;
+    }
+  }
+  return baseline;
 }
 
 export function askingYears(
@@ -50,6 +66,20 @@ export function minimumCredibleSalaryRatio(player: GmPlayer): number {
   const ovr = overallOf(player);
   return ovr >= 86 ? 0.80 : ovr >= 83 ? 0.67 :
     ovr >= 80 ? 0.54 : ovr >= 78 ? 0.42 : 0;
+}
+
+/** Hard bottom for bona-fide veterans, even after weeks unsigned.
+ * The asking number can slide, but 90+ OVR players do not take minimum deals.
+ */
+export function credibleFreeAgentSalaryFloor(player: GmPlayer, league: GmLeagueState): number {
+  const rules = getCbaRules(cbaSeason(league));
+  const initial = askingSalary(player, rules);
+  const current = askingSalary(player, league);
+  const ovr = overallOf(player);
+  const absolute = ovr >= 90 ? .73 : ovr >= 86 ? .68 : ovr >= 83 ? .57 :
+    ovr >= 80 ? .46 : ovr >= 78 ? .34 : 0;
+  return Math.round(Math.max(current * minimumCredibleSalaryRatio(player),
+    initial * absolute, rules.minSalaryM || 1) * 100) / 100;
 }
 
 /** Rough QO amount: near the prior salary, floored at the league minimum. */
