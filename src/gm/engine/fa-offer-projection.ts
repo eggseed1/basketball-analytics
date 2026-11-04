@@ -5,7 +5,7 @@
  */
 import type { GmFaOffer, GmLeagueState, GmPlayer } from "@/gm/types";
 import { evaluateSigning, exceptionAmounts, maxSalaryForAge } from "@/gm/engine/cap";
-import { askingSalary, askingYears, minimumCredibleSalaryRatio } from "@/gm/engine/free-agency-ask";
+import { askingSalary, askingYears, credibleFreeAgentSalaryFloor } from "@/gm/engine/free-agency-ask";
 import { evaluateOfferUtility, agentFeedback } from "@/gm/engine/fa-utility";
 
 const round = (value: number) => Math.round(value * 100) / 100;
@@ -108,7 +108,7 @@ export function projectFreeAgentResponse(
   const ask = askingSalary(player, league);
   const askYears = askingYears(player, league);
   const salaryRatio = salaryM / Math.max(0.5, ask);
-  const floor = minimumCredibleSalaryRatio(player);
+  const floor = credibleFreeAgentSalaryFloor(player, league)/Math.max(0.5, ask);
   // Mirrors the NBA-style agent reservation and competitor comparisons.
   // Actual offers still go through userOfferFreeAgent / resolvePlayers.
   // The agent's interest must climb with each improvement to annual pay or
