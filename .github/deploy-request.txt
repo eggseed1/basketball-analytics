@@ -1,6 +1,6 @@
 DRBL production deployment request
 Target: main
-Reason: Franchise Lab generated skill correlations; training camp no-loss OVR fix; existing save compatibility and targeted camp loss repair
-Reviewed and validated commit: ce2c4a903abbb1d776f27e5a69f831e00d8eec82 (merged PR #187)
-Validation: all seven PR workflows passed; 100-class / 6,000-career cohort, browser, systems, general CI, fidelity, multiseason balance, and two five-year runs
-Data safety: deploy-site workflow syncs current NBA snapshots and protects live runtime results
+Reason: Ship Franchise Lab release #190 (animated 2027 draft lottery, combine scouting and athletic badges, Bird-rights retention and free agency, evolving player tendencies, impactful training camp).
+Validated release code commit: fdfc751f81afbcf1bb03ca5a2ba60201d8918cb6
+Verification: 125/125 repository test scripts passed on prior gameplay-identical commit; browser, balance, fidelity, parity, cohorts, and two five-season longitudinal simulations passed; expanded 25-minute specialized workflow is revalidating the same gameplay code.
+Data safety: deploy-site workflow syncs current live NBA runtime snapshots from main and protects recent results before deploying the Worker.
