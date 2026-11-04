@@ -3,6 +3,7 @@
  */
 import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { simulationRates } from "../src/gm/engine/player-profile";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
 import { applyTrainingCamp, assignCamp, campSkillChanges, CAMP_FOCUSES } from "../src/gm/engine/season-development";
 import {
@@ -69,7 +70,10 @@ const base = league.players.find(player => player.teamId === "bos" && player.con
 // existing overall, potential, hidden development, team or other attributes.
 const legacy: GmPlayer = { ...base, sheet: { ...base.sheet!, version: 8,
   overall: 83, overallOffset: -5, attributes: { ...base.sheet!.attributes, threePoint: 90, midrange: 60, freeThrow: 59 } } };
+const savedRates = simulationRates(legacy);
 const migrated = ensurePlayerSheet(legacy);
+assert.deepEqual(simulationRates(migrated), savedRates,
+  "old generated players must not gain shooting or rebounding accuracy merely from loading a save");
 assert.equal(migrated.sheet!.overall, 83);
 verify(skills(migrated), "legacy generated save");
 assert.equal(migrated.sheet!.overallOffset,
