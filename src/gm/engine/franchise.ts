@@ -65,7 +65,7 @@ export function prepareFranchise(league: GmLeagueState): GmLeagueState {
       .map(row => [row.playerId, row]));
     const restored = repaired.players.map(player => {
       const row = bad.get(player.id), sheet = player.sheet;
-      if (!row || !sheet || player.teamId !== repaired.userTeamId ||
+      if (!row || !sheet || !player.teamId ||
           sheet.overall !== row.after || sheet.priorOverall !== row.before) return player;
       const extras = { impact: player.ratings.impact,
         offense: player.ratings.offense, defense: player.ratings.defense };
