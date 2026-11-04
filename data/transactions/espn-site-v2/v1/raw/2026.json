@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-04T18:16:39.356Z",
-  "apiCount": 429,
+  "fetchedAt": "2026-11-04T21:56:40.288Z",
+  "apiCount": 430,
   "rows": [
+    {
+      "date": "2026-11-04T08:00Z",
+      "description": "Signed F Dalen Terry to a contract for the remainder of the season.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
     {
       "date": "2026-11-03T08:00Z",
       "description": "Waived F Enrique Freeman.",

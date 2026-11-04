@@ -5,11 +5,11 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-04",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-04T18:17:56.536Z",
+    "builtAt": "2026-11-04T21:58:01.462Z",
     "rosterPlayerCount": 504,
-    "headlinesScanned": 10411,
-    "latestHeadlineAt": "2026-11-04T18:14:35.000Z",
-    "latestTransactionDate": "2026-11-03",
+    "headlinesScanned": 10494,
+    "latestHeadlineAt": "2026-11-04T21:53:50.000Z",
+    "latestTransactionDate": "2026-11-04",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -1119,12 +1119,13 @@
         "mv-ff2016272a3c9e6f",
         "mv-db37464b00615528",
         "mv-584d2e2b13d2ed1e",
-        "mv-f60ad4ce719c3a63"
+        "mv-f60ad4ce719c3a63",
+        "mv-38fa6be9dfd6e322"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-09T23:11:42.000Z",
-      "lastMeaningfulAt": "2026-11-03T22:17:39.000Z",
+      "lastMeaningfulAt": "2026-11-04T17:02:56.000Z",
       "linkedPlayerIds": [
         "3945274",
         "4433136"
@@ -1945,12 +1946,13 @@
       "headline": "Dalen Terry: contract talks with the Thunder",
       "primaryClaimId": "mv-485b97ad42ecdb00",
       "claimIds": [
-        "mv-485b97ad42ecdb00"
+        "mv-485b97ad42ecdb00",
+        "mv-espn-tx-2e90470fff83677e"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "completed",
       "firstSeenAt": "2026-11-03T14:06:43.000Z",
-      "lastMeaningfulAt": "2026-11-03T14:06:43.000Z",
+      "lastMeaningfulAt": "2026-11-04T12:00:00.000Z",
       "linkedPlayerIds": [
         "4433159"
       ],
@@ -10283,6 +10285,27 @@
       "isOriginal": false
     },
     {
+      "id": "mv-38fa6be9dfd6e322",
+      "clusterId": "mv-trade-3945274-20261009",
+      "summary": "Luka Doncic trade pressure mounts as Lakers insider puts odds of a major move at 65%",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-04T17:02:56.000Z",
+      "sourceId": "reporter:jovan-buha",
+      "sourceLabel": "Marca, citing Jovan Buha (The Athletic)",
+      "reporterLabel": "Jovan Buha",
+      "sourceUrl": "https://www.marca.com/en/basketball/nba/los-angeles-lakers/2026/11/04/luka-doncic-trade-pressure-mounts-as-lakers-insider-puts-odds-of-major-move-at-65.html",
+      "playerIds": [
+        "3945274"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-b9818516ef6efda3",
       "clusterId": "mv-trade-2595516-20261101",
       "summary": "NBA rumors: The problem with Warriors’ Kristaps Porzingis trade possibilities involving Bucks, Bulls",
@@ -10670,6 +10693,26 @@
       ],
       "teamIds": [
         "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-espn-tx-2e90470fff83677e",
+      "clusterId": "mv-contract-4433159-20261103",
+      "summary": "Signed F Dalen Terry to a contract for the remainder of the season.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-11-04T12:00:00.000Z",
+      "sourceId": "ledger:espn-transactions",
+      "sourceLabel": "Transaction log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4433159"
+      ],
+      "teamIds": [
+        "25"
       ],
       "isOriginal": true
     },
@@ -11733,6 +11776,16 @@
       "outcome": "materialized",
       "resolvedAt": "2026-10-23T12:00:00.000Z",
       "transactionRef": "nba-tx-9a9400588d2c1610",
+      "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-contract-4433159-20261103",
+      "playerIds": [
+        "4433159"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-11-04T12:00:00.000Z",
+      "transactionRef": "espn-tx-2e90470fff83677e",
       "suppressTradeSpeculation": false
     },
     {
