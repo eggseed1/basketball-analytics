@@ -55,8 +55,18 @@ assert.equal(bronzeOnly.badges!.xp.deep_range,120,"current eligibility limits st
 
 const vet = { ...veteran,id:"badge-mentor",position:player.position,age:32,badges:{version:1 as const,xp:{deep_range:900}} };
 const student = {...player,badgeFocus:"deep_range" as const,mentorship:{mentorId:vet.id,teamId:player.teamId!,season:2027,sharedGames:0}};
-assert.ok((recordBadgeGame(student,box,[student,vet]).badges!.xp.deep_range ?? 0) > 27, "mentor teaches badge XP beyond action bonus");
-assert.equal(recordBadgeGame(student,box,[student,{...vet,teamId:"nyk"}]).badges!.xp.deep_range,25);
+const sharedBox: GmBoxScore = { ...box, players: [
+  ...box.players,
+  { ...line, playerId: vet.id, playerName: vet.name, minutes: 21, points: 9, tpm: 1 },
+] };
+assert.ok((recordBadgeGame(student,sharedBox,[student,vet]).badges!.xp.deep_range ?? 0) > 27,
+  "mentor teaches badge XP when both players have on-court reps");
+assert.equal(recordBadgeGame(student,box,[student,vet]).badges!.xp.deep_range,25,
+  "a DNP veteran cannot teach bonus badge XP from a game he missed");
+assert.equal(recordBadgeGame(student,{ ...sharedBox, players: sharedBox.players.map(p =>
+  p.playerId === vet.id ? { ...p, minutes: 0 } : p) },[student,vet]).badges!.xp.deep_range,25,
+  "mentors with zero minutes are not credited with game teaching");
+assert.equal(recordBadgeGame(student,sharedBox,[student,{...vet,teamId:"nyk"}]).badges!.xp.deep_range,25);
 const aged = { ...player,sheet:{...player.sheet!,attributes:{...attributes,threePoint:70}},badges:{version:1 as const,xp:{deep_range:3200}} };
 assert.equal(badgeEarned(aged,"deep_range"),5);
 assert.equal(badgeLevel(aged,"deep_range"),1, "current attributes bound active effects while XP is kept");

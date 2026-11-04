@@ -26,9 +26,10 @@ finishing at an exact OVR.
 4. **Talent is not destiny.** Hidden learning and skill aptitudes are
    deterministic per prospect and persist through trades, seasons and saves.
    A late pick may roll unexpectedly well; a top pick may plateau.
-5. **Breakouts revise the outlook, not a number.** Mentorship and excellent
-   season-long play can strengthen a player's future learning rate with
-   diminishing returns. There is no +4 career cap for generated rookies.
+5. **Breakouts revise learning, not a target rating.** Mentorship and excellent
+   season-long play can strengthen a generated player's future learning rate
+   with diminishing returns. A real mentoring breakthrough requires 20 games
+   played by both mentor and mentee. There is no +4 career cap for generated rookies.
 6. **Keep league history credible.** Soft OVR and skill saturation make
    movement beyond 85–90 harder; aging and injuries remain important. Current
    NBA players retain their original calibration until a separate measured
@@ -46,7 +47,8 @@ finishing at an exact OVR.
   performance, coaching, staff, mentoring and work ethic. Elite ratings
   encounter soft diminishing returns, not a fixed cap.
 - Breakouts/mentoring increase persistent development discovery rather than
-  the historical overall ceiling. Exceptionally productive generated players
+  the historical overall ceiling. Mentor-led badge XP comes only from
+  co-appearances and still obeys skill-based badge eligibility. Exceptionally productive generated players
   aged 26–29 can still unlock a late breakthrough, but require at least
   55 games, 1,400 minutes, efficient scoring and substantially better production
   than their opening rating. Older player types preserve the legacy

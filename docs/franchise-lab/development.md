@@ -1,27 +1,99 @@
-# Development desk
+# Franchise Lab: player development and mentorship
 
-Home is the first working-desk link. Development has its own destination; the gear opens league settings. The creation gear configures a new save before roster selection. Existing `/gm/franchise` links retain the team plan, roles and history.
+## One simple player-development loop
+
+The GM picks a **skill focus** (shooting, creation, finishing, defense or
+rebounding) and optionally a **playing-time plan**. Players earn growth over
+four in-season checkpoints and a larger offseason progression window.
+Current attributes, minutes, efficiency, awards, age, coach/development
+staff, work ethic, injury and the selected focus influence those results.
+For generated players, the hidden learning profile affects *how fast* a
+skill responds; it does not set a final overall destination.
+
+- **Practice-first:** keeps a young bench player developing at limited
+  minutes, though game evidence still helps.
+- **Rotation reps:** rewards sustainable NBA participation, not forced
+  40-minute nights.
+- **Training camp:** two preseason focus assignments per team grant one-time
+  skill changes with a small fatigue or soreness cost. They do not guarantee
+  an overall jump or change a ceiling.
+- **Breakout season:** sustained, efficient production can permanently improve
+  how a generated young player learns, with diminishing returns. Late
+  (age 26–29) breakthroughs require especially strong evidence.
+
+### Two different underlying growth paths
+
+| Player | Real outcome of a development milestone |
+| --- | --- |
+| Generated draft-model-2 player | Persistent, bounded improvement in skill-learning response through `developmentProfile.discovery`; **no fixed final OVR ceiling** or guaranteed star tier. |
+| Existing NBA / old-generation player | Retains historical sheet potential calibration; rare milestone can increase the legacy ceiling by 1–3, with a combined **+4 career limit**. This is only for legacy compatibility and is not a direct OVR gain. |
+
+For save compatibility, both paths still persist their milestone history in the
+old `ceilingGrowth` key. On model-2 players its `gain` and `total` count
+*discovery opportunities*, **not additional OVR points**. Do not present
+these as "potential +N" in the new game UI.
+
+Migrating every real NBA player's growth to the open model is a separate,
+league-wide calibration effort. We should not silently remove calibrated
+ceiling behavior from existing NBA saves without extensive multiseason tests.
 
 ## Mentorship
 
-A learner must be 25 or younger. A mentor must be a contracted teammate at the same primary position, at least 28 and five years older. Each veteran has one learner. The assignment follows the player, but becomes inactive when eligibility or team membership changes. CPU clubs use the same eligibility and public overall/work-habit inputs.
+A learner must be **25 or younger**; their contracted veteran must be
+**28 or older**, at least **five years older**, on the **same team** and at
+the **same primary position**. Each veteran mentors at most one player;
+each team can maintain **two active pairings**. A trade, contract change or
+position change deactivates an invalid pairing.
 
-A valid mentor adds 4% to 18% to development work, scaled by overall and simulated work ethic. Work ethic is stored when supplied; otherwise it has a deterministic identity-based default. It is a game attribute, not an assessment of a real person's character.
+While active, mentoring adds **4–18% to growth pace** during both
+regular-season and offseason checkpoints. This represents help with practice,
+so it can work even without heavy NBA minutes. Mentor quality depends on
+their current OVR and modeled work ethic, not on a hidden future-potential
+number.
 
-Season-end ceiling reviews require 20 actual appearances by the learner while paired with the veteran. Their ceiling chance ranges from 3% to 12%, with a gain of 1 to 3. Better mentors also unlock the larger gain tiers. Rolls use the learner and season, so changing mentors or reloading cannot reroll them. The regular-season stat recorder maintains shared-game counts and the opening overall.
+A mentor can teach **eligible badge XP** while **both players actually
+appear in the same game**. The pupil must independently meet the badge's
+attribute requirement; mentoring cannot bypass skill gates or grant ratings
+from nowhere. Mentoring does not give instant OVR points.
 
-## Breakouts and limits
+After **20 real co-appearances in the same season**, a rare season-end
+mentoring milestone can occur. Its chance is **3–12%**, depending on
+mentor quality, and an internal 1–3 discovery-unit roll follows. For
+generated players this slightly strengthens future learning, subject to
+diminishing returns: **it does not increase a final OVR cap**. For
+historic/legacy players it retains the older limited ceiling rule.
 
-Reviews happen after the regular season, before the final development pass. A player must be 25 or younger with 40 games, 1,000 minutes and at least 54% true shooting. A game-model performance score uses per-36 points, assists, rebounds, steals, blocks, turnovers and efficiency. It must exceed opening overall by six; a gap of twelve earns two points, otherwise one. This is a game balance rule, not an NBA projection or empirical probability.
+All season-end rolls are deterministic for the learner and year and are
+reviewed at most once. Changing a veteran or reloading a save does not
+reroll a failed attempt; a completed review does not double-award progress.
 
-Mentorship and breakouts draw from one permanent +4 career allowance. Absolute ceilings cannot exceed 99. The ledger, annual review mark and opening baseline survive saves, trades and summer rollover. Original ceiling calibration and trait rarity remain intact. A ceiling award opens growth room; it does not immediately add overall or assign a star trait.
+## Other guardrails
 
-## Training camp
+- Development traits adjust growth pace but do not assign a guaranteed career
+  outcome for generated players. The offseason assessment can change traits
+  based on sustained performance and accolades.
+- Elite skills and OVR face steep soft growth friction. An unusual player
+  can still reach 98–99 while the ordinary population remains balanced.
+- Badges gain XP from actual official-game evidence and are capped by learned
+  attributes. Their possession effects do not increase OVR or development
+  potential.
+- CPU teams use the same growth checkpoints, badge eligibility, staff and
+  mentorship constraints.
+- Real NBA player ratings and historical saves retain their original
+  calibration during this rollout.
 
-Each club has two individual slots. Staff still affects the skill gain. A focus grants its saved one-time attribute changes at the preseason camp step. It never raises the ceiling. Players receive two team games of fatigue (a 2% shooting penalty), or one game of soreness. Baseline soreness risk is 6%, scaled by the injury-frequency setting. It cannot leave a club with fewer than five healthy players. CPU clubs use the same slots and tradeoffs.
+## Verification
 
-The skill preview, risk disclosure and result use the same saved assignments. Camp results prevent a second application after reload. Unrun legacy camps retain their first two assignments; already saved camp results remain intact. Fatigue follows the player and decreases only when his team plays a counted game.
+`npm run test:franchise-development` validates team limits, eligibility,
+mentorship continuity, real co-appearances, rare annual reviews, legacy
+ceiling caps, and training-camp replay guards.
 
-## Validation
+`npm run test:franchise-mentorship-open-path` validates generated-player
+learning discoveries, the 20 co-appearance threshold, saved profiles,
+replay safety, and the lack of any predetermined OVR ceiling changes.
 
-`test:franchise-development` covers pairing constraints, teammate changes, fractional growth, actual shared games, save/reload, breakout sample requirements, deterministic rare reviews, combined career limits, replay guards, camp limits and fatigue recovery. The browser audit checks Home placement, Development at phone/desktop widths, focus and mentorship persistence, settings navigation and creation settings applied to a new slot.
+`npm run test:franchise-badges` validates joint-appearance badge teaching,
+attribute gates, XP idempotence, and simulation effects.
+
+Full draft-cohort, 10-year talent, browser, simulation and roster-balance
+regression suites gate any change to how quickly players gain ratings.

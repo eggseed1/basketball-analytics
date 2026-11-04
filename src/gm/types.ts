@@ -354,6 +354,11 @@ export interface GmPlayer {
   workEthic?: number;
   mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; lastGameId?: string; slot?: 0 | 1 };
   developmentBaseline?: { season: number; overall: number };
+  /**
+   * Historical save key: for model-2 generated players this records earned
+   * learning discoveries, NOT increases in a predetermined potential ceiling.
+   * Only legacy/NBA player types use true capped ceiling awards.
+   */
   ceilingGrowth?: { total: number; reviewedSeason?: number; awards: Array<{ season: number; source: "mentorship" | "breakout"; gain: number; reason: string }> };
   campFatigueGames?: number;
   /** The real role at the selected season, used as a prior while he stays on that club. */

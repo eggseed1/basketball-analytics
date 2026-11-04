@@ -48,6 +48,7 @@ jobs:
       - run: npm run test:franchise-generated-jersey
       - run: npm run test:franchise-media
       - run: npm run test:franchise-development
+      - run: npm run test:franchise-mentorship-open-path
       - run: npm run test:franchise-dynamic-progression
       - run: npx tsx scripts/test-gm-open-development.ts
       - run: npm run test:franchise-calendar

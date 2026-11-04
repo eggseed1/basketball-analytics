@@ -20,7 +20,7 @@ DRBL adapts the 2K25/26 skill progression pattern to a franchise roster: permane
 
 Inside touch uses average close shot and driving layup. Secure handle uses average ball handle and speed with ball. Rim guardian uses average block and interior defense. Glass cleaner, Defensive anchor and Clutch scorer use the stronger of their listed skills. Other badges use one attribute. The UI lists these inputs, XP sources and effects.
 
-Progress stops at the current skill cap; improved attributes need new game evidence. XP never regresses through non-use. Aging can lower the active level, while earned progress stays saved. Each badge earns at most 24 base XP per game, with +25% for the chosen emphasis and +10% if an eligible active mentor has a higher level of that badge. Auto emphasis follows current skills and development focus. CPU players use the same automatic selection, gates, XP and effects.
+Progress stops at the current skill cap; improved attributes need new game evidence. XP never regresses through non-use. Aging can lower the active level, while earned progress stays saved. Each badge earns at most 24 base XP per game, with +25% for the chosen emphasis and +10% if an eligible active mentor with a higher badge level **plays in the same game**. Auto emphasis follows current skills and development focus. CPU players use the same automatic selection, gates, XP and effects.
 
 Official regular-season, Cup, play-in and playoff games count. DNPs, All-Star exhibitions and summer games do not grant XP. Secure handle rewards ball uses after a turnover penalty; defensive progress requires actual minutes against opponents shooting 48% or below. Clutch scoring requires a made field goal in the last four minutes or overtime with the pre-shot score within ten points.
 
@@ -30,7 +30,7 @@ Shooting bonuses reach at most 1.5 percentage points, free throws 2 points, rebo
 
 Migration initializes up to three signature badges from visible current attributes at Gold or below. Players aged 22 or younger and unsigned players get at most one Bronze signature. The migration runs once per player and does not change attributes, overall, potential, results or rotations. Later-created players initialize before their first simulation. Draft prospects' badges stay hidden on their player cards.
 
-XP and emphasis travel with the player through trades, seasons, slots and JSON exports. A saved current-season game-ID ledger rejects consecutive and nonconsecutive replays; older-season boxes cannot award progress after the ledger advances. Only the current season's IDs are retained. Skill bonuses do not alter the shared +4 career ceiling-growth limit.
+XP and emphasis travel with the player through trades, seasons, slots and JSON exports. A saved current-season game-ID ledger rejects consecutive and nonconsecutive replays; older-season boxes cannot award progress after the ledger advances. Only the current season's IDs are retained. Skill bonuses do not affect any potential ceiling. New generated players have no fixed final OVR, while legacy players retain their historical +4 career ceiling-milestone allowance.
 
 Development has a roster selector, emphasis control, ten badge cards, explicit gates and XP progress. Player cards show active badges and an owner's link to Development. No badge loadout is needed before advancing a season.
 

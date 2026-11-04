@@ -241,6 +241,7 @@ export function GmRosterBoard({ league }: { league: GmLeagueState }) {
       <div className="gm-club-panel gm-roster__panel overflow-x-auto">
         {view === "simple" ? (
           <SimpleTable
+            season={league.season}
             players={players}
             selectedId={selected?.id ?? null}
             onSelect={setSelectedId}
@@ -416,11 +417,13 @@ function Status({ label, value }: { label: string; value: string }) {
 }
 
 function SimpleTable({
+  season,
   players,
   selectedId,
   onSelect,
   scout,
 }: {
+  season: number;
   players: GmPlayer[];
   selectedId: string | null;
   onSelect: (id: string) => void;
@@ -439,7 +442,7 @@ function SimpleTable({
               {cat.label}
             </th>
           ))}
-          <th title="Scouted potential">POT</th>
+          <th title="Generated players show observed development; historic players show a scouted potential grade">Dev</th>
         </tr>
       </thead>
       <tbody>
@@ -449,6 +452,7 @@ function SimpleTable({
           const prior = sheet.priorSimple;
           const pot = scoutPotentialView(player, scout);
           const potGrade = ratingToLetter((pot.low + pot.high) / 2);
+          const outlook = player.draftModel === 2 ? developmentOutlook(player, season) : null;
           return (
             <tr
               key={player.id}
@@ -470,8 +474,8 @@ function SimpleTable({
               {means.map((value, index) => (
                 <GradeCell key={SIMPLE_CATS[index]!.id} value={value} prior={prior?.[index]} />
               ))}
-              <td className="gm-roster__grade" title={`${pot.low}-${pot.high}`}>
-                {potGrade}
+              <td className="gm-roster__grade" title={outlook?.detail ?? `Scouted potential: ${pot.low}-${pot.high}`}>
+                {outlook ? <span className="text-[11px] font-medium">{outlook.label}</span> : potGrade}
               </td>
             </tr>
           );
