@@ -51,7 +51,7 @@ export function GmLotteryMachine({
         collecting: index < draw.balls.length - 1,
       }));
     }
-    const attempts = draw.attempts?.length
+    const attempts: Array<{ballId:number; teamId:string; accepted:boolean; reason?:string}> = draw.attempts?.length
       ? draw.attempts
       : [{ ballId: draw.balls[0] ?? 1, teamId: draw.teamId, accepted: true }];
     return attempts.map(pull => ({
