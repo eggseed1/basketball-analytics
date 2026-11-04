@@ -1429,13 +1429,14 @@ export const useGmStore = create<GmStore>()(
           set({ league: withUpdate({ ...league, tradeTalks: [talk, ...(league.tradeTalks ?? [])].slice(0, 30) }) });
           return evaluation;
         }
-        const next = applyTrade(league, {
+        const next = withUpdate(applyTrade(league, {
           fromTeamId: league.userTeamId,
           toTeamId,
           fromAssets,
           toAssets,
-        });
+        }));
         set({ league: next });
+        syncMyLeague(next);
         return { ok: true };
       },
 
