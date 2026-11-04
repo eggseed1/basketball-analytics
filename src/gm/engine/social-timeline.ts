@@ -373,7 +373,7 @@ export function syncSocialTimeline(league: GmLeagueState): GmLeagueState {
   ).slice(0, 1050);
   const seen = new Set(existing.map(p => p.id));
   const fresh = allEvents(league).flatMap(renderEvent).filter(p => !seen.has(p.id));
-  if (!fresh.length && league.socialPosts) return league;
+  if (!fresh.length && Array.isArray(league.socialPosts) && existing.length === league.socialPosts.length) return league;
   const posts = [...fresh, ...existing].sort((a, b) =>
     b.season - a.season || b.day - a.day ||
     b.heat - a.heat || a.id.localeCompare(b.id)).slice(0, 900);
