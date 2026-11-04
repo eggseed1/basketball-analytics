@@ -219,18 +219,31 @@ function possessionsForBoard(league: GmLeagueState, player: GmPlayer): number | 
 }
 
 /**
- * DRBL/100 is the entry rating. WAR1 before tip-off is the published season total.
- * After tip-off, WAR1 is that rating times possessions played in this save, divided by P1.
+ * The published NBA entry value is a starting prior, NOT a forever-frozen
+ * rating. In simulated future seasons the player's current in-game impact
+ * updates that prior. Generated players have no external NBA DRBL estimate;
+ * use their current simulation impact instead, clearly marked as an estimate.
+ * WAR1 is earned only from possessions actually played in this save.
  */
 export function valueForBoard(
   league: GmLeagueState,
   player: GmPlayer
-): { drbl100: number | null; war1: number | null } {
+): { drbl100: number | null; war1: number | null; estimated: boolean } {
   const entry = entryValue(player);
-  if (!seasonHasGames(league)) return entry;
-  if (entry.drbl100 == null) return { drbl100: null, war1: null };
+  const generated = !player.nbaPlayerId && entry.drbl100 == null;
+  const impact = player.ratings.impact;
+  const baseline = player.simProfile?.impact ?? impact;
+  const adjusted = Number.isFinite(impact) ? Math.max(-10, Math.min(12,
+    entry.drbl100 == null ? impact : entry.drbl100 + (impact - baseline)
+  )) : entry.drbl100;
+  const drbl100 = generated || seasonHasGames(league) || league.season > 2026
+    ? adjusted : entry.drbl100;
+  const estimated = generated || (entry.drbl100 != null && drbl100 !== entry.drbl100);
+  if (!seasonHasGames(league)) {
+    return { drbl100, war1: generated || estimated ? null : entry.war1, estimated };
+  }
   const possessions = possessionsForBoard(league, player);
-  if (possessions == null) return { drbl100: entry.drbl100, war1: null };
-  return { drbl100: entry.drbl100, war1: war1FromRate(entry.drbl100, possessions) };
+  return { drbl100, war1: drbl100 != null && possessions != null
+    ? war1FromRate(drbl100, possessions) : null, estimated };
 }
 
