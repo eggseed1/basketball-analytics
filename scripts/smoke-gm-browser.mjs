@@ -392,13 +392,22 @@ try {
   await chamber.waitFor();
   const firstFrame = await chamber.evaluate(canvas => canvas.toDataURL());
   await page.getByTestId("lottery-start").click();
+  const speedControl = page.getByTestId("lottery-playback-speed");
+  await speedControl.getByText("Cinematic 1×").waitFor();
+  assert.equal(await page.getByRole("button", { name: "Auto-play remaining picks" }).count(), 1,
+    "manual step-by-step reveal must be the default");
   await page.waitForTimeout(450);
   assert.ok(await page.getByText("Balls in motion", { exact: true }).isVisible(),
     "normal-motion chamber must still be mixing before the 72-frame gate opens");
   const movingFrame = await chamber.evaluate(canvas => canvas.toDataURL());
   assert.notEqual(firstFrame, movingFrame, "the lottery balls must visibly move during the draw");
   await page.getByText(/Valid ball extracted|Invalid draw|Combination in progress/)
-    .waitFor({ timeout: 70000 });
+    .waitFor({ timeout: 145000 });
+  await page.getByTestId("lottery-next").waitFor();
+  await page.waitForTimeout(1400);
+  assert.ok(await page.getByTestId("lottery-next").isVisible(),
+    "picked team and ball stay visible until user requests the next draw");
+  await page.screenshot({ path: `${dir}/lottery-cinematic-first-pick.png`, animations: "disabled" });
   assert.equal(await page.getByRole("alert").filter({hasText: /physical extraction does not match/}).count(), 0,
     "normal-motion canvas physics must reproduce the engine's extracted ball");
   await page.emulateMedia({ reducedMotion: "reduce" });
