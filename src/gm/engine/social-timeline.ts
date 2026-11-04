@@ -239,10 +239,10 @@ function awardEvents(league: GmLeagueState): Event[] {
     for (const race of league.awards.races.filter(r => ["mvp", "dpoy", "roy", "mip"].includes(r.id))) {
       const winner = race.candidates[0];
       if (!winner) continue;
-      const name = league.players.find(p => p.id === winner.playerId)?.name ?? winner.playerName;
+      const name = league.players.find(p => p.id === winner.id)?.name ?? winner.name;
       events.push({ key: "award:" + league.season + ":" + race.id,
         season: league.season, day: league.day, category: "awards",
-        teamId: winner.teamId, playerId: winner.playerId, href: "/gm/awards", heat: 92,
+        teamId: winner.teamId, playerId: winner.id, href: "/gm/awards", heat: 92,
         topic: name + " wins " + race.title + ".",
         detail: "The " + league.season + " award race is official.",
         account: "wire", fan: pick(race.id + league.season, [
@@ -300,7 +300,16 @@ function renderEvent(event: Event): SocialPost[] {
   });
 }
 function allEvents(league: GmLeagueState): Event[] {
-  const events = [
+  const events: Event[] = [
+    {
+      key: "season:" + league.season, season: league.season, day: 0,
+      category: "news", teamId: league.userTeamId, href: "/gm/standings",
+      heat: 38, account: "wire",
+      topic: "New season, new arguments. The " + (league.season - 1) + "-" +
+        String(league.season).slice(-2) + " league calendar is open.",
+      detail: "Every record starts at zero. Every fan has already penciled in a championship.",
+      fan: "Annual optimism is a renewable energy source. We are so back before a ball has been tipped.",
+    },
     ...gameEvents(league), ...newsEvents(league), ...tradeEvents(league),
     ...injuryEvents(league), ...awardEvents(league),
   ];
