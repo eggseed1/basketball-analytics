@@ -6,6 +6,7 @@ import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { GmLotteryMachine } from "@/gm/ui/gm-lottery-machine";
+import { GmCombineHighlights } from "@/gm/ui/gm-combine-highlights";
 import { ATTRIBUTE_LABEL } from "@/gm/engine/attributes";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -119,6 +120,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
 
     {stage === "lottery" ? <GmLotteryMachine key={league.season} league={league} onFinish={completeLotteryReveal} /> : null}
 
+    {stage === "scouting" && league.combineDone ? <GmCombineHighlights league={league} /> : null}
     {stage === "scouting" ? <SectionFrame title="Prepare your board" >
       <div className="flex flex-wrap items-center gap-3"><Button variant="outline" onClick={() => runCombine()} disabled={league.combineDone}>{league.combineDone ? "Combine complete" : "Run draft combine"}</Button><Link className={linkClass} href="/gm/draft">Scouting board and workouts</Link></div>
 
