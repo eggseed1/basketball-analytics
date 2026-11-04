@@ -86,29 +86,33 @@ try {
   assert.match(await minuteBudget.innerText(), /240\s*\/\s*240/,
     "the actual rotation UI must start with one valid 240-minute budget");
   const rotationSliders = page.locator('.gm-rot__slider input[type="range"]:not([disabled])');
-  const beforeMinutes = await rotationSliders.evaluateAll(nodes => nodes.map(el => Number(el.value)));
-  assert.ok(beforeMinutes.length >= 5);
+  const readMinuteBook = () => page.locator('.gm-rot__slider input[type="range"]:not([disabled])')
+    .evaluateAll(nodes => Object.fromEntries(nodes.map(el => [el.getAttribute("aria-label"), Number(el.value)])));
+  const beforeMinutes = await readMinuteBook();
+  assert.ok(Object.keys(beforeMinutes).length >= 5);
   const firstSlider = rotationSliders.first();
-  assert.ok(Number(await firstSlider.inputValue()) >= 2);
+  const editedPlayer = await firstSlider.getAttribute("aria-label");
+  assert.ok(editedPlayer);
+  assert.ok(beforeMinutes[editedPlayer] >= 2);
   await firstSlider.focus();
   await firstSlider.press("ArrowLeft");
-  await page.waitForFunction(before => {
-    const current = [...document.querySelectorAll('.gm-rot__slider input[type="range"]:not([disabled])')]
-      .map(el => Number(el.value));
-    return current.length === before.length && current.some((value, index) => value !== before[index]);
-  }, beforeMinutes);
-  const afterMinutes = await rotationSliders.evaluateAll(nodes => nodes.map(el => Number(el.value)));
-  assert.equal(afterMinutes.reduce((sum, n) => sum + n, 0), 240,
+  await page.waitForFunction(({ before, edited }) => {
+    const target = [...document.querySelectorAll('.gm-rot__slider input[type="range"]:not([disabled])')]
+      .find(el => el.getAttribute("aria-label") === edited);
+    return Boolean(target && Number(target.value) === before[edited] - 2);
+  }, { before: beforeMinutes, edited: editedPlayer });
+  const afterMinutes = await readMinuteBook();
+  assert.equal(Object.values(afterMinutes).reduce((sum, n) => sum + n, 0), 240,
     "the minute book cannot gain or lose minutes on an edit");
-  assert.equal(afterMinutes[0], beforeMinutes[0] - 2,
+  assert.equal(afterMinutes[editedPlayer], beforeMinutes[editedPlayer] - 2,
     "the selected player's minutes move by one linked two-minute block");
-  assert.ok(afterMinutes.slice(1).some((minutes, index) => minutes > beforeMinutes[index + 1]),
+  assert.ok(Object.entries(afterMinutes).some(([name, minutes]) =>
+    name !== editedPlayer && minutes > (beforeMinutes[name] ?? 0)),
     "a teammate must receive the moved minutes");
   assert.match(await minuteBudget.innerText(), /240\s*\/\s*240/);
   await page.reload();
   await minuteBudget.waitFor();
-  const savedMinutes = await page.locator('.gm-rot__slider input[type="range"]:not([disabled])')
-    .evaluateAll(nodes => nodes.map(el => Number(el.value)));
+  const savedMinutes = await readMinuteBook();
   assert.deepEqual(savedMinutes, afterMinutes, "linked minute changes survive reload");
 
   // Development should make one clear skill choice prominent, without
