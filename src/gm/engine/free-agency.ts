@@ -183,7 +183,7 @@ function bestLegalBid(
 
 function teamTargets(state: GmLeagueState, team: GmTeam, rules: CBARules): GmPlayer[] {
   const size = rosterCount(team.id, state.players);
-  if (size >= state.settings.maxRoster) return [];
+  // NBA clubs may hold an offseason roster of up to 21; 15-man in-season\n  // limits must not stop Bird-rights re-signings in June and July.\n  if (size >= offseasonRosterLimit(state)) return [];
   const needs = rosterNeeds(team, state.players);
   const reserved = new Set(
     (state.faMarket?.reservations ?? [])
