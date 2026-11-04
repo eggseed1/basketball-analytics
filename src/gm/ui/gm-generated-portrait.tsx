@@ -143,7 +143,7 @@ export function GmGeneratedPortrait({
             fill={uniform.lettering} stroke={jersey} strokeWidth="0.8" paintOrder="stroke">
             {uniform.abbreviation}
           </text>}
-        {(size === "lg" || size === "xl") && player.jersey && /^\\d{1,2}$/.test(player.jersey) &&
+        {(size === "lg" || size === "xl") && player.jersey && /^\d{1,2}$/.test(player.jersey) &&
           <text x="80" y="159" textAnchor="middle" fontFamily="Arial, sans-serif"
             fontSize="9.5" fontWeight="800" fill={uniform.lettering}>
             {player.jersey}
