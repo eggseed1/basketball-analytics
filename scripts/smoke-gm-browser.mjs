@@ -43,6 +43,45 @@ try {
     "sim-through-injuries preference survives reload");
   await page.getByRole("checkbox", { name: /Sim through injuries/ }).uncheck();
 
+  // Fullscreen must paint the exact semantic GM page surface, not inherit the
+  // browser's opaque black fullscreen backdrop after the page chrome hides.
+  await page.getByRole("button", { name: "Fullscreen", exact: true }).click();
+  await page.waitForFunction(() => document.documentElement.dataset.gmFull === "1");
+  const checkFullscreenSurface = async () => {
+    const appearance = await page.locator("main[data-gm]").evaluate((desk) => {
+      const panel = desk.querySelector(".gm-mast");
+      const rect = desk.getBoundingClientRect();
+      const panelRect = panel?.getBoundingClientRect();
+      return {
+        background: getComputedStyle(desk).backgroundColor,
+        page: getComputedStyle(document.body).backgroundColor,
+        width: rect.width,
+        viewport: innerWidth,
+        cardWidth: panelRect?.width ?? 0,
+        maxCardWidth: parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--page-max-standard")) * 16,
+      };
+    });
+    assert.equal(appearance.background, appearance.page,
+      "fullscreen GM desk must use the same background as the normal GM page");
+    assert.notEqual(appearance.background, "rgba(0, 0, 0, 0)",
+      "fullscreen cannot expose a transparent black browser backdrop");
+    assert.ok(Math.abs(appearance.width - appearance.viewport) < 3,
+      "fullscreen must fill the viewport");
+    assert.ok(appearance.cardWidth > 0 && appearance.cardWidth <= appearance.viewport,
+      "fullscreen masthead must remain legible within the viewport");
+    assert.ok(appearance.cardWidth <= 1282,
+      "fullscreen content should keep the standard GM page width on desktop");
+  };
+  await checkFullscreenSurface();
+  await page.reload();
+  await page.waitForFunction(() => document.documentElement.dataset.gmFull === "1");
+  await checkFullscreenSurface();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await checkFullscreenSurface();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByRole("button", { name: "Exit fullscreen", exact: true }).click();
+  await page.waitForFunction(() => document.documentElement.dataset.gmFull !== "1");
+
   // Fictional social reactions are integrated into the same saved league,
   // accessible on narrow screens, and can be liked/followed without any API.
   await page.goto("http://127.0.0.1:3107/gm/timeline", { waitUntil: "domcontentloaded" });
