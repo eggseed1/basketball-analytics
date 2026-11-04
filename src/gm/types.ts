@@ -103,6 +103,8 @@ export interface ScoutProfile {
     wingspanIn: number;
     verticalIn: number;
     sprint: number;
+    laneAgility?: number;
+    standingReachIn?: number;
   };
 }
 
