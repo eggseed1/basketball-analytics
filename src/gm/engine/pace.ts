@@ -23,6 +23,7 @@ import { noteTradeDeadline } from "@/gm/engine/offseason";
 import { recordSimGame } from "@/gm/lib/season-line";
 import { rebalanceForInjuryChanges, schemeHeadline } from "@/gm/engine/coaching";
 import { injuryReturnDate } from "@/gm/engine/injury-schedule";
+import { syncSocialTimeline } from "@/gm/engine/social-timeline";
 
 export function stepDay(league: GmLeagueState): {
   league: GmLeagueState;
@@ -118,7 +119,9 @@ export function stepDay(league: GmLeagueState): {
   next = ensureAllStar(ensureNbaCup(next));
   next = noteTradeDeadline({ ...next, day: Math.min(next.day + 1, maxScheduleDay(next.schedule) + 1) });
   return {
-    league: maybeGrowInSeason(next),
+    // Capture each completed day before the bounded box-score archive rolls
+    // past it. Simulating a month in one click must not erase earlier events.
+    league: syncSocialTimeline(maybeGrowInSeason(next)),
     seasonOver: regularSeasonComplete(schedule),
   };
 }
