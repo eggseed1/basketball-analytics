@@ -328,7 +328,23 @@ export interface GmDevelopmentProfile {
   learningSurge?: number;
 }
 
+/**
+ * Cosmetic, deterministic biography. Never controls hidden talent, prospect
+ * scouting, finances, or training. Persisted for franchise save stability.
+ */
+export interface GmPlayerIdentity {
+  version: 1;
+  countryCode: string;
+  hometown: string;
+  familyOriginCode?: string;
+  portraitSeed: number;
+  temperament: string;
+  interest: string;
+}
+
 export interface GmPlayer {
+  /** Fictional names, origin and portrait remain stable after trades and aging. */
+  identity?: GmPlayerIdentity;
   /** A player's developmental tendencies; generated prospects have no fixed OVR ceiling. */
   developmentProfile?: GmDevelopmentProfile;
   /** One deterministic trait review per offseason; retained in saves. */
