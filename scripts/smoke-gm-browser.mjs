@@ -326,8 +326,23 @@ try {
   await page.getByRole("heading", { name: "Draft lottery", exact: true }).waitFor();
   await page.reload();
   await page.getByRole("heading", { name: "Draft lottery", exact: true }).waitFor();
+  const ceremony = page.getByTestId("gm-lottery-ceremony");
+  await ceremony.waitFor();
+  assert.equal(await page.getByTestId("lottery-revealed-order").count(), 0,
+    "lottery must not spoil the pick order before the reveal");
+  await page.getByTestId("lottery-start").click();
+  await page.getByRole("heading", { name: /The drum is spinning/ }).waitFor();
+  await page.getByTestId("lottery-skip").click();
+  assert.ok((await page.getByTestId("lottery-revealed-order").locator("li").count()) >= 14);
+  await page.reload();
+  await page.getByText("The lottery is official.").waitFor();
   await page.getByRole("button", { name: "Continue to combine and workouts", exact: true }).click();
   await page.getByRole("button", { name: "Run draft combine", exact: true }).click();
+  await page.getByTestId("gm-combine-results").waitFor();
+  assert.ok((await page.getByTestId("gm-combine-results").locator("tbody tr").count()) >= 3,
+    "combine must reveal ranked athlete measurements instead of silently flipping a flag");
+  await page.reload();
+  await page.getByTestId("gm-combine-results").waitFor();
   await page.getByRole("button", { name: "Combine complete", exact: true }).waitFor();
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), "season hub overflows mobile");
   await page.screenshot({ path: `${dir}/season-hub-mobile.png`, fullPage: true, animations: "disabled" });
