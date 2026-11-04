@@ -76,7 +76,7 @@ export function GmFreeAgencyHub() {
     const before = useGmStore.getState().league;
     action();
     const after = useGmStore.getState().league;
-    if (!before || !after || before.id !== after.id) return;
+    if (!before || !after || before.userTeamId !== after.userTeamId || before.season !== after.season) return;
     const newSignings = after.players.filter(player => {
       const previous = before.players.find(p => p.id === player.id);
       return previous && previous.teamId !== after.userTeamId &&
