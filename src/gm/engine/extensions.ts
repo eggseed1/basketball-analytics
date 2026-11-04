@@ -51,7 +51,7 @@ export function extensionSalaryTarget(quote: ExtensionQuote, years: number): num
 
 /** Forecast is a continuously responsive INTEREST score, not a promise.
  * Keep salary and guaranteed term monotonic inside the legal offer range. */
-export function extensionInterest(league: GmLeagueState, player: GmPlayer,
+export function extensionInterest(_league: GmLeagueState, player: GmPlayer,
   quote: ExtensionQuote, salaryM: number, years: number): number {
   if (!quote.eligible || years < 1 || years > quote.maxYears ||
       !Number.isFinite(salaryM) || salaryM < 0 || salaryM > quote.maxSalaryM + 0.05) return 0;
