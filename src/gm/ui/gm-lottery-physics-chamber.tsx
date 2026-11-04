@@ -14,10 +14,11 @@ const colorFor = (team: string) => {
  * This animates the *persisted* uniformly sampled urn, never selects a winner
  * from display pixels, which would introduce frame-rate and physics bias. */
 export function LotteryPhysicsChamber({
-  balls, selectedTeams, pullingId, spinning,
+  balls, selectedTeams, removedBallIds = [], pullingId, spinning,
 }: {
   balls: PhysicalBall[];
   selectedTeams: string[];
+  removedBallIds?: number[];
   pullingId?: number;
   spinning: boolean;
 }) {
@@ -26,9 +27,11 @@ export function LotteryPhysicsChamber({
   const spinningRef = useRef(spinning);
   const selectedRef = useRef(new Set(selectedTeams));
   const pullingRef = useRef(pullingId);
+  const removedBallRef = useRef(new Set(removedBallIds));
   spinningRef.current = spinning;
   selectedRef.current = new Set(selectedTeams);
   pullingRef.current = pullingId;
+  removedBallRef.current = new Set(removedBallIds);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -63,7 +66,7 @@ export function LotteryPhysicsChamber({
       ctx.ellipse(w / 2, h / 2, 174, 106, 0, 0, Math.PI * 2);
       ctx.fill();
       const available = particles.current.filter(p =>
-        !selectedRef.current.has(p.teamId) && p.id !== pullingRef.current);
+        !selectedRef.current.has(p.teamId) && !removedBallRef.current.has(p.id) && p.id !== pullingRef.current);
       if (spinningRef.current && !reduced) {
         for (const ball of available) {
           // Tangential air currents plus upward jets, small deterministic

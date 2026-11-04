@@ -125,7 +125,7 @@ export function GmLotteryMachine({
   };
   const done = phase === "complete";
   const headline = done ? "The lottery is official." :
-    phase === "ready" ? "37 balls. 16 picks. One real draw." :
+    phase === "ready" ? (classic ? "14 balls. Four-number combinations." : "37 balls. 16 picks. One real draw.") :
     phase === "mixing" ? "Air jets are mixing the balls…" :
     current?.accepted ? "Pick #" + current.pick + " has been drawn!" :
     current?.collecting ? "Ball " + current.ballId + " extracted." :
@@ -166,6 +166,7 @@ export function GmLotteryMachine({
           <LotteryPhysicsChamber
             balls={pool}
             selectedTeams={selected}
+            removedBallIds={classic ? completed.filter(x => x.pick === current?.pick).map(x => x.ballId) : []}
             pullingId={activePull?.ballId}
             spinning={phase === "mixing"}
           />
