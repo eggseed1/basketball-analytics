@@ -274,6 +274,22 @@ export function GmLotteryMachine({
         Ball odds: 3/37 (8.1%), 2/37 (5.4%), or 1/37 (2.7%) before restrictions.
         Relegated clubs are guaranteed a top-12 pick. Ineligible balls are returned and redrawn.
       </p> : null}
+      {!classic && pool.length === 37 ? <details className="mt-4 rounded-xl border border-border p-3" data-testid="lottery-ball-allotments">
+        <summary className="cursor-pointer text-sm font-semibold">Verify all 37 ball assignments and opening odds</summary>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          {[...new Set(pool.map(ball => ball.teamId))].map(teamId => {
+            const owned = pool.filter(ball => ball.teamId === teamId);
+            return <div key={teamId} className="flex items-center justify-between gap-2 rounded-lg bg-muted/50 px-3 py-2 text-xs">
+              <span className="min-w-0 truncate">{nameOf(teamId)}</span>
+              <strong className="shrink-0 tabular-nums">{owned.length} {owned.length === 1 ? "ball" : "balls"} · {(owned.length/37*100).toFixed(1)}%</strong>
+            </div>;
+          })}
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Each numbered ball is sampled uniformly. Restrictions alter eligible teams as picks are drawn;
+          percentages above are opening odds, not guarantees at every slot.
+        </p>
+      </details> : null}
     </div>
     <style>{`
       @keyframes gm-lotto-eject {
