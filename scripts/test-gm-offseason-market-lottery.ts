@@ -8,6 +8,8 @@ import { athleticTools } from "../src/gm/engine/combine-evaluation";
 import { badgeCap, badgeLevel } from "../src/gm/engine/badges";
 import { askingSalary, credibleFreeAgentSalaryFloor } from "../src/gm/engine/free-agency-ask";
 import { advanceFaDayDetailed, emptyFaMarket, runFaPeriod } from "../src/gm/engine/free-agency";
+import { financialSettings } from "../src/gm/engine/season-flow-state";
+import { evaluateSigning } from "../src/gm/engine/cap";
 import type { GmLeagueState, GmPlayer } from "../src/gm/types";
 
 const fresh = (season: number, seed: number) =>
@@ -97,6 +99,7 @@ const star: GmPlayer = {...oldStar,id:"test-unsigned-superstar",age:28,
   sheet:{...oldStar.sheet!,overall:92},
   teamId:null,contract:null,rightsTeamId:team.id,rightsKind:"bird",lastSalaryM:35};
 let market: GmLeagueState = {...modern,phase:"free_agency",financialSeason:2029,
+  settings:financialSettings(2029,modern.settings),
   players:[...modern.players,star],freeAgents:[...modern.freeAgents,star.id],
   faMarket:{...emptyFaMarket(8121),stage:"open",day:2}};
 const baseAsk=askingSalary(star,market);
@@ -120,8 +123,15 @@ market={...market,faMarket:{...emptyFaMarket(52),stage:"re_signing",day:0},
   freeAgents:[...modern.freeAgents,star.id]};
 const rosterBefore=market.players.filter(p=>p.teamId===team.id).length;
 assert.ok(rosterBefore>=10);
-const birdOffer=advanceFaDayDetailed(market).state.faMarket?.agreements.find(a=>a.playerId===star.id);
-assert.ok(birdOffer,"CPU must actively pursue and agree with its own 92 OVR Bird-rights star");
+const birdResult=advanceFaDayDetailed(market).state;
+const birdOffer=birdResult.faMarket?.agreements.find(a=>a.playerId===star.id);
+assert.ok(birdOffer,"CPU must actively pursue and agree with its own 92 OVR Bird-rights star. "+
+  JSON.stringify({team:team.id,rosterBefore,cap:market.settings.salaryCapM,
+    marketStage:birdResult.faMarket?.stage,ask:askingSalary(star,market),
+    legalAsk:evaluateSigning(market,team.id,star,askingSalary(star,market),4),
+    ownFreeAgents:market.players.filter(p=>p.teamId==null&&p.rightsTeamId===team.id).length,
+    competingBids:birdResult.faMarket?.pending.filter(o=>o.playerId===star.id),
+    agreements:birdResult.faMarket?.agreements.filter(o=>o.playerId===star.id)}));
 assert.equal(birdOffer!.teamId,team.id);
 assert.ok(birdOffer!.salaryM>=askingSalary(star,market)*.9,
   "no elite talent signs at a wildly discounted early Bird rate");
