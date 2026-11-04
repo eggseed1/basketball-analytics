@@ -33,7 +33,8 @@ const news: GmNewsItem[] = [
     headline: "Midseason development", body: "Players' learning progress was assessed." },
 ];
 const injured = {
-  ...hero, injury: { type: "Sprained ankle", gamesRemaining: 7, reinjuryRisk: 0.1 },
+  ...hero, draftYear: season - 1, draftPick: 17,
+  injury: { type: "Sprained ankle", gamesRemaining: 7, reinjuryRisk: 0.1 },
 };
 const state: GmLeagueState = {
   ...base, day: 45, news, boxScores: [sample], players: base.players.map(p => p.id === hero.id ? injured : p),
@@ -61,12 +62,14 @@ for (const category of ["game", "draft", "trade", "injury", "news"]) {
 const report = posts.find(p => p.eventId === "social:game:box-story-40" && !p.replyTo)!;
 assert.ok(report.text.includes(hero.name));
 assert.ok(report.text.includes("48 PTS"));
+assert.ok(report.text.includes("Rookie " + hero.name + " was selected at pick #17"),
+  "rookie breakout recognizes the draft year before the season, not the season end year");
 assert.ok(report.text.includes("126"));
 assert.ok(posts.some(p => p.eventId === report.eventId && p.replyTo === report.id &&
   socialAccount(p.accountId, p.teamId).voice === "fan"));
 const medical = posts.find(p => p.accountId === "injury" && p.text.includes(hero.name))!;
 assert.ok(medical.text.includes("Sprained ankle"));
-assert.ok(medical.text.includes("7 game(s) remaining"));
+assert.ok(medical.text.includes("7 game(s) estimated remaining"));
 assert.ok(!posts.some(p => /has been traded to LAL as confirmed by medical/.test(p.text)),
   "the generator never fabricates a transaction to fill a template");
 const trade = posts.find(p => p.eventId === "social:trade:trade-real-01" && !p.replyTo)!;
