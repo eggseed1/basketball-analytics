@@ -3,6 +3,7 @@
  */
 import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { prepareFranchise } from "../src/gm/engine/franchise";
 import { mentorProfile, mentorshipBonus, mentorshipQuality, assignMentor } from "../src/gm/engine/development";
 import { extensionInterest, extensionQuote, extensionSalaryTarget, offerExtension } from "../src/gm/engine/extensions";
 import { emptyFaMarket } from "../src/gm/engine/free-agency";
@@ -12,7 +13,7 @@ import { tradeWindowStatus } from "../src/gm/engine/trade-window";
 import { beginOffseason } from "../src/gm/engine/season-flow";
 import type { GmPlayer, GmLeagueState } from "../src/gm/types";
 
-const league = createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 781 });
+const league = prepareFranchise(createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 781 }));
 const roster = league.players.filter(p => p.teamId === "bos" && p.contract && p.sheet);
 assert.ok(roster.length >= 4);
 const base = roster[0]!;
