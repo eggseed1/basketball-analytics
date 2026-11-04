@@ -84,7 +84,11 @@ export function advanceSeasonJourney(input: GmLeagueState): JourneyResult {
       const teams = league.teams.map(team => ({ ...team, staff: { ...team.staff, headCoach: team.staff.headCoach.walkYear ? { ...team.staff.headCoach, yearsLeft: 3, walkYear: false } : team.staff.headCoach, associate: team.staff.associate?.walkYear ? { ...team.staff.associate, yearsLeft: 2, walkYear: false } : team.staff.associate } }));
       const draw = drawDraftLottery(league);
       const lotteryOrder = league.lotteryOrder ?? draw.order;
-      return result(moveStage({ ...league, teams, lotteryOrder,
+      // Record the original club's pick, not the owner after trades. The 2027+
+      // draw restricts consecutive high picks even if a selection was traded.
+      const history = (league.history ?? []).map(year => year.season === league.season
+        ? { ...year, lotteryOrder: [...lotteryOrder] } : year);
+      return result(moveStage({ ...league, teams, lotteryOrder, history,
         lotteryDraws: league.lotteryDraws ?? draw.draws,
         lotteryCount: league.lotteryCount ?? draw.lotteryCount,
         lotteryFormat: league.lotteryFormat ?? draw.format,

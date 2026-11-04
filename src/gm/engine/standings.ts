@@ -192,9 +192,19 @@ export function drawDraftLottery(state: GmLeagueState, playoffIds?: Set<string>)
       playInTwo.has(id) ? 2 : 1;
     const left = [...eligible];
     const draws: LotteryDraw[] = [];
+    // Restriction follows each ORIGINAL club's selection, whether retained
+    // or traded. A team cannot repeat #1 or go top-five three drafts running.
+    const prior = state.history?.find(y => y.season === state.season - 1)?.lotteryOrder ?? [];
+    const beforePrior = state.history?.find(y => y.season === state.season - 2)?.lotteryOrder ?? [];
+    const repeatTopFive = new Set(prior.slice(0,5).filter(id => beforePrior.slice(0,5).includes(id)));
     for (let slot=1; slot<=eligible.length; slot++) {
       const forced = slot <= 12 && 13 - slot === left.filter(id => relegated.has(id)).length;
-      const pool = forced ? left.filter(id => relegated.has(id)) : left;
+      const candidates = forced ? left.filter(id => relegated.has(id)) : left;
+      const permitted = candidates.filter(id => !(slot === 1 && prior[0] === id) &&
+        !(slot <= 5 && repeatTopFive.has(id)));
+      // All standard 16-team seasons have enough candidates. If an imported
+      // archive is corrupt, finish the draft rather than leave the league stuck.
+      const pool = permitted.length ? permitted : candidates;
       const total = pool.reduce((s,id) => s + weight(id),0);
       let roll = rng()*total;
       let winner = pool[pool.length-1]!;

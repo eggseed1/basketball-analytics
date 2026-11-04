@@ -304,6 +304,8 @@ export interface GmFranchisePlan {
 
 export interface GmSeasonArchive {
   season: number;
+  /** Original-team lottery order, regardless of traded picks. Used for repeat-pick restrictions. */
+  lotteryOrder?: string[];
   champion?: GmLeagueState["champion"];
   awards?: GmLeagueState["awards"];
   standings: GmLeagueState["standings"];

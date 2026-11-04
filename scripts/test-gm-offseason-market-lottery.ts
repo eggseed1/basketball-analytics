@@ -23,6 +23,22 @@ assert.equal(result.draws.length, 16);
 assert.deepEqual(drawDraftLottery(lotteryBase), result, "same save and standings cannot re-roll lottery");
 assert.deepEqual(computeLotteryOrder(lotteryBase), result.order);
 assert.ok(result.draws.every(d=>d.startingRank>=1 && d.startingRank<=16));
+// The official 2027+ limits follow the original team's draft position even
+// after a pick is traded, not the franchise ultimately making the selection.
+const priorArchive=(season:number,order:string[])=>({season,lotteryOrder:order,
+  standings:lotteryBase.standings,trades:[],players:[],userTeamId:lotteryBase.userTeamId});
+const priorWinner=result.order[0]!;
+const repeatNumberOne=drawDraftLottery({...lotteryBase,
+  history:[priorArchive(2027,result.order)]});
+assert.notEqual(repeatNumberOne.order[0],priorWinner,
+  "the same original club cannot receive #1 in consecutive draft years");
+const repeatTopFive=drawDraftLottery({...lotteryBase,
+  history:[priorArchive(2026,result.order),priorArchive(2027,result.order)]});
+assert.ok(repeatTopFive.order.slice(0,5).every(id=>!result.order.slice(0,5).includes(id)),
+  "no original club may select in the top five for three consecutive drafts");
+assert.deepEqual(drawDraftLottery({...lotteryBase,history:[priorArchive(2026,result.order),
+  priorArchive(2027,result.order)]}),repeatTopFive,
+  "repeat-pick restrictions must be deterministic across reloads");
 const bottomThree = [...result.draws].filter(d=>d.startingRank<=3);
 assert.ok(bottomThree.every(d=>result.order.indexOf(d.teamId)<12),
   "3-2-1 lottery protects the three relegated teams from picks 13–16");
