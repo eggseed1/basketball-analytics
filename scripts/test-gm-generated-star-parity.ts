@@ -38,6 +38,10 @@ const observedReal = { ...elite, draftModel: undefined,
 };
 assert.ok(high.fga >= simulationRates(observedReal).fga * 0.7,
   "elite drafted scorers should not be permanently stuck at half a real NBA star's shot volume");
+const tinyRookiePrior = { ...elite, simProfile: { ...elite.simProfile,
+  rates: { ...elite.simProfile.rates, fga: 0.27 } } };
+assert.ok(simulationRates(tinyRookiePrior).fga > 0.62,
+  "a former low-volume rookie who earns 94 OVR can become an elite scorer");
 assert.equal(simulationRates(observedReal).fga,
   simulationRates({ ...observedReal, draftModel: undefined }).fga,
   "NBA observed profiles remain unchanged by a generated-player-only curve");
