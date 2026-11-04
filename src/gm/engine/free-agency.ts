@@ -914,7 +914,7 @@ export function userOfferFreeAgent(
       );
     }, 0);
     const ovr = overallOf(player);
-    const ask = askingSalary(player, rules);
+    const ask = askingSalary(player, state);
     if (ovr >= 84 && utility.total + 4 < bestRival) {
       return {
         ok: false,
@@ -1028,7 +1028,7 @@ export function resignOwnFreeAgent(
     return { ok: false, reason: "This player did not finish his contract with your club." };
   }
   const rules = getCbaRules(cbaSeason(state));
-  const salaryM = askingSalary(player, rules);
+  const salaryM = askingSalary(player, state);
   const years = askingYears(player, rules);
   return userOfferFreeAgent(state, playerId, salaryM, years);
 }
