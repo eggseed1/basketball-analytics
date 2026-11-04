@@ -1089,6 +1089,11 @@ export interface GmLeagueState {
   standings: Record<string, GmStandingsRow>;
   boxScores: GmBoxScore[];
   news: GmNewsItem[];
+  /** Fictional in-game social feed. Saved threads survive seasons and reloads. */
+  socialPosts?: import("@/gm/engine/social-timeline").SocialPost[];
+  /** Account follows and liked posts belong only to this franchise save. */
+  socialFollowing?: string[];
+  socialLikes?: string[];
   /** Short recap of the last skip. Replaced each time you jump ahead. */
   digest?: GmDigestItem[];
   tradeLog: GmTradeProposal[];
