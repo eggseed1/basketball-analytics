@@ -18,7 +18,7 @@ export function GmLotteryMachine({
 }: { league: GmLeagueState; onFinish: () => void }) {
   const size = Math.min(league.lotteryCount ?? (league.season >= 2027 ? 16 : 14),
     league.teams.length);
-  const [shown, setShown] = useState(0);
+  const [shown, setShown] = useState(() => league.seasonFlow?.lotteryRevealed ? size : 0);
   const [phase, setPhase] = useState<Phase>(league.seasonFlow?.lotteryRevealed ? "complete" : "ready");
   const [auto, setAuto] = useState(true);
   const slots = useMemo(() => Array.from({ length: size }, (_, i) => {
