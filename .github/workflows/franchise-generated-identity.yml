@@ -5,6 +5,8 @@ on:
       - 'src/gm/lib/generated-player-identity.ts'
       - 'src/gm/lib/player-portrait-ids.ts'
       - 'src/gm/ui/gm-generated-portrait.tsx'
+      - 'src/gm/lib/generated-player-jersey.ts'
+      - 'scripts/test-gm-generated-jersey.ts'
       - 'src/gm/ui/gm-player-portrait.tsx'
       - 'src/gm/ui/gm-prospect-file.tsx'
       - 'src/gm/ui/gm-player-card.tsx'
@@ -33,4 +35,5 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run test:franchise-generated-identity
+      - run: npm run test:franchise-generated-jersey
       - run: npm run test:franchise-media
