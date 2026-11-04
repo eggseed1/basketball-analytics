@@ -330,11 +330,22 @@ try {
   await ceremony.waitFor();
   assert.equal(await page.getByTestId("lottery-revealed-order").count(), 0,
     "lottery must not spoil the pick order before the reveal");
+  // Test actual animated physics rather than only the reduced-motion fast
+  // path: two rendered frames must differ, and the FIRST winner must exit
+  // through the hole before the browser reveals its number.
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  const chamber = page.getByTestId("lottery-hole-chamber");
+  await chamber.waitFor();
+  const firstFrame = await chamber.evaluate(canvas => canvas.toDataURL());
   await page.getByTestId("lottery-start").click();
-  await page.getByTestId("lottery-hole-chamber").waitFor();
-  await page.getByText(/Valid ball extracted|Invalid draw|Combination in progress/).waitFor({ timeout: 15000 });
+  await page.waitForTimeout(450);
+  const movingFrame = await chamber.evaluate(canvas => canvas.toDataURL());
+  assert.notEqual(firstFrame, movingFrame, "the lottery balls must visibly move during the draw");
+  await page.getByText(/Valid ball extracted|Invalid draw|Combination in progress/)
+    .waitFor({ timeout: 70000 });
   assert.equal(await page.getByRole("alert").filter({hasText: /physical extraction does not match/}).count(), 0,
-    "canvas physics must reproduce the engine's extracted ball");
+    "normal-motion canvas physics must reproduce the engine's extracted ball");
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.getByTestId("lottery-skip").click();
   assert.ok((await page.getByTestId("lottery-revealed-order").locator("li").count()) >= 14);
   await page.reload();
