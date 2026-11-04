@@ -84,7 +84,7 @@ function gameEvents(league: GmLeagueState): Event[] {
     const heroLost = Boolean(p && p.teamId !== winnerId);
     const tripleDouble = Boolean(p && p.points >= 10 && p.assists >= 10 && p.rebounds >= 10);
     const rookie = hero ? league.players.find(player => player.id === p!.playerId &&
-      player.draftYear === league.season && player.draftPick != null) : undefined;
+      player.draftYear === league.season - 1 && player.draftPick != null) : undefined;
     const decisive = league.playoffBracket?.find(series =>
       series.done && series.games?.at(-1)?.gameId === box.gameId);
     const special = decisive ? "Series-clinching night. " :
@@ -265,7 +265,7 @@ function injuryEvents(league: GmLeagueState): Event[] {
       category: "injury" as const, season: league.season, day: league.day,
       teamId: p.teamId!, playerId: p.id, href: "/gm/medical", heat: 53,
       topic: p.name + " (" + abbr(league, p.teamId!) + ") is unavailable with " + p.injury!.type + ".",
-      detail: "Current estimate: " + p.injury!.gamesRemaining + " game(s) remaining. Estimates may change.",
+      detail: "At report time: " + p.injury!.gamesRemaining + " game(s) estimated remaining. Recovery timelines can change.",
       account: "injury",
       fan: "Hoping for a clean recovery. The rotation gets a lot more complicated.",
     }));
