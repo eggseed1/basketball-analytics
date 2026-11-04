@@ -139,7 +139,7 @@ export function suggestDraftTrade(
     ...group(first, 4),
     ...group(row => row.asset.kind === "future" && !first(row), 2),
     ...group(row => row.asset.kind === "player", 5),
-  ];
+  ].sort(byValue);
   if (!pool.length) return null;
   const maxAssets = targetSlot < 14 ? 4 : 3;
   const expectedAsk = draftSlotTradePoints(targetSlot + 1) *
