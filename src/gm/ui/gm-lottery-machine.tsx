@@ -16,6 +16,7 @@ type DrawStep = {
   collecting?: boolean;
   reason?: string;
   physicsSeed?: number;
+  physicsVersion?: 1 | 2;
   exitFrame?: number;
 };
 
@@ -58,13 +59,13 @@ export function GmLotteryMachine({
       }));
     }
     const attempts: Array<{ballId:number; teamId:string; accepted:boolean; reason?:string;
-      physicsSeed?:number; exitFrame?:number}> = draw.attempts?.length
+      physicsSeed?:number; physicsVersion?:1|2; exitFrame?:number}> = draw.attempts?.length
       ? draw.attempts
       : [{ ballId: draw.balls[0] ?? 1, teamId: draw.teamId, accepted: true }];
     return attempts.map(pull => ({
       pick: i + 1, ballId: pull.ballId, origin: pull.teamId,
       accepted: pull.accepted, reason: pull.reason,
-      physicsSeed: pull.physicsSeed, exitFrame: pull.exitFrame,
+      physicsSeed: pull.physicsSeed, physicsVersion: pull.physicsVersion ?? 1, exitFrame: pull.exitFrame,
     }));
   }), [league.lotteryDraws, classic, size]);
 
@@ -82,7 +83,9 @@ export function GmLotteryMachine({
   const initiallyDone = Boolean(league.seasonFlow?.lotteryRevealed);
   const [step, setStep] = useState(() => initiallyDone ? steps.length : 0);
   const [phase, setPhase] = useState<Phase>(initiallyDone ? "complete" : "ready");
-  const [auto, setAuto] = useState(true);
+  // Manual, cinematic reveals by default; user can opt into autoplay or 2x.
+  const [auto, setAuto] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState<"cinematic" | "quick">("cinematic");
   const [replayError, setReplayError] = useState<string | null>(null);
   const current = steps[step];
   const completed = steps.slice(0, step);
@@ -122,8 +125,8 @@ export function GmLotteryMachine({
   useEffect(() => {
     if (phase !== "pulled" || !auto) return;
     const timer = window.setTimeout(advance,
-      current?.accepted ? (current.pick <= 5 ? 2200 : 1150) :
-        current?.collecting ? 650 : 1300);
+      current?.accepted ? (current.pick <= 5 ? 4800 : 3200) :
+        current?.collecting ? 2300 : 3000);
     return () => window.clearTimeout(timer);
   // Advance reads the current draw and step; no other state is sampled.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -156,7 +159,7 @@ export function GmLotteryMachine({
           <h3 className="mt-2 text-xl font-black tracking-tight sm:text-2xl">{headline}</h3>
           <p className="mt-2 text-xs text-slate-300">
             {classic ? "Historical 14 numbered balls · four-ball combinations for picks 1–4" :
-              "37 balls · one narrow exit · the ball that escapes determines each pick"}
+              "37 balls · gravity and collisions · the bottom exit decides each pick"}
           </p>
           {!classic && league.season >= 2030 ? <p className="mt-1 text-xs text-amber-200">
             Franchise Lab continues 2027–29 rules for 2030+ until the NBA approves a replacement.
@@ -172,7 +175,7 @@ export function GmLotteryMachine({
         </div>
       </div>
 
-      <div className="mt-6 grid items-center gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="mt-6 grid items-center gap-5 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         <div className="relative">
           <LotteryPhysicsChamber
             balls={pool}
@@ -181,7 +184,8 @@ export function GmLotteryMachine({
             pullingId={activePull?.ballId}
             spinning={phase === "mixing"}
             sceneSeed={modernHole ? current?.physicsSeed : undefined}
-            fast={(current?.pick ?? 0) > 5}
+            physicsVersion={current?.physicsVersion ?? 1}
+            playbackSpeed={playbackSpeed}
             onExit={ballId => {
               if (phase !== "mixing" || !modernHole) return;
               if (ballId === current?.ballId) setPhase("pulled");
@@ -191,8 +195,8 @@ export function GmLotteryMachine({
               }
             }}
           />
-          {activePull ? <div className="pointer-events-none absolute left-1/2 top-0 z-20 flex -translate-x-1/2 items-start">
-            <div key={step} className="gm-lotto-eject flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-white via-cyan-100 to-sky-500 text-sm font-black text-slate-900 shadow-[0_6px_30px_rgba(125,211,252,.7)]">
+          {activePull ? <div className="pointer-events-none absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-start">
+            <div key={step} className="gm-lotto-eject flex h-14 w-14 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-white via-cyan-100 to-sky-500 text-lg font-black text-slate-900 shadow-[0_6px_30px_rgba(125,211,252,.7)]">
               {lastBall}
             </div>
           </div> : null}
@@ -224,10 +228,11 @@ export function GmLotteryMachine({
             </span>
             <strong className="mt-5 text-2xl">Balls in motion</strong>
             <p className="mt-2 text-sm text-slate-300">
-              {modernHole ? "Real collisions determine which ball crosses the opening — no separate winner animation." :
+              {modernHole ? "Watch the balls tumble under gravity. The first ball through the bottom opening gets the pick." :
                 "Bouncing, colliding and swirling inside the air-powered chamber…"}
             </p>
             {current?.pick === 1 ? <p className="mt-2 text-xs text-sky-200">The next ball has not been revealed.</p> : null}
+          <p className="mt-3 text-xs text-slate-300">The ball physically exits before the pick is revealed.</p>
           </> : activePull ? <>
             <span className={"text-xs font-bold uppercase tracking-widest " +
               (activePull.accepted ? "text-emerald-300" : "text-amber-300")}>
@@ -268,7 +273,13 @@ export function GmLotteryMachine({
           {activePull?.accepted ? "Draw next pick" : "Draw next ball"}
         </Button> : null}
         {phase !== "ready" && !done && !replayError ? <Button variant="outline" className="border-white/30 bg-transparent text-white hover:text-white"
-          onClick={() => setAuto(x => !x)}>{auto ? "Pause auto draw" : "Resume auto draw"}</Button> : null}
+          onClick={() => setAuto(x => !x)}>{auto ? "Pause after this ball" : "Auto-play remaining picks"}</Button> : null}
+        {phase !== "ready" && !done && modernHole ?
+          <Button variant="outline" className="border-white/30 bg-transparent text-white hover:text-white"
+            data-testid="lottery-playback-speed"
+            onClick={() => setPlaybackSpeed(x => x === "cinematic" ? "quick" : "cinematic")}>
+            Playback: {playbackSpeed === "cinematic" ? "Cinematic 1×" : "Quick 2×"}
+          </Button> : null}
         {!done ? <Button variant="ghost" className="text-slate-200 hover:text-white"
           data-testid="lottery-skip" onClick={skip}>Skip to final order</Button> : null}
         {done ? <p role="status" className="text-sm font-semibold text-emerald-300">
@@ -322,11 +333,11 @@ export function GmLotteryMachine({
     </div>
     <style>{`
       @keyframes gm-lotto-eject {
-        0% { opacity:0; transform:translateY(12px) scale(.82) }
-        55% { opacity:1; transform:translateY(-20px) scale(1.2) }
-        100% { opacity:1; transform:translateY(10px) scale(1) }
+        0% { opacity:0; transform:translateY(-10px) scale(.82) }
+        55% { opacity:1; transform:translateY(18px) scale(1.17) }
+        100% { opacity:1; transform:translateY(27px) scale(1) }
       }
-      .gm-lotto-eject { animation:gm-lotto-eject .9s cubic-bezier(.16,1,.3,1) both }
+      .gm-lotto-eject { animation:gm-lotto-eject 1.35s cubic-bezier(.16,1,.3,1) both }
       @keyframes gm-lotto-team-enter { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:none } }
       .gm-lotto-team-in { animation:gm-lotto-team-enter .4s ease-out both }
       @media (prefers-reduced-motion:reduce) {
