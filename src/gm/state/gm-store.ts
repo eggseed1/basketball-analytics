@@ -135,7 +135,7 @@ import { uid, clamp } from "@/gm/engine/rng";
 import {
   betterRecord,
   buildPlayoffBracket,
-  computeLotteryOrder,
+  drawDraftLottery,
   seriesHosts,
 } from "@/gm/engine/standings";
 import {
@@ -363,6 +363,7 @@ interface GmStore {
   moveDraftBoard: (playerId: string, dir: "up" | "down" | "top") => void;
   resetDraftBoard: () => void;
   runCombine: () => void;
+  completeLotteryReveal: () => void;
   /** Fill one fogged grade on a draft prospect (does not reveal identity). */
   scoutLook: (playerId: string) => void;
   advanceToPlayoffs: () => void;
@@ -1540,6 +1541,14 @@ export const useGmStore = create<GmStore>()(
         set({ league: withUpdate({ ...league, userDraftBoard: undefined }) });
       },
 
+      completeLotteryReveal: () => {
+        const league = get().league;
+        if (!league || league.seasonFlow?.stage !== "lottery" || league.seasonFlow.lotteryRevealed) return;
+        const next = withUpdate({ ...league, seasonFlow: { ...league.seasonFlow, lotteryRevealed: true } });
+        set({ league: next });
+        syncMyLeague(next);
+      },
+
       runCombine: () => {
         const league = get().league;
         if (!league || league.combineDone || (league.seasonFlow?.stage !== "scouting" && !(league.phase === "offseason" && !league.seasonFlow))) return;
@@ -1771,13 +1780,17 @@ export const useGmStore = create<GmStore>()(
         const seeds = league.playIn ? playoffSeeds(league, league.playIn) : undefined;
         const playoffIds = seeds ? playoffTeamIdSet(seeds) : undefined;
         const bracket = buildPlayoffBracket(league, seeds);
-        const lotteryOrder = computeLotteryOrder(league, playoffIds);
+        const lottery = drawDraftLottery(league, playoffIds);
+        const lotteryOrder = lottery.order;
         const next = withUpdate({
           ...league,
           phase: "playoffs",
           playIn: league.playIn,
           playoffBracket: bracket,
           lotteryOrder,
+          lotteryDraws: lottery.draws,
+          lotteryCount: lottery.lotteryCount,
+          lotteryFormat: lottery.format,
           draftPickIndex: 0,
           news: [
             {
