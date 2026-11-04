@@ -45,6 +45,15 @@ try {
 
   // Fullscreen must paint the exact semantic GM page surface, not inherit the
   // browser's opaque black fullscreen backdrop after the page chrome hides.
+  // Drive the CSS fallback during responsive tests: a true native Chromium
+  // fullscreen window cannot be resized with Playwright's viewport API.
+  const disableNativeFullscreen = () => {
+    HTMLElement.prototype.requestFullscreen = async () => {
+      throw new Error("Browser fullscreen intentionally unavailable in responsive QA");
+    };
+  };
+  await page.addInitScript(disableNativeFullscreen);
+  await page.evaluate(disableNativeFullscreen);
   await page.getByRole("button", { name: "Fullscreen", exact: true }).click();
   await page.waitForFunction(() => document.documentElement.dataset.gmFull === "1");
   const checkFullscreenSurface = async () => {
@@ -76,14 +85,8 @@ try {
   await page.reload();
   await page.waitForFunction(() => document.documentElement.dataset.gmFull === "1");
   await checkFullscreenSurface();
-  // Chromium cannot resize a native fullscreen OS window. Drop only the
-  // browser Fullscreen API; keep the GM CSS fullscreen fallback enabled,
-  // which is the mode actually used after in-app route remounts.
-  await page.evaluate(async () => {
-    if (document.fullscreenElement) await document.exitFullscreen();
-  });
   assert.equal(await page.evaluate(() => document.documentElement.dataset.gmFull), "1",
-    "the full-screen CSS fallback must survive browser fullscreen exit");
+    "the fullscreen fallback must persist across a page reload");
   await page.setViewportSize({ width: 390, height: 844 });
   await checkFullscreenSurface();
   await page.screenshot({ path: `${dir}/gm-fullscreen-mobile.png`, fullPage: true, animations: "disabled" });
