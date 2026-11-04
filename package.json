@@ -26,6 +26,7 @@
     "audit:franchise-five-year": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-continuous-five-year.ts",
     "test:franchise-badges": "tsx scripts/test-gm-badges.ts",
     "test:franchise-development": "tsx scripts/test-gm-development.ts",
+    "test:franchise-front-office-polish": "tsx scripts/test-gm-front-office-polish.ts",
     "test:franchise-mentorship-open-path": "tsx scripts/test-gm-mentorship-open-path.ts",
     "test:franchise-dynamic-progression": "tsx scripts/test-gm-dynamic-progression.ts",
     "test:franchise-multiseason": "tsx scripts/test-gm-multiseason-progression.ts",
