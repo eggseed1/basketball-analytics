@@ -5,6 +5,7 @@
 import type { GmLeagueState, GmTradeAsset, GmPlayer, GmDraftPick } from "@/gm/types";
 import { boardValue, evaluateTrade, type PlayerPackage } from "@/gm/engine/trades";
 import { playerTradePoints, pickTradePoints } from "@/gm/engine/value";
+import { tradeWindowStatus } from "@/gm/engine/trade-window";
 
 type Assets = GmTradeAsset[];
 const assetKey = (asset: GmTradeAsset) => asset.type + ":" + (asset.type === "cash" ? "cash" : asset.id);
@@ -168,8 +169,7 @@ export function findSelectedTradePackages(
   youSend: GmTradeAsset[], youReceive: GmTradeAsset[],
   selectedPartnerId?: string,
 ): PlayerPackage[] {
-  // Honor the same trading window as proposal submission, including offseason dates.
-  if (league.tradeDeadlinePassed) return [];
+  if (!tradeWindowStatus(league).open) return [];
   if (!validSelection(league, userTeamId, youSend)) return [];
   const otherTeams = league.teams.filter(team =>
     team.id !== userTeamId && !team.id.startsWith("as-"));
