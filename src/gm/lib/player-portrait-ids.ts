@@ -12,3 +12,13 @@ export function gmPlayerPortraitIds(player: GmPlayer): {
     player.nbaSeason && /^\d+$/.test(player.id) ? player.id : undefined;
   return { playerId: nbaId ?? entryId, nbaId };
 }
+
+/**
+ * Keep generated characters out of live NBA/ESPN image lookups, including
+ * legacy generated saves with no portrait metadata yet.
+ */
+export function isFictionalGmPlayer(player: GmPlayer): boolean {
+  if (player.nbaPlayerId || player.nbaSeason) return false;
+  return Boolean(player.identity || player.draftModel === 2 ||
+    player.id.startsWith("prospect-") || player.id.startsWith("p_"));
+}
