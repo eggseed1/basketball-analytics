@@ -181,8 +181,24 @@ for (let cycle = 0; cycle < 2; cycle++) {
     }
     if (stage === "summer_league") {
       const statistics = JSON.stringify({ standings: league.standings, boxes: league.boxScores, players: league.players });
+      // A later offseason may have no healthy under-25 roster or available
+      // invitees. The game should record 0 games rather than fabricate players.
+      const eligible = league.players.filter(p => !p.injury && !league.draftPool.includes(p.id));
+      const invitees = eligible.filter(p => p.teamId == null && !p.rightsTeamId && p.age <= 25)
+        .sort((a, b) => overallOf(b) - overallOf(a) || a.id.localeCompare(b.id));
+      const prospects = eligible.filter(p => p.teamId === league.userTeamId && (p.age <= 24 || p.draftYear === league.season))
+        .sort((a, b) => a.age - b.age || overallOf(b) - overallOf(a)).slice(0, 10);
+      const home = [...prospects, ...invitees.slice(0, Math.max(0, 8 - prospects.length))];
+      const homeIds = new Set(home.map(p => p.id));
+      const remainingInvitees = invitees.filter(p => !homeIds.has(p.id));
+      const expectedGames = home.length < 5 ? 0 : league.teams.filter(t => t.id !== league.userTeamId).slice(0, 3)
+        .filter(t => {
+          const rivals = eligible.filter(p => p.teamId === t.id && (p.age <= 24 || p.draftYear === league.season)).slice(0, 10);
+          return rivals.length + Math.min(Math.max(0, 8 - rivals.length), remainingInvitees.length) >= 5;
+        }).length;
       league = runSummerLeague(league);
-      assert.equal(league.seasonFlow?.summerLeague?.games.length, 3);
+      assert.equal(league.seasonFlow?.summerLeague?.games.length, expectedGames,
+        "summer league only schedules games when both sides can field five eligible players");
       assert.equal(runSummerLeague(league), league, "summer games cannot be farmed on reload");
       assert.equal(JSON.stringify({ standings: league.standings, boxes: league.boxScores, players: league.players }), statistics);
     }
