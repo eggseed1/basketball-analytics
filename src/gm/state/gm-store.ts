@@ -146,6 +146,7 @@ import {
   teamName,
 } from "@/gm/engine/play-in";
 import { useMyLeagueStore } from "@/gm/myleague/store";
+import { syncSocialTimeline } from "@/gm/engine/social-timeline";
 import {
   allocateNewSave,
   createGmSlotStorage,
@@ -292,6 +293,8 @@ interface GmStore {
   autoLineup: () => void;
   setCoaching: (patch: Partial<GmCoaching>) => void;
   setRotationMinutes: (playerId: string, minutes: number) => void;
+  toggleSocialLike: (postId: string) => void;
+  toggleSocialFollow: (accountId: string) => void;
   /** Set how many bodies get minutes, then rebuild the book. */
   setRotationDepth: (depth: GmRotationDepth) => void;
   /** Keep starters; rebuild a balanced 240 chart. */
@@ -417,7 +420,7 @@ function withCreationSettings(league: GmLeagueState, opts?: CreationOptions): Gm
 }
 
 function withUpdate(league: GmLeagueState): GmLeagueState {
-  return { ...league, updatedAt: new Date().toISOString() };
+  return syncSocialTimeline({ ...league, updatedAt: new Date().toISOString() });
 }
 
 function syncMyLeague(league: GmLeagueState) {
@@ -891,6 +894,21 @@ export const useGmStore = create<GmStore>()(
           };
         });
         set({ league: withUpdate({ ...league, teams }) });
+      },
+
+      toggleSocialLike: (postId) => {
+        const league = get().league;
+        if (!league || !postId.startsWith("social:") || postId.length > 180) return;
+        const current = new Set(league.socialLikes ?? []);
+        if (current.has(postId)) current.delete(postId); else current.add(postId);
+        set({ league: withUpdate({ ...league, socialLikes: [...current].slice(-500) }) });
+      },
+      toggleSocialFollow: (accountId) => {
+        const league = get().league;
+        if (!league || !/^(fan:[a-z]{2,4}|[a-z]{3,12})$/.test(accountId)) return;
+        const current = new Set(league.socialFollowing ?? []);
+        if (current.has(accountId)) current.delete(accountId); else current.add(accountId);
+        set({ league: withUpdate({ ...league, socialFollowing: [...current].slice(0, 40) }) });
       },
 
       setRotationMinutes: (playerId, minutes) => {

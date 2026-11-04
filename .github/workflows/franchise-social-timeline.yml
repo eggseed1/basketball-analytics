@@ -1,0 +1,35 @@
+name: Franchise social timeline
+on:
+  pull_request:
+    paths:
+      - 'src/gm/engine/social-timeline.ts'
+      - 'src/gm/ui/gm-social-timeline.tsx'
+      - 'src/gm/ui/gm-nav.tsx'
+      - 'src/gm/ui/gm-home-stage.tsx'
+      - 'src/gm/state/gm-store.ts'
+      - 'src/gm/types.ts'
+      - 'src/app/gm/timeline/**'
+      - 'scripts/test-gm-social-timeline.ts'
+      - 'package.json'
+      - '.github/workflows/franchise-social-timeline.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  event-feed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx next typegen
+      - run: npm run typecheck
+      - run: npx eslint src/gm/engine/social-timeline.ts src/gm/ui/gm-social-timeline.tsx src/app/gm/timeline/page.tsx scripts/test-gm-social-timeline.ts --quiet
+      - run: npm run test:franchise-social
+      - run: npm run test:franchise-saves

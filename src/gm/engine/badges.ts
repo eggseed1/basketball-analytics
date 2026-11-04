@@ -89,13 +89,18 @@ export function recordBadgeGame(player: GmPlayer, box: GmBoxScore, players: GmPl
   };
   const focus = defaultBadgeFocus(player);
   const mentor = activeMentor(player,players);
+  // Practice improves development separately. Badge-specific game lessons
+  // require actual on-court evidence from both mentor and mentee.
+  const gameMentor = mentor && box.players.some(row =>
+    row.playerId === mentor.id && row.teamId === line.teamId && row.minutes > 0
+  ) ? mentor : undefined;
   const xp = { ...book.xp };
   for (const b of BADGES) {
     const cap = badgeCap(player,b.id);
     const current = xp[b.id] ?? 0;
     // No banking above current eligibility; a later skill gain needs fresh court evidence.
     if (cap === 0 || current >= BADGE_XP[cap]!) continue;
-    const mentorLevel = mentor ? badgeLevel(ensureBadges(mentor),b.id) : 0;
+    const mentorLevel = gameMentor ? badgeLevel(ensureBadges(gameMentor),b.id) : 0;
     const mentorBonus = mentorLevel > badgeLevel(player,b.id) ? 0.1 : 0;
     // Shared game reps teach a mentor\x27s signature skills even if the learner has no matching box-score action.
     // The pupil must have the underlying attributes; mentorship never bypasses the badge cap.

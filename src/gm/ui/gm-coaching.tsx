@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { listedPositionCorrections } from "@/gm/engine/position-listings";
+import { editMinuteBook, individualMinuteCap, MINUTE_STEP, normalizeMinuteBook, TEAM_MINUTE_BUDGET } from "@/gm/engine/rotation-minute-budget";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
@@ -80,6 +82,7 @@ export function GmCoaching() {
   const setRotationDepth = useGmStore((s) => s.setRotationDepth);
   const resetRotation = useGmStore((s) => s.resetRotation);
   const restoreListings = useGmStore(s=>s.restoreListedPositions);
+  const [recentTransfer, setRecentTransfer] = useState<string | null>(null);
   if (!league) return null;
 
   const team = userTeam(league);
@@ -88,16 +91,11 @@ export function GmCoaching() {
   const saved = team.coaching?.minutes;
   const book = suggestedMinutePlan(team, players);
   const targets = book.minutes;
-  // Minute totals come from the positional book (or the saved plan).
-  // The shift chart only decides when people are on the floor.
-  const minutes: Record<string, number> = {};
-  for (const player of players) {
-    minutes[player.id] = injured(player)
-      ? 0
-      : saved
-        ? (saved[player.id] ?? 0)
-        : (targets[player.id] ?? 0);
-  }
+  // Legacy saves could have independent 48-minute wishes for every player.
+  // Render a real 240-minute book immediately, including before migration
+  // completes, and use the identical pure helper for each slider action.
+  const minutes = normalizeMinuteBook(players, saved ?? targets, targets, plan.rotationDepth);
+  const minuteCap = individualMinuteCap(players);
   // Saved cover wins when present; fill gaps so every minute has one seat.
   const coverSlot = resolveCoverSlot(players, minutes, {
     ...book.coverSlot,
@@ -109,7 +107,7 @@ export function GmCoaching() {
   const corrections = listedPositionCorrections(players);
   const suggested = suggestedMinutes(team, players);
   const total = Object.values(minutes).reduce((sum, value) => sum + value, 0);
-  const remaining = 240 - total;
+  const remaining = TEAM_MINUTE_BUDGET - total;
   const ordered = rosterOrder(players, team.starters, minutes);
   const chart = new Map(painted.map((row) => [row.id, row.on]));
   const positionRows = minutesPerPosition(players, tonight.minutes, coverSlot, tonight.positionMinutes);
@@ -123,7 +121,7 @@ export function GmCoaching() {
         <div>
           <h2 className="text-xl font-bold tracking-tight">{t("pageLineupTitle")}</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Choose a starting five, set minute targets, and review the actual planned stints and positions below.
+            Set your starting five and share 240 minutes. Give one player more time and teammates automatically give up the same amount.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -137,7 +135,7 @@ export function GmCoaching() {
       </div>
 
       <SectionFrame title="Tonight's rotation" description="The chart and simulation share this plan. Each block is two minutes; five players cover every block. Substitutions favor continuous stints, staggered creators, and a balanced unit." bodySurface>
-        <p className="text-sm">{tonight.tightened ? "Automatic playoff rotation: eight players. Explicit minute plans keep their selected depth." : "Minute targets are fitted to 240 regulation minutes. The planned minutes below are what the sim uses."}</p>
+        <p className="text-sm">{tonight.tightened ? "Automatic playoff rotation: eight players. Explicit minute plans keep their selected depth." : "The rotation uses 240 regulation minutes across five players at a time. Every shaded block is two minutes."}</p>
         {tonight.warnings.length ? <ul className="mt-2 list-disc space-y-1 pl-4 text-sm" role="status">{tonight.warnings.map(note=><li key={note}>{note}</li>)}</ul> : null}
         <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-5">{POSITIONS.map((spot,index)=><label key={spot} className="grid min-w-0 gap-1 text-sm">Closing {spot}<select aria-label={`Closing ${spot}`} className="w-full min-w-0 rounded-md border border-border bg-background px-2 py-2" value={(plan.closingLineup??tonight.closing)[index]??""} onChange={event=>{const next=[...(plan.closingLineup??tonight.closing)];const other=next.findIndex((id,i)=>id===event.target.value&&i!==index);if(other>=0)next[other]=next[index]!;next[index]=event.target.value;setCoaching({closingLineup:next});}}>{players.map(player=><option key={player.id} value={player.id} disabled={injured(player)||!(tonight.minutes[player.id]!>0)}>{displayPlayerName(player)} · {player.position}</option>)}</select></label>)}</div>
         <Button className="mt-3" variant="outline" size="sm" onClick={()=>setCoaching({closingLineup:undefined})}>Use automatic closing unit</Button>
@@ -272,14 +270,22 @@ export function GmCoaching() {
       <section className="sports-card flex flex-col gap-3 p-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h3 className="inline-flex items-center gap-2 font-semibold"><TeamLogo teamKey={team.id} size="xs" />{t("coachRotations")}</h3>
-          <p className="text-sm tabular-nums">
-            {t("coachRemaining", { value: formatMinutes(remaining) })}
-            {remaining < 0
-              ? t("coachOverBook")
-              : remaining > 12
-                ? t("coachOpenMinutes")
-                : ""}
+          <p className="text-sm font-semibold tabular-nums" data-testid="rotation-minute-budget">
+            {formatMinutes(total)} / {TEAM_MINUTE_BUDGET} min assigned
           </p>
+        </div>
+        <div className="rounded-lg border border-border bg-secondary/30 px-3 py-2 text-sm" aria-live="polite" aria-atomic="true" data-testid="rotation-minute-feedback">
+          <p className="font-medium">
+            {remaining === 0
+              ? "Balanced · 0 minutes to add or remove"
+              : remaining > 0
+                ? `Assign ${formatMinutes(remaining)} more minutes to complete the rotation.`
+                : `Remove ${formatMinutes(-remaining)} minutes to complete the rotation.`}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Drag a slider to move minutes between teammates. No one can claim minutes that are already assigned.
+          </p>
+          {recentTransfer ? <p className="mt-2 text-xs font-semibold">{recentTransfer}</p> : null}
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -318,8 +324,7 @@ export function GmCoaching() {
             const on = chart.get(player.id) ?? [];
             const ovr = overallOf(player);
             const wish = suggested[player.id] ?? 0;
-            const delta = wish - value;
-            const rank = starterIds.has(player.id) ? player.position : String(index + 1);
+             const rank = starterIds.has(player.id) ? player.position : String(index + 1);
             return (
               <li key={player.id} className="gm-rot gm-rot--board">
                 <div className="gm-rot__name">
@@ -404,18 +409,32 @@ export function GmCoaching() {
                     <input
                       type="range"
                       min={0}
-                      max={48}
-                      step={1}
+                      max={minuteCap}
+                      step={MINUTE_STEP}
                       value={value}
                       disabled={out}
                       aria-label={t("coachMinutesAria", { player: displayPlayerName(player) })}
-                      onChange={(event) =>
-                        setRotationMinutes(player.id, Number(event.target.value))
-                      }
+                      onChange={(event) => {
+                        const edit = editMinuteBook(
+                          players, minutes, player.id, Number(event.target.value),
+                          targets, plan.rotationDepth
+                        );
+                        const change = edit.movements.find(move => move.playerId === player.id)?.change ?? 0;
+                        const others = edit.movements.filter(move => move.playerId !== player.id)
+                          .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))
+                          .map(move => {
+                            const teammate = players.find(row => row.id === move.playerId);
+                            return `${move.change > 0 ? "+" : ""}${move.change} ${teammate ? displayPlayerName(teammate) : move.playerId}`;
+                          });
+                        setRecentTransfer(change
+                          ? `${change > 0 ? "+" : ""}${change} min ${displayPlayerName(player)} · ${others.join(" · ")} · 0 unassigned`
+                          : "No minutes moved. At least five healthy players must cover all 240 minutes.");
+                        setRotationMinutes(player.id, edit.target);
+                      }}
                     />
                     <span className="tabular-nums">{formatMinutes(value)}</span>
                   </label>
-                  <p className="text-xs text-muted-foreground">Planned: {formatMinutes(tonight.minutes[player.id]??0)} min</p>
+                  <p className="text-xs text-muted-foreground">On court: {formatMinutes(tonight.minutes[player.id] ?? 0)} min</p>
                   <div className="gm-chart" aria-hidden>
                     {QUARTERS.map((quarter) => (
                       <span key={quarter} className="gm-chart__slice">
@@ -434,13 +453,8 @@ export function GmCoaching() {
                     ))}
                   </div>
                 </div>
-                <div className="gm-rot__suggested tabular-nums">
-                  <span>{formatMinutes(wish)}</span>
-                  {Math.abs(delta) >= 0.05 && !out ? (
-                    <span className={cn("gm-rot__delta", delta > 0 ? "is-up" : "is-down")}>
-                      {delta > 0 ? "▲" : "▼"} {formatMinutes(Math.abs(delta))}
-                    </span>
-                  ) : null}
+                <div className="gm-rot__suggested tabular-nums" title="Coach's recommended minutes, not extra time to assign">
+                  <span>{formatMinutes(wish)} min</span>
                 </div>
               </li>
             );

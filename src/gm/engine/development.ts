@@ -88,8 +88,18 @@ export function assignMentor(league: GmLeagueState, playerId: string, mentorId: 
   return { ok: true, reason: veteran ? `${veteran.name} will mentor ${player.name}.` : "Mentorship cleared.", state: { ...league, players: league.players.map(row => row.id === playerId ? { ...row, mentorship, developmentPlan: row.developmentPlan ?? "balanced" } : row) } };
 }
 
-/** The same allowance funds every source. It persists through trades and new seasons. */
-export function raiseCeiling(player: GmPlayer, amount: number, season: number, source: "mentorship" | "breakout", reason: string): GmPlayer {
+/**
+ * A single saved event ledger covers both growth systems.
+ *
+ * Model-2 players: 'gain' measures a discovery opportunity, permanently
+ * improving their response to practice through a bounded, diminishing
+ * learning multiplier. NEVER touches a fixed OVR potential.
+ *
+ * Historic NBA/legacy players: preserve the original limited ceiling change
+ * for save and rating-calibration compatibility. The stored 'ceilingGrowth'
+ * field is historical schema; it is NOT a ceiling for generated prospects.
+ */
+export function recordDevelopmentMilestone(player: GmPlayer, amount: number, season: number, source: "mentorship" | "breakout", reason: string): GmPlayer {
   if (!player.sheet || player.ceilingGrowth?.awards.some(award => award.season === season && award.source === source)) return player;
   if (player.draftModel === 2) {
     // An earned breakout discovers more of a rookie's development capacity;
@@ -118,6 +128,9 @@ export function raiseCeiling(player: GmPlayer, amount: number, season: number, s
     awards: [...(player.ceilingGrowth?.awards ?? []), { season, source, gain, reason }],
   } };
 }
+/** Legacy name retained for tests and integrations that imported the old helper. */
+export const raiseCeiling = recordDevelopmentMilestone;
+
 export function breakoutEvidence(player: GmPlayer, season: number) {
   const line = player.seasonLine;
   const baseline = player.developmentBaseline?.season === season ? player.developmentBaseline.overall : player.sheet?.overall ?? 99;
@@ -142,7 +155,8 @@ export function breakoutEvidence(player: GmPlayer, season: number) {
     ? `Season production rated ${Math.round(performance)} against an opening rating of ${Math.round(baseline)}.`
     : "The season sample does not yet clearly outperform the opening rating with efficient scoring." };
 }
-export function reviewPlayerCeilings(league: GmLeagueState): GmLeagueState {
+/** Review earned development discoveries after a *completed regular season*. */
+export function reviewPlayerDevelopment(league: GmLeagueState): GmLeagueState {
   if (!league.schedule.length || !regularSeasonComplete(league.schedule)) return league;
   let changed = false;
   const notes: GmLeagueState["news"] = [];
@@ -151,29 +165,34 @@ export function reviewPlayerCeilings(league: GmLeagueState): GmLeagueState {
     changed = true;
     let player: GmPlayer = { ...raw, ceilingGrowth: { total: raw.ceilingGrowth?.total ?? 0, awards: raw.ceilingGrowth?.awards ?? [], reviewedSeason: league.season } };
     const evidence = breakoutEvidence(player, league.season);
-    if (evidence.eligible) player = raiseCeiling(player, player.age <= 25 && evidence.performance - evidence.baseline >= 12 ? 2 : 1, league.season, "breakout", evidence.reason);
+    if (evidence.eligible) player = recordDevelopmentMilestone(player, player.age <= 25 && evidence.performance - evidence.baseline >= 12 ? 2 : 1, league.season, "breakout", evidence.reason);
     const veteran = activeMentor(player, league.players);
+    // Keep the original player/season RNG key, preserving existing save
+    // outcomes and preventing rerolls when users replace mentors.
     const rng = createRng(developmentSeed(player.id + ":ceiling:" + league.season));
     if (veteran && player.mentorship?.season === league.season && player.mentorship.sharedGames >= 20 && rng() < 0.03 + mentorshipQuality(veteran) * 0.09) {
       const quality = mentorshipQuality(veteran);
       const maxGain = quality >= 0.65 ? 3 : quality >= 0.35 ? 2 : 1;
-      const raised = raiseCeiling(player, 1 + Math.floor(rng() * maxGain), league.season, "mentorship", `${veteran.name} helped expand his development outlook after ${player.mentorship.sharedGames} shared games.`);
+      const raised = recordDevelopmentMilestone(player, 1 + Math.floor(rng() * maxGain), league.season, "mentorship", `${veteran.name} helped strengthen future learning after ${player.mentorship.sharedGames} games played together.`);
       player = raised;
     }
     for (const award of (player.ceilingGrowth?.awards ?? []).slice(raw.ceilingGrowth?.awards.length ?? 0)) {
       notes.push({
         id: `ceiling-${league.season}-${player.id}-${award.source}`,
         day: league.day, season: league.season, tone: "good",
-        headline: `${player.name}: ${award.source} expands his outlook`,
+        headline: `${player.name}: ${award.source === "mentorship" ? "mentoring breakthrough" : "breakout season"}`,
         body: player.draftModel === 2
-          ? `Development possibilities improved. ${award.reason}`
-          : `Ceiling +${award.gain}. ${award.reason}`,
+          ? `Future skill learning improved slightly. No fixed overall ceiling was raised. ${award.reason}`
+          : `Legacy potential ceiling +${award.gain} OVR. ${award.reason}`,
       });
     }
     return player;
   });
   return changed ? { ...league, players, news: [...notes, ...league.news].slice(0, 50) } : league;
 }
+
+/** Compatibility alias for old development scripts. */
+export const reviewPlayerCeilings = reviewPlayerDevelopment;
 
 export function pairCpuMentors(league: GmLeagueState): GmLeagueState {
   const players = [...league.players];

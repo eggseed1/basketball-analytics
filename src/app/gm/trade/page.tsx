@@ -10,10 +10,10 @@ import type { GmDraftPick, GmLeagueState, GmPlayer, GmTradeAsset } from "@/gm/ty
 import {
   cashLimitM,
   evaluateTrade,
-  findPlayerPackages,
   teamCashM,
   type PlayerPackage,
 } from "@/gm/engine/trades";
+import { findSelectedTradePackages } from "@/gm/engine/trade-finder";
 import { Button } from "@/components/ui/button";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
@@ -629,7 +629,9 @@ function TradeBody() {
     setGet(ownerId !== league.userTeamId ? [asset] : []);
     setCashSend(0);
     setCashReceive(0);
-    const suggested = findPlayerPackages(league, league.userTeamId, playerId);
+    const suggested = findSelectedTradePackages(league, league.userTeamId,
+      ownerId === league.userTeamId ? [asset] : [],
+      ownerId !== league.userTeamId ? [asset] : [], ownerId);
     setPackages(suggested);
     if (ownerId !== league.userTeamId) setPartnerChoice(ownerId);
     setMessage(suggested.length
@@ -722,6 +724,7 @@ function TradeBody() {
       {packages && packages.length > 0 ? (
         <section data-testid="trade-finder-matches" aria-label="Trade Finder packages" className="rounded-xl border border-border p-3">
           <h2 className="mb-2 text-sm font-semibold">Suggested deals</h2>
+          <p className="mb-3 text-xs text-muted-foreground">All selected assets stay in each offer. Results are accepted by the CPU trade evaluator, including salary and draft-pick rules.</p>
           <ul className="flex flex-col gap-2">
           {packages.map((pack) => {
             const abbr = league.teams.find((entry) => entry.id === pack.partnerId)?.abbr ?? pack.partnerId;
@@ -908,18 +911,16 @@ function TradeBody() {
         </Button>
         <Button
           variant="outline"
+          disabled={league.tradeDeadlinePassed}
           onClick={() => {
-            const mine = give.filter((asset) => asset.type === "player");
-            const theirs = get.filter((asset) => asset.type === "player");
-            if (mine.length + theirs.length !== 1) {
-              setPackages(null);
-              setMessage("Check one player, on your club or theirs.");
-              return;
-            }
-            const target = (mine[0] ?? theirs[0])!;
-            const found = findPlayerPackages(league, league.userTeamId, target.id);
+            const found = findSelectedTradePackages(
+              league, league.userTeamId, fromAssets, toAssets, partnerId
+            );
             setPackages(found);
-            setMessage(found.length === 0 ? "No legal package found for this player. Try a different trade partner or adjust the offer." : null);
+            setMessage(found.length
+              ? found.length + " legal package" + (found.length === 1 ? "" : "s") +
+                " found. Choose an offer to load it into the machine."
+              : "No CPU team is willing to accept a legal trade with those assets right now. Try changing the picks, protections or players. You can also clear the machine to browse open offers.");
           }}
         >
           Find deals

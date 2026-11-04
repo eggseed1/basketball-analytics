@@ -33,6 +33,15 @@ try {
   assert.equal(await overview.evaluate(node => node.open), false, "secondary content starts closed");
   await overview.locator("summary").click();
   assert.equal(await overview.evaluate(node => node.open), true, "overview remains available");
+  // The prominent injury-sim setting must persist with this save.
+  const injurySim = page.getByRole("checkbox", { name: /Sim through injuries/ });
+  await injurySim.check();
+  assert.equal(await injurySim.isChecked(), true);
+  await page.reload();
+  await page.getByRole("checkbox", { name: /Sim through injuries/ }).waitFor();
+  assert.equal(await page.getByRole("checkbox", { name: /Sim through injuries/ }).isChecked(), true,
+    "sim-through-injuries preference survives reload");
+  await page.getByRole("checkbox", { name: /Sim through injuries/ }).uncheck();
 
   // Development should make one clear skill choice prominent, without
   // exposing a hard-coded final OVR. The focus persists after a page reload.
@@ -74,7 +83,15 @@ try {
   assert.equal(await gmRead.getByRole("heading", { name: "Build a two-sided offer" }).count(), 0,
     "adding assets on both sides must update the live trade response");
   await page.getByRole("button", { name: "Find deals", exact: true }).click();
-  await page.getByText("Check one player, on your club or theirs.", { exact: true }).waitFor();
+  await page.getByText(/legal packages? found|No CPU team is willing/).first().waitFor();
+  assert.equal(await page.getByText("Check one player, on your club or theirs.", { exact: true }).count(), 0,
+    "multi-sided selection must no longer be rejected by Trade Finder");
+  await page.getByTestId("trade-my-players").getByRole("checkbox").nth(1).check();
+  await page.getByRole("button", { name: "Find deals", exact: true }).click();
+  await page.getByText(/legal packages? found|No CPU team is willing/).first().waitFor();
+  await page.getByRole("button", { name: "Clear", exact: true }).click();
+  await page.getByRole("button", { name: "Find deals", exact: true }).click();
+  await page.getByText(/legal packages? found|No CPU team is willing/).first().waitFor();
   await page.getByRole("button", { name: "Clear", exact: true }).click();
   await gmRead.getByRole("heading", { name: "Build a two-sided offer" }).waitFor();
   assert.equal(await page.getByRole("button", { name: "Propose trade", exact: true }).isDisabled(), true);

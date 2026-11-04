@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { CalendarDays, ChevronDown, ClipboardList, House, LayoutGrid, TrendingUp, UsersRound } from "lucide-react";
+import { CalendarDays, ChevronDown, ClipboardList, House, LayoutGrid, MessageCircle, TrendingUp, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const MAIN = [
@@ -63,6 +63,7 @@ export function GmNav() {
       <div className="gm-desk-nav__primary">
         {MAIN.map(({ href, key, icon: Icon }) => <Link key={href} href={href} aria-current={isCurrent(pathname, href) ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, href) && "is-active")}><Icon size={16} strokeWidth={1.8} aria-hidden="true" /><span>{t(key)}</span></Link>)}
         <Link href="/gm/development" aria-current={isCurrent(pathname, "/gm/development") ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, "/gm/development") && "is-active")}><TrendingUp size={16} strokeWidth={1.8} aria-hidden="true" /><span>Development</span></Link>
+        <Link href="/gm/timeline" aria-current={isCurrent(pathname, "/gm/timeline") ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, "/gm/timeline") && "is-active")}><MessageCircle size={16} strokeWidth={1.8} aria-hidden="true" /><span>Timeline</span></Link>
         <Link href="/gm/offseason" aria-current={isCurrent(pathname, "/gm/offseason") ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, "/gm/offseason") && "is-active")}><CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" /><span>Season hub</span></Link>
       </div>
     </div>
