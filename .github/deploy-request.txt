@@ -1,6 +1,6 @@
 DRBL Cloudflare production deployment request
 Target: main
-Reason: Release PR #191: mentorship across primary/secondary positions and selection fix; generated-player WAR1 and DRBL/100; realistic 2033+ generated-star scoring/development; legal draft trade-up packages with salary matching and preserved return assets.
-Validated merge: 3bd02d8026545d58e25ca7256a646ae03403563f
-Release gates: browser mentorship and draft UI; generated scoring parity; draft trade-up execution; simulation fidelity and multiseason balance; two five-season audits; full repository npm test passed.
-NBA data safety: merge retains latest runtime NBA snapshots and deploy workflow checks live NBA regression protection.
+Reason: Franchise Lab release PR #192: authentic 37 numbered ball / 16 team 3-2-1 NBA lottery with physics collision chamber, replayed saved ball pulls, restriction redraws, legacy 14-ball format, and prohibition on attaching new top-12 through top-15 pick protections.
+Validated release commit: b8a6d564aff71f991d8c01d16bbb72630483e558
+Validation: all 10 release checks passed, including full repository npm test, modern 8000-draw empirical probability audit, browser, scoring fidelity, multi-season balance and both 5-season longitudinal audits.
+Data safety: code-only production release; preserve live NBA runtime snapshots and run the existing regression protection checks before Cloudflare deployment.
