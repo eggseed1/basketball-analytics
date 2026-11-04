@@ -61,6 +61,7 @@ for(let year=2007;year<2047;year++){
 assert.ok(population.every(year=>year.mean>=69&&year.mean<=80),"replacement and decline must prevent a steady rise in league ratings");
 assert.ok(population.every(year=>year.stars>=5&&year.stars<=90),"the rolling talent stock needs stars without making them ordinary");
 assert.ok(population.every(year=>year.elite<=25));
+console.log("Mature league elite supply diagnostic:", JSON.stringify(population));
 assert.ok(population.filter(year=>year.elite>=1).length>=8,
   "a mature league cannot go many consecutive seasons without any genuine superstars");
 assert.ok(population.every(year=>year.stars>=15&&year.stars<=55),
