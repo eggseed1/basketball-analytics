@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { userRecord } from "@/gm/lib/selectors";
 import { useGmStore } from "@/gm/state/gm-store";
+import { franchisePlan } from "@/gm/engine/franchise";
 import { Button } from "@/components/ui/button";
 
 function opponentOf(game: GmScheduleGame, userTeamId: string) {
@@ -78,8 +79,10 @@ export function GmSeasonCalendar({
   const simRun = useGmStore((s) => s.simRun);
   const startAutoSim = useGmStore((s) => s.startAutoSim);
   const stopAutoSim = useGmStore((s) => s.stopAutoSim);
+  const updateFranchise = useGmStore((s) => s.updateFranchise);
   const path = usePathname();
   const running = simRun != null && simRun.kind !== "day";
+  const simThroughInjuries = franchisePlan(league).pauses.injuries === false;
   const cursor = tip;
 
   const userGames = useMemo(
@@ -301,6 +304,16 @@ export function GmSeasonCalendar({
         </div>
       </header>
 
+      {league.phase === "regular" ? (
+        <label className="flex cursor-pointer items-center gap-2 self-start text-xs text-muted-foreground">
+          <input type="checkbox" checked={simThroughInjuries}
+            onChange={event => updateFranchise({
+              pauses: { ...franchisePlan(league).pauses, injuries: !event.target.checked },
+            })} />
+          <span><strong className="font-semibold text-foreground">Sim through injuries</strong> ·
+            Auto-adjust rotations; still pause for trades, scouting and season checkpoints.</span>
+        </label>
+      ) : null}
       {!running && pauseReason ? <p role="status" className="text-sm text-muted-foreground">{pauseReason}</p> : null}
 
       {span && cursor ? (
