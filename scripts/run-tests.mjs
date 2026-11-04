@@ -14,7 +14,15 @@ const TIMEOUT_MS = 180_000;
 // These deterministic league-wide audits can exceed three minutes when
 // running alongside the full CI matrix; keep the normal timeout elsewhere.
 const LONG_TEST_TIMEOUT_MS = 360_000;
-const LONG_TESTS = new Set(["test:franchise-draft-accessibility", "test:franchise-multiseason", "test:franchise-calendar"]);
+const LONG_TESTS = new Set([
+  "test:franchise-draft-accessibility",
+  "test:franchise-multiseason",
+  "test:franchise-calendar",
+  // Full-league AI and lottery market audits complete in 180-240s under
+  // six-worker CI load. Treat them like the existing long-duration cohorts.
+  "test:franchise-systems",
+  "test:franchise-offseason-market-lottery",
+]);
 const CONCURRENCY = Math.max(2, Math.min(6, os.cpus().length - 1));
 
 const only = process.argv
