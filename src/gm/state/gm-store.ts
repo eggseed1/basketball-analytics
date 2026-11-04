@@ -127,6 +127,7 @@ import {
   resetBalancedRotation,
 } from "@/gm/engine/coaching";
 import type { GmCoaching } from "@/gm/types";
+import { editMinuteBook } from "@/gm/engine/rotation-minute-budget";
 import { prepareFranchise, franchisePlan, parseFranchise, importDraftClass as importDraftClassEngine } from "@/gm/engine/franchise";
 import { overallFromAttributes } from "@/gm/engine/attributes";
 import { uid, clamp } from "@/gm/engine/rng";
@@ -769,7 +770,12 @@ export const useGmStore = create<GmStore>()(
           // coaching ORtg nudge for the user only, and CPU clubs stay at 1.0.
           const book = buildBalancedMinutes(nextTeam, league.players);
           const promotedMinutes = t.coaching?.minutes && playerId && !(t.coaching.minutes[playerId]!>0)
-            ? {...t.coaching.minutes,[playerId]:prev?(t.coaching.minutes[prev]??book.minutes[playerId]??24):(book.minutes[playerId]??24),...(prev?{[prev]:0}:{})} : t.coaching?.minutes;
+            ? editMinuteBook(
+                league.players.filter(p => p.teamId === t.id),
+                { ...t.coaching.minutes, ...(prev ? { [prev]: 0 } : {}) },
+                playerId, prev ? (t.coaching.minutes[prev] ?? book.minutes[playerId] ?? 24) : (book.minutes[playerId] ?? 24),
+                book.minutes, coachingOf(t).rotationDepth
+              ).minutes : t.coaching?.minutes;
           const coverSlot = {
             ...(t.coaching?.coverSlot ?? book.coverSlot),
             ...(playerId ? { [playerId]: position } : {}),
@@ -917,11 +923,12 @@ export const useGmStore = create<GmStore>()(
         const team = league.teams.find((entry) => entry.id === league.userTeamId);
         if (!team) return;
         const book = buildBalancedMinutes(team, league.players);
+        const roster = league.players.filter(entry => entry.teamId === team.id);
         const base = team.coaching?.minutes ?? book.minutes;
-        const minutesPlan = {
-          ...base,
-          [playerId]: clamp(Math.round(minutes), 0, 48),
-        };
+        const minutesPlan = editMinuteBook(
+          roster, base, playerId, minutes, book.minutes,
+          coachingOf(team).rotationDepth
+        ).minutes;
         const player = league.players.find((entry) => entry.id === playerId);
         const coverSlot = {
           ...book.coverSlot,
