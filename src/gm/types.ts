@@ -354,6 +354,7 @@ export interface GmPlayer {
   workEthic?: number;
   mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; lastGameId?: string; slot?: 0 | 1 };
   developmentBaseline?: { season: number; overall: number };
+  /** Historical save key: model-2 generated prospects store learning discoveries here, not raises to a fixed potential ceiling. */
   ceilingGrowth?: { total: number; reviewedSeason?: number; awards: Array<{ season: number; source: "mentorship" | "breakout"; gain: number; reason: string }> };
   campFatigueGames?: number;
   /** The real role at the selected season, used as a prior while he stays on that club. */
