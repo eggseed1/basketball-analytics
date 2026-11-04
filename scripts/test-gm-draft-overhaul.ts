@@ -97,7 +97,13 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   const bidLeague={...early,players:early.players.map(p=>p.id===star.id?star:p)};
   const seller=bidLeague.draftOrder![0]!;
   const tradeUp=suggestDraftTrade(bidLeague,"bos",seller,0,undefined,{allowCounter:true});
-  assert.ok(tradeUp, "a premium asset must produce an actionable top-pick package or a legal counteroffer");
+  assert.ok(tradeUp, "a premium asset must produce an actionable top-pick package or a legal counteroffer: " +
+    JSON.stringify({seller, userAssets:draftAssetCatalog(bidLeague,"bos").filter(x=>x.available)
+      .sort((a,b)=>b.points-a.points).slice(0,8).map(x=>({asset:x.asset,points:x.points})),
+      sellerBench:draftAssetCatalog(bidLeague,seller).filter(x=>x.asset.kind==="player"&&x.available)
+        .slice(0,8).map(x=>({asset:x.asset,points:x.points})),
+      starOnly:quoteDraftTrade(bidLeague,{fromTeamId:"bos",toTeamId:seller,clockIndex:0,
+        send:[{kind:"player",id:star.id}],receive:[{kind:"slot",slot:0}]})}));
   const upQuote=quoteDraftTrade(bidLeague,tradeUp!);
   assert.equal(upQuote.legal,true, "suggestions must always pass roster, salary, and Stepien rules");
   assert.ok(tradeUp!.send.some(asset=>asset.kind==="player") || upQuote.accepted,
