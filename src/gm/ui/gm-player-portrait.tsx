@@ -2,7 +2,8 @@
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { displayPlayerName } from "@/gm/lib/selectors";
-import { gmPlayerPortraitIds } from "@/gm/lib/player-portrait-ids";
+import { gmPlayerPortraitIds, isFictionalGmPlayer } from "@/gm/lib/player-portrait-ids";
+import { GmGeneratedPortrait } from "@/gm/ui/gm-generated-portrait";
 import type { GmPlayer } from "@/gm/types";
 
 /**
@@ -22,6 +23,9 @@ export function GmPlayerPortrait({
   priority?: boolean;
   className?: string;
 }) {
+  if (isFictionalGmPlayer(player)) {
+    return <GmGeneratedPortrait player={player} name={displayPlayerName(player)} size={size} className={className} />;
+  }
   const ids = gmPlayerPortraitIds(player);
   return (
     <PlayerHeadshot
