@@ -88,11 +88,6 @@ export function GmLotteryMachine({
   const visibleRows = classic && phase !== "complete"
     ? shownRows.filter(p => p.pick <= 4) : phase === "complete" ? picks : shownRows;
   const selected = shown.filter(x => x.accepted && !classic).map(x => x.origin);
-  const lastAccepted = [...shown].reverse().find(x => x.accepted);
-  const lastTeam = lastAccepted ? picks[lastAccepted.pick - 1] : undefined;
-  const drawnThisRound = classic
-    ? completed.filter(x => x.pick === current?.pick).map(x => x.ballId)
-    : [];
   const nameOf = (id: string) => {
     const team = league.teams.find(t => t.id === id);
     return team ? team.city + " " + team.name : id.toUpperCase();
@@ -138,7 +133,6 @@ export function GmLotteryMachine({
   const announced = shown.filter(x => x.accepted).length;
   const originallyDrawn = activePull ? picks[activePull.pick - 1] : undefined;
   const lastBall = activePull?.ballId;
-  const liveWinner = Boolean(activePull?.accepted);
   const legacy = !classic && !physical;
 
   return <div data-testid="gm-lottery-ceremony" className="overflow-hidden rounded-2xl border border-border bg-background">
