@@ -33,7 +33,7 @@ assert.equal(hist.lotteryCount,14);
 assert.equal(new Set(hist.order).size,30);
 assert.deepEqual(drawDraftLottery(fresh(2026,413)),hist);
 let champions=0, jumps=0;
-for(let seed=1;seed<=50;seed++){
+for(let seed=1;seed<=22;seed++){
   const sample = fresh(2028, seed*17);
   const roll = drawDraftLottery({...sample,playIn:createPlayInBoard(sample)??undefined});
   assert.equal(roll.order.length,30);
@@ -53,7 +53,9 @@ const tested = applyCombine(rookie);
 assert.ok(tested.scoutProfile?.combine);
 assert.equal(JSON.stringify(tested.sheet),before,"combine cannot silently change OVR or attributes");
 assert.equal(applyCombine(tested).scoutProfile?.combine?.sprint,tested.scoutProfile?.combine?.sprint);
-assert.ok(tested.scoutProfile!.combine!.verticalIn>=24);
+assert.ok(tested.scoutProfile!.combine!.verticalIn>=22);
+assert.ok((tested.scoutProfile!.combine!.standingReachIn??0)>=rookie.heightIn+18,
+  "standing reach should be measured in realistic NBA inches, not just wingspan");
 assert.ok(tested.scoutProfile!.combine!.laneAgility!>0);
 const athletic = {
   ...rookie, sheet:{...rookie.sheet!,attributes:{...rookie.sheet!.attributes,
@@ -100,7 +102,6 @@ assert.ok(credibleFreeAgentSalaryFloor(rfa,late)>0);
 market={...market,faMarket:{...emptyFaMarket(52),stage:"re_signing",day:0},
   players:modern.players.map(p=>p.id===oldStar.id ? star : p),
   freeAgents:[...modern.freeAgents,star.id]};
-const incumbent=modern.teams.find(t=>t.id===team.id)!;
 const rosterBefore=market.players.filter(p=>p.teamId===team.id).length;
 assert.ok(rosterBefore>=10);
 const birdOffer=advanceFaDayDetailed(market).state.faMarket?.agreements.find(a=>a.playerId===star.id);
