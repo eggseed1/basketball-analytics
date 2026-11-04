@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { teamColorStyle } from "@/gm/ui/team-colors";
@@ -21,20 +21,13 @@ export function GmLotteryMachine({
   const [shown, setShown] = useState(0);
   const [phase, setPhase] = useState<Phase>(league.seasonFlow?.lotteryRevealed ? "complete" : "ready");
   const [auto, setAuto] = useState(true);
-  const slots = Array.from({ length: size }, (_, i) => {
+  const slots = useMemo(() => Array.from({ length: size }, (_, i) => {
     const index = size - i - 1;
     return { pick: index + 1, owner: league.draftOrder?.[index] ?? league.lotteryOrder?.[index] ?? "",
       origin: league.draftSlotOrigins?.[index] ?? league.lotteryOrder?.[index] ?? "" };
-  });
+  }), [size, league.draftOrder, league.lotteryOrder, league.draftSlotOrigins]);
   const current = slots[shown] ?? null;
   const revealed = slots.slice(0, shown);
-  const originalIndex = current ? [...league.lotteryOrder ?? []].indexOf(current.origin) : -1;
-  // The pre-lottery seeding is the reverse regular-season record among
-  // eligible teams; a traded selection celebrates its original team's luck.
-  const odds = current && league.lotteryDraws?.find(d => d.teamId === current.origin);
-  const bigMove = odds && current && odds.startingRank - current.pick >= 3;
-  const userPick = Boolean(current && current.owner === league.userTeamId);
-  const hasResult = phase === "revealed" || phase === "complete";
   const isDone = phase === "complete";
   const nameOf = (id: string) => {
     const team = league.teams.find(t => t.id === id);
