@@ -1,4 +1,4 @@
-import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
+import { bundleGeneratedAttributes, ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
 import { amateurSeason } from "@/gm/engine/draft-intel";
 import type {
   GmPlayer,
@@ -705,8 +705,12 @@ export function createDraftClass(options: {
       potential.ceiling=randInt(rng,85,95);potential.trait=rng()<0.33?"star":"normal";
       const pathRoll=rng();potential.path=pathRoll<0.49?"boom":pathRoll>0.89?"bust":"average";
     }
+    // Style rolls and sleeper boosts happen AFTER the initial sheet build.
+    // Rebundle here too: a sniper's independent 3PT override must not create
+    // a 90-three / 60-mid profile that could never pass the basic touch test.
+    const bundled = bundleGeneratedAttributes(attributes);
     const target=clamp(sheet.overall,54,tier==="superstar"?83:tier==="allstar"?79:tier==="starter"?76:73);
-    raw={...raw,sheet:{...sheet,attributes,overall:target,overallOffset:target-overallFromAttributes(raw.position,attributes,{impact:raw.ratings.impact}),potential}};
+    raw={...raw,sheet:{...sheet,attributes:bundled,overall:target,overallOffset:target-overallFromAttributes(raw.position,bundled,{impact:raw.ratings.impact,offense:raw.ratings.offense,defense:raw.ratings.defense}),potential}};
     raw={...raw,amateur:amateurSeason(raw)};
     out.push(seal(raw, scoutLevel, board, rng));
   }
