@@ -76,7 +76,13 @@ function withAdditions(locked: Assets, candidates: Assets[], limit: number): Ass
   const used = new Set(locked.map(assetKey));
   const variants = [locked];
   if (locked.length >= 9) return variants;
-  for (const candidate of candidates) {
+  const prioritized = [
+    ...candidates.filter(bundle => bundle.length === 1 && bundle[0]?.type === "pick"),
+    ...candidates.filter(bundle => bundle.length === 1 && bundle[0]?.type === "player").slice(0, 8),
+    ...candidates.filter(bundle => bundle.length === 2 && bundle.every(asset => asset.type === "player")).slice(0, 6),
+    ...candidates.filter(bundle => bundle.length > 1 && bundle.some(asset => asset.type === "pick")).slice(0, 12),
+  ];
+  for (const candidate of prioritized) {
     if (candidate.length + locked.length > 9 ||
         candidate.some(asset => used.has(assetKey(asset)))) continue;
     variants.push([...locked, ...candidate]);
@@ -132,8 +138,12 @@ function findForPartner(
   // a player-and-pick package is a valid starting point.
   const sendFirst = lockedSend.length ? [lockedSend] :
     lockedReceive.length ? myBundles : starterPackages(league, userTeamId, myBundles);
-  const receiveFirst = lockedReceive.length ? [lockedReceive] : otherBundles;
+  const receiveFirst = lockedReceive.length ? [lockedReceive] :
+    lockedSend.length ? otherBundles : otherBundles.slice(0, 75);
   scan(sendFirst, receiveFirst);
+  if (!lockedSend.length && !lockedReceive.length && found.size === 0) {
+    scan(sendFirst, otherBundles.slice(75));
+  }
 
   // A rigid package may need a second salary, pick or complementary player.
   // Only broaden when needed, to avoid making each button click expensive.
@@ -142,7 +152,7 @@ function findForPartner(
     const receives = lockedReceive.length ? withAdditions(lockedReceive, otherBundles, 20) : otherBundles;
     // Limit the cross-product when one side is completely unselected.
     scan(sends.slice(0, lockedSend.length ? 23 : 170),
-      receives.slice(0, lockedReceive.length ? 21 : lockedSend.length ? 85 : 170));
+      receives.slice(0, lockedReceive.length ? 21 : lockedSend.length ? 65 : 170));
   }
   return [...found.values()].sort((a, b) => b.score - a.score);
 }
