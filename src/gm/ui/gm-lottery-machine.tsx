@@ -117,7 +117,7 @@ export function GmLotteryMachine({
               <ClubMark teamId={last.owner} label={nameOf(last.owner)} />
               <strong className="text-xl">{nameOf(last.owner)}</strong>
             </div>
-            {last.origin !== last.owner ? <p className="mt-2 text-xs text-slate-300">via {nameOf(last.origin)}'s pick</p> : null}
+            {last.origin !== last.owner ? <p className="mt-2 text-xs text-slate-300">via {nameOf(last.origin)}&apos;s pick</p> : null}
             {last.owner === league.userTeamId ? <p className="mt-3 rounded-lg bg-emerald-500/20 px-3 py-2 font-bold text-emerald-200">YOUR TEAM IS ON THE CLOCK AT #{last.pick}!</p> : null}
             {league.lotteryDraws?.some(d=>d.teamId === last.origin &&
               d.startingRank - last.pick >= 3) ? <p className="mt-2 font-bold text-amber-300">Lottery jump! {nameOf(last.origin)} moves up.</p> : null}
