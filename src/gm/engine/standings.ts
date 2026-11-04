@@ -4,7 +4,7 @@ import type {
   GmStandingsRow,
   GmTeam,
 } from "@/gm/types";
-import { uid } from "@/gm/engine/rng";
+import { createRng, uid } from "@/gm/engine/rng";
 
 export function emptyStandings(teams: GmTeam[]): Record<string, GmStandingsRow> {
   return Object.fromEntries(
@@ -153,33 +153,88 @@ export function betterRecord(state: GmLeagueState, a: string, b: string): string
   return a;
 }
 
-/** Lottery + reverse playoff finish → full first-round draft order. */
-export function computeLotteryOrder(
-  state: GmLeagueState,
-  playoffIds?: Set<string>
-): string[] {
-  const inPlayoffs =
-    playoffIds ??
-    new Set([
-      ...sortedStandings(state.standings, "East", state.teams)
-        .slice(0, 8)
-        .map((x) => x.teamId),
-      ...sortedStandings(state.standings, "West", state.teams)
-        .slice(0, 8)
-        .map((x) => x.teamId),
-    ]);
-  const byRecordAsc = sortedStandings(state.standings).reverse(); // worst first
-  const lottery = byRecordAsc
-    .filter((r) => !inPlayoffs.has(r.teamId))
-    .map((r) => r.teamId);
-  // Mild lottery shuffle among the bottom 4
-  const shuffled = [...lottery];
-  for (let i = Math.min(3, shuffled.length - 1); i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
+/** The 2027 NBA 3-2-1 lottery grants weighted balls to 16 teams. Historic
+ * drafts through 2026 use four draws among 14 non-playoff teams. The 2030+
+ * regime is not legislated yet; continue the current 3-2-1 rules in future
+ * simulated seasons rather than silently reverting to a less realistic shuffle.
+ * Draws are deterministic from the season and completed standings, never a
+ * new Math.random() roll on reload. */
+export type LotteryDraw = { teamId: string; balls: number[]; startingRank: number; oddsPct: number };
+export type LotteryResult = { order: string[]; draws: LotteryDraw[]; lotteryCount: number; format: "classic" | "321" };
+
+function lotterySeed(state: GmLeagueState): number {
+  const rows = Object.values(state.standings).sort((a,b) => a.teamId.localeCompare(b.teamId));
+  return rows.reduce((seed,row) => {
+    for (const letter of row.teamId) seed = Math.imul(seed ^ letter.charCodeAt(0), 16777619);
+    return Math.imul(seed ^ row.wins * 53 ^ row.losses * 97, 16777619);
+  }, state.season ^ 0x9e3779b9) >>> 0;
+}
+
+export function drawDraftLottery(state: GmLeagueState, playoffIds?: Set<string>): LotteryResult {
+  const overall = sortedStandings(state.standings, undefined, state.teams).reverse().map(r => r.teamId);
+  const newRules = state.season >= 2027 && state.teams.length === 30;
+  const rng = createRng(lotterySeed(state));
+  if (newRules) {
+    const nonPlayIn = new Set<string>();
+    const playInTwo = new Set<string>();
+    const playInOne = new Set<string>();
+    for (const conf of ["East","West"] as const) {
+      const rows = sortedStandings(state.standings, conf, state.teams).map(r => r.teamId);
+      rows.slice(10).forEach(id => nonPlayIn.add(id));
+      rows.slice(8,10).forEach(id => playInTwo.add(id));
+      const matchup = state.playIn?.conferences.find(x => x.conf === conf);
+      const loser = matchup?.sevenLoserId ?? rows[7];
+      if (loser) playInOne.add(loser);
+    }
+    const eligible = overall.filter(id => nonPlayIn.has(id) || playInTwo.has(id) || playInOne.has(id));
+    const relegated = new Set(overall.filter(id => nonPlayIn.has(id)).slice(0,3));
+    const weight = (id: string) => relegated.has(id) ? 2 : nonPlayIn.has(id) ? 3 :
+      playInTwo.has(id) ? 2 : 1;
+    const left = [...eligible];
+    const draws: LotteryDraw[] = [];
+    for (let slot=1; slot<=eligible.length; slot++) {
+      const forced = slot <= 12 && 13 - slot === left.filter(id => relegated.has(id)).length;
+      const pool = forced ? left.filter(id => relegated.has(id)) : left;
+      const total = pool.reduce((s,id) => s + weight(id),0);
+      let roll = rng()*total;
+      let winner = pool[pool.length-1]!;
+      for (const id of pool) { roll -= weight(id); if (roll < 0) { winner=id;break; } }
+      const startingRank = eligible.indexOf(winner)+1;
+      draws.push({teamId:winner,balls:[1+Math.floor(rng()*37)],startingRank,
+        oddsPct:Math.round(weight(winner)/37*1000)/10});
+      left.splice(left.indexOf(winner),1);
+    }
+    return {order:[...draws.map(x=>x.teamId),...overall.filter(id=>!eligible.includes(id))],
+      draws,lotteryCount:eligible.length,format:"321"};
   }
-  const playoff = byRecordAsc
-    .filter((r) => inPlayoffs.has(r.teamId))
-    .map((r) => r.teamId);
-  return [...shuffled, ...playoff];
+
+  const inPlayoffs = playoffIds ?? new Set([
+    ...sortedStandings(state.standings,"East",state.teams).slice(0,8).map(x=>x.teamId),
+    ...sortedStandings(state.standings,"West",state.teams).slice(0,8).map(x=>x.teamId)
+  ]);
+  const eligible = overall.filter(id=>!inPlayoffs.has(id));
+  const weights = [140,140,140,125,105,90,75,60,45,30,20,15,10,5];
+  // The 1,001 unordered four-ball combinations, of which one is unassigned.
+  const combinations:number[][]=[];
+  for(let a=1;a<=11;a++)for(let b=a+1;b<=12;b++)for(let d=b+1;d<=13;d++)for(let e=d+1;e<=14;e++)
+    combinations.push([a,b,d,e]);
+  const owners:string[]=[];
+  eligible.forEach((id,i)=>{for(let n=0;n<(weights[i]??0);n++)owners.push(id);});
+  const drawn:LotteryDraw[]=[];const taken=new Set<string>();
+  let guard=0;
+  while(drawn.length<Math.min(4,eligible.length) && guard++<20000){
+    const index=Math.floor(rng()*combinations.length);
+    const owner=owners[index];
+    if(!owner || taken.has(owner))continue;
+    taken.add(owner);
+    drawn.push({teamId:owner,balls:combinations[index]!,startingRank:eligible.indexOf(owner)+1,
+      oddsPct:(weights[eligible.indexOf(owner)]??0)/10});
+  }
+  const remainder=eligible.filter(id=>!taken.has(id));
+  return {order:[...drawn.map(x=>x.teamId),...remainder,...overall.filter(id=>!inPlayoffs.has(id)&&!eligible.includes(id)),...overall.filter(id=>inPlayoffs.has(id))],
+    draws:drawn,lotteryCount:eligible.length,format:"classic"};
+}
+
+export function computeLotteryOrder(state:GmLeagueState, playoffIds?:Set<string>):string[]{
+  return drawDraftLottery(state,playoffIds).order;
 }
