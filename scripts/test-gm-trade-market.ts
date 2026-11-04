@@ -11,7 +11,8 @@ import {
   buildTradeMarket, marketForDisplay, tradeCompetitionMultiplier,
   tradeWindowDeadline, wantsTrade,
 } from "../src/gm/engine/trade-market";
-import type { GmLeagueState, GmPlayer } from "../src/gm/types";
+import type { GmLeagueState, GmPlayer, GmTradeAsset } from "../src/gm/types";
+import { findSelectedTradePackages } from "../src/gm/engine/trade-finder";
 
 const seeded = createGeneratedLeague({
   userTeamId: "bos", season: 2026, seed: 19,
@@ -85,6 +86,56 @@ if (possible) {
 }
 assert.deepEqual(marketForDisplay({ ...league, tradeMarket: pulse }), pulse,
   "a current market snapshot remains stable through save/reload");
+
+// Trade Finder supports whole multi-asset packages, picks-only searches, and
+// browsing without a starting player. It may only return genuinely accepted deals.
+const ownPicks = league.teams.find(t => t.id === "bos")!.draftPicks.filter(p => !p.frozen);
+const rivalPicks = league.teams.find(t => t.id === "nyk")!.draftPicks.filter(p => !p.frozen);
+assert.ok(ownPicks.length > 0 && rivalPicks.length > 0);
+const extraMine = league.players.find(p => p.teamId === "bos" && p.contract && p.id !== mine.id)!;
+const relaxed: GmLeagueState = {
+  ...quietLeague,
+  settings: { ...quietLeague.settings, tradeDifficulty: 0.5 },
+  teams: quietLeague.teams.map(t => ({ ...t, untouchables: [] })),
+};
+const pick = (id: string): GmTradeAsset => ({ type: "pick", id });
+const player = (id: string): GmTradeAsset => ({ type: "player", id });
+const cases = [
+  { name: "no selection", sent: [], received: [], partnerId: undefined },
+  { name: "one pick", sent: [pick(ownPicks[0]!.id)], received: [], partnerId: undefined },
+  { name: "player and pick", sent: [player(mine.id), pick(ownPicks[0]!.id)], received: [], partnerId: undefined },
+  { name: "multiple players and a pick", sent: [player(mine.id), player(extraMine.id), pick(ownPicks[0]!.id)], received: [], partnerId: undefined },
+  { name: "request a rival pick", sent: [], received: [pick(rivalPicks[0]!.id)], partnerId: "nyk" },
+  { name: "both sides locked", sent: [player(mine.id), pick(ownPicks[0]!.id)], received: [player(partner.id)], partnerId: "nyk" },
+];
+for (const example of cases) {
+  const found = findSelectedTradePackages(relaxed, "bos", example.sent, example.received, example.partnerId);
+  assert.ok(found.length <= 8, example.name + ": keep the UI manageable");
+  assert.equal(new Set(found.map(pack => pack.partnerId + "|" +
+    pack.youSend.map(a => a.id).sort().join(",") + "=>" +
+    pack.youReceive.map(a => a.id).sort().join(","))).size, found.length,
+    example.name + ": unique packages");
+  for (const offer of found) {
+    assert.ok(example.sent.every(a => offer.youSend.some(p => p.type === a.type && p.id === a.id)),
+      example.name + ": retain every selected outgoing asset");
+    assert.ok(example.received.every(a => offer.youReceive.some(p => p.type === a.type && p.id === a.id)),
+      example.name + ": retain every selected incoming asset");
+    if (example.received.length) assert.equal(offer.partnerId, "nyk",
+      "an incoming player or pick belongs to exactly one trade partner");
+    assert.equal(evaluateTrade(relaxed, "bos", offer.partnerId, offer.youSend, offer.youReceive).ok, true,
+      example.name + ": proposals must clear the actual CPU rules and valuation");
+  }
+}
+assert.ok(findSelectedTradePackages(relaxed, "bos", [], []).length > 0,
+  "with an open market the finder should return viable offers even without an anchor");
+assert.deepEqual(findSelectedTradePackages({
+  ...relaxed, tradeDeadlinePassed: true,
+}, "bos", [], []), [], "closed trade windows never recommend deals");
+assert.ok(findSelectedTradePackages({ ...relaxed, phase: "offseason", tradeDeadlinePassed: false }, "bos", [], []).length > 0,
+  "finder must honor the same open trading window as proposal submission outside the regular season");
+assert.deepEqual(findSelectedTradePackages(relaxed, "bos", [],
+  [pick(rivalPicks[0]!.id), pick(ownPicks[0]!.id)], "nyk"), [],
+  "finder cannot quietly assemble a cross-team package");
 
 const deadline = tradeWindowDeadline(league);
 const scheduleWindows = [0.31, 0.55, 0.76].map(p => Math.round(deadline * p));
