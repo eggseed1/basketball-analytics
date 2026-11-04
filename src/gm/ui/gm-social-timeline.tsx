@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Heart, MessageCircle, Repeat2, Sparkles, Users, Radio, Bookmark, TrendingUp } from "lucide-react";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
