@@ -11,7 +11,7 @@ import type { SocialPost } from "@/gm/engine/social-timeline";
 import type { GmLeagueState } from "@/gm/types";
 import { cn } from "@/lib/utils";
 
-type Filter = "for-you" | "team" | "news" | "fans" | "injuries" | "draft" | "following" | "liked";
+type Filter = "for-you" | "team" | "news" | "fans" | "injuries" | "draft" | "following" | "liked" | `trend:${string}`;
 const FILTERS: Array<{ key: Filter; label: string }> = [
   { key: "for-you", label: "For you" },
   { key: "team", label: "Your team" },
@@ -36,6 +36,7 @@ function isFun(id: string) {
   return ["bench", "panic", "burner", "sicko", "rings"].includes(id) || id.startsWith("fan:");
 }
 function eventMatches(posts: SocialPost[], filter: Filter, league: GmLeagueState): boolean {
+  if (filter.startsWith("trend:")) return posts.some(p => p.teamId === filter.slice(6));
   if (filter === "team") return posts.some(p => p.teamId === league.userTeamId);
   if (filter === "news") return posts.some(p =>
     isReporter(p.accountId) && ["news", "trade", "draft", "awards", "game"].includes(p.category));
@@ -172,6 +173,12 @@ export function GmSocialTimeline({ compact = false }: { compact?: boolean }) {
                   {option.label}
                 </button>
               ))}
+              {filter.startsWith("trend:") ? (
+                <button type="button" aria-pressed={true} onClick={() => setFilter("for-you")}
+                  className="rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background">
+                  {league.teams.find(t => t.id === filter.slice(6))?.abbr ?? "Team"} trending ×
+                </button>
+              ) : null}
             </div>
             <div className="mt-3 flex items-center justify-between gap-3 text-xs text-muted-foreground">
               <span><Sparkles size={13} aria-hidden="true" className="mr-1 inline" /> Based on real events inside this save</span>
@@ -228,7 +235,7 @@ export function GmSocialTimeline({ compact = false }: { compact?: boolean }) {
               {trending.map((entry, index) => {
                 const team = league.teams.find(t => t.id === entry.teamId);
                 return <button type="button" key={entry.teamId} className="flex w-full items-center gap-2 py-2 text-left"
-                  onClick={() => setFilter(entry.teamId === league.userTeamId ? "team" : "for-you")}>
+                  onClick={() => { setFilter(`trend:${entry.teamId}`); setLimit(18); }}>
                   <span className="w-3 text-xs text-muted-foreground">{index + 1}</span>
                   <TeamLogo teamKey={entry.teamId} size="xs" />
                   <span className="min-w-0 flex-1">
