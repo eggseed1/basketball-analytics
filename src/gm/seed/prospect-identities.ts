@@ -7,6 +7,7 @@ import type {
   ProspectArchetypeId,
 } from "@/gm/types";
 import { pick, randInt, clamp } from "@/gm/engine/rng";
+import { withGeneratedPlayerIdentity, developmentLeagueForOrigin } from "@/gm/lib/generated-player-identity";
 
 export type CodenameDef = {
   codename: string;
@@ -388,7 +389,7 @@ export function assignProspectIdentity(
   player: GmPlayer,
   rng: () => number,
   usedCodenames: Set<string>,
-  opts?: { eliteEligible?: boolean }
+  opts?: { eliteEligible?: boolean; usedNames?: Set<string> }
 ): GmPlayer {
   const eliteEligible =
     opts?.eliteEligible ??
@@ -427,13 +428,12 @@ export function assignProspectIdentity(
   }
   usedCodenames.add(def.codename);
 
-  return {
+  return withGeneratedPlayerIdentity({
     ...player,
-    name: generateTrueName(rng),
     codename: def.codename,
     identityRevealed: false,
     position: player.position,
-  };
+  }, { usedNames: opts?.usedNames });
 }
 
 export function codenameDef(codename: string | undefined): CodenameDef | undefined {
@@ -668,9 +668,10 @@ export function createDraftClass(options: {
             : pick(rng, ["Duke", "Connecticut", "Gonzaga", "Houston", "Kansas", "Michigan State", "Kentucky", "Arizona", "Baylor", "Tennessee"]),
     };
     // The style nickname must not disclose the hidden career tier.
-    raw = assignProspectIdentity(raw, rng, used, { eliteEligible: false });
-    while(usedNames.has(raw.name)) raw={...raw,name:generateTrueName(rng)};
-    usedNames.add(raw.name);
+    raw = assignProspectIdentity(raw, rng, used, { eliteEligible: false, usedNames });
+    if (pipeline === "international" && raw.identity) {
+      raw = { ...raw, college: developmentLeagueForOrigin(raw.identity.countryCode) };
+    }
     raw = ensurePlayerSheet(raw);
     const sheet=raw.sheet!,attributes={...sheet.attributes};
     const style=rng();
