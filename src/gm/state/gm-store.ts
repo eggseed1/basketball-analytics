@@ -54,6 +54,7 @@ import {
   recordDeclinedOffer,
 } from "@/gm/engine/offers";
 import { buildTradeMarket } from "@/gm/engine/trade-market";
+import { tradeWindowStatus } from "@/gm/engine/trade-window";
 import {
   considerTeamBuildingCheckpoint,
   continuePastCheckpoint as continuePastCheckpointEngine,
@@ -1304,12 +1305,11 @@ export const useGmStore = create<GmStore>()(
         const league = get().league;
         const offer = league?.incomingOffer;
         if (!league || !offer) return { ok: false, reason: "No offer is waiting." };
-        if (league.tradeDeadlinePassed) {
-          return { ok: false, reason: "The trade deadline has passed." };
-        }
+        const window = tradeWindowStatus(league);
+        if (!window.open) return { ok: false, reason: window.reason };
         const fair = offerIsFair(league, offer.fromTeamId, offer.toTeamId, fromAssets, toAssets);
         if (!fair.ok) return { ok: false, reason: fair.reason };
-        const next = applyTrade(
+        const next = withUpdate(applyTrade(
           {
             ...league,
             incomingOffer: undefined,
@@ -1321,7 +1321,7 @@ export const useGmStore = create<GmStore>()(
             fromAssets,
             toAssets,
           }
-        );
+        ));
         set({ league: next });
         syncMyLeague(next);
         return { ok: true };
@@ -1414,9 +1414,8 @@ export const useGmStore = create<GmStore>()(
       proposeTrade: (toTeamId, fromAssets, toAssets) => {
         const league = get().league;
         if (!league) return { ok: false, reason: "No league" };
-        if (league.tradeDeadlinePassed) {
-          return { ok: false, reason: "The trade deadline has passed." };
-        }
+        const window = tradeWindowStatus(league);
+        if (!window.open) return { ok: false, reason: window.reason };
         const evaluation = evaluateTrade(
           league,
           league.userTeamId,
