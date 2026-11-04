@@ -742,7 +742,27 @@ export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
 /** Older saves have no sheet, or a sheet from an earlier formula. */
 export function ensurePlayerSheet(player: GmPlayer): GmPlayer {
   if (player.sheet?.version === SHEET_VERSION) return player;
-  return { ...player, sheet: playerSheet(player) };
+  const sheet = playerSheet(player);
+  const old = player.sheet?.attributes;
+  const profile = player.simProfile;
+  // A saved generated player's estimated simulation profile is anchored to
+  // the attributes he had at entry. Move its baseline by the exact same
+  // migration delta, so the player keeps all earned development but does not
+  // get a free shooting/rebounding boost merely by loading an old save.
+  if (isGeneratedProfile(player) && old && profile && profile.source !== "nba") {
+    const baseline = { ...profile.baseline };
+    let changed = false;
+    for (const key of Object.keys(sheet.attributes) as Array<keyof GmAttributes>) {
+      const delta = sheet.attributes[key] - old[key];
+      if (delta === 0) continue;
+      baseline[key] = (baseline[key] ?? old[key]) + delta;
+      changed = true;
+    }
+    if (changed) return {
+      ...player, sheet, simProfile: { ...profile, baseline },
+    };
+  }
+  return { ...player, sheet };
 }
 
 function addKeys(
