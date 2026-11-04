@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { GmAwardsShow } from "@/gm/ui/gm-awards-show";
+import { GmSocialTimeline } from "@/gm/ui/gm-social-timeline";
 import { GmChampionSplash } from "@/gm/ui/gm-champion-splash";
 import { GmGamePlan } from "@/gm/ui/gm-game-plan";
 import { GmPlayInSchedule } from "@/gm/ui/gm-play-in";
@@ -184,6 +185,7 @@ export function GmHomeStage({ league }: { league: GmLeagueState }) {
       <StageChip league={league} />
       <GmGamePlan league={league} />
       <GmSeasonCalendar league={league} />
+      <GmSocialTimeline compact />
       <details className="rounded-xl border border-border p-4 text-sm" data-testid="gm-home-more">
         <summary className="cursor-pointer font-semibold">Team overview & news</summary>
         <div className="mt-4 flex flex-col gap-4">
