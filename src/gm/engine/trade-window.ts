@@ -7,6 +7,7 @@ import type { GmLeagueState } from "@/gm/types";
  * separate eliminated-team windows during an active playoff bracket.
  */
 export function tradeWindowStatus(league: GmLeagueState): { open: boolean; reason: string; label: string } {
+  if (league.phase === "preseason") return { open: true, reason: "", label: "Preseason trades open" };
   if (league.phase === "regular") return league.tradeDeadlinePassed
     ? { open: false, reason: "Trading resumes after the Finals. Prepare your offseason targets.", label: "Trade deadline passed" }
     : { open: true, reason: "", label: "In-season trades open" };
