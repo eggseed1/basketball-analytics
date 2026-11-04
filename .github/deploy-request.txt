@@ -1,6 +1,6 @@
-DRBL production deployment request
+DRBL Cloudflare production deployment request
 Target: main
-Reason: Ship Franchise Lab release #190 (animated 2027 draft lottery, combine scouting and athletic badges, Bird-rights retention and free agency, evolving player tendencies, impactful training camp).
-Validated release code commit: fdfc751f81afbcf1bb03ca5a2ba60201d8918cb6
-Verification: 125/125 repository test scripts passed on prior gameplay-identical commit; browser, balance, fidelity, parity, cohorts, and two five-season longitudinal simulations passed; expanded 25-minute specialized workflow is revalidating the same gameplay code.
-Data safety: deploy-site workflow syncs current live NBA runtime snapshots from main and protects recent results before deploying the Worker.
+Reason: Release PR #191: mentorship across primary/secondary positions and selection fix; generated-player WAR1 and DRBL/100; realistic 2033+ generated-star scoring/development; legal draft trade-up packages with salary matching and preserved return assets.
+Validated merge: 3bd02d8026545d58e25ca7256a646ae03403563f
+Release gates: browser mentorship and draft UI; generated scoring parity; draft trade-up execution; simulation fidelity and multiseason balance; two five-season audits; full repository npm test passed.
+NBA data safety: merge retains latest runtime NBA snapshots and deploy workflow checks live NBA regression protection.
