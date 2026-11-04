@@ -330,7 +330,7 @@ function renderEvent(event: Event): SocialPost[] {
       season: event.season, day: event.day, category: event.category,
       ...(event.teamId ? { teamId: event.teamId } : {}),
       ...(event.playerId ? { playerId: event.playerId } : {}),
-      text: entry.text, href: event.href, replyTo: entry.reply ? topicId + ":0" : undefined,
+      text: entry.text, href: event.href, ...(entry.reply ? { replyTo: topicId + ":0" } : {}),
       heat: event.heat, likes: Math.round((event.heat + 10) * (engagement + 5) / (entry.reply ? 7 : 3)),
       reposts: Math.round((event.heat + 10) * (engagement + 5) / (entry.reply ? 40 : 15)),
     };
