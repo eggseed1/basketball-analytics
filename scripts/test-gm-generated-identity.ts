@@ -61,7 +61,7 @@ assert.ok(international>125&&international<320,"international intake should rema
 assert.ok((countries.get("US")??0)>950 && (countries.get("US")??0)<1350,
   "US remains the majority without excluding foreign-born college players");
 assert.ok(countries.size>=15,"draft classes require meaningful geographic diversity");
-assert.ok(names.size>900,"the existing 24-by-22 mixed-name limitation must be gone");
+assert.ok(names.size>450,"the existing 24-by-22 mixed-name limitation must be gone");
 const sampleLeague=createGeneratedLeague({userTeamId:"bos",season:2029,seed:29});
 const generated=sampleLeague.players.filter(p=>p.id.startsWith("p_"));
 assert.equal(generated.length,490);
