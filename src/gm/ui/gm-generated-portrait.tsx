@@ -29,7 +29,11 @@ function hashText(text: string): number {
     value ^= text.charCodeAt(i);
     value = Math.imul(value, 16777619);
   }
-  return value >>> 0;
+  // Match one-shot/rng.hashString used when the identity is first created.
+  // This keeps the portrait identical before and after old-save migration.
+  let mixed = Math.imul(value ^ (value >>> 16), 0x7feb352d) >>> 0;
+  mixed = Math.imul(mixed ^ (mixed >>> 15), 0x846ca68b) >>> 0;
+  return (mixed ^ (mixed >>> 16)) >>> 0;
 }
 function next(seed: number): () => number {
   let state = seed >>> 0;
