@@ -23,6 +23,7 @@ import {
 import { rateLabel, shotLabel, simCountingLine } from "@/gm/lib/counting";
 import { valueForBoard } from "@/gm/lib/season-line";
 import { displayPlayerName, userTeam } from "@/gm/lib/selectors";
+import { originLabel } from "@/gm/lib/generated-player-identity";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { teamColorStyle } from "@/gm/ui/team-colors";
 import type { GmCountingLine, GmLeagueState, GmPlayer } from "@/gm/types";
@@ -228,6 +229,12 @@ export function GmPlayerCard({
             {player.draftLabel || (player.draftYear!=null&&player.draftPick!=null?`${player.draftYear} draft · Pick #${player.draftPick}`:"Draft info blank")}
             {player.college ? ` · ${player.college}` : ""}
           </p>
+          {player.identity ? (
+            <div className="mt-2 text-sm text-muted-foreground">
+              <p>{player.identity.hometown}, {originLabel(player.identity.countryCode)}</p>
+              <p className="text-xs">{player.identity.temperament} · {player.identity.interest}</p>
+            </div>
+          ) : null}
           {awards.length > 0 ? (
             <ul className="mt-2 flex flex-wrap gap-1.5">
               {awards.map((award) => (
