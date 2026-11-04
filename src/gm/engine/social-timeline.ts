@@ -357,8 +357,19 @@ function allEvents(league: GmLeagueState): Event[] {
 }
 /** Deterministically append factual event threads, keep old arcs across seasons. */
 export function syncSocialTimeline(league: GmLeagueState): GmLeagueState {
-  const existing = (league.socialPosts ?? []).filter(p =>
-    p && typeof p.id === "string" && typeof p.text === "string" && p.text.length <= 600
+  // Franchise saves are importable JSON. Treat stored posts as untrusted:
+  // never expose arbitrary hrefs via Next Link or unbounded input strings.
+  const existing = (Array.isArray(league.socialPosts) ? league.socialPosts : []).filter(p =>
+    p && typeof p.id === "string" && p.id.startsWith("social:") && p.id.length < 190 &&
+    typeof p.eventId === "string" && p.eventId.length < 180 &&
+    typeof p.accountId === "string" && (SOCIAL_BY_ID.has(p.accountId) || /^fan:[a-z]{2,4}$/.test(p.accountId)) &&
+    typeof p.text === "string" && p.text.length > 0 && p.text.length <= 420 &&
+    typeof p.href === "string" && /^\/gm(?:\/|\?|$)/.test(p.href) && p.href.length < 200 &&
+    Number.isInteger(p.season) && p.season > 2000 && p.season < 2200 &&
+    Number.isInteger(p.day) && p.day >= 0 && p.day < 400 &&
+    typeof p.heat === "number" && Number.isFinite(p.heat) &&
+    typeof p.likes === "number" && Number.isFinite(p.likes) &&
+    typeof p.reposts === "number" && Number.isFinite(p.reposts)
   ).slice(0, 1050);
   const seen = new Set(existing.map(p => p.id));
   const fresh = allEvents(league).flatMap(renderEvent).filter(p => !seen.has(p.id));
