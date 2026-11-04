@@ -6,6 +6,7 @@ import { rookieContractForPick } from "@/gm/engine/draft-order";
 import type { GmLeagueState, GmNewsItem, GmPlayer } from "@/gm/types";
 import { createRng, clamp, uid } from "@/gm/engine/rng";
 import { ensurePlayerSheet, playerSheet, progressSheet } from "@/gm/engine/attributes";
+import { syncSocialTimeline } from "@/gm/engine/social-timeline";
 import {
   aiSelectProspect,
   draftSlotCount,
@@ -352,7 +353,7 @@ export function runDraftPick(
   const grade =
     teamId === state.userTeamId ? ` ${pickGrade(state, playerId)}` : "";
 
-  return {
+  return syncSocialTimeline({
     ...state,
     players: fixed,
     teams,
@@ -372,6 +373,6 @@ export function runDraftPick(
       ...state.news,
     ].slice(0, 50),
     updatedAt: new Date().toISOString(),
-  };
+  });
 }
 
