@@ -293,6 +293,8 @@ interface GmStore {
   autoLineup: () => void;
   setCoaching: (patch: Partial<GmCoaching>) => void;
   setRotationMinutes: (playerId: string, minutes: number) => void;
+  toggleSocialLike: (postId: string) => void;
+  toggleSocialFollow: (accountId: string) => void;
   /** Set how many bodies get minutes, then rebuild the book. */
   setRotationDepth: (depth: GmRotationDepth) => void;
   /** Keep starters; rebuild a balanced 240 chart. */
