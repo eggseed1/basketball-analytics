@@ -71,6 +71,9 @@ export function evolveTendencies(
   const tendencyCarry: Partial<Record<Key, number>> = { ...before.tendencyCarry };
 
   for (const key of KEYS) {
+    // Carry may only advance with another relevant skill change. A defensive
+    // workout must not silently trigger an old fractional shooting adjustment.
+    if (learning[key] === 0) continue;
     // Some old fixtures and imported player cards have missing tendency keys.
     // Never manufacture new habits from that incomplete information.
     const original = tendencies[key];
