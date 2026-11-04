@@ -49,7 +49,7 @@ for (const p of posts) {
   assert.ok(Number.isInteger(p.likes) && p.likes >= 0);
   assert.ok(Number.isInteger(p.reposts) && p.reposts >= 0);
   assert.ok(p.id.startsWith("social:"), "all posts use in-game namespaces");
-  assert.ok(p.href.startsWith("/gm/"), "no external social links");
+  assert.ok(/^\/gm(?:\/|\?|$)/.test(p.href), "all social links stay inside Franchise Lab");
   assert.ok(p.accountId && socialAccount(p.accountId, p.teamId).name);
   if (p.replyTo) assert.ok(posts.some(root => root.id === p.replyTo),
     "each reaction replies to an actual report");
