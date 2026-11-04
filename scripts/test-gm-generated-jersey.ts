@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { FRANCHISES } from "../src/gm/seed/franchises";
+import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { applyTrade } from "../src/gm/engine/trades";
 import { generatedJerseyStyle } from "../src/gm/lib/generated-player-jersey";
 import { generatedPortraitRecipe, GmGeneratedPortrait } from "../src/gm/ui/gm-generated-portrait";
 import { portraitSeedForId } from "../src/gm/lib/generated-player-identity";
@@ -70,4 +72,20 @@ assert.ok(!html({ ...original, jersey: "suspicious<script>" }).includes("suspici
   "only valid numeric jersey numbers are rendered");
 assert.ok(!html({ ...original, jersey: "" }).includes(">23</text>"),
   "player's actual jersey should disappear when unset");
+// The real trade engine moves the player via teamId. Portrait props should
+// pick up that change, without an explicit avatar refresh or save rewrite.
+const league = createGeneratedLeague({ userTeamId: "bos", season: 2029, seed: 1788 });
+const candidate = league.players.find(p => p.teamId === "bos" && p.identity)!;
+assert.ok(candidate);
+const traded = applyTrade(league, {
+  fromTeamId: "bos", toTeamId: "lal",
+  fromAssets: [{ type: "player", id: candidate.id }],
+  toAssets: [],
+});
+const moved = traded.players.find(p => p.id === candidate.id)!;
+assert.equal(moved.teamId, "lal");
+assert.deepEqual(moved.identity, candidate.identity);
+assert.equal(faceRegion(html({ ...candidate, jersey: "12" })),faceRegion(html({ ...moved, jersey: "12" })));
+assert.match(html({ ...candidate, jersey: "12" }), /data-jersey-team="bos"/);
+assert.match(html({ ...moved, jersey: "12" }), /data-jersey-team="lal"/);
 console.log("Generated jerseys: 30 NBA teams, free agency, compact avatars, same-face trades, and number safety passed");
