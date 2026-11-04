@@ -389,7 +389,7 @@ export function assignProspectIdentity(
   player: GmPlayer,
   rng: () => number,
   usedCodenames: Set<string>,
-  opts?: { eliteEligible?: boolean; usedNames?: Set<string> }
+  opts?: { eliteEligible?: boolean; usedNames?: Set<string>; legacyNames?: Set<string> }
 ): GmPlayer {
   const eliteEligible =
     opts?.eliteEligible ??
@@ -427,6 +427,13 @@ export function assignProspectIdentity(
     def = { ...base, codename };
   }
   usedCodenames.add(def.codename);
+
+  // Preserve the old draft RNG consumption exactly (including former-name
+  // collision retries). Names themselves now come from a separate stream;
+  // otherwise a cosmetic change would re-roll rookie talent downstream.
+  let legacyName = generateTrueName(rng);
+  while (opts?.legacyNames?.has(legacyName)) legacyName = generateTrueName(rng);
+  opts?.legacyNames?.add(legacyName);
 
   return withGeneratedPlayerIdentity({
     ...player,
@@ -582,6 +589,7 @@ export function createDraftClass(options: {
   const used = new Set<string>();
   const out: GmPlayer[] = [];
   const usedNames=new Set<string>();
+  const legacyNames=new Set<string>();
 
   // Pyramid first, then board chaos: stars can slide, and a sleeper can climb.
   const ranked = rollProspectTier(count, rng)
@@ -668,7 +676,7 @@ export function createDraftClass(options: {
             : pick(rng, ["Duke", "Connecticut", "Gonzaga", "Houston", "Kansas", "Michigan State", "Kentucky", "Arizona", "Baylor", "Tennessee"]),
     };
     // The style nickname must not disclose the hidden career tier.
-    raw = assignProspectIdentity(raw, rng, used, { eliteEligible: false, usedNames });
+    raw = assignProspectIdentity(raw, rng, used, { eliteEligible: false, usedNames, legacyNames });
     if (pipeline === "international" && raw.identity) {
       raw = { ...raw, college: developmentLeagueForOrigin(raw.identity.countryCode) };
     }
