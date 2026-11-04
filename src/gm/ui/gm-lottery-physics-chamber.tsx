@@ -28,10 +28,12 @@ export function LotteryPhysicsChamber({
   const selectedRef = useRef(new Set(selectedTeams));
   const pullingRef = useRef(pullingId);
   const removedBallRef = useRef(new Set(removedBallIds));
-  spinningRef.current = spinning;
-  selectedRef.current = new Set(selectedTeams);
-  pullingRef.current = pullingId;
-  removedBallRef.current = new Set(removedBallIds);
+  useEffect(() => {
+    spinningRef.current = spinning;
+    selectedRef.current = new Set(selectedTeams);
+    pullingRef.current = pullingId;
+    removedBallRef.current = new Set(removedBallIds);
+  }, [spinning, selectedTeams, pullingId, removedBallIds]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
