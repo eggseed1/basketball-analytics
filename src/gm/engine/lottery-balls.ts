@@ -1,14 +1,15 @@
+import { simulateLotteryHoleExit } from "./lottery-hole-physics";
+
 /**
  * 2027–29 NBA "3-2-1" lottery urn. Each of 37 distinct physical balls has
  * exactly one owner, making P(first pick) = 1, 2 or 3 divided by 37.
  *
  * The NBA has not specified a public mechanical procedure for applying its
- * pick restrictions. We use transparent rejection sampling: a ball that would
- * violate a mandated pick limit returns to the mixer and another is drawn.
- * This preserves proportional odds among legally eligible balls.
- *
- * These are the actual persisted draws that the animation replays. The 2-D
- * bouncing-ball visuals never pick a second winner.
+ * pick restrictions. We return an ineligible extracted ball to the urn and
+ * perform another independent physical chamber simulation. Every extraction
+ * is produced by identical colliding balls leaving a ball-sized opening.
+ * Shuffling ID labels independently of the physics preserves 3/37, 2/37
+ * and 1/37 initial odds. Saved seeds reproduce every actual collision/exit.
  */
 /** For new trades, NBA rules beginning with the 2027 Draft bar top-12, 13, 14 and 15 protection. */
 export function legalNew321PickProtection(draftSeason: number, topN: number | null | undefined): boolean {
@@ -20,6 +21,9 @@ export interface LotteryAttempt {
   ballId: number;
   teamId: string;
   accepted: boolean;
+  /** Reproducible independent physics run; absent for older saved lotteries. */
+  physicsSeed?: number;
+  exitFrame?: number;
   reason?: "consecutive-number-one" | "third-top-five" | "relegation-floor";
 }
 export interface PhysicalLotteryDraw {
@@ -78,17 +82,30 @@ export function draw321PhysicalUrn(args: {
     const urn = ballPool.filter(ball => remainingTeams.has(ball.teamId));
     const attempts: LotteryAttempt[] = [];
     let winner: LotteryBall | undefined;
-    // A rejected ball is RETURNED TO the urn; only a valid winner's full
-    // allotment is removed. Each attempted ball is sampled uniformly.
+    // No weighted RNG shortcut: the fixed-timestep chamber itself decides
+    // the extracted ball by collision/airflow and the narrow physical outlet.
+    // Rejected balls go back into the next run with all surviving team balls.
     for (let tryNumber = 0; tryNumber < 2048; tryNumber++) {
-      const sample = Math.min(urn.length - 1, Math.floor(random() * urn.length));
-      const ball = urn[sample]!;
+      let pulled: ReturnType<typeof simulateLotteryHoleExit> | undefined;
+      let physicsSeed = 0;
+      // Rare stalled chamber scenes are retried without assigning a winner.
+      for (let chamberTry = 0; chamberTry < 6 && !pulled; chamberTry++) {
+        physicsSeed = Math.floor(random() * 4294967296) >>> 0;
+        try { pulled = simulateLotteryHoleExit(urn, physicsSeed); }
+        catch (error) {
+          if (!(error instanceof Error) || !error.message.includes("failed to eject")) throw error;
+        }
+      }
+      if (!pulled) throw new Error("Lottery physical chamber could not eject a ball");
+      const ball = urn.find(x => x.id === pulled.ballId);
+      if (!ball) throw new Error("A lottery ball exited that was not in the chamber");
       const reason = reasonFor(ball.teamId);
       attempts.push({ ballId: ball.id, teamId: ball.teamId,
-        accepted: !reason, ...(reason ? { reason } : {}) });
+        accepted: !reason, physicsSeed, exitFrame: pulled.frame,
+        ...(reason ? { reason } : {}) });
       if (!reason) { winner = ball; break; }
     }
-    if (!winner) throw new Error("Lottery draw exceeded rejection-sampling safety limit");
+    if (!winner) throw new Error("Lottery draw exceeded physical retry safety limit");
     draws.push({
       teamId: winner.teamId,
       balls: [winner.id],
