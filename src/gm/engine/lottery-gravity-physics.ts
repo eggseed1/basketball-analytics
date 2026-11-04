@@ -39,7 +39,7 @@ export function createLotteryGravityScene(balls: readonly HoleBall[], seed: numb
   // Spatially separated positions, shuffled independently from ball IDs.
   const particles: HoleParticle[] = [];
   for (const ball of assigned) {
-    let x = c, y = c;
+    let x: number = c, y: number = c;
     for (let trial = 0; trial < 90; trial++) {
       const theta = random() * Math.PI * 2;
       const distance = Math.sqrt(random()) * (wall - r - 3);
