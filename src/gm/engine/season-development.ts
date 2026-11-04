@@ -7,6 +7,7 @@ import { coachEffect } from "@/gm/engine/staff";
 import { simulateGame } from "@/gm/engine/simulate";
 import { createRng, clamp } from "@/gm/engine/rng";
 import { flowOf } from "@/gm/engine/season-flow-state";
+import { evolveTendencies } from "@/gm/engine/tendency-development";
 
 export const CAMP_FOCUSES: ReadonlyArray<{ id: GmCampFocus; label: string; keys: Array<keyof GmAttributes> }> = [
   { id: "shooting", label: "Shooting", keys: ["threePoint", "midrange", "freeThrow"] },
@@ -143,7 +144,7 @@ export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
     if (soreness) strainedTeams.add(player.teamId!);
     const tradeoff = soreness ? "Camp soreness: out for one team game." : "Camp fatigue: 2% shooting penalty for the next two team games.";
     results.push({ playerId: player.id, name: player.name, before: sheet.overall, after: overall, focus: camp.id, gains, tradeoff });
-    return { ...player, campFatigueGames: soreness ? 0 : 2, injury: soreness ? { type: "Camp soreness", gamesRemaining: 1, reinjuryRisk: 0 } : player.injury, sheet: { ...sheet, attributes, overallOffset: offset, overall, priorOverall: sheet.overall } };
+    return { ...player, campFatigueGames: soreness ? 0 : 2, injury: soreness ? { type: "Camp soreness", gamesRemaining: 1, reinjuryRisk: 0 } : player.injury, sheet: { ...sheet, ...evolveTendencies(sheet, attributes, "camp", player.simProfile?.source === "nba"), attributes, overallOffset: offset, overall, priorOverall: sheet.overall } };
   });
   return { ...league, players, seasonFlow: { ...flow, campResults: results } };
 }

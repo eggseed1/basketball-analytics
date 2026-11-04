@@ -53,6 +53,7 @@ jobs:
       - run: npm run test:franchise-front-office-polish
       - run: npm run test:franchise-mentorship-open-path
       - run: npm run test:franchise-dynamic-progression
+      - run: npm run test:franchise-tendencies
       - run: npx tsx scripts/test-gm-open-development.ts
       - run: npm run test:franchise-calendar
       - run: npm run test:franchise-flow

@@ -30,6 +30,7 @@
     "test:franchise-front-office-polish": "tsx scripts/test-gm-front-office-polish.ts",
     "test:franchise-mentorship-open-path": "tsx scripts/test-gm-mentorship-open-path.ts",
     "test:franchise-dynamic-progression": "tsx scripts/test-gm-dynamic-progression.ts",
+    "test:franchise-tendencies": "tsx scripts/test-gm-tendencies.ts",
     "test:franchise-multiseason": "tsx scripts/test-gm-multiseason-progression.ts",
     "test:franchise-calendar": "tsx scripts/test-gm-calendar.ts",
     "test:franchise-flow": "tsx scripts/test-gm-season-journey.ts",

@@ -262,6 +262,8 @@ export interface GmSheet {
   /** Fractional gains/losses between visible progression steps. */
   progressionCarry?: number;
   developmentCarry?: number;
+  /** Fractional shifts in on-court habits earned alongside actual skill growth. */
+  tendencyCarry?: Partial<Record<keyof GmTendencies, number>>;
   developmentReport?: { age: number; before: number; after: number; reasons: string[]; gains: string[] };
   /** Entry calibration retained through development and save migrations. */
   overallOffset?: number;

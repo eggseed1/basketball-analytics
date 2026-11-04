@@ -8,6 +8,7 @@ import { clamp, createRng } from "@/gm/engine/rng";
 import { developmentSeed, workEthicOf } from "@/gm/engine/development";
 import { ATTRIBUTE_LABEL, ensurePlayerSheet, overallFromAttributes, simpleCategoryMeans } from "@/gm/engine/attributes";
 import { pathFromTrait } from "@/gm/engine/dev-traits";
+import { evolveTendencies } from "@/gm/engine/tendency-development";
 import {
   developmentProfileOf, developmentFocusSkill, developmentSkillKeys,
   softGrowthFactor,
@@ -161,7 +162,7 @@ function changeRating(player: GmPlayer, target: number, label: string, checkpoin
     ...old,
     ratings: rating,
     sheet: {
-      ...sheet, overall: target, attributes: attrs, overallOffset: offset,
+      ...sheet, ...evolveTendencies(sheet, attrs, checkpoint === "summer" ? "summer" : "season", old.simProfile?.source === "nba"), overall: target, attributes: attrs, overallOffset: offset,
       priorOverall: before, priorSimple: simpleCategoryMeans(sheet.attributes),
       developmentReport: { age: old.age, before, after: target,
         reasons: [label], gains: step ? [`Overall ${step > 0 ? "+" : ""}${step}`, ...skillGains] : ["Skill maintenance"] },
