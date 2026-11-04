@@ -100,6 +100,29 @@ export function simulationRates(player: GmPlayer): GmSimProfile["rates"] {
   }
   rates.ftPct = clamp(rates.ftPct + delta("freeThrow") * 0.004, 0.35, 0.98);
   rates.fga *= clamp(1 + (player.ratings.impact - profile.impact) * 0.025 + delta("ballHandle") * 0.002, 0.65, 1.4);
+  // The draft-day estimated profile has no real NBA usage history. Without a
+  // star-usage curve, a generated 92 OVR scorer keeps a 70 OVR rookie's shot
+  // volume indefinitely and cannot put up real superstar scoring totals.
+  // Reallocate *who* shoots, not team possessions or team-wide FGA. Real NBA
+  // players retain their evidence-based usage priors.
+  if (player.draftModel === 2) {
+    const overall = player.sheet?.overall ?? 70;
+    const skill = Math.max(attrs?.threePoint ?? 60, attrs?.midrange ?? 60,
+      attrs?.drivingLayup ?? 60, attrs?.closeShot ?? 60);
+    const starRole = clamp((overall - 78) / 17, 0, 1);
+    const scoringSkill = clamp((skill - 79) / 20, 0, 1);
+    const scoringImpact = clamp((player.ratings.offense - 2) / 8, 0, 1);
+    rates.fga *= 1 + 0.48 * starRole + 0.18 * scoringSkill + 0.10 * scoringImpact;
+    // A 70 OVR rookie can start with just 0.25 FGA/min. Multiplying that
+    // tiny entry prior forever still leaves a 90+ OVR scorer around 15 PPG.
+    // Real star-volume players need a FLOOR tied to their *current* scoring
+    // skill and role, not to the random amount they shot on draft night.
+    // Defense-first 90 OVR bigs receive less usage than elite shot creators.
+    const scorer = clamp((skill - 75) / 20, 0, 1);
+    const trainedFloor = 0.25 + clamp(overall - 72, 0, 25) * 0.019 *
+      (0.65 + 0.35 * scorer) + 0.04 * scoringImpact + 0.035 * scorer;
+    rates.fga = Math.max(rates.fga, trainedFloor);
+  }
   rates.ast *= clamp(1 + delta("passAccuracy") * 0.018, 0.4, 1.7);
   rates.orb *= clamp(1 + delta("offReb") * 0.018 + delta("strength") * 0.003, 0.4, 1.7);
   rates.drb *= clamp(1 + delta("defReb") * 0.015 + delta("strength") * 0.003, 0.4, 1.7);

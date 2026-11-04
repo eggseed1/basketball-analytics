@@ -16,9 +16,14 @@ export function developmentSeed(key: string): number {
 export function workEthicOf(player: GmPlayer): number {
   return clamp(player.workEthic ?? Math.round(40 + createRng(developmentSeed(player.id + ":work"))() * 55), 0, 100);
 }
+/** Either player's listed primary OR secondary position can establish a real fit. */
+export function mentorPositionsOverlap(young: GmPlayer, veteran: GmPlayer): boolean {
+  const roles = new Set([young.position, young.secondaryPosition].filter(Boolean));
+  return [veteran.position, veteran.secondaryPosition].some(position => position != null && roles.has(position));
+}
 export function mentorEligible(young: GmPlayer, veteran: GmPlayer): boolean {
   return young.id !== veteran.id && young.age <= 25 && veteran.age >= 28 && veteran.age >= young.age + 5 &&
-    Boolean(young.teamId && young.teamId === veteran.teamId && young.contract && veteran.contract) && young.position === veteran.position;
+    Boolean(young.teamId && young.teamId === veteran.teamId && young.contract && veteran.contract) && mentorPositionsOverlap(young, veteran);
 }
 export function activeMentor(player: GmPlayer, players: GmPlayer[]): GmPlayer | undefined {
   const veteran = players.find(row => row.id === player.mentorship?.mentorId);
@@ -104,7 +109,7 @@ export function assignMentor(league: GmLeagueState, playerId: string, mentorId: 
   const player = league.players.find(row => row.id === playerId && row.teamId === league.userTeamId);
   if (!player) return fail("Choose a player on your roster.");
   const veteran = mentorId ? league.players.find(row => row.id === mentorId) : undefined;
-  if (mentorId && (!veteran || !mentorEligible(player, veteran))) return fail("Choose a same-position teammate aged 28 or older, at least five years older than the young player.");
+  if (mentorId && (!veteran || !mentorEligible(player, veteran))) return fail("Choose a teammate sharing a primary or secondary position, aged 28 or older and at least five years older.");
   if (mentorId && league.players.some(row => row.id !== playerId && row.mentorship?.mentorId === mentorId && activeMentor(row, league.players))) return fail("That veteran already mentors a teammate.");
   if (player.mentorship?.mentorId === mentorId && player.mentorship?.teamId === player.teamId) return { ok: true, state: league, reason: "This mentorship is already active." };
   if (mentorId && activeTeamMentorships(player.teamId!, league.players) >= MAX_TEAM_MENTORSHIPS && !activeMentor(player, league.players)) return fail("Only two mentorships can be active at once. End an existing pairing first.");

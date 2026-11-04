@@ -12,6 +12,7 @@ const control = "min-h-11 w-full rounded-lg border border-border bg-background p
 
 export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; roster: GmPlayer[] }) {
   const assign = useGmStore(state => state.assignMentorshipSlot);
+  const note = useGmStore(state => state.lastDevelopmentNote);
   const [draftMentees, setDraftMentees] = useState<[string | null, string | null]>([null, null]);
   const slots = mentorshipSlots(league);
   const eligibleMentees = roster.filter(player => player.age <= 25);
@@ -22,12 +23,13 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <h2 className="text-lg font-bold">Mentorship</h2>
-        <p className="text-xs text-muted-foreground">Two pairs max. Experience and years of service matter more than OVR.</p>
+        <p className="text-xs text-muted-foreground">Two pairs max. Primary and secondary positions both count. Mentors must be 28+ and at least five years older.</p>
       </div>
       <span className="text-xs font-semibold text-muted-foreground">
         {slots.filter(Boolean).length}/2 active
       </span>
     </div>
+    {note ? <p role="status" className="text-xs text-muted-foreground">{note}</p> : null}
     <div className="grid gap-3 lg:grid-cols-2">
       {([0, 1] as const).map(slot => {
         const current = slots[slot];
@@ -113,7 +115,7 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
             {!mentee ? "Choose a mentee to get started." : current && current.id !== mentee.id
               ? "Choose a mentor to replace this pairing." : possibleMentors.length
                 ? "Choose a mentor to start learning badges and growing together."
-                : "No eligible veteran plays this position."}
+                : "No eligible veteran on this roster shares either listed position (age 28+, five years older, under contract)."}
           </p>}
         </article>;
       })}

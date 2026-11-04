@@ -248,6 +248,9 @@ export function GmPlayersTable() {
         <p className="mt-1 text-sm text-muted-foreground">
           {t("pagePlayersBlurb", { note: statNote })}
         </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Future-season DRBL/100 includes simulated player-impact estimates. WAR1 uses possessions played in this franchise. Estimated values are not published NBA DRBL ratings.
+        </p>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <input
@@ -331,8 +334,8 @@ export function GmPlayersTable() {
                 <td className="px-3 py-2">
                   <ClubMark teamId={row.player.teamId} label={row.club} />
                 </td>
-                <td className="px-3 py-2 tabular-nums">{valueNum(row.value.war1)}</td>
-                <td className="px-3 py-2 tabular-nums">{valueNum(row.value.drbl100)}</td>
+                <td className="px-3 py-2 tabular-nums" title={row.value.estimated ? "Franchise simulation estimate" : "Published NBA entry value"}>{valueNum(row.value.war1)}</td>
+                <td className="px-3 py-2 tabular-nums" title={row.value.estimated ? "Franchise simulation estimate" : "Published NBA entry value"}>{valueNum(row.value.drbl100)}</td>
                 <td className="px-3 py-2 tabular-nums">{row.sheet.overall}</td>
                 <td className="px-3 py-2 tabular-nums" title={row.scouted.comment}>
                   {row.scouted.low}-{row.scouted.high}

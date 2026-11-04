@@ -301,10 +301,10 @@ try {
     const pupil = club[0], veteran = club[1], secondPupil = club[2], secondVeteran = club[3];
     snapshot.league.players = snapshot.league.players.map(p => {
       const cleared = p.teamId === snapshot.league.userTeamId ? { ...p, mentorship: undefined } : p;
-      if (p.id === pupil.id) return { ...cleared, age: 21, position: "PG" };
-      if (p.id === veteran.id) return { ...cleared, age: 32, position: "PG", workEthic: 90 };
-      if (p.id === secondPupil.id) return { ...cleared, age: 22, position: "SG" };
-      if (p.id === secondVeteran.id) return { ...cleared, age: 34, position: "SG", workEthic: 88 };
+      if (p.id === pupil.id) return { ...cleared, age: 21, position: "PG", secondaryPosition: null };
+      if (p.id === veteran.id) return { ...cleared, age: 32, position: "SG", secondaryPosition: "PG", workEthic: 90 };
+      if (p.id === secondPupil.id) return { ...cleared, age: 22, position: "SF", secondaryPosition: "SG" };
+      if (p.id === secondVeteran.id) return { ...cleared, age: 34, position: "SG", secondaryPosition: null, workEthic: 88 };
       return cleared;
     });
     writeFileSync(`${dir}/development-ui.json`, JSON.stringify(snapshot));
@@ -320,6 +320,7 @@ try {
       assert.equal(await page.locator('[data-testid^="development-player-"]').count(), 0, "no individual player cards crowd the screen");
       await page.getByLabel("Mentorship 1 mentee", { exact: true }).selectOption(pupil.id);
       await page.getByLabel("Mentorship 1 mentor", { exact: true }).selectOption(veteran.id);
+      await page.getByTestId("mentorship-cards").getByRole("status").getByText(/will mentor/).waitFor();
       await page.getByLabel("Mentorship 2 mentee", { exact: true }).selectOption(secondPupil.id);
       await page.getByLabel("Mentorship 2 mentor", { exact: true }).selectOption(secondVeteran.id);
       assert.equal(await page.getByLabel("Mentorship 2 mentee", { exact: true }).inputValue(), secondPupil.id);

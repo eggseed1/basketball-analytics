@@ -6,7 +6,7 @@
 import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
-import { assignMentor, mentorshipBonus, recordDevelopmentMilestone, reviewPlayerDevelopment, workEthicOf } from "../src/gm/engine/development";
+import { assignMentor, mentorEligible, mentorPositionsOverlap, mentorshipBonus, recordDevelopmentMilestone, reviewPlayerDevelopment, workEthicOf } from "../src/gm/engine/development";
 import { developmentProfileOf, softGrowthFactor } from "../src/gm/engine/development-profile";
 import { advanceDynamicProgression } from "../src/gm/engine/dynamic-progression";
 import type { GmLeagueState, GmPlayer } from "../src/gm/types";
@@ -32,6 +32,15 @@ const league: GmLeagueState = {
   ...base, draftPool: [], players: [starter, veteran],
   schedule: base.schedule.map(g => ({ ...g, played: true })),
 };
+const secondaryVet: GmPlayer = { ...veteran, position: "SG", secondaryPosition: "PG" };
+assert.equal(mentorPositionsOverlap(starter, secondaryVet), true, "a mentor's secondary can match the mentee's primary");
+assert.equal(mentorEligible(starter, secondaryVet), true);
+const dualMentee: GmPlayer = { ...starter, position: "SG", secondaryPosition: "PG" };
+const purePoint: GmPlayer = { ...veteran, position: "PG", secondaryPosition: null };
+assert.equal(mentorEligible(dualMentee, purePoint), true, "the mentee's secondary can match the mentor's primary");
+assert.equal(mentorEligible({ ...dualMentee, position: "SF", secondaryPosition: null }, purePoint), false,
+  "unrelated roles should not be treated as interchangeable");
+assert.equal(mentorEligible(starter, { ...secondaryVet, age: 26 }), false, "young veterans still must meet mentor experience rules");
 const paired = assignMentor(league, starter.id, veteran.id);
 assert.equal(paired.ok, true);
 const learner = paired.state.players[0]!;
