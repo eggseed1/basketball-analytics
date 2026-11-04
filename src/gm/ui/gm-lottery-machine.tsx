@@ -43,7 +43,7 @@ export function GmLotteryMachine({
     draw: league.lotteryDraws?.[i],
   })), [league.draftOrder, league.lotteryOrder, league.draftSlotOrigins, league.lotteryDraws, size]);
 
-  const steps = useMemo<DrawStep[]>(() => (league.lotteryDraws ?? []).slice(0, classic ? 4 : size).flatMap((draw, i) => {
+  const steps = useMemo<DrawStep[]>(() => (league.lotteryDraws ?? []).slice(0, classic ? 4 : size).flatMap((draw, i): DrawStep[] => {
     if (classic) {
       // Four balls without replacement form a combination in the old system.
       return draw.balls.map((ballId, index) => ({
