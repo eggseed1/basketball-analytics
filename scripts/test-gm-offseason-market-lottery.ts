@@ -135,7 +135,10 @@ assert.ok(birdOffer,"CPU must actively pursue and agree with its own 92 OVR Bird
 assert.equal(birdOffer!.teamId,team.id);
 assert.ok(birdOffer!.salaryM>=askingSalary(star,market)*.9,
   "no elite talent signs at a wildly discounted early Bird rate");
-const signed=runFaPeriod({...market,faMarket:{...emptyFaMarket(52),stage:"moratorium",day:0}},19);
+// The standard guided flow intentionally stops when the user's manual FA
+// window changes; run this full-period simulation in delegated mode instead.
+const signed=runFaPeriod({...market,automation:{...market.automation,autoFreeAgency:true},
+  faMarket:{...emptyFaMarket(52),stage:"moratorium",day:0}},19);
 const hired=signed.players.find(p=>p.id===star.id);
 assert.ok(hired?.teamId != null || signed.faMarket?.pending.some(o=>o.playerId===star.id),
   "a legal elite Bird player should not vanish without a realistic bid");
