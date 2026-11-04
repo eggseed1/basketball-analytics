@@ -1556,8 +1556,7 @@ export const useGmStore = create<GmStore>()(
         const players = league.players.map((player) =>
           pool.has(player.id) ? applyCombine(player) : player
         );
-        set({
-          league: withUpdate({
+        const next = withUpdate({
             ...league,
             players,
             combineDone: true,
@@ -1572,8 +1571,9 @@ export const useGmStore = create<GmStore>()(
               },
               ...league.news,
             ].slice(0, 50),
-          }),
-        });
+          });
+        set({ league: next });
+        syncMyLeague(next);
       },
 
       scoutLook: (playerId) => get().scoutProspect(playerId,"film","shooting"),
