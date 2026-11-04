@@ -1790,6 +1790,7 @@ export const useGmStore = create<GmStore>()(
           playoffBracket: bracket,
           lotteryOrder,
           lotteryDraws: lottery.draws,
+          lotteryBallPool: lottery.ballPool,
           lotteryCount: lottery.lotteryCount,
           lotteryFormat: lottery.format,
           draftPickIndex: 0,
