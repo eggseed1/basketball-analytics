@@ -20,7 +20,7 @@ export function beginOffseason(state: GmLeagueState): GmLeagueState {
   if (!state.champion && state.phase !== "offseason") return state;
   const league = normalizeSeasonFlow(state);
   if (league.seasonFlow?.stage) return league;
-  return archiveSeason({ ...league, phase: "offseason", homeFlow: { ...league.homeFlow, awardsSeen: true, championSeen: true }, teamBuildingCheckpoint: undefined, checkpointSnooze: undefined, incomingOffer: undefined, scoutingFocusPrompt: undefined, seasonFlow: { version: 1, season: league.season, stage: "review", completed: [] } });
+  return archiveSeason({ ...league, phase: "offseason", tradeDeadlinePassed: false, homeFlow: { ...league.homeFlow, awardsSeen: true, championSeen: true }, teamBuildingCheckpoint: undefined, checkpointSnooze: undefined, incomingOffer: undefined, scoutingFocusPrompt: undefined, seasonFlow: { version: 1, season: league.season, stage: "review", completed: [] } });
 }
 
 function moveStage(league: GmLeagueState, stage: GmOffseasonStage): GmLeagueState {
