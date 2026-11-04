@@ -32,6 +32,10 @@ assert.deepEqual(changedPotential.badges,rookie.badges, "badges do not reveal or
 for (const b of BADGES) for (let rank = 1; rank <= 5; rank++) {
   const attrs = Object.fromEntries(Object.keys(attributes).map(k => [k,BADGE_REQUIREMENTS[rank]!])) as typeof attributes;
   const at = { ...player, sheet: { ...player.sheet!, attributes:attrs }, badges: { version: 1 as const, xp: { [b.id]: BADGE_XP[rank]! } } };
+  if (["aerial_assault","chase_down","explosive_first_step"].includes(b.id) && rank < 5) {
+    assert.equal(badgeCap(at,b.id),0, "unique athletic badges must require extraordinary physical traits");
+    continue;
+  }
   assert.equal(badgeCap(at,b.id),rank);
   assert.equal(badgeLevel(at,b.id),rank);
   assert.equal(badgeLevel({ ...at,badges:{version:1,xp:{[b.id]:BADGE_XP[rank]!-1}} },b.id),rank-1);
