@@ -44,6 +44,8 @@ jobs:
       - run: npm run test:franchise-postseason
       - run: npm run test:franchise-calibration
       - run: npm run test:franchise-badges
+      - run: npm run test:franchise-generated-identity
+      - run: npm run test:franchise-media
       - run: npm run test:franchise-development
       - run: npm run test:franchise-dynamic-progression
       - run: npx tsx scripts/test-gm-open-development.ts
