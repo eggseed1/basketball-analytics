@@ -423,6 +423,8 @@ export function applyTrade(
 
   const log: GmTradeProposal = {
     id: uid("tr"),
+    season: state.season,
+    day: state.day,
     fromTeamId: proposal.fromTeamId,
     toTeamId: proposal.toTeamId,
     fromAssets: proposal.fromAssets,
