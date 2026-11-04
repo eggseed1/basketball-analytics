@@ -15,6 +15,8 @@ type DrawStep = {
   accepted: boolean;
   collecting?: boolean;
   reason?: string;
+  physicsSeed?: number;
+  exitFrame?: number;
 };
 
 const labels: Record<string, string> = {
@@ -25,8 +27,8 @@ const labels: Record<string, string> = {
 
 /**
  * The animation never rerolls or shuffles the saved result. For 2027–29 the
- * engine has already sampled individually numbered balls from the 37-ball urn;
- * this ceremony plays every successful pull and restriction-driven redraw.
+ * engine has already resolved which numbered ball physically left the
+ * circular opening; this ceremony replays that exact seeded collision event.
  * Draws are shown in actual extraction order (#1 -> #16), not via envelopes.
  */
 export function GmLotteryMachine({
@@ -36,6 +38,10 @@ export function GmLotteryMachine({
   const size = Math.min(league.lotteryCount ?? (classic ? 14 : 16), league.teams.length);
   const physical = !classic && league.lotteryBallPool?.length === 37 &&
     league.lotteryDraws?.slice(0, size).every(d => (d.attempts?.length ?? 0) > 0);
+  const modernHole = Boolean(!classic && physical &&
+    league.lotteryDraws?.slice(0, size).every(draw =>
+      draw.attempts?.every(attempt =>
+        Number.isInteger(attempt.physicsSeed) && (attempt.exitFrame ?? 0) > 0)));
   const picks = useMemo(() => Array.from({ length: size }, (_, i) => ({
     pick: i + 1,
     owner: league.draftOrder?.[i] ?? league.lotteryOrder?.[i] ?? "",
@@ -51,12 +57,14 @@ export function GmLotteryMachine({
         collecting: index < draw.balls.length - 1,
       }));
     }
-    const attempts: Array<{ballId:number; teamId:string; accepted:boolean; reason?:string}> = draw.attempts?.length
+    const attempts: Array<{ballId:number; teamId:string; accepted:boolean; reason?:string;
+      physicsSeed?:number; exitFrame?:number}> = draw.attempts?.length
       ? draw.attempts
       : [{ ballId: draw.balls[0] ?? 1, teamId: draw.teamId, accepted: true }];
     return attempts.map(pull => ({
       pick: i + 1, ballId: pull.ballId, origin: pull.teamId,
       accepted: pull.accepted, reason: pull.reason,
+      physicsSeed: pull.physicsSeed, exitFrame: pull.exitFrame,
     }));
   }), [league.lotteryDraws, classic, size]);
 
@@ -75,6 +83,7 @@ export function GmLotteryMachine({
   const [step, setStep] = useState(() => initiallyDone ? steps.length : 0);
   const [phase, setPhase] = useState<Phase>(initiallyDone ? "complete" : "ready");
   const [auto, setAuto] = useState(true);
+  const [replayError, setReplayError] = useState<string | null>(null);
   const current = steps[step];
   const completed = steps.slice(0, step);
   const activePull = phase === "pulled" ? current : undefined;
@@ -102,11 +111,13 @@ export function GmLotteryMachine({
   };
 
   useEffect(() => {
-    if (phase !== "mixing") return;
+    if (phase !== "mixing" || modernHole) return;
+    // Historic 14-ball and archived 37-ball draws have no actual chamber
+    // history to replay, so retain the existing illustrative reveal pacing.
     const timer = window.setTimeout(() => setPhase("pulled"),
       step === 0 || (current?.pick ?? 0) <= 5 ? 1750 : 1150);
     return () => window.clearTimeout(timer);
-  }, [phase, step, current?.pick]);
+  }, [phase, step, current?.pick, modernHole]);
 
   useEffect(() => {
     if (phase !== "pulled" || !auto) return;
@@ -133,7 +144,7 @@ export function GmLotteryMachine({
   const announced = shown.filter(x => x.accepted).length;
   const originallyDrawn = activePull ? picks[activePull.pick - 1] : undefined;
   const lastBall = activePull?.ballId;
-  const legacy = !classic && !physical;
+  const legacy = !classic && !modernHole;
 
   return <div data-testid="gm-lottery-ceremony" className="overflow-hidden rounded-2xl border border-border bg-background">
     <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-4 py-6 text-white sm:px-7 sm:py-8">
@@ -145,13 +156,13 @@ export function GmLotteryMachine({
           <h3 className="mt-2 text-xl font-black tracking-tight sm:text-2xl">{headline}</h3>
           <p className="mt-2 text-xs text-slate-300">
             {classic ? "Historical 14 numbered balls · four-ball combinations for picks 1–4" :
-              "16 teams · 37 separately numbered physical balls · picks 1–16 pulled in order"}
+              "37 balls · one narrow exit · the ball that escapes determines each pick"}
           </p>
           {!classic && league.season >= 2030 ? <p className="mt-1 text-xs text-amber-200">
             Franchise Lab continues 2027–29 rules for 2030+ until the NBA approves a replacement.
           </p> : null}
           {legacy ? <p className="mt-1 text-xs text-amber-200">
-            Archived save: lottery results were fixed before numbered-ball records existed. Chamber is illustrative for this draft.
+            Archived save: this draw was decided before hole-physics replay existed. The chamber is illustrative; your fixed order is preserved.
           </p> : null}
         </div>
         <div className="rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-right text-xs">
@@ -169,6 +180,16 @@ export function GmLotteryMachine({
             removedBallIds={classic ? completed.filter(x => x.pick === current?.pick).map(x => x.ballId) : []}
             pullingId={activePull?.ballId}
             spinning={phase === "mixing"}
+            sceneSeed={modernHole ? current?.physicsSeed : undefined}
+            fast={(current?.pick ?? 0) > 5}
+            onExit={ballId => {
+              if (phase !== "mixing" || !modernHole) return;
+              if (ballId === current?.ballId) setPhase("pulled");
+              else {
+                setAuto(false);
+                setReplayError("The physical extraction does not match the saved ball. The draw has stopped to protect your saved order.");
+              }
+            }}
           />
           {activePull ? <div className="pointer-events-none absolute left-1/2 top-0 z-20 flex -translate-x-1/2 items-start">
             <div key={step} className="gm-lotto-eject flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-white via-cyan-100 to-sky-500 text-sm font-black text-slate-900 shadow-[0_6px_30px_rgba(125,211,252,.7)]">
@@ -191,15 +212,21 @@ export function GmLotteryMachine({
             <strong className="mt-3 text-xl">{classic ? "14-ball combinations" : "37 balls loaded in the drum"}</strong>
             <p className="mt-3 text-sm text-slate-300">
               {classic ? "Four different numbers determine a team. Repeated teams and unassigned combinations are redrawn." :
-                "Every ball has exactly one team owner. Each physical ball is equally likely to be extracted, and all of a winning team's remaining balls leave the chamber."}
+                "Identical balls collide inside the circle. After mixing, one ball-sized opening releases the winner. A fresh random arrangement protects every physical ball's equal chance."}
             </p>
-            <p className="mt-2 text-xs text-slate-400">Watch the actual saved draw, including ineligible-ball redraws.</p>
+            <p className="mt-2 text-xs text-slate-400">
+              {modernHole ? "The visible escape determines the saved pick. Invalid pulls are returned and redrawn." :
+                "This historical result remains unchanged by the animation."}
+            </p>
           </> : phase === "mixing" ? <>
             <span className="text-xs font-bold uppercase tracking-widest text-amber-300">
               {classic ? "Combination for pick #" : "Drawing pick #"}{current?.pick}
             </span>
             <strong className="mt-5 text-2xl">Balls in motion</strong>
-            <p className="mt-2 text-sm text-slate-300">Bouncing, colliding and swirling inside the air-powered chamber…</p>
+            <p className="mt-2 text-sm text-slate-300">
+              {modernHole ? "Real collisions determine which ball crosses the opening — no separate winner animation." :
+                "Bouncing, colliding and swirling inside the air-powered chamber…"}
+            </p>
             {current?.pick === 1 ? <p className="mt-2 text-xs text-sky-200">The next ball has not been revealed.</p> : null}
           </> : activePull ? <>
             <span className={"text-xs font-bold uppercase tracking-widest " +
@@ -233,13 +260,14 @@ export function GmLotteryMachine({
         </div>
       </div>
 
+      {replayError ? <p role="alert" className="mt-4 text-sm font-semibold text-rose-300">{replayError}</p> : null}
       <div className="mt-6 flex flex-wrap items-center gap-3">
         {phase === "ready" ? <Button data-testid="lottery-start" className="bg-amber-400 font-bold text-slate-950 hover:bg-amber-300"
           onClick={() => steps.length ? setPhase("mixing") : skip()}>Start ball draw</Button> : null}
         {phase === "pulled" && !auto ? <Button data-testid="lottery-next" onClick={advance}>
           {activePull?.accepted ? "Draw next pick" : "Draw next ball"}
         </Button> : null}
-        {phase !== "ready" && !done ? <Button variant="outline" className="border-white/30 bg-transparent text-white hover:text-white"
+        {phase !== "ready" && !done && !replayError ? <Button variant="outline" className="border-white/30 bg-transparent text-white hover:text-white"
           onClick={() => setAuto(x => !x)}>{auto ? "Pause auto draw" : "Resume auto draw"}</Button> : null}
         {!done ? <Button variant="ghost" className="text-slate-200 hover:text-white"
           data-testid="lottery-skip" onClick={skip}>Skip to final order</Button> : null}
@@ -272,7 +300,8 @@ export function GmLotteryMachine({
       </p> : null}
       {!classic ? <p className="mt-3 text-xs text-muted-foreground">
         Ball odds: 3/37 (8.1%), 2/37 (5.4%), or 1/37 (2.7%) before restrictions.
-        Relegated clubs are guaranteed a top-12 pick. Ineligible balls are returned and redrawn.
+        A fair shuffle gives every numbered ball an equal physical starting chance.
+        Relegated clubs are guaranteed a top-12 pick; ineligible balls are returned and redrawn.
       </p> : null}
       {!classic && pool.length === 37 ? <details className="mt-4 rounded-xl border border-border p-3" data-testid="lottery-ball-allotments">
         <summary className="cursor-pointer text-sm font-semibold">Verify all 37 ball assignments and opening odds</summary>
