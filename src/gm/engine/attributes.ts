@@ -23,7 +23,7 @@ import { softGrowthFactor, developmentProfileOf } from "@/gm/engine/development-
 export { productionOverallSpine } from "@/gm/engine/true-strength";
 
 /** Rebuild stored sheets when this changes. */
-export const SHEET_VERSION = 8;
+export const SHEET_VERSION = 9;
 
 export type SheetStatHint = {
   twoPct?: number;
@@ -94,6 +94,42 @@ function hashId(id: string): number {
 
 function band(value: number): number {
   return clamp(Math.round(Number.isFinite(value) ? value : 60), 25, 99);
+}
+
+/** Only fictional players get synthetic skill correlations. Published NBA
+ * ratings and their specialized shot diets must remain untouched. */
+function isGeneratedProfile(player: GmPlayer): boolean {
+  return player.draftModel === 2 || player.id.startsWith("prospect-") || player.id.startsWith("p_");
+}
+
+/** Shared fundamentals with room for real archetypes: 3-and-D wings need not
+ * be elite pull-up shooters; midrange specialists need not shoot threes.
+ * This repairs implausible extremes without flattening every player into the
+ * same all-around profile. Pure and idempotent for save migration. */
+export function bundleGeneratedAttributes(attributes: GmAttributes): GmAttributes {
+  const next = { ...attributes };
+  const minimum = (key: keyof GmAttributes, floor: number) => {
+    next[key] = Math.max(next[key], band(floor));
+  };
+  // 90 three -> at least 75 mid and 72 FT; 85 three -> ~70 mid.
+  if (next.threePoint >= 78) {
+    minimum("midrange", Math.round(next.threePoint * 0.85 - 2));
+    if (next.threePoint >= 84) minimum("freeThrow", Math.round(next.threePoint * 0.8));
+  }
+  // Elite touch from two-point range usually travels to the line, but does
+  // not force a DeRozan-style midrange specialist to become a deep shooter.
+  if (next.midrange >= 86) minimum("freeThrow", Math.round(next.midrange * 0.79));
+  // Handles and movement, explosive finishing and rebounding share real
+  // underlying skills, without making passing equal to ball handling.
+  if (next.ballHandle >= 84) minimum("speedWithBall", Math.round(next.ballHandle * 0.72 + 3));
+  if (next.drivingDunk >= 84) {
+    minimum("drivingLayup", Math.round(next.drivingDunk * 0.76));
+    minimum("vertical", Math.round(next.drivingDunk * 0.73));
+  }
+  if (next.standingDunk >= 85) minimum("closeShot", Math.round(next.standingDunk * 0.77));
+  if (next.offReb >= 85) minimum("defReb", next.offReb - 24);
+  if (next.defReb >= 88) minimum("offReb", next.defReb - 30);
+  return next;
 }
 
 /** Fractions (0.239) and percent points (23.9) both become percent points. */
@@ -461,7 +497,7 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
     return band(measured + jitter() * 0.35);
   };
 
-  const attributes: GmAttributes = {
+  const rolledAttributes: GmAttributes = {
     closeShot: rated(
       rimFinisher ? scale(fgPct!, [[0.6, 82], [0.7, 90], [0.8, 97]]) : undefined,
       anchor + (big ? 4 : 1) + finishNudge
@@ -516,6 +552,8 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
     vertical: band((big ? 67 : 72) - ageTax * 0.8 + jitter()),
     stamina: band(75 + bump(((hint?.mpg ?? 24) - 28) * 0.7, 10) - ageTax * 0.4),
   };
+  const attributes = isGeneratedProfile(player)
+    ? bundleGeneratedAttributes(rolledAttributes) : rolledAttributes;
 
   const overall = overallFromAttributes(position, attributes, {
     impact: ratings.impact,
@@ -676,11 +714,25 @@ export function sheetHint(player: GmPlayer, hint?: SheetStatHint): SheetStatHint
 export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
   const resolved = sheetHint(player, hint);
   if (player.sheet) {
-    // Reconcile trait floors (production / discourse) without rebuilding ratings.
+    // Keep the observed OVR, playing strength, saved potential, and development
+    // history unchanged. Existing generated saves get the correlated attribute
+    // correction once, then a recalibrated offset so the migration cannot
+    // manufacture (or erase) ability merely by loading the save.
+    const attributes = isGeneratedProfile(player)
+      ? bundleGeneratedAttributes(player.sheet.attributes) : player.sheet.attributes;
+    const changed = (Object.keys(attributes) as Array<keyof GmAttributes>)
+      .some(key => attributes[key] !== player.sheet!.attributes[key]);
+    const extras = {
+      impact: player.ratings.impact, offense: player.ratings.offense,
+      defense: player.ratings.defense,
+    };
     return {
       ...player.sheet,
       version: SHEET_VERSION,
-      overallOffset: player.sheet.overallOffset ?? player.sheet.overall - overallFromAttributes(player.position, player.sheet.attributes, { impact: player.ratings.impact, offense: player.ratings.offense, defense: player.ratings.defense }),
+      attributes,
+      overallOffset: changed
+        ? player.sheet.overall - overallFromAttributes(player.position, attributes, extras)
+        : player.sheet.overallOffset ?? player.sheet.overall - overallFromAttributes(player.position, player.sheet.attributes, extras),
       potential: ensurePotentialTrait(player.sheet.potential, player),
     };
   }
@@ -690,7 +742,27 @@ export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
 /** Older saves have no sheet, or a sheet from an earlier formula. */
 export function ensurePlayerSheet(player: GmPlayer): GmPlayer {
   if (player.sheet?.version === SHEET_VERSION) return player;
-  return { ...player, sheet: playerSheet(player) };
+  const sheet = playerSheet(player);
+  const old = player.sheet?.attributes;
+  const profile = player.simProfile;
+  // A saved generated player's estimated simulation profile is anchored to
+  // the attributes he had at entry. Move its baseline by the exact same
+  // migration delta, so the player keeps all earned development but does not
+  // get a free shooting/rebounding boost merely by loading an old save.
+  if (isGeneratedProfile(player) && old && profile && profile.source !== "nba") {
+    const baseline = { ...profile.baseline };
+    let changed = false;
+    for (const key of Object.keys(sheet.attributes) as Array<keyof GmAttributes>) {
+      const delta = sheet.attributes[key] - old[key];
+      if (delta === 0) continue;
+      baseline[key] = (baseline[key] ?? old[key]) + delta;
+      changed = true;
+    }
+    if (changed) return {
+      ...player, sheet, simProfile: { ...profile, baseline },
+    };
+  }
+  return { ...player, sheet };
 }
 
 function addKeys(

@@ -6,7 +6,7 @@ import { ensureDraftPickHorizon } from "@/gm/engine/draft-order";
 import type { GmFranchisePlan, GmLeagueState, GmPlayer, GmSeasonArchive } from "@/gm/types";
 import { sealProspect, staffScoutContext } from "@/gm/engine/scouting";
 import { clamp, createRng } from "@/gm/engine/rng";
-import { ensurePlayerSheet } from "@/gm/engine/attributes";
+import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
 import { ensureSimProfile, playerRoles } from "@/gm/engine/player-profile";
 import { withGeneratedPlayerIdentity } from "@/gm/lib/generated-player-identity";
 import { normalizeSeasonFlow } from "@/gm/engine/season-flow-state";
@@ -54,6 +54,34 @@ export function prepareFranchise(league: GmLeagueState): GmLeagueState {
     }),
   };
   const flow = repaired.seasonFlow;
+  // Older camp code compared an impact-only rating against a split O/D-based
+  // saved offset. Repair only directly documented camp losses in the current
+  // offseason, before a later progression checkpoint could have legitimately
+  // changed the player. Never boost someone based on historical reports alone.
+  if (repaired.phase === "offseason" &&
+      (flow?.stage === "training_camp" || flow?.stage === "roster_check") &&
+      flow.campResults?.some(row => row.after < row.before)) {
+    const bad = new Map(flow.campResults.filter(row => row.after < row.before)
+      .map(row => [row.playerId, row]));
+    const restored = repaired.players.map(player => {
+      const row = bad.get(player.id), sheet = player.sheet;
+      if (!row || !sheet || !player.teamId ||
+          sheet.overall !== row.after || sheet.priorOverall !== row.before) return player;
+      const extras = { impact: player.ratings.impact,
+        offense: player.ratings.offense, defense: player.ratings.defense };
+      return { ...player, sheet: { ...sheet,
+        overall: row.before,
+        overallOffset: row.before - overallFromAttributes(player.position, sheet.attributes, extras),
+      } };
+    });
+    const fixed = new Map(restored.filter((player, index) =>
+      player.sheet?.overall !== repaired.players[index]?.sheet?.overall)
+      .map(player => [player.id, player.sheet!.overall]));
+    if (fixed.size) return { ...repaired, players: restored, seasonFlow: { ...flow,
+      campResults: flow.campResults.map(row =>
+        fixed.has(row.playerId) ? { ...row, after: fixed.get(row.playerId)! } : row),
+    } };
+  }
   if (flow?.stage === "training_camp" && !flow.campResults && Object.keys(flow.campAssignments ?? {}).length > 2) {
     return { ...repaired, seasonFlow: { ...flow, campAssignments: Object.fromEntries(Object.entries(flow.campAssignments ?? {}).slice(0, 2)) } };
   }

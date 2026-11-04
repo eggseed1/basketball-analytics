@@ -49,6 +49,7 @@ jobs:
       - run: npm run test:franchise-generated-jersey
       - run: npm run test:franchise-media
       - run: npm run test:franchise-development
+      - run: npm run test:franchise-skill-bundles-camp
       - run: npm run test:franchise-front-office-polish
       - run: npm run test:franchise-mentorship-open-path
       - run: npm run test:franchise-dynamic-progression
