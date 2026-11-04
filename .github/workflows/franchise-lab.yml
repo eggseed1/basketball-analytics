@@ -26,7 +26,10 @@ concurrency:
 jobs:
   simulation:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    # The expanded lottery / market / development audit matrix needs more
+    # than 15 minutes under parallel CI load. Keep per-script timeouts in
+    # scripts/run-tests.mjs; this guards the entire sequential gameplay job.
+    timeout-minutes: 25
     env:
       NEXT_TELEMETRY_DISABLED: '1'
     steps:
