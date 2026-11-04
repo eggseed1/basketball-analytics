@@ -16,7 +16,7 @@ import { evaluateSigning } from "@/gm/engine/cap";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { defaultFaConfig, ensureFaMarket } from "@/gm/engine/fa-market-config";
 import { uid } from "@/gm/engine/rng";
-import { askingSalary, minimumCredibleSalaryRatio } from "@/gm/engine/free-agency-ask";
+import { credibleFreeAgentSalaryFloor } from "@/gm/engine/free-agency-ask";
 
 function applySign(
   state: GmLeagueState,
@@ -110,7 +110,7 @@ export function submitOfferSheet(
   }
   // An offer sheet is a contract the player actually agrees to sign, not a
   // no-risk bid. Elite RFAs must reject grossly under-market terms.
-  if (salaryM + 0.05 < askingSalary(player, state) * minimumCredibleSalaryRatio(player)) {
+  if (salaryM + 0.05 < credibleFreeAgentSalaryFloor(player, state)) {
     return { ok: false, reason: "He will not sign an offer sheet this far below his market value." };
   }
   const verdict = evaluateSigning(state, offeringTeamId, player, salaryM, years);
