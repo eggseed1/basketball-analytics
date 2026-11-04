@@ -5,6 +5,7 @@ import type {
   GmTeam,
 } from "@/gm/types";
 import { createRng, uid } from "@/gm/engine/rng";
+import { draw321PhysicalUrn, type LotteryAttempt, type LotteryBall } from "@/gm/engine/lottery-balls";
 
 export function emptyStandings(teams: GmTeam[]): Record<string, GmStandingsRow> {
   return Object.fromEntries(
@@ -159,8 +160,8 @@ export function betterRecord(state: GmLeagueState, a: string, b: string): string
  * simulated seasons rather than silently reverting to a less realistic shuffle.
  * Draws are deterministic from the season and completed standings, never a
  * new Math.random() roll on reload. */
-export type LotteryDraw = { teamId: string; balls: number[]; startingRank: number; oddsPct: number };
-export type LotteryResult = { order: string[]; draws: LotteryDraw[]; lotteryCount: number; format: "classic" | "321" };
+export type LotteryDraw = { teamId: string; balls: number[]; startingRank: number; oddsPct: number; attempts?: LotteryAttempt[] };
+export type LotteryResult = { order: string[]; draws: LotteryDraw[]; lotteryCount: number; format: "classic" | "321"; ballPool?: LotteryBall[] };
 
 function lotterySeed(state: GmLeagueState): number {
   const rows = Object.values(state.standings).sort((a,b) => a.teamId.localeCompare(b.teamId));
@@ -190,32 +191,27 @@ export function drawDraftLottery(state: GmLeagueState, playoffIds?: Set<string>)
     const relegated = new Set(overall.filter(id => nonPlayIn.has(id)).slice(0,3));
     const weight = (id: string) => relegated.has(id) ? 2 : nonPlayIn.has(id) ? 3 :
       playInTwo.has(id) ? 2 : 1;
-    const left = [...eligible];
-    const draws: LotteryDraw[] = [];
-    // Restriction follows each ORIGINAL club's selection, whether retained
-    // or traded. A team cannot repeat #1 or go top-five three drafts running.
+    // Each owned ball is a distinct 1-in-37 chance of being pulled first.
+    // The rejection trace is saved with the draft; the UI can replay the exact
+    // ball numbers and redraws without changing the order on reload.
     const prior = state.history?.find(y => y.season === state.season - 1)?.lotteryOrder ?? [];
     const beforePrior = state.history?.find(y => y.season === state.season - 2)?.lotteryOrder ?? [];
-    const repeatTopFive = new Set(prior.slice(0,5).filter(id => beforePrior.slice(0,5).includes(id)));
-    for (let slot=1; slot<=eligible.length; slot++) {
-      const forced = slot <= 12 && 13 - slot === left.filter(id => relegated.has(id)).length;
-      const candidates = forced ? left.filter(id => relegated.has(id)) : left;
-      const permitted = candidates.filter(id => !(slot === 1 && prior[0] === id) &&
-        !(slot <= 5 && repeatTopFive.has(id)));
-      // All standard 16-team seasons have enough candidates. If an imported
-      // archive is corrupt, finish the draft rather than leave the league stuck.
-      const pool = permitted.length ? permitted : candidates;
-      const total = pool.reduce((s,id) => s + weight(id),0);
-      let roll = rng()*total;
-      let winner = pool[pool.length-1]!;
-      for (const id of pool) { roll -= weight(id); if (roll < 0) { winner=id;break; } }
-      const startingRank = eligible.indexOf(winner)+1;
-      draws.push({teamId:winner,balls:[1+Math.floor(rng()*37)],startingRank,
-        oddsPct:Math.round(weight(winner)/37*1000)/10});
-      left.splice(left.indexOf(winner),1);
-    }
-    return {order:[...draws.map(x=>x.teamId),...overall.filter(id=>!eligible.includes(id))],
-      draws,lotteryCount:eligible.length,format:"321"};
+    const priorTopFive = new Set(prior.slice(0,5).filter(id => beforePrior.slice(0,5).includes(id)));
+    const result = draw321PhysicalUrn({
+      eligible,
+      weights: new Map(eligible.map(id => [id, weight(id)])),
+      relegated,
+      previousWinner: prior[0],
+      previousTopFive: priorTopFive,
+      random: rng,
+    });
+    return {
+      order: [...result.draws.map(draw => draw.teamId), ...overall.filter(id => !eligible.includes(id))],
+      draws: result.draws,
+      lotteryCount: eligible.length,
+      format: "321",
+      ballPool: result.ballPool,
+    };
   }
 
   const inPlayoffs = playoffIds ?? new Set([
