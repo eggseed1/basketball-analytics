@@ -1,4 +1,4 @@
-import { mentorshipBonus, reviewPlayerCeilings } from "@/gm/engine/development";
+import { mentorshipBonus, reviewPlayerDevelopment } from "@/gm/engine/development";
 import { developmentProfileOf } from "@/gm/engine/development-profile";
 import { draftScoutingOf } from "@/gm/engine/draft-intel";
 import { maybeCpuDraftTrade } from "@/gm/engine/draft-trades";
@@ -220,7 +220,7 @@ export function maybeGrowInSeason(league: GmLeagueState): GmLeagueState {
   for (const step of steps) {
     if (!step.reached || marks[step.id]) continue;
     if (step.id === "finale") {
-      const reviewed = reviewPlayerCeilings(next);
+      const reviewed = reviewPlayerDevelopment(next);
       notes.push(...reviewed.news.filter(row => !next.news.some(previous => previous.id === row.id)));
       next = reviewed;
     }
