@@ -138,7 +138,13 @@ export function suggestDraftTrade(
     ...group(row => row.asset.kind === "slot", 3),
     ...group(first, 4),
     ...group(row => row.asset.kind === "future" && !first(row), 2),
-    ...group(row => row.asset.kind === "player", 5),
+    // The user's draft desk can voluntarily offer established talent. CPU
+    // auto-trades should still default to picks and unsigned rookie rights,
+    // not spontaneously auction their best veterans for lottery positions.
+    ...group(row => row.asset.kind === "player" && (
+      fromTeamId === state.userTeamId || state.players.some(player =>
+        player.id === (row.asset as { id: string }).id && player.pendingRookieContract)
+    ), 5),
   ].sort(byValue);
   if (!pool.length) return null;
   const maxAssets = targetSlot < 14 ? 4 : 3;
