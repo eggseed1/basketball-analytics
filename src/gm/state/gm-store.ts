@@ -896,6 +896,21 @@ export const useGmStore = create<GmStore>()(
         set({ league: withUpdate({ ...league, teams }) });
       },
 
+      toggleSocialLike: (postId) => {
+        const league = get().league;
+        if (!league || !postId.startsWith("social:") || postId.length > 180) return;
+        const current = new Set(league.socialLikes ?? []);
+        if (current.has(postId)) current.delete(postId); else current.add(postId);
+        set({ league: withUpdate({ ...league, socialLikes: [...current].slice(-500) }) });
+      },
+      toggleSocialFollow: (accountId) => {
+        const league = get().league;
+        if (!league || !/^(fan:[a-z]{2,4}|[a-z]{3,12})$/.test(accountId)) return;
+        const current = new Set(league.socialFollowing ?? []);
+        if (current.has(accountId)) current.delete(accountId); else current.add(accountId);
+        set({ league: withUpdate({ ...league, socialFollowing: [...current].slice(0, 40) }) });
+      },
+
       setRotationMinutes: (playerId, minutes) => {
         const league = get().league;
         if (!league) return;
