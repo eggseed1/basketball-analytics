@@ -68,8 +68,32 @@ export function assignMentorshipSlot(league: GmLeagueState, slot: 0 | 1, menteeI
   };
 }
 
+/** Years in the league matter more than the current rating. Old NBA saves can
+ * lack an explicit service record, so approximate conservatively from age. */
+export function mentorServiceYears(player: GmPlayer): number {
+  return Math.max(0, Math.floor(player.serviceYears ?? Math.max(0, player.age - 20)));
+}
+
+export function mentorProfile(veteran: GmPlayer): {
+  quality: number; experience: number; service: number; age: number;
+  ability: number; professionalism: number; tier: "Exceptional" | "Strong" | "Solid" | "Developing";
+} {
+  const service = mentorServiceYears(veteran);
+  const experience = clamp(service / 15, 0, 1);
+  const age = clamp((veteran.age - 27) / 11, 0, 1);
+  const ability = clamp(((veteran.sheet?.overall ?? 70) - 65) / 30, 0, 1);
+  const professionalism = workEthicOf(veteran) / 100;
+  // 65% earned career experience/maturity, 20% playing excellence,
+  // 15% professional habits. An aging role player can out-teach a young star.
+  const quality = clamp(0.41 * experience + 0.24 * age +
+    0.20 * ability + 0.15 * professionalism, 0, 1);
+  const tier = quality >= 0.78 ? "Exceptional" :
+    quality >= 0.60 ? "Strong" : quality >= 0.40 ? "Solid" : "Developing";
+  return { quality, experience, service, age, ability, professionalism, tier };
+}
+
 export function mentorshipQuality(veteran: GmPlayer): number {
-  return clamp(((veteran.sheet?.overall ?? 60) - 55) / 40, 0, 1) * workEthicOf(veteran) / 100;
+  return mentorProfile(veteran).quality;
 }
 export function mentorshipBonus(player: GmPlayer, players: GmPlayer[]): number {
   const veteran = activeMentor(player, players);
