@@ -152,7 +152,9 @@ export function recordSimGame(
     // The former counter only checked the student and could award a rare
     // permanent discovery while the supposed mentor never entered a game.
     const mentor = player.mentorship ? activeMentor(player, players) : undefined;
-    if (player.mentorship && mentor && playedIds.has(mentor.id) && player.mentorship.lastGameId !== box.gameId) {
+    if (player.mentorship && mentor && box.players.some(row =>
+      row.playerId === mentor.id && row.teamId === player.teamId && row.minutes > 0
+    ) && player.mentorship.lastGameId !== box.gameId) {
       const previous = player.mentorship.season === box.season ? player.mentorship.sharedGames : 0;
       player = { ...player, mentorship: { ...player.mentorship, season: box.season, sharedGames: previous + 1, lastGameId: box.gameId } };
     }
