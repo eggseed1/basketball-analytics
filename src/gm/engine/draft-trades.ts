@@ -101,30 +101,84 @@ export function quoteDraftTrade(state:GmLeagueState, proposal:DraftTradeProposal
   const top=marketBoard(state).find(player=>state.draftPool.includes(player.id));
   if(top&&earliest<3) rationale.push("The leading consensus prospect is still on the board.");
   const headliner=Math.max(...selected[0]!.map(row=>row.points));
-  const credibleHeadliner=smallLeague||earliest>=14||headliner>=asking*(earliest<3?0.5:0.45);
+  // A real bundle of premium firsts can replace a lone headliner. Do not
+  // accept a mountain of seconds or minimum-contract bench players.
+  const premiumPicks = selected[0]!.filter(row =>
+    (row.asset.kind === "slot" || row.asset.kind === "future") && row.points >= asking * 0.19);
+  const credibleHeadliner = smallLeague || earliest >= 14 ||
+    headliner >= asking * (earliest < 3 ? 0.48 : 0.43) ||
+    (premiumPicks.length >= 2 && headliner >= asking * 0.31);
   const accepted=give+0.05>=asking&&credibleHeadliner;
   if(!credibleHeadliner)rationale.push("This lottery pick needs a stronger main asset; a stack of small assets does not replace it.");
   return {legal:true,accepted,reason:accepted?to.abbr+" is willing to make this deal.":to.abbr+" wants a stronger package. Add another useful asset or target a later pick.",give:Math.round(give*10)/10,get:Math.round(get*10)/10,asking:Math.round(asking*10)/10,rationale};
 }
 
-/** Search modest pick/rights packages. Never volunteer a veteran or an untouchable. */
-export function suggestDraftTrade(state:GmLeagueState, fromTeamId:string, toTeamId:string, targetSlot:number, targetPlayerId?:string):DraftTradeProposal|null {
-  if(pickOwner(state,targetSlot)!==toTeamId||targetSlot<(state.draftPickIndex??0)) return null;
-  const all=draftAssetCatalog(state,fromTeamId).filter(row=>{const asset=row.asset;return row.available && (asset.kind!=="slot"||asset.slot>targetSlot) && (asset.kind!=="player"||state.players.find(p=>p.id===asset.id)?.pendingRookieContract);});
-  const pool=[...all.filter(row=>row.asset.kind==="slot").slice(0,3),...all.filter(row=>row.asset.kind==="future"&&state.teams.flatMap(team=>team.draftPicks).find(pick=>pick.id===(row.asset as {id:string}).id)?.round===1).slice(0,5),...all.filter(row=>row.asset.kind==="future"&&state.teams.flatMap(team=>team.draftPicks).find(pick=>pick.id===(row.asset as {id:string}).id)?.round===2).slice(0,5),...all.filter(row=>row.asset.kind==="player").slice(0,2)];
-  let best:DraftTradeProposal|null=null, bestCost=Infinity;
-  const walk=(start:number,chosen:DraftAssetRow[],cost:number)=>{
-    if(cost>=bestCost) return;
-    if(chosen.length) {
-      const proposal:DraftTradeProposal={fromTeamId,toTeamId,clockIndex:state.draftPickIndex??0,send:chosen.map(row=>row.asset),receive:[{kind:"slot",slot:targetSlot}],targetPlayerId};
-      const quote=quoteDraftTrade(state,proposal);
-      if(quote.accepted){best=proposal;bestCost=cost;return;}
+/**
+ * Draft-night offers can be genuinely expensive, including a good player or
+ * several premium picks. Search a bounded legal set, never silently override
+ * an untouchable, a Stepien restriction, or salary rules.
+ *
+ * With allowCounter the UI receives the closest LEGAL starting package when
+ * no offer is yet accepted. CPU trades still require real acceptance.
+ */
+export function suggestDraftTrade(
+  state: GmLeagueState, fromTeamId: string, toTeamId: string,
+  targetSlot: number, targetPlayerId?: string,
+  options: { allowCounter?: boolean } = {},
+): DraftTradeProposal | null {
+  if (pickOwner(state, targetSlot) !== toTeamId || targetSlot < (state.draftPickIndex ?? 0)) return null;
+  const available = draftAssetCatalog(state, fromTeamId).filter(row =>
+    row.available && (row.asset.kind !== "slot" || row.asset.slot > targetSlot));
+  const first = (row: DraftAssetRow) => row.asset.kind === "future" &&
+    state.teams.flatMap(team => team.draftPicks).some(pick => pick.id === (row.asset as { id: string }).id && pick.round === 1);
+  const byValue = (a: DraftAssetRow, b: DraftAssetRow) => b.points - a.points || a.key.localeCompare(b.key);
+  const group = (predicate: (row: DraftAssetRow) => boolean, count: number) =>
+    available.filter(predicate).sort(byValue).slice(0, count);
+  const pool = [
+    ...group(row => row.asset.kind === "slot", 3),
+    ...group(first, 4),
+    ...group(row => row.asset.kind === "future" && !first(row), 2),
+    ...group(row => row.asset.kind === "player", 5),
+  ];
+  if (!pool.length) return null;
+  const maxAssets = targetSlot < 14 ? 4 : 3;
+  const expectedAsk = draftSlotTradePoints(targetSlot + 1) *
+    (targetSlot < 3 ? 1.2 : targetSlot < 14 ? 1.06 : 0.98) *
+    clamp(state.settings.tradeDifficulty ?? 1, 0.65, 1.6);
+  let best: DraftTradeProposal | null = null, bestCost = Infinity;
+  let fallback: DraftTradeProposal | null = null, fallbackRatio = 0;
+  let checks = 0;
+  const walk = (start: number, chosen: DraftAssetRow[]) => {
+    if (chosen.length) {
+      // Avoid building expensive salary/roster quotes for obviously worthless
+      // combinations. This bound is intentionally conservative.
+      const sorted = [...chosen].sort(byValue);
+      const rough = sorted.reduce((sum, row, i) => sum + row.points * ([1, 0.9, 0.72, 0.5][i] ?? 0.3), 0);
+      if (rough >= expectedAsk * (options.allowCounter ? 0.35 : 0.82)) {
+        const proposal: DraftTradeProposal = {
+          fromTeamId, toTeamId, clockIndex: state.draftPickIndex ?? 0,
+          send: chosen.map(row => row.asset), receive: [{ kind: "slot", slot: targetSlot }],
+          targetPlayerId,
+        };
+        const quote = quoteDraftTrade(state, proposal);
+        checks++;
+        if (quote.accepted) {
+          const cost = rough + chosen.filter(row => row.asset.kind === "player").length * 0.2;
+          if (cost < bestCost) { bestCost = cost; best = proposal; }
+        } else if (options.allowCounter && quote.legal && quote.asking > 0) {
+          const ratio = quote.give / quote.asking;
+          if (ratio > fallbackRatio && ratio >= 0.35) { fallbackRatio = ratio; fallback = proposal; }
+        }
+      }
     }
-    if(chosen.length>=3) return;
-    for(let index=start;index<pool.length;index++) walk(index+1,[...chosen,pool[index]!],cost+pool[index]!.points);
+    if (chosen.length >= maxAssets || checks >= 1800) return;
+    for (let index = start; index < pool.length; index++) {
+      if (checks >= 1800) break;
+      walk(index + 1, [...chosen, pool[index]!]);
+    }
   };
-  walk(0,[],0);
-  return best;
+  walk(0, []);
+  return best ?? (options.allowCounter ? fallback : null);
 }
 
 export function executeDraftTrade(state:GmLeagueState, proposal:DraftTradeProposal):{state:GmLeagueState;ok:boolean;reason:string} {

@@ -90,6 +90,18 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   const reserveState={...early,players:early.players.map(player=>player.id===reserve.id?reserve:player)};
   const reserveOffer={fromTeamId:"bos",toTeamId:lotteryOwner,clockIndex:0,send:[{kind:"player" as const,id:reserve.id}],receive:[{kind:"slot" as const,slot:9}]};
   assert.equal(quoteDraftTrade(reserveState,reserveOffer).accepted,false,"a cheap reserve cannot buy a lottery pick through a value-scale mismatch");
+  // In early lottery stages, a club willing to move a genuine young superstar
+  // can obtain a top selection. The assistant must consider player assets.
+  const star = {...expensive,age:24,position:"SG" as const,contract:{...expensive.contract!,annualSalaryM:1.5,yearsRemaining:4},
+    sheet:{...expensive.sheet!,overall:96}};
+  const bidLeague={...early,players:early.players.map(p=>p.id===star.id?star:p)};
+  const seller=bidLeague.draftOrder![0]!;
+  const tradeUp=suggestDraftTrade(bidLeague,"bos",seller,0,undefined,{allowCounter:true});
+  assert.ok(tradeUp, "a premium asset must produce an actionable top-pick package or a legal counteroffer");
+  const upQuote=quoteDraftTrade(bidLeague,tradeUp!);
+  assert.equal(upQuote.legal,true, "suggestions must always pass roster, salary, and Stepien rules");
+  assert.ok(tradeUp!.send.some(asset=>asset.kind==="player") || upQuote.accepted,
+    "the package finder should consider top players, not only three future picks");
   const rights={...reserve,contract:null,pendingRookieContract:rookieContractForPick(early,45),draftYear:early.season,draftPick:45};
   assert.equal(quoteDraftTrade({...early,players:early.players.map(player=>player.id===rights.id?rights:player)},reserveOffer).accepted,false,"selecting a second-rounder does not instantly turn his rights into a lottery asset");
 }
