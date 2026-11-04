@@ -25,6 +25,7 @@
     "audit:franchise-production-standings": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-production-standings.ts",
     "audit:franchise-five-year": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-continuous-five-year.ts",
     "test:franchise-badges": "tsx scripts/test-gm-badges.ts",
+    "test:franchise-offseason-market-lottery": "tsx scripts/test-gm-offseason-market-lottery.ts",
     "test:franchise-development": "tsx scripts/test-gm-development.ts",
     "test:franchise-skill-bundles-camp": "tsx scripts/test-gm-skill-bundles-camp.ts",
     "test:franchise-front-office-polish": "tsx scripts/test-gm-front-office-polish.ts",
