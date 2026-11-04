@@ -241,6 +241,7 @@ export function GmRosterBoard({ league }: { league: GmLeagueState }) {
       <div className="gm-club-panel gm-roster__panel overflow-x-auto">
         {view === "simple" ? (
           <SimpleTable
+            season={league.season}
             players={players}
             selectedId={selected?.id ?? null}
             onSelect={setSelectedId}
@@ -416,11 +417,13 @@ function Status({ label, value }: { label: string; value: string }) {
 }
 
 function SimpleTable({
+  season,
   players,
   selectedId,
   onSelect,
   scout,
 }: {
+  season: number;
   players: GmPlayer[];
   selectedId: string | null;
   onSelect: (id: string) => void;
@@ -449,7 +452,7 @@ function SimpleTable({
           const prior = sheet.priorSimple;
           const pot = scoutPotentialView(player, scout);
           const potGrade = ratingToLetter((pot.low + pot.high) / 2);
-          const outlook = player.draftModel === 2 ? developmentOutlook(player, league.season) : null;
+          const outlook = player.draftModel === 2 ? developmentOutlook(player, season) : null;
           return (
             <tr
               key={player.id}
