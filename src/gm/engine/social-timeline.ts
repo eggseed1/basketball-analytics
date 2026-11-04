@@ -85,9 +85,16 @@ function gameEvents(league: GmLeagueState): Event[] {
     const tripleDouble = Boolean(p && p.points >= 10 && p.assists >= 10 && p.rebounds >= 10);
     const rookie = hero ? league.players.find(player => player.id === p!.playerId &&
       player.draftYear === league.season - 1 && player.draftPick != null) : undefined;
+    // Build an actual ongoing storyline from the player's previous recorded appearance,
+    // never from a fabricated hot streak or an assumed box score.
+    const previous = p ? boxes
+      .filter(other => other.day < box.day && other.players.some(line => line.playerId === p.playerId))
+      .sort((a, b) => b.day - a.day)[0]?.players.find(line => line.playerId === p.playerId) : undefined;
+    const hotStreak = Boolean(p && p.points >= 35 && previous && previous.points >= 35);
     const decisive = league.playoffBracket?.find(series =>
       series.done && series.games?.at(-1)?.gameId === box.gameId);
     const special = decisive ? "Series-clinching night. " :
+      hotStreak ? "Another 35+ point night in consecutive recorded appearances. " :
       tripleDouble ? "Triple-double alert. " :
       p && p.tpm >= 9 ? "Nine-plus made threes. " : "";
     const key = "game:" + box.id;
@@ -102,6 +109,20 @@ function gameEvents(league: GmLeagueState): Event[] {
           "Someone check whether one person is legally allowed to score all those points and still lose.",
           "The plus-minus discourse is going to be unbearable after this.",
           "Box score looked like a one-person group project. Result looked like the group project.",
+        ])
+      : hero && p!.points >= 50
+      ? pick(key + "fifty", [
+          hero + " has " + p!.points + " and I am prepared to make basketball my entire personality.",
+          "Fifty-plus points. The scoreboard is going to request hazard pay.",
+          "We are going to need a separate box score just for " + hero + ".",
+          "I was told defense was allowed in this league. Someone should check.",
+        ])
+      : hotStreak
+      ? pick(key + "heater", [
+          "Another 35-piece? At some point the scouting report just says good luck.",
+          "This is becoming a weekly episode. The opponents keep renewing it.",
+          "The second explosion is somehow funnier than the first.",
+          "I have seen enough. It is an agenda now and I will not be taking questions.",
         ])
       : rookie && p!.points >= 30
       ? pick(key + "rookie", [
@@ -199,7 +220,8 @@ function newsEvents(league: GmLeagueState): Event[] {
     const category: SocialCategory = injury ? "injury" : draft ? "draft" :
       trade ? "trade" : awards ? "awards" : "news";
     // Omit generic trade news if actual detailed trade assets already exist.
-    if (item.headline === "Trade completed" && league.tradeLog.some(t => t.status === "accepted")) continue;
+    if (item.headline === "Trade completed" &&
+      league.tradeLog.some(t => t.status === "accepted" && t.season === item.season && t.day === item.day)) continue;
     const teamId = league.teams.find(t =>
       item.headline.toUpperCase().includes(t.abbr + " ") ||
       item.headline.toLowerCase().includes(t.city.toLowerCase())
@@ -240,10 +262,12 @@ function tradeEvents(league: GmLeagueState): Event[] {
     return "$" + (asset.cashM ?? 0) + "M cash";
   }
   for (const trade of league.tradeLog.slice(0, 40)) {
-    if (trade.status !== "accepted") continue;
+    // Old trade logs have no trustworthy date. Never present them as a
+    // breaking transaction in the current season merely because the save loaded.
+    if (trade.status !== "accepted" || !Number.isInteger(trade.season) || !Number.isInteger(trade.day)) continue;
     const assetsA = trade.fromAssets.map(label).join(", ") || "cap considerations";
     const assetsB = trade.toAssets.map(label).join(", ") || "cap considerations";
-    events.push({ key: "trade:" + trade.id, season: league.season, day: league.day,
+    events.push({ key: "trade:" + trade.id, season: trade.season!, day: trade.day!,
       category: "trade", teamId: trade.fromTeamId, href: "/gm/transactions", heat: 82,
       topic: abbr(league, trade.fromTeamId) + " and " + abbr(league, trade.toTeamId) + " complete a trade.",
       detail: abbr(league, trade.fromTeamId) + " sends " + assetsA + "; " +
