@@ -149,7 +149,7 @@ assert.ok(changed>0, "badge accuracy bonus changes actual simulated possessions"
 const maxed={...player,badges:{version:1 as const,xp:Object.fromEntries(BADGES.map(b=>[b.id,3200]))}};
 const effects=badgeEffects(maxed);
 assert.equal(effects.three,0.015);assert.equal(effects.two,0.025);assert.equal(effects.defense,0.005);
-assert.equal(effects.tov,0.91);assert.equal(effects.reb,1.125);
-assert.equal(effects.blk,1.2, "earned chase-down badges contribute a bounded additional block-rate modifier");
+assert.ok(Math.abs(effects.tov-0.91)<1e-9);assert.equal(effects.reb,1.125);
+assert.ok(Math.abs(effects.blk-1.2)<1e-9, "earned chase-down badges contribute a bounded additional block-rate modifier");
 assert.deepEqual(recordBadgeBox([player],box)[0]!.badges,first.badges);
 console.log("Badges passed: five levels, skill gates, signature migration, focus/mentor XP, replay guards, three seasons, save/reload, CPU parity, exhibitions, and possession effects.");
