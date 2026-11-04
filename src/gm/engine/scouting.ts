@@ -560,6 +560,8 @@ export function applyCombine(player: GmPlayer): GmPlayer {
         wingspanIn: wingspan,
         verticalIn: clamp(Math.round(26 + (vertical - 40) * 0.22), 24, 44),
         sprint: Math.round(clamp(3.45 - (speed - 70) * 0.007, 2.95, 3.75) * 100) / 100,
+        laneAgility: Math.round(clamp(11.7 - (agility - 70) * 0.028, 10.2, 13.2) * 100) / 100,
+        standingReachIn: clamp(Math.round(wingspan * .97), player.heightIn + 1, player.heightIn + 10),
       },
     },
   };
