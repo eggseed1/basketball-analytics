@@ -1,0 +1,36 @@
+name: Franchise generated identities
+on:
+  pull_request:
+    paths:
+      - 'src/gm/lib/generated-player-identity.ts'
+      - 'src/gm/lib/player-portrait-ids.ts'
+      - 'src/gm/ui/gm-generated-portrait.tsx'
+      - 'src/gm/ui/gm-player-portrait.tsx'
+      - 'src/gm/ui/gm-prospect-file.tsx'
+      - 'src/gm/ui/gm-player-card.tsx'
+      - 'src/gm/seed/prospect-identities.ts'
+      - 'src/gm/seed/create-league.ts'
+      - 'src/gm/engine/franchise.ts'
+      - 'src/gm/types.ts'
+      - 'scripts/test-gm-generated-identity.ts'
+      - 'package.json'
+      - '.github/workflows/franchise-generated-identity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  portraits-and-names:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:franchise-generated-identity
+      - run: npm run test:franchise-media
