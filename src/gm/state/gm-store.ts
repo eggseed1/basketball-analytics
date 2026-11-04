@@ -418,7 +418,7 @@ function withCreationSettings(league: GmLeagueState, opts?: CreationOptions): Gm
 }
 
 function withUpdate(league: GmLeagueState): GmLeagueState {
-  return { ...league, updatedAt: new Date().toISOString() };
+  return syncSocialTimeline({ ...league, updatedAt: new Date().toISOString() });
 }
 
 function syncMyLeague(league: GmLeagueState) {
