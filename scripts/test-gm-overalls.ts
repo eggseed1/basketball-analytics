@@ -72,7 +72,7 @@ function teamNet(team: GmTeam, players: GmPlayer[]): number {
 }
 
 async function main() {
-  assert.equal(SHEET_VERSION, 8);
+  assert.equal(SHEET_VERSION, 9);
   assert.ok(Math.abs(overallToImpact(impactToOverall(5.1)) - 5.1) < 0.05);
 
   const { league } = await createRealSeasonLeague({ userTeamId: "bos" });
