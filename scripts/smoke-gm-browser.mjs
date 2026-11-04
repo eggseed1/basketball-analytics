@@ -222,8 +222,28 @@ try {
   assert.ok(Math.abs(Number(await extensionSlider.inputValue()) - manifest.ask) < .08, "extension salary should start at asking price");
   assert.ok(Number(await extensionSlider.getAttribute("max")) >= manifest.ask, "salary slider respects legal max");
   await page.getByRole("slider", { name: "Contract length", exact: true }).waitFor();
+  const extensionInterestBefore = await page.getByRole("img", { name: /Offer interest:/ }).getAttribute("aria-label");
+  const lengthSlider = page.getByRole("slider", { name: "Contract length", exact: true });
+  if (Number(await lengthSlider.inputValue()) < Number(await lengthSlider.getAttribute("max"))) {
+    await lengthSlider.focus();
+    await lengthSlider.press("ArrowRight");
+    const extensionInterestAfter = await page.getByRole("img", { name: /Offer interest:/ }).getAttribute("aria-label");
+    assert.ok(Number(extensionInterestAfter?.match(/\d+/)?.[0] ?? 0) >
+      Number(extensionInterestBefore?.match(/\d+/)?.[0] ?? 0),
+      "adding a guaranteed year should improve extension interest");
+    await lengthSlider.press("ArrowLeft");
+  }
   await page.getByRole("button", { name: "Offer extension", exact: true }).click();
   await page.getByRole("status").filter({ hasText: /signed 3 added years/ }).waitFor();
+  const signing = page.getByTestId("gm-contract-signed");
+  await signing.waitFor();
+  assert.equal(await signing.locator(".gm-sign-confetti").count(), 66,
+    "confirmed contract shows team-color confetti");
+  assert.ok(await signing.getByLabel(manifest.playerName + " fictional signature").isVisible(),
+    "signing card must draw the fictional player signature");
+  await page.screenshot({ path: `${dir}/contract-signing-mobile.png`, animations: "disabled" });
+  await signing.getByRole("button", { name: "Continue franchise" }).click();
+  assert.equal(await signing.count(), 0);
   await page.reload();
   await page.getByRole("link", { name: "Back to contracts" }).first().click();
   await page.getByText(/Extended: 3 added years/).waitFor();
@@ -248,6 +268,8 @@ try {
   await faSlider.press("End");
   await page.getByRole("button", { name: "Request verbal agreement", exact: true }).click();
   await page.getByRole("status").filter({ hasText: /Verbal agreement with/ }).waitFor();
+  assert.equal(await page.getByTestId("gm-contract-signed").count(), 0,
+    "a verbal agreement must not trigger signed-contract celebrations");
   await page.reload();
   await page.getByText(/A verbal agreement is on record with/).waitFor();
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2),
