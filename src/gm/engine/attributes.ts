@@ -17,6 +17,7 @@ import {
 } from "@/gm/engine/dev-traits";
 import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
 import { ensureSimProfile } from "@/gm/engine/player-profile";
+import { evolveTendencies } from "@/gm/engine/tendency-development";
 import { impactToOverall, netStrength } from "@/gm/engine/true-strength";
 import { softGrowthFactor, developmentProfileOf } from "@/gm/engine/development-profile";
 
@@ -865,7 +866,7 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   if(gap<=2) reasons.push("Limited headroom slows further gains");
   else reasons.push(age<=23?"Young player with skills still to develop":"Growth slows as the player approaches his prime");
   if(!steps&&gap>2) reasons.push("Small gains accumulate between reports");
-  return {...player,...(openPath?{developmentProfile:developmentProfileOf(player)}:{}),sheet:{...sheet,attributes,overall,overallOffset:offset,priorOverall:sheet.overall,priorSimple:simpleCategoryMeans(sheet.attributes),developmentCarry:carry,developmentReport:{age,before:sheet.overall,after:overall,reasons,gains}},ratings:{...player.ratings,impact,offense:Math.round((player.ratings.offense+delta*offenseShare)*100)/100,defense:Math.round((player.ratings.defense+delta*(1-offenseShare))*100)/100}};
+  return {...player,...(openPath?{developmentProfile:developmentProfileOf(player)}:{}),sheet:{...sheet,...evolveTendencies(sheet,attributes,opts.pace==="season"?"season":"summer",player.simProfile?.source==="nba"),attributes,overall,overallOffset:offset,priorOverall:sheet.overall,priorSimple:simpleCategoryMeans(sheet.attributes),developmentCarry:carry,developmentReport:{age,before:sheet.overall,after:overall,reasons,gains}},ratings:{...player.ratings,impact,offense:Math.round((player.ratings.offense+delta*offenseShare)*100)/100,defense:Math.round((player.ratings.defense+delta*(1-offenseShare))*100)/100}};
 }
 
 /** One offseason. Age on the player is the age they just turned. */
@@ -1006,6 +1007,7 @@ export function progressSheet(
       ...sheet,
       overall,
       overallOffset,
+      ...evolveTendencies(sheet, attributes, opts?.pace === "season" ? "season" : "summer", player.simProfile?.source === "nba"),
       attributes,
       priorOverall: sheet.overall,
       priorSimple: simpleCategoryMeans(sheet.attributes),

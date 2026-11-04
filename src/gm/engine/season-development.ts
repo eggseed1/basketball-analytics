@@ -7,6 +7,9 @@ import { coachEffect } from "@/gm/engine/staff";
 import { simulateGame } from "@/gm/engine/simulate";
 import { createRng, clamp } from "@/gm/engine/rng";
 import { flowOf } from "@/gm/engine/season-flow-state";
+import { evolveTendencies } from "@/gm/engine/tendency-development";
+import { BADGES, BADGE_XP, badgeCap, badgeLevel } from "@/gm/engine/badges";
+import type { GmBadgeId } from "@/gm/types";
 
 export const CAMP_FOCUSES: ReadonlyArray<{ id: GmCampFocus; label: string; keys: Array<keyof GmAttributes> }> = [
   { id: "shooting", label: "Shooting", keys: ["threePoint", "midrange", "freeThrow"] },
@@ -36,8 +39,10 @@ export function applySeasonProgression(league: GmLeagueState): GmLeagueState {
   }) } };
 }
 
-export function campSorenessRisk(league: GmLeagueState): number {
-  return 0.06 * clamp(league.settings.injuryFrequency ?? 1, 0, 2);
+export function campSorenessRisk(league: GmLeagueState, focus?: GmCampFocus): number {
+  // Conditioning is lower-intensity recovery work. Every other specialty
+  // still carries the established small short-term training tradeoff.
+  return (focus === "conditioning" ? 0.02 : 0.06) * clamp(league.settings.injuryFrequency ?? 1, 0, 2);
 }
 
 export function campSlots(league: GmLeagueState, teamId = league.userTeamId): number {
@@ -64,13 +69,63 @@ export function campSkillChanges(league: GmLeagueState, player: GmPlayer, focus:
   const camp = CAMP_FOCUSES.find(row => row.id === focus);
   const attributes = ensurePlayerSheet(player).sheet!.attributes;
   const trainer = league.teams.find(team => team.id === player.teamId)?.staff.trainerLevel ?? 1;
-  const gain = player.age <= 25 && trainer >= 3 ? 2 : 1;
+  const overall = overallOf(player);
+  // Camps teach a primary skill and supporting fundamentals. Young prospects
+  // get the most from concentrated reps; strong veterans improve more slowly.
+  // Coaches cannot push an already elite attribute up four points per summer.
+  const base = player.age <= 23 ? 3 : player.age <= 29 ? 2 : 1;
+  const primary = clamp(base + (trainer >= 3 ? 1 : 0) - (overall >= 88 ? 1 : 0), 1, 4);
   const keys: Array<keyof GmAttributes> = focus === "finishing"
     ? player.position === "C" || player.position === "PF"
       ? ["closeShot", "standingDunk", "postControl"]
       : ["drivingLayup", "closeShot", "drivingDunk"]
     : (camp?.keys ?? []);
-  return keys.map(key => ({ key, before: attributes[key], after: clamp(attributes[key] + gain, 25, 99) }));
+  return keys.map((key, index) => {
+    const before = attributes[key];
+    const desired = Math.max(1, primary - Math.min(2, index));
+    const skillCap = before >= 92 ? 1 : before >= 85 ? 1 : before >= 78 ? 2 : 4;
+    return { key, before, after: clamp(before + Math.min(desired, skillCap), 25, 99) };
+  });
+}
+
+const CAMP_BADGES: Partial<Record<GmCampFocus, GmBadgeId[]>> = {
+  shooting: ["deep_range", "free_throw", "clutch_scorer"],
+  creation: ["floor_general", "secure_handle"],
+  finishing: ["inside_touch"],
+  defense: ["passing_lanes", "rim_guardian", "defensive_anchor"],
+  rebounding: ["glass_cleaner"],
+};
+
+/** Preview and apply exactly the same attribute-gated badge practice. */
+export function campBadgePractice(league: GmLeagueState, player: GmPlayer, focus: GmCampFocus): { player: GmPlayer; gains: string[] } {
+  const choices = CAMP_BADGES[focus] ?? [];
+  if (!choices.length) return { player, gains: [] };
+  const sheet = ensurePlayerSheet(player).sheet!;
+  const attrs = { ...sheet.attributes };
+  for (const { key, after } of campSkillChanges(league, player, focus)) attrs[key] = after;
+  const projected: GmPlayer = { ...player, sheet: { ...sheet, attributes: attrs } };
+  const xp = { ...(player.badges?.xp ?? {}) };
+  const trainer = league.teams.find(team => team.id === player.teamId)?.staff.trainerLevel ?? 1;
+  const gains: string[] = [];
+  const eligible = choices.filter(id => badgeCap(projected, id) > 0 &&
+    (xp[id] ?? 0) < BADGE_XP[badgeCap(projected, id)]!);
+  for (const [index, id] of eligible.slice(0, 2).entries()) {
+    const cap = BADGE_XP[badgeCap(projected, id)]!;
+    const starting = xp[id] ?? 0;
+    // Primary badge can reach Bronze with real skill eligibility; additional
+    // levels still take seasons of games or multiple camps to master.
+    const amount = (index === 0 ? 120 : 55) + (trainer >= 4 ? 10 : 0);
+    xp[id] = Math.round(Math.min(cap, starting + amount) * 10) / 10;
+    const after: GmPlayer = { ...projected, badges: { ...player.badges, version: player.badges?.version ?? 2, xp } };
+    const levelBefore = badgeLevel(player, id);
+    const levelAfter = badgeLevel(after, id);
+    const label = BADGES.find(b => b.id === id)!.name;
+    gains.push(label + " +" + (xp[id]! - starting) + " XP" +
+      (levelAfter > levelBefore ? " (level " + levelAfter + " unlocked)" : ""));
+  }
+  return gains.length
+    ? { player: { ...player, badges: { ...player.badges, version: player.badges?.version ?? 2, xp } }, gains }
+    : { player, gains };
 }
 
 export function suggestCampAssignments(league: GmLeagueState): { state: GmLeagueState; ok: boolean; reason: string } {
@@ -131,19 +186,37 @@ export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
       offense: player.ratings.offense,
       defense: player.ratings.defense,
     };
+    const earnedSkills = gains.reduce((total, gain) => total + Number(gain.split(" +")[1] ?? 0), 0);
+    // Real skill work also produces a small amount of on-court impact.
+    // Without this, an entire meaningful camp often shows 0 OVR because
+    // attributes are intentionally only 10% of the composite player rating.
+    // Restrict the boost to developing players, not elite veteran farming.
+    const trainingImpact = earnedSkills >= 4 && player.age <= 27 && sheet.overall < 85
+      ? (earnedSkills >= 8 && player.age <= 21 ? 0.32 : 0.22) : 0;
+    const attackShare = camp.id === "defense" ? 0.18 : camp.id === "rebounding" || camp.id === "conditioning" ? 0.45 : 0.82;
+    const ratings = trainingImpact > 0 ? {
+      ...player.ratings,
+      impact: clamp(Math.round((player.ratings.impact + trainingImpact) * 100) / 100, -4, 10),
+      offense: clamp(Math.round((player.ratings.offense + trainingImpact * attackShare) * 100) / 100, -5, 12),
+      defense: clamp(Math.round((player.ratings.defense + trainingImpact * (1 - attackShare)) * 100) / 100, -5, 10),
+    } : player.ratings;
+    const nextExtras = { impact: ratings.impact, offense: ratings.offense, defense: ratings.defense };
     const beforeRating = overallFromAttributes(player.position, sheet.attributes, extras);
-    const afterRating = overallFromAttributes(player.position, attributes, extras);
-    const overall = clamp(sheet.overall + Math.max(0, afterRating - beforeRating), 25, 99);
+    const afterRating = overallFromAttributes(player.position, attributes, nextExtras);
+    const earnedOverall = Math.max(0, afterRating - beforeRating);
+    const overall = clamp(sheet.overall + Math.min(2, Math.max(earnedOverall, trainingImpact > 0 ? 1 : 0)), 25, 99);
+    const practice = campBadgePractice(league, player, camp.id);
     // Preserve the new overall across subsequent development/save cycles:
     // the latent strength hasn't changed just because someone attended camp.
     const offset = overall - afterRating;
     const rng = createRng(developmentSeed(player.id + ":camp:" + league.season));
     const healthy = league.players.filter(row => row.teamId === player.teamId && row.contract && !row.injury).length;
-    const soreness = rng() < campSorenessRisk(league) && healthy >= 6 && !strainedTeams.has(player.teamId!);
+    const soreness = rng() < campSorenessRisk(league, camp.id) && healthy >= 6 && !strainedTeams.has(player.teamId!);
     if (soreness) strainedTeams.add(player.teamId!);
-    const tradeoff = soreness ? "Camp soreness: out for one team game." : "Camp fatigue: 2% shooting penalty for the next two team games.";
-    results.push({ playerId: player.id, name: player.name, before: sheet.overall, after: overall, focus: camp.id, gains, tradeoff });
-    return { ...player, campFatigueGames: soreness ? 0 : 2, injury: soreness ? { type: "Camp soreness", gamesRemaining: 1, reinjuryRisk: 0 } : player.injury, sheet: { ...sheet, attributes, overallOffset: offset, overall, priorOverall: sheet.overall } };
+    const tradeoff = soreness ? "Camp soreness: out for one team game." : camp.id === "conditioning"
+      ? "Conditioning: no opening-night fatigue." : "Camp fatigue: 2% shooting penalty for the next two team games.";
+    results.push({ playerId: player.id, name: player.name, before: sheet.overall, after: overall, focus: camp.id, gains, badgeGains: practice.gains, tradeoff });
+    return { ...practice.player, ratings, campFatigueGames: soreness || camp.id === "conditioning" ? 0 : 2, injury: soreness ? { type: "Camp soreness", gamesRemaining: 1, reinjuryRisk: 0 } : player.injury, sheet: { ...sheet, ...evolveTendencies(sheet, attributes, "camp", player.simProfile?.source === "nba"), attributes, overallOffset: offset, overall, priorOverall: sheet.overall } };
   });
   return { ...league, players, seasonFlow: { ...flow, campResults: results } };
 }

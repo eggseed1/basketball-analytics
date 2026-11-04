@@ -25,6 +25,7 @@ import type {
 import { createGeneratedLeague } from "@/gm/seed/create-league";
 import { simulateGame, actualShiftSnapshot } from "@/gm/engine/simulate";
 import { ensurePlayerSheet } from "@/gm/engine/attributes";
+import { evolveTendencies } from "@/gm/engine/tendency-development";
 import { applyRookieRatings } from "@/gm/engine/rookie-ratings";
 import { applyRealBooks } from "@/gm/seed/real-books";
 import {
@@ -588,7 +589,7 @@ export const useGmStore = create<GmStore>()(
           if (p.id !== playerId || !p.sheet || !(attribute in p.sheet.attributes)) return p;
           const attributes = { ...p.sheet.attributes, [attribute]: clamp(Math.round(value), 25, 99) };
           const overall = clamp(overallFromAttributes(p.position, attributes, { impact: p.ratings.impact, offense: p.ratings.offense, defense: p.ratings.defense }) + (p.sheet.overallOffset ?? 0), 25, 99);
-          return { ...p, sheet: { ...p.sheet, attributes, overall } };
+          return { ...p, sheet: { ...p.sheet, ...evolveTendencies(p.sheet, attributes, "commissioner", p.simProfile?.source === "nba"), attributes, overall } };
         });
         set({ league: withUpdate({ ...league, players }) });
       },
