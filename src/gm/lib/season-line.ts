@@ -148,7 +148,11 @@ export function recordSimGame(
     }
     if (!playedIds.has(player.id)) return player;
     if (player.developmentBaseline?.season !== box.season) player = { ...player, developmentBaseline: { season: box.season, overall: player.sheet?.overall ?? 70 } };
-    if (player.mentorship && activeMentor(player, players) && player.mentorship.lastGameId !== box.gameId) {
+    // An actual shared appearance requires the mentor to play as well.
+    // The former counter only checked the student and could award a rare
+    // permanent discovery while the supposed mentor never entered a game.
+    const mentor = player.mentorship ? activeMentor(player, players) : undefined;
+    if (player.mentorship && mentor && playedIds.has(mentor.id) && player.mentorship.lastGameId !== box.gameId) {
       const previous = player.mentorship.season === box.season ? player.mentorship.sharedGames : 0;
       player = { ...player, mentorship: { ...player.mentorship, season: box.season, sharedGames: previous + 1, lastGameId: box.gameId } };
     }
