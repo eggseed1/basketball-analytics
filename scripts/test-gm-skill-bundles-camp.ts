@@ -136,6 +136,10 @@ for (const focus of CAMP_FOCUSES.map(entry => entry.id)) {
   const trainedLeague = applyTrainingCamp(selected.state);
   const trained = trainedLeague.players.find(p => p.id === base.id)!;
   const result = trainedLeague.seasonFlow!.campResults!.find(row => row.playerId === base.id)!;
+  assert.ok(result.after >= result.before + 1 && result.after <= result.before + 2,
+    "a strong young prospect camp makes a visible but bounded overall gain");
+  assert.ok(trained.ratings.impact > rookie.ratings.impact,
+    "the camp improvement must reflect real on-court ability, not a cosmetic OVR bump");
   assert.ok((result.badgeGains?.length ?? 0) > 0, "skill-specific camps provide badge practice");
   assert.ok((trained.badges?.xp.deep_range ?? 0) > 0, "badge practice is persisted");
   assert.ok(trained.sheet!.tendencies.shootThree >= rookie.sheet!.tendencies.shootThree,
