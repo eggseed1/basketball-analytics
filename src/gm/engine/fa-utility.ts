@@ -84,9 +84,9 @@ function financialUtility(
   const firstYear = clamp((salaryM / Math.max(0.5, ask)) * 55, 0, 100);
   const term = clamp((years / Math.max(1, askY)) * 35, 0, 55);
   const guarantee = clamp(years * 8, 0, 40);
-  // Longer deals are not automatically better than a strong short deal.
-  const stretchPenalty = years > askY + 1 ? (years - askY) * 4 : 0;
-  return clamp(firstYear * 0.55 + term * 0.25 + guarantee * 0.2 - stretchPenalty, 0, 100);
+  // Longer guaranteed contracts add security with diminishing gains, never a
+  // negative step in offer interest when the user adds a year.
+  return clamp(firstYear * 0.55 + term * 0.25 + guarantee * 0.2, 0, 100);
 }
 
 function winningUtility(league: GmLeagueState, teamId: string): number {
