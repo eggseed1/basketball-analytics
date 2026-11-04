@@ -6,6 +6,7 @@ import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { displayPlayerName } from "@/gm/lib/selectors";
 import { originLabel } from "@/gm/lib/generated-player-identity";
 import { buildScoutDesk } from "@/gm/engine/scout-desk";
+import { athleticTools } from "@/gm/engine/combine-evaluation";
 import { useGmStore } from "@/gm/state/gm-store";
 import { amateurSeason, draftRead, draftScoutingOf, draftSleeperSignals, scoutingBudget, SCOUT_STUDIES, DRAFT_TOOL_LABELS as tools } from "@/gm/engine/draft-intel";
 import type { GmDraftTool, GmLeagueState, GmPlayer } from "@/gm/types";
@@ -35,6 +36,19 @@ export function GmProspectFile({league,player}:{league:GmLeagueState;player:GmPl
     <div className="rounded-lg bg-secondary/50 p-3"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{desk.scoutName}&apos;s take{highlight?" · "+highlight.board.title:""}</p><p className="mt-1 text-sm font-medium">{summary}</p><p className="mt-1 text-xs text-muted-foreground">Watch out: {caution}</p><p className="mt-1 text-xs text-muted-foreground">{steps?"Research completed: "+steps+" report"+(steps===1?"":"s")+". Still a projection, not a guaranteed ceiling.":"Early read only. One scout action can narrow the uncertainty."}</p></div>
     <dl className="grid grid-cols-2 gap-3"><Metric label="Ready now (OVR)" value={read.readyLow+"–"+read.readyHigh}/><Metric label="Possible upside" value={read.upsideLow+"–"+read.upsideHigh}/></dl>
     <p className="text-xs text-muted-foreground">{read.availability} · {Math.round(read.coverage*100)}% report coverage. Future development is uncertain.</p>
+    {player.scoutProfile?.combine ? <section data-testid="prospect-combine" className="rounded-lg border border-border bg-secondary/20 p-3">
+      <h4 className="font-bold">Combine testing · {athleticTools(player).label}</h4>
+      <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <Metric label="Wingspan" value={player.scoutProfile.combine.wingspanIn+"″"}/>
+        <Metric label="Standing reach" value={(player.scoutProfile.combine.standingReachIn??"—")+"″"}/>
+        <Metric label="Max vertical" value={player.scoutProfile.combine.verticalIn+"″"}/>
+        <Metric label="¾ court sprint" value={player.scoutProfile.combine.sprint.toFixed(2)+"s"}/>
+        <Metric label="Lane agility" value={player.scoutProfile.combine.laneAgility?.toFixed(2)+"s"}/>
+        <Metric label="Height / weight" value={player.heightIn+"″ / "+player.weightLbs+" lbs"}/>
+      </dl>
+      <p className="mt-3 text-xs text-muted-foreground">{[athleticTools(player).leaping&&"Aerial assault",athleticTools(player).chaser&&"Chase-down artist",athleticTools(player).burst&&"Explosive first step"].filter(Boolean).join(", ")||"No rare athletic badge pathway identified."} · Athletic tools help with related skills, not guaranteed career potential.</p>
+      <p className="mt-1 text-xs text-muted-foreground">{player.scoutProfile.medicalNote}</p>
+    </section> : null}
     {read.marketRank>=22?<div className="rounded-lg border border-border bg-background p-3"><p className="text-sm font-semibold">Late-value watch</p><p className="mt-1 text-xs text-muted-foreground">{signal.reasons.slice(0,2).join(" · ")||"Not enough convincing public indicators yet."} These are clues, not a hidden star label.</p></div>:null}
     {canScout?<div className="flex flex-col gap-2 rounded-lg border border-border p-3"><div className="flex items-center justify-between gap-2"><h4 className="text-sm font-semibold">Scout this player</h4><span className="text-xs text-muted-foreground">{remaining} scouting days left</span></div><p className="text-xs text-muted-foreground">No need to choose five reports or guess which skill to investigate. Your scout starts with the strongest public clue.</p>
       {next?<Button className="min-h-11 w-full" disabled={remaining<1} onClick={()=>study(player.id,next,signal.focus)}>{next==="film"?"Scout prospect · 1 day":"Get a second opinion · 1 day"}</Button>:<p className="text-sm font-medium">Basic scouting complete. You can compare this player or use an optional deep dive.</p>}
