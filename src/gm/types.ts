@@ -776,6 +776,9 @@ export interface GmTradeMarket {
 
 export interface GmTradeProposal {
   id: string;
+  /** Only timestamped historical trades can become dated social reports. */
+  season?: number;
+  day?: number;
   fromTeamId: string;
   toTeamId: string;
   fromAssets: GmTradeAsset[];
