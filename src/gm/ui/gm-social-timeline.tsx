@@ -7,7 +7,7 @@ import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useGmStore } from "@/gm/state/gm-store";
 import { socialAccount, socialTimeline, socialTrends } from "@/gm/engine/social-timeline";
-import type { SocialPost, SocialCategory } from "@/gm/engine/social-timeline";
+import type { SocialPost } from "@/gm/engine/social-timeline";
 import type { GmLeagueState } from "@/gm/types";
 import { cn } from "@/lib/utils";
 
