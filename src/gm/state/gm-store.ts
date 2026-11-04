@@ -146,6 +146,7 @@ import {
   teamName,
 } from "@/gm/engine/play-in";
 import { useMyLeagueStore } from "@/gm/myleague/store";
+import { syncSocialTimeline } from "@/gm/engine/social-timeline";
 import {
   allocateNewSave,
   createGmSlotStorage,
