@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { CalendarDays, ChevronDown, ClipboardList, House, LayoutGrid, TrendingUp, UsersRound } from "lucide-react";
+import { CalendarDays, ChevronDown, ClipboardList, House, LayoutGrid, MessageCircle, TrendingUp, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const MAIN = [
