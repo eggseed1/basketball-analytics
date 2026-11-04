@@ -168,7 +168,8 @@ export function findSelectedTradePackages(
   youSend: GmTradeAsset[], youReceive: GmTradeAsset[],
   selectedPartnerId?: string,
 ): PlayerPackage[] {
-  if (league.tradeDeadlinePassed || league.phase !== "regular") return [];
+  // Honor the same trading window as proposal submission, including offseason dates.
+  if (league.tradeDeadlinePassed) return [];
   if (!validSelection(league, userTeamId, youSend)) return [];
   const otherTeams = league.teams.filter(team =>
     team.id !== userTeamId && !team.id.startsWith("as-"));
