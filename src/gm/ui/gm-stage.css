@@ -440,15 +440,12 @@ html[data-gm-full] .app-tab-bar {
   display: none;
 }
 
+/* Fullscreen retains the ordinary DRBL page surface in both themes.
+   Avoid a hard-coded black backdrop when the page atmosphere is hidden. */
 html[data-gm-full],
 html[data-gm-full] body {
-  background: #e7edf3;
+  background: var(--background);
   overflow: hidden;
-}
-
-html.dark[data-gm-full],
-html.dark[data-gm-full] body {
-  background: #070b10;
 }
 
 /* The desk is the fullscreen element, so the site header is outside it.
@@ -466,6 +463,28 @@ html [data-gm]:-webkit-full-screen {
   margin: 0;
   border-radius: 0;
   overflow: auto;
+  /* The normal GM desk is transparent to the surrounding page. Fullscreen
+     removes that page, so the desk must paint its own semantic surface. */
+  background: var(--background);
+  color: var(--foreground);
+  background-attachment: local;
+}
+
+/* Match the browser fullscreen backdrop as well as the fixed-position
+   fallback used after in-app navigation or when Fullscreen API is denied. */
+html [data-gm]:fullscreen::backdrop,
+html [data-gm]:-webkit-full-screen::backdrop {
+  background: var(--background);
+}
+
+/* Fill the viewport without stretching cards, tables and navigation from
+   edge to edge on very wide monitors. Keep the ordinary 80rem GM content. */
+html[data-gm-full] [data-gm] > *,
+html [data-gm]:fullscreen > *,
+html [data-gm]:-webkit-full-screen > * {
+  width: 100%;
+  max-width: var(--page-max-standard);
+  margin-inline: auto;
 }
 
 /* The desk is a fixed-height flex column in fullscreen. Children with
