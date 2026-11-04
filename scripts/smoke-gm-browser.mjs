@@ -332,6 +332,10 @@ try {
     "lottery must not spoil the pick order before the reveal");
   await page.getByTestId("lottery-start").click();
   await page.getByText("Balls in motion").waitFor();
+  await page.getByTestId("lottery-hole-chamber").waitFor();
+  await page.getByText(/Valid ball extracted|Invalid draw|Combination in progress/).waitFor({ timeout: 15000 });
+  assert.equal(await page.getByRole("alert").filter({hasText: /physical extraction does not match/}).count(), 0,
+    "canvas physics must reproduce the engine's extracted ball");
   await page.getByTestId("lottery-skip").click();
   assert.ok((await page.getByTestId("lottery-revealed-order").locator("li").count()) >= 14);
   await page.reload();
