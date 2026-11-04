@@ -1,8 +1,7 @@
 "use client";
 
 import type { GmPlayer } from "@/gm/types";
-import { resolveTeamBrand } from "@/lib/nba-brand";
-import { brandKeyForUi } from "@/data/identity/team-map";
+import { generatedJerseyStyle } from "@/gm/lib/generated-player-jersey";
 import { cn } from "@/lib/utils";
 
 /**
@@ -79,9 +78,11 @@ export function GmGeneratedPortrait({
   const face = generatedPortraitRecipe(seed);
   const [skin, shadow] = SKIN[face.skin]!;
   const hair = HAIR[face.hair]!;
-  const brand = resolveTeamBrand(brandKeyForUi(player.teamId));
-  const jersey = brand?.primary ?? "#485b75";
-  const trim = brand?.secondary ?? "#e1e7f3";
+  // Uniform always follows the player's current team. The face seed and
+  // facial features do not read teamId and therefore survive trades.
+  const uniform = generatedJerseyStyle(player.teamId);
+  const jersey = uniform.base;
+  const trim = uniform.piping;
   const width = face.headWidth;
   const hairTop = face.hairline;
   const left = 80 - width, right = 80 + width;
@@ -91,18 +92,24 @@ export function GmGeneratedPortrait({
       className={cn("relative inline-flex shrink-0 overflow-hidden rounded-full ring-1 ring-border",SIZE[size],className)}
       data-avatar={size}
       data-generated-portrait="true"
+      data-jersey-team={uniform.teamId ?? "free-agent"}
+      data-jersey-color={uniform.base}
       title={name}
     >
-      <svg viewBox="0 0 160 160" width="100%" height="100%" role="img" aria-label={name + " illustrated player portrait"} xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 160 160" width="100%" height="100%" role="img" aria-label={name + " illustrated portrait in " + (uniform.teamId ? uniform.abbreviation + " jersey" : "neutral free-agent clothing")} xmlns="http://www.w3.org/2000/svg">
         <rect width="160" height="160" fill={BACKDROPS[face.background]}/>
         <path d="M0 0H160V58L0 144Z" fill="#fff" opacity="0.045"/>
         <circle cx="80" cy="65" r="65" fill="none" stroke="#fff" strokeOpacity="0.10" strokeWidth="1.5"/>
+        <circle cx="80" cy="80" r="78" fill="none" stroke={trim} strokeOpacity="0.48" strokeWidth="2.5"/>
         {/* Broad shoulders create a consistent NBA-media-day crop. */}
-        <path d="M17 160Q17 125 40 116L68 109H92L120 116Q143 125 143 160Z" fill={jersey}/>
-        <path d="M25 160Q27 132 47 124L71 118H89L113 124Q134 132 135 160" fill="none" stroke={trim} strokeWidth="3" opacity="0.75"/>
+        <path d="M13 160Q15 124 39 115L68 107H92L121 115Q145 124 147 160Z" fill={jersey}/>
+        <path d="M13 160Q15 124 39 115L68 107H92L121 115Q145 124 147 160Z" fill="none" stroke={trim} strokeWidth="2.5"/>
+        <path d="M23 160Q26 130 46 122L68 115M137 160Q134 130 114 122L92 115" stroke={trim} strokeWidth="4" opacity="0.9" fill="none"/>
+        <path d="M16 160Q22 138 34 130L38 160ZM144 160Q138 138 126 130L122 160Z" fill="#000" opacity="0.11"/>
         <path d="M64 105V119Q80 135 96 119V105Z" fill={shadow}/>
         <path d="M67 109L80 125L93 109Z" fill={skin}/>
-        <path d="M54 120Q66 134 80 137Q94 134 106 120L98 116Q80 134 62 116Z" fill={trim} opacity="0.92"/>
+        <path d="M56 116Q68 130 80 134Q92 130 104 116L99 112Q80 128 61 112Z" fill={trim}/>
+        <path d="M61 116Q70 125 80 128Q90 125 99 116" fill="none" stroke={uniform.highlight} strokeOpacity="0.85" strokeWidth="1.6"/>
         {/* Ears and facial shape are separate from hair and beard style. */}
         <ellipse cx={left - 1} cy="78" rx="7" ry="12" fill={shadow}/>
         <ellipse cx={right + 1} cy="78" rx="7" ry="12" fill={shadow}/>
@@ -114,7 +121,7 @@ export function GmGeneratedPortrait({
         {face.style === 2 && <path d={`M${left-3} 60L${left-3} ${hairTop}Q80 ${hairTop-26} ${right+4} ${hairTop}V61Q93 42 68 46Z`} fill={hair}/>}
         {face.style === 3 && <path d={`M${left-4} 64L${left-3} 25Q${left+4} 7 80 10Q${right-5} 8 ${right+3} 26L${right+3} 64Q105 44 80 45Q55 44 ${left-4} 64Z`} fill={hair}/>}
         {face.style === 4 && <path d={`M${left} 57Q${left} 32 80 31Q${right} 32 ${right} 57`} stroke={hair} strokeWidth="5" fill="none"/>}
-        {face.style === 5 && <><path d={`M${left-4} 65Q${left-7} 28 80 24Q${right+5} 28 ${right+4} 65Z`} fill={hair}/>{[-2,-1,0,1,2].map(i=><path key={i} d={`M${80+i*13} 28Q${83+i*12} 59 ${78+i*15} ${i%2===0?95:88}`} stroke={hair} strokeWidth="5" fill="none" strokeLinecap="round"/>)}</>}
+        {face.style === 5 && <><path d={`M${left-4} 62Q${left-7} 28 80 24Q${right+5} 28 ${right+4} 62L${right-4} 51Q80 42 ${left+4} 51Z`} fill={hair}/>{[-2,-1,0,1,2].map(i=><path key={i} d={`M${80+i*10-4} 28Q${80+i*10+7} 35 ${80+i*10-2} 45`} stroke={skin} strokeOpacity="0.20" strokeWidth="2" fill="none" strokeLinecap="round"/>)}</>}
         {face.style === 6 && <path d={`M${left-4} 58Q${left-2} 24 70 26Q85 10 ${right+4} 33Q102 34 94 38Q68 35 ${left-4} 58Z`} fill={hair}/>}
         {face.style === 7 && <><path d={`M${left-5} 62Q${left-5} 25 80 27Q${right+5} 25 ${right+5} 62Z`} fill={hair}/>{Array.from({length:9},(_,i)=><circle key={i} cx={left + 6+i*(width*2-12)/8} cy={31+(i%3)*4} r={8+(i%2)*2} fill={hair}/>)}</>}
         {/* Brow and eye shapes remain readable even at small avatar sizes. */}
@@ -129,6 +136,18 @@ export function GmGeneratedPortrait({
         {face.beard===1 && <path d="M72 99Q80 105 88 99" stroke={hair} strokeWidth="3" fill="none" strokeLinecap="round"/>}
         <path d={face.mouth===0?"M73 101Q80 104 87 101":face.mouth===1?"M73 102Q80 99 87 102":"M73 102Q80 106 87 102"} stroke={face.beard>=2?"#9a7567":shadow} strokeWidth="2" fill="none" strokeLinecap="round"/>
         {face.freckles && [0,1,2].map(i=><g key={i} fill={shadow} opacity="0.55"><circle cx={59+i*5} cy={85+i%2*2} r="1.1"/><circle cx={91+i*5} cy={85+i%2*2} r="1.1"/></g>)}
+        {/* Small avatars still show club piping; full-size headshots add the team mark. */}
+        {(size === "md" || size === "lg" || size === "xl") &&
+          <text x="80" y="148" textAnchor="middle" fontFamily="Arial, sans-serif"
+            fontWeight="900" fontSize="11.5" letterSpacing="1.2"
+            fill={uniform.lettering} stroke={jersey} strokeWidth="0.8" paintOrder="stroke">
+            {uniform.abbreviation}
+          </text>}
+        {(size === "lg" || size === "xl") && player.jersey && /^\\d{1,2}$/.test(player.jersey) &&
+          <text x="80" y="159" textAnchor="middle" fontFamily="Arial, sans-serif"
+            fontSize="9.5" fontWeight="800" fill={uniform.lettering}>
+            {player.jersey}
+          </text>}
       </svg>
     </span>
   );
