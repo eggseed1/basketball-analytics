@@ -434,7 +434,6 @@ html [data-gm] .gm-award {
 }
 
 html[data-gm-full] header.site-chrome,
-html[data-gm-full] .page-atmosphere,
 html[data-gm-full] .app-safe-bottom,
 html[data-gm-full] .app-tab-bar {
   display: none;
@@ -448,8 +447,9 @@ html[data-gm-full] body {
   overflow: hidden;
 }
 
-/* The desk is the fullscreen element, so the site header is outside it.
-   Fixed cover is the fallback when the browser refuses the Fullscreen API. */
+/* The persistent document root owns native fullscreen, not the
+   per-route GM desk. Keep the desk and loading boundary on the same fixed
+   surface while those route segments replace each other. */
 html[data-gm-full] [data-gm],
 html [data-gm]:fullscreen,
 html [data-gm]:-webkit-full-screen {
@@ -463,18 +463,40 @@ html [data-gm]:-webkit-full-screen {
   margin: 0;
   border-radius: 0;
   overflow: auto;
-  /* The normal GM desk is transparent to the surrounding page. Fullscreen
-     removes that page, so the desk must paint its own semantic surface. */
-  background: var(--background);
+  /* Keep the real site atmosphere visible through the transparent desk.
+     The body provides the solid theme backdrop underneath the team orbs. */
+  background: transparent;
   color: var(--foreground);
-  background-attachment: local;
 }
 
 /* Match the browser fullscreen backdrop as well as the fixed-position
    fallback used after in-app navigation or when Fullscreen API is denied. */
+html:fullscreen::backdrop,
+html:-webkit-full-screen::backdrop,
 html [data-gm]:fullscreen::backdrop,
 html [data-gm]:-webkit-full-screen::backdrop {
   background: var(--background);
+}
+
+/* The site atmosphere stays mounted inside SportsShell even when GM is
+   fullscreen. The loading boundary uses the same fixed transparent surface
+   rather than flashing back to the regular page during tab navigation. */
+html[data-gm-full] .page-atmosphere { display: block; }
+html [data-gm] .gm-route-loading {
+  width: 100%;
+  min-width: 0;
+}
+html[data-gm-full] [data-gm-route-loading] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+}
+html[data-gm-full] [data-gm-route-loading] > main {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: var(--page-max-standard);
+  margin-inline: auto;
 }
 
 /* Fill the viewport without stretching cards, tables and navigation from
