@@ -308,6 +308,19 @@ try {
   const faManifest = JSON.parse(readFileSync(`${dir}/journey-fa-manifest.json`, "utf8"));
   await importJourney("fa");
   await page.goto("http://127.0.0.1:3107/gm/free-agency", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Market", exact: true }).click();
+  await page.getByTestId("fa-market-browser").waitFor();
+  await page.getByRole("button", { name: "View details for " + faManifest.playerName, exact: true }).click();
+  const faFile = page.getByTestId("fa-player-dossier");
+  await faFile.waitFor();
+  await faFile.getByRole("heading", { name: faManifest.playerName, exact: true }).waitFor();
+  await faFile.getByRole("button", { name: "Ratings & badges", exact: true }).click();
+  await faFile.getByRole("heading", { name: "Active badges", exact: true }).waitFor();
+  await faFile.getByRole("button", { name: "Market & fit", exact: true }).click();
+  await faFile.getByRole("heading", { name: "Recorded offers", exact: true }).waitFor();
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2),
+    "responsive free-agent list + dossier must not overflow mobile");
+  await page.screenshot({ path: `${dir}/free-agency-dossier-mobile.png`, fullPage: true, animations: "disabled" });
   await page.getByRole("link", { name: "Review terms for " + faManifest.playerName, exact: true }).click();
   await page.waitForURL("**/gm/free-agency/offer/**");
   const faSlider = page.getByRole("slider", { name: "Annual salary offer", exact: true });
