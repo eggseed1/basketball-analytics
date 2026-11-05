@@ -43,6 +43,22 @@ try {
     "sim-through-injuries preference survives reload");
   await page.getByRole("checkbox", { name: /Sim through injuries/ }).uncheck();
 
+  // Real UI visual regression: generated headshots should show studio-vector
+  // faces with actual sleeveless jerseys while roster navigation still works.
+  await page.goto("http://127.0.0.1:3107/gm/roster", { waitUntil: "domcontentloaded" });
+  const generatedPortraits = page.locator('[data-generated-portrait="true"][data-portrait-version="2"]');
+  await generatedPortraits.first().waitFor();
+  assert.ok(await generatedPortraits.count() >= 5,
+    "generated rosters should consistently render the upgraded player headshots");
+  const portraitSvg = generatedPortraits.first().locator("svg");
+  assert.equal(await portraitSvg.getAttribute("viewBox"), "0 0 160 160");
+  assert.ok(await portraitSvg.locator('[data-jersey-layer="true"]').count() === 1);
+  assert.ok(await portraitSvg.locator('[data-face-layer="true"]').count() === 1);
+  await page.screenshot({ path: `${dir}/generated-portraits-roster-desktop.png`,
+    fullPage: true, animations: "disabled" });
+  await page.goto("http://127.0.0.1:3107/gm", { waitUntil: "domcontentloaded" });
+  await page.getByRole("region", { name: "Next game", exact: true }).waitFor();
+
   // Fullscreen must paint the exact semantic GM page surface, not inherit the
   // browser's opaque black fullscreen backdrop after the page chrome hides.
   // Drive the CSS fallback during responsive tests: a true native Chromium
