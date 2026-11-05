@@ -221,6 +221,17 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
     pathname.startsWith("/games/") ||
     pathname.startsWith("/arcade/one-shot");
 
+  // Fullscreen belongs to Franchise Lab only. It survives internal /gm
+  // navigations but must not leak into the rest of DRBL when leaving the mode.
+  useEffect(() => {
+    if (isGmRoute || window.sessionStorage.getItem("gm-full") !== "1") return;
+    window.sessionStorage.removeItem("gm-full");
+    delete document.documentElement.dataset.gmFull;
+    if (document.fullscreenElement === document.documentElement) {
+      void document.exitFullscreen().catch(() => undefined);
+    }
+  }, [isGmRoute]);
+
   function closeMenu() {
     setMenuOpen(false);
     setMenuOpenedAt(null);
