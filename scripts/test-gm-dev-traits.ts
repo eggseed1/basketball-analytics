@@ -193,9 +193,9 @@ for (const overall of [95,96,97]) {
     "annual review must persist the visible tier instead of leaving the legacy stamp");
 }
 assert.equal(playerDevTrait({ ...slow, sheet: { ...slow.sheet!, overall: 98 } }), "xfactor");
-assert.equal(abilityTraitFloor(slow, 94), "star");
-assert.equal(abilityTraitFloor(slow, 95), "superstar");
-assert.equal(abilityTraitFloor(slow, 98), "xfactor");
+assert.equal(abilityTraitFloor(94), "star");
+assert.equal(abilityTraitFloor(95), "superstar");
+assert.equal(abilityTraitFloor(98), "xfactor");
 // For model 2 the ceiling value is a historical compatibility field, never
 // a promise that controls the tier or how high a player can eventually grow.
 const lowCeiling = { ...starLearner, sheet: { ...starLearner.sheet!,
