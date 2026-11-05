@@ -17,6 +17,7 @@ export const draftControl="min-h-11 max-w-full rounded-lg border border-border b
 export function GmProspectFile({league,player}:{league:GmLeagueState;player:GmPlayer}){
   const study=useGmStore(state=>state.scoutProspect);
   const [focus,setFocus]=useState<GmDraftTool>("shooting");
+  const [view,setView]=useState<"overview"|"scouting"|"production">("overview");
   const scouting=draftScoutingOf(league),read=draftRead(league,player,scouting.strategy),stats=amateurSeason(player);
   const signal=draftSleeperSignals(player);
   const remaining=scoutingBudget(league)-scouting.spent;
@@ -32,10 +33,33 @@ export function GmProspectFile({league,player}:{league:GmLeagueState;player:GmPl
   const summary=highlight?.entry.note??read.strengths[0]??signal.reasons[0]??"Needs another look before investing a pick.";
   const caution=highlight?.entry.caution??read.risks[0]??"NBA translation remains uncertain.";
   return <section aria-label={"Prospect file for "+displayPlayerName(player)} className="flex min-w-0 flex-col gap-4 rounded-xl border border-border p-4">
-    <header className="flex items-start gap-3"><GmPlayerPortrait player={player} size="md"/><div className="min-w-0"><p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Prospect report · market #{read.marketRank}</p><h3 className="mt-1 text-xl font-bold">{displayPlayerName(player)}</h3><p className="mt-1 text-sm text-muted-foreground">{player.position} · {player.age} years · {player.college??stats.competition}</p>{player.identity?<p className="mt-1 text-xs text-muted-foreground">{player.identity.hometown}, {originLabel(player.identity.countryCode)} · {player.identity.temperament}</p>:null}</div></header>
+    <header className="flex items-start gap-3 rounded-xl bg-secondary/35 p-3"><GmPlayerPortrait player={player} size="md"/><div className="min-w-0"><p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Prospect report · market #{read.marketRank}</p><h3 className="mt-1 text-xl font-bold">{displayPlayerName(player)}</h3><p className="mt-1 text-sm text-muted-foreground">{player.position} · {player.age} years · {player.college??stats.competition}</p>{player.identity?<p className="mt-1 text-xs text-muted-foreground">{player.identity.hometown}, {originLabel(player.identity.countryCode)} · {player.identity.temperament}</p>:null}</div></header>
+    <nav aria-label="Prospect detail sections" className="grid grid-cols-3 overflow-hidden rounded-lg border border-border">
+      {(["overview","scouting","production"] as const).map(item=>
+        <button type="button" key={item} aria-pressed={view===item}
+          className={"min-h-11 border-b-2 px-2 text-xs font-semibold capitalize " +
+            (view===item ? "border-primary bg-secondary/70 text-foreground" : "border-transparent text-muted-foreground hover:bg-secondary/40")}
+          onClick={()=>setView(item)}>{item==="scouting" ? "Grades & traits" : item==="production" ? "Stats & combine" : "Overview"}</button>)}
+    </nav>
+    {view==="overview" ? <>
     <div className="rounded-lg bg-secondary/50 p-3"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{desk.scoutName}&apos;s take{highlight?" · "+highlight.board.title:""}</p><p className="mt-1 text-sm font-medium">{summary}</p><p className="mt-1 text-xs text-muted-foreground">Watch out: {caution}</p><p className="mt-1 text-xs text-muted-foreground">{steps?"Research completed: "+steps+" report"+(steps===1?"":"s")+". Still a projection, not a guaranteed ceiling.":"Early read only. One scout action can narrow the uncertainty."}</p></div>
     <dl className="grid grid-cols-2 gap-3"><Metric label="Ready now (OVR)" value={read.readyLow+"–"+read.readyHigh}/><Metric label="Possible upside" value={read.upsideLow+"–"+read.upsideHigh}/></dl>
     <p className="text-xs text-muted-foreground">{read.availability} · {Math.round(read.coverage*100)}% report coverage. Future development is uncertain.</p>
+    </> : null}
+    {view==="production" ? <>
+      <section className="rounded-lg border border-border bg-secondary/20 p-3">
+        <h4 className="text-sm font-bold">College / amateur season</h4>
+        <p className="mt-1 text-xs text-muted-foreground">Simulated {stats.competition} · {stats.games} games · {stats.minutes} minutes/game</p>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          <Metric label="PPG" value={String(stats.points)}/>
+          <Metric label="RPG" value={String(stats.rebounds)}/>
+          <Metric label="APG" value={String(stats.assists)}/>
+          <Metric label="3PT%" value={three.toFixed(1)+"%"}/>
+          <Metric label="FT%" value={ft.toFixed(1)+"%"}/>
+          <Metric label="TOV" value={String(stats.turnovers)}/>
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">College production is simulated scouting context, not a guarantee of NBA production.</p>
+      </section>
     {player.scoutProfile?.combine ? <section data-testid="prospect-combine" className="rounded-lg border border-border bg-secondary/20 p-3">
       <h4 className="font-bold">Combine testing · {athleticTools(player).label}</h4>
       <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -49,7 +73,39 @@ export function GmProspectFile({league,player}:{league:GmLeagueState;player:GmPl
       <p className="mt-3 text-xs text-muted-foreground">{[athleticTools(player).leaping&&"Aerial assault",athleticTools(player).chaser&&"Chase-down artist",athleticTools(player).burst&&"Explosive first step"].filter(Boolean).join(", ")||"No rare athletic badge pathway identified."} · Athletic tools help with related skills, not guaranteed career potential.</p>
       <p className="mt-1 text-xs text-muted-foreground">{player.scoutProfile.medicalNote}</p>
     </section> : null}
-    {read.marketRank>=22?<div className="rounded-lg border border-border bg-background p-3"><p className="text-sm font-semibold">Late-value watch</p><p className="mt-1 text-xs text-muted-foreground">{signal.reasons.slice(0,2).join(" · ")||"Not enough convincing public indicators yet."} These are clues, not a hidden star label.</p></div>:null}
+    </> : null}
+    {view==="scouting" ? <>
+      <section className="rounded-lg border border-border p-3">
+        <h4 className="text-sm font-bold">Your scout's grades</h4>
+        <p className="mt-1 text-xs text-muted-foreground">Unscouted areas stay unknown; the draft board does not reveal true potential.</p>
+        <dl className="mt-3 grid grid-cols-2 gap-2">
+          {Object.entries(player.scoutProfile?.grades ?? {}).map(([key,grade])=>
+            <div key={key} className="flex justify-between gap-2 rounded-md bg-secondary/50 p-2 text-xs">
+              <dt className="capitalize text-muted-foreground">{key}</dt><dd className="font-bold">{grade ?? "?"}</dd>
+            </div>)}
+        </dl>
+        <p className="mt-3 text-xs text-muted-foreground">Report confidence {Math.round(read.coverage*100)}% · readiness {read.readyLow}–{read.readyHigh} · projected upside {read.upsideLow}–{read.upsideHigh}</p>
+      </section>
+      <section className="rounded-lg bg-secondary/30 p-3">
+        <h4 className="text-sm font-bold">Scouted NBA comparisons</h4>
+        <p className="mt-2 text-sm">High-end: <strong>{player.scoutProfile?.compCeiling ?? "Unknown"}</strong></p>
+        <p className="mt-1 text-sm">Floor: <strong>{player.scoutProfile?.compFloor ?? "Unknown"}</strong></p>
+        <p className="mt-2 text-xs text-muted-foreground">{player.scoutProfile?.summary ?? "Not enough tape yet."}</p>
+      </section>
+      <section className="rounded-lg border border-border p-3">
+        <h4 className="text-sm font-bold">Estimated skills</h4>
+        <dl className="mt-3 grid grid-cols-2 gap-2">
+          {Object.entries(tools).map(([id,label])=> {
+            const tool=id as GmDraftTool,center=read.tools[tool],range=read.report.tools[tool]!=null?4:8;
+            return <div key={id} className="rounded-md bg-secondary/50 p-2">
+              <dt className="text-xs text-muted-foreground">{label}</dt>
+              <dd className="font-bold tabular-nums">{Math.max(25,Math.round(center-range))}–{Math.min(99,Math.round(center+range))}</dd>
+            </div>;
+          })}
+        </dl>
+      </section>
+    </> : null}
+    {view==="overview" && read.marketRank>=22?<div className="rounded-lg border border-border bg-background p-3"><p className="text-sm font-semibold">Late-value watch</p><p className="mt-1 text-xs text-muted-foreground">{signal.reasons.slice(0,2).join(" · ")||"Not enough convincing public indicators yet."} These are clues, not a hidden star label.</p></div>:null}
     {canScout?<div className="flex flex-col gap-2 rounded-lg border border-border p-3"><div className="flex items-center justify-between gap-2"><h4 className="text-sm font-semibold">Scout this player</h4><span className="text-xs text-muted-foreground">{remaining} scouting days left</span></div><p className="text-xs text-muted-foreground">No need to choose five reports or guess which skill to investigate. Your scout starts with the strongest public clue.</p>
       {next?<Button className="min-h-11 w-full" disabled={remaining<1} onClick={()=>study(player.id,next,signal.focus)}>{next==="film"?"Scout prospect · 1 day":"Get a second opinion · 1 day"}</Button>:<p className="text-sm font-medium">Basic scouting complete. You can compare this player or use an optional deep dive.</p>}
       {workoutOpen&&!read.report.studies.workout?<Button variant="outline" className="min-h-11 w-full" disabled={remaining<2||visits>=4} onClick={()=>study(player.id,"workout",signal.focus)}>Deep scout · 2 days</Button>:null}
