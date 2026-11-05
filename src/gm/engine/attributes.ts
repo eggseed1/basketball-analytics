@@ -849,9 +849,10 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
       (profile.learningSurge ?? 1)
     : 1;
   // Model-2 growth is driven by its underlying learning DNA only once.
-  // The small cohort-normalization factor preserves the audited second-round
-  // rotation-hit rate after retiring the old independent label multiplier.
-  const cohortBalance = openPath ? 0.98 : 1;
+  // The ordinary cohort retains the audited second-round rotation-hit rate;
+  // existing near-star players need a little extra runway to maintain a
+  // realistic number of elite players over decades. No draft-rank shortcut.
+  const cohortBalance = openPath ? (sheet.overall >= 84 ? 1.12 : 0.98) : 1;
   const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*cohortBalance*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;
   const budget=annual*pace*(1+clamp(opts.mentorBonus??0,0,0.18))*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
