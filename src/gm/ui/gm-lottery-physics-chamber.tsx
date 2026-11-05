@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
   createLotteryHoleScene, LOTTERY_HOLE, type HoleParticle,
 } from "@/gm/engine/lottery-hole-physics";
@@ -9,11 +10,9 @@ import {
 } from "@/gm/engine/lottery-gravity-physics";
 
 type PhysicalBall = { id: number; teamId: string };
-const colorFor = (team: string) => {
-  let hash = 0;
-  for (let i = 0; i < team.length; i++) hash = (Math.imul(hash, 31) + team.charCodeAt(i)) | 0;
-  return "hsl(" + (Math.abs(hash) % 360) + " 76% 65%)";
-};
+// The ball rim uses the same real NBA team color as the rest of the site.
+const colorFor = (team: string, fallback: string) =>
+  resolveTeamBrand(team)?.primary ?? fallback;
 
 /**
  * Replays the exact deterministic physical extraction stored in the save.
@@ -140,12 +139,27 @@ export function LotteryPhysicsChamber({
         accumulator = 0;
       }
 
+      // Canvas shares the GM surface palette. Read the variables at paint
+      // time so toggling site light/dark mode updates a running replay.
+      const theme = getComputedStyle(canvas);
+      const tone = (name: string, fallback: string) =>
+        theme.getPropertyValue(name).trim() || fallback;
+      const well = tone("--gm-lottery-well", "#e8e8ed");
+      const highlight = tone("--gm-lottery-highlight", "#ffffff");
+      const track = tone("--gm-lottery-track", "#d2d2d7");
+      const rim = tone("--gm-lottery-rim", "#8e9097");
+      const gate = tone("--gm-lottery-gate", "#61656e");
+      const ink = tone("--gm-lottery-ball-ink", "#1d1d1f");
+      const ballEdge = tone("--gm-lottery-ball-edge", "#d1d3d9");
       ctx.clearRect(0, 0, size, size);
-      ctx.fillStyle = "#0b1629";
+      const dome = ctx.createRadialGradient(c - radius * .35,c - radius * .5,8,c,c,radius);
+      dome.addColorStop(0,highlight);
+      dome.addColorStop(1,well);
+      ctx.fillStyle = dome;
       ctx.beginPath();
       ctx.arc(c,c,radius,0,Math.PI*2);
       ctx.fill();
-      ctx.strokeStyle = "rgba(125,211,252,.13)";
+      ctx.strokeStyle = track;
       ctx.lineWidth = 6;
       ctx.beginPath();
       ctx.arc(c,c,radius-7,0,Math.PI*2);
@@ -154,7 +168,7 @@ export function LotteryPhysicsChamber({
       // Same physical outlet in the lower rim for both versions. Archived V1
       // simulations are ONLY mirrored for display, never recalculated.
       const gapHalfAngle = Math.asin((gapWidth/2)/radius);
-      ctx.strokeStyle = "rgba(226,232,240,.92)";
+      ctx.strokeStyle = rim;
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.arc(c,c,radius,Math.PI/2+gapHalfAngle,
@@ -162,12 +176,12 @@ export function LotteryPhysicsChamber({
       ctx.stroke();
       const gateOpen = Boolean(scene && scene.frame >= openFrame);
       if (!gateOpen) {
-        ctx.strokeStyle = "#fbbf24";
+        ctx.strokeStyle = gate;
         ctx.beginPath();
         ctx.arc(c,c,radius,Math.PI/2-gapHalfAngle,Math.PI/2+gapHalfAngle);
         ctx.stroke();
       }
-      ctx.strokeStyle = gateOpen ? "#67e8f9" : "#94a3b8";
+      ctx.strokeStyle = gateOpen ? gate : rim;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(c-gapWidth/2,size-13); ctx.lineTo(c-gapWidth/2,size-1);
@@ -177,17 +191,19 @@ export function LotteryPhysicsChamber({
       for (const ball of scene?.particles ?? legacy) {
         if (ball.id === pullingRef.current || scene?.exit?.ballId === ball.id) continue;
         const y = drawY(ball.y);
-        const shine = ctx.createRadialGradient(ball.x-r*0.4,y-r*0.5,1,ball.x,y,r);
-        shine.addColorStop(0,"#fff");
-        shine.addColorStop(0.35,colorFor(ball.teamId || "neutral"));
-        shine.addColorStop(1,"#475569");
+        // Uniform white numbered balls with a thin *team-color* rim.
+        // A restrained palette keeps all 37 numbers readable in both themes.
+        const shine = ctx.createRadialGradient(ball.x-r*.4,y-r*.5,1,ball.x,y,r);
+        shine.addColorStop(0,"#ffffff");
+        shine.addColorStop(.65,"#f9fafb");
+        shine.addColorStop(1,ballEdge);
         ctx.fillStyle = shine;
         ctx.beginPath(); ctx.arc(ball.x,y,r,0,Math.PI*2); ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,.75)";
-        ctx.lineWidth = .6; ctx.stroke();
+        ctx.strokeStyle = colorFor(ball.teamId, rim);
+        ctx.lineWidth = 1.15; ctx.stroke();
         ctx.font = "bold " + (size >= 300 ? "8" : "7") + "px ui-sans-serif,system-ui";
         ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillStyle = "#101827";
+        ctx.fillStyle = ink;
         ctx.fillText(String(ball.id),ball.x,y+.5);
       }
       request = window.requestAnimationFrame(paint);
@@ -198,15 +214,15 @@ export function LotteryPhysicsChamber({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balls, sceneSeed, physicsVersion, selectedKey, removedKey]);
 
-  return <div className="relative mx-auto w-full max-w-[390px]">
+  return <div className="gm-lottery-chamber relative mx-auto w-full max-w-[390px]">
     <canvas
       ref={canvasRef} width={physicsVersion === 2 ? 304 : 224}
       height={physicsVersion === 2 ? 304 : 224}
       className="block w-full" aria-hidden="true"
       data-testid="lottery-hole-chamber"
     />
-    <div className="mx-auto -mt-1 h-4 w-28 rounded-b-full border-b-4 border-slate-400 bg-slate-950" aria-hidden="true" />
-    <p className="mt-2 text-center text-[11px] font-semibold uppercase tracking-[.12em] text-slate-300">
+    <div className="mx-auto -mt-1 h-3 w-28 rounded-b-full border-b-2 border-border bg-secondary" aria-hidden="true" />
+    <p className="mt-3 text-center text-[11px] font-medium uppercase tracking-[.1em] text-muted-foreground">
       {sceneSeed !== undefined
         ? spinning ? "Gravity · colliding balls · real exit" : "Saved physical draw"
         : "Historical lottery chamber"}

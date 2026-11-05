@@ -140,7 +140,7 @@ export function GmLotteryMachine({
   const done = phase === "complete";
   const headline = done ? "The lottery is official." :
     phase === "ready" ? (classic ? "14 balls. Four-number combinations." : "37 balls. 16 picks. One real draw.") :
-    phase === "mixing" ? "Air jets are mixing the balls…" :
+    phase === "mixing" ? "Drawing the next ball…" :
     current?.accepted ? "Pick #" + current.pick + " has been drawn!" :
     current?.collecting ? "Ball " + current.ballId + " extracted." :
     "Ball returned. Drawing again.";
@@ -149,34 +149,33 @@ export function GmLotteryMachine({
   const lastBall = activePull?.ballId;
   const legacy = !classic && !modernHole;
 
-  return <div data-testid="gm-lottery-ceremony" className="overflow-hidden rounded-2xl border border-border bg-background">
-    <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-4 py-6 text-white sm:px-7 sm:py-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+  return <section data-testid="gm-lottery-ceremony" className="gm-lottery-ceremony overflow-hidden rounded-2xl border border-border bg-card text-foreground">
+    <div className="px-4 py-5 sm:px-6 sm:py-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[.2em] text-cyan-200">
+          <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.13em] text-muted-foreground"><span className="inline-block h-2 w-2 rounded-full bg-[var(--team-primary)]" aria-hidden="true" />
             Draft lottery · {league.season}
           </p>
-          <h3 className="mt-2 text-xl font-black tracking-tight sm:text-2xl">{headline}</h3>
-          <p className="mt-2 text-xs text-slate-300">
+          <h3 className="mt-2 text-[23px] font-semibold tracking-tight sm:text-[28px]">{headline}</h3>
+          <p className="mt-1.5 text-[13px] text-muted-foreground">
             {classic ? "Historical 14 numbered balls · four-ball combinations for picks 1–4" :
               "37 balls · gravity and collisions · the bottom exit decides each pick"}
           </p>
-          {!classic && league.season >= 2030 ? <p className="mt-1 text-xs text-amber-200">
+          {!classic && league.season >= 2030 ? <p className="mt-2 text-xs text-[var(--accent-warning)]">
             Franchise Lab continues 2027–29 rules for 2030+ until the NBA approves a replacement.
           </p> : null}
-          {legacy ? <p className="mt-1 text-xs text-amber-200">
+          {legacy ? <p className="mt-2 text-xs text-[var(--accent-warning)]">
             Archived save: this draw was decided before hole-physics replay existed. The chamber is illustrative; your fixed order is preserved.
           </p> : null}
         </div>
-        <div className="rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-right text-xs">
-          <strong className="block text-2xl tabular-nums">{done ? size : classic ? announced : announced}
-            <span className="text-slate-400">/{size}</span></strong>
+        <div className="min-w-28 rounded-xl border border-border bg-secondary/35 px-4 py-3 text-right text-xs text-muted-foreground">
+          <strong className="block text-2xl font-semibold tabular-nums tracking-tight text-foreground">{done ? size : announced}<span className="text-muted-foreground">/{size}</span></strong>
           Picks confirmed
         </div>
       </div>
 
-      <div className="mt-6 grid items-center gap-5 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-        <div className="relative">
+      <div className="mt-5 grid min-w-0 items-stretch gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]" data-testid="gm-lottery-draw-stage">
+        <div className="relative flex min-w-0 flex-col justify-center rounded-xl border border-border bg-secondary/30 px-3 py-4 sm:px-5 sm:py-5">
           <LotteryPhysicsChamber
             balls={pool}
             selectedTeams={selected}
@@ -195,108 +194,108 @@ export function GmLotteryMachine({
               }
             }}
           />
-          {activePull ? <div className="pointer-events-none absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-start">
-            <div key={step} className="gm-lotto-eject flex h-14 w-14 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-white via-cyan-100 to-sky-500 text-lg font-black text-slate-900 shadow-[0_6px_30px_rgba(125,211,252,.7)]">
+          {activePull ? <div className="pointer-events-none absolute bottom-9 left-1/2 z-20 flex -translate-x-1/2 items-start">
+            <div key={step} style={teamColorStyle(activePull.origin)} className="gm-lotto-eject flex h-14 w-14 items-center justify-center rounded-full border-2 border-[var(--team-primary)] bg-card text-lg font-bold tabular-nums text-foreground shadow-sm">
               {lastBall}
             </div>
           </div> : null}
         </div>
 
-        <div className="flex min-h-52 flex-col justify-center rounded-xl border border-white/20 bg-black/25 p-5" aria-live="polite" aria-atomic="true">
+        <div className="flex min-h-52 min-w-0 flex-col justify-center rounded-xl border border-border bg-background p-4 sm:p-6" aria-live="polite" aria-atomic="true" data-testid="gm-lottery-result-panel">
           {done ? <>
-            <span className="text-xs font-bold uppercase tracking-widest text-emerald-300">Final order saved</span>
-            <strong className="mt-3 text-2xl font-black">#1 Overall</strong>
+            <span className="text-[11px] font-semibold uppercase tracking-[.12em] text-muted-foreground">Final order saved</span>
+            <strong className="mt-3 text-2xl font-semibold tracking-tight">#1 overall</strong>
             <div className="mt-3 flex items-center gap-3">
               <ClubMark teamId={picks[0]?.owner ?? ""} label={nameOf(picks[0]?.owner ?? "")}/>
               <span className="font-semibold">{nameOf(picks[0]?.owner ?? "")}</span>
             </div>
-            <p className="mt-4 text-xs text-slate-300">The draw cannot be rerolled by replaying this screen.</p>
+            <p className="mt-4 text-xs text-muted-foreground">Replaying does not change the saved draft order.</p>
           </> : phase === "ready" ? <>
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-300">Lottery machine ready</span>
-            <strong className="mt-3 text-xl">{classic ? "14-ball combinations" : "37 balls loaded in the drum"}</strong>
-            <p className="mt-3 text-sm text-slate-300">
+            <span className="text-[11px] font-semibold uppercase tracking-[.12em] text-muted-foreground">Lottery machine ready</span>
+            <strong className="mt-3 text-xl font-semibold tracking-tight">{classic ? "14-ball combinations" : "37 numbered balls"}</strong>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               {classic ? "Four different numbers determine a team. Repeated teams and unassigned combinations are redrawn." :
                 "Identical balls collide inside the circle. After mixing, one ball-sized opening releases the winner. A fresh random arrangement protects every physical ball's equal chance."}
             </p>
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-muted-foreground">
               {modernHole ? "The visible escape determines the saved pick. Invalid pulls are returned and redrawn." :
                 "This historical result remains unchanged by the animation."}
             </p>
           </> : phase === "mixing" ? <>
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-300">
+            <span className="text-[11px] font-semibold uppercase tracking-[.12em] text-muted-foreground">
               {classic ? "Combination for pick #" : "Drawing pick #"}{current?.pick}
             </span>
-            <strong className="mt-5 text-2xl">Balls in motion</strong>
-            <p className="mt-2 text-sm text-slate-300">
+            <strong className="mt-3 text-2xl font-semibold tracking-tight">Balls in motion</strong>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               {modernHole ? "Watch the balls tumble under gravity. The first ball through the bottom opening gets the pick." :
                 "Bouncing, colliding and swirling inside the air-powered chamber…"}
             </p>
-            {current?.pick === 1 ? <p className="mt-2 text-xs text-sky-200">The next ball has not been revealed.</p> : null}
-          <p className="mt-3 text-xs text-slate-300">The ball physically exits before the pick is revealed.</p>
+            {current?.pick === 1 ? <p className="mt-2 text-xs text-muted-foreground">The next ball has not been revealed.</p> : null}
+            <p className="mt-3 text-xs text-muted-foreground">The ball physically exits before the pick is revealed.</p>
           </> : activePull ? <>
-            <span className={"text-xs font-bold uppercase tracking-widest " +
-              (activePull.accepted ? "text-emerald-300" : "text-amber-300")}>
+            <span className={"text-[11px] font-semibold uppercase tracking-[.12em] " +
+              (activePull.accepted ? "text-muted-foreground" : "text-[var(--accent-warning)]")}>
               {activePull.collecting ? "Combination in progress" :
                 activePull.accepted ? "Valid ball extracted" : "Invalid draw · retry"}
             </span>
-            <strong className="mt-2 text-3xl font-black tabular-nums">Ball #{activePull.ballId}</strong>
-            {activePull.collecting ? <p className="mt-2 text-sm text-slate-300">
+            <strong className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">Ball #{activePull.ballId}</strong>
+            {activePull.collecting ? <p className="mt-2 text-sm text-muted-foreground">
               {completed.filter(x => x.pick === activePull.pick).length + 1} of 4 balls collected. More numbers are needed.
             </p> : activePull.accepted && originallyDrawn ? <>
-              <div style={teamColorStyle(originallyDrawn.owner)} className="gm-lotto-team-in mt-3 flex items-center gap-2">
+              <div style={teamColorStyle(originallyDrawn.owner)} className="gm-lotto-team-in mt-3 flex items-center gap-2 border-l-[3px] border-l-[var(--team-primary)] pl-3">
                 <ClubMark teamId={originallyDrawn.owner} label={nameOf(originallyDrawn.owner)}/>
                 <strong className="text-lg">{nameOf(originallyDrawn.owner)}</strong>
               </div>
-              {originallyDrawn.origin !== originallyDrawn.owner ? <p className="mt-1 text-xs text-slate-300">
+              {originallyDrawn.origin !== originallyDrawn.owner ? <p className="mt-1 text-xs text-muted-foreground">
                 via {nameOf(originallyDrawn.origin)}&apos;s pick
               </p> : null}
-              {originallyDrawn.draw ? <p className="mt-2 text-xs text-slate-300">
+              {originallyDrawn.draw ? <p className="mt-2 text-xs text-muted-foreground">
                 Starting rank #{originallyDrawn.draw.startingRank} · original first-pick odds {originallyDrawn.draw.oddsPct.toFixed(1)}%
               </p> : null}
-              {originallyDrawn.owner === league.userTeamId ? <p className="mt-3 rounded-md bg-emerald-500/20 px-3 py-2 text-sm font-bold text-emerald-200">
+              {originallyDrawn.owner === league.userTeamId ? <p className="mt-3 rounded-lg border border-border bg-secondary/60 px-3 py-2 text-sm font-semibold text-foreground">
                 YOUR TEAM HAS PICK #{activePull.pick}!
               </p> : null}
               {originallyDrawn.draw && originallyDrawn.draw.startingRank > activePull.pick + 2 ?
-                <p className="mt-3 text-sm font-black text-amber-200">↑ JUMPS {originallyDrawn.draw.startingRank - activePull.pick} PICKS!</p> : null}
-            </> : <p className="mt-2 text-sm text-amber-200">
+                <p className="mt-3 text-sm font-semibold text-foreground">↑ JUMPS {originallyDrawn.draw.startingRank - activePull.pick} PICKS!</p> : null}
+            </> : <p className="mt-2 text-sm text-[var(--accent-warning)]">
               {labels[activePull.reason ?? ""] ?? "Not eligible for this pick. Ball returns to the chamber."}
             </p>}
           </> : null}
         </div>
       </div>
 
-      {replayError ? <p role="alert" className="mt-4 text-sm font-semibold text-rose-300">{replayError}</p> : null}
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        {phase === "ready" ? <Button data-testid="lottery-start" className="bg-amber-400 font-bold text-slate-950 hover:bg-amber-300"
+      {replayError ? <p role="alert" className="mt-4 rounded-lg border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm font-medium text-destructive">{replayError}</p> : null}
+      <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        {phase === "ready" ? <Button data-testid="lottery-start" className="font-semibold"
           onClick={() => steps.length ? setPhase("mixing") : skip()}>Start ball draw</Button> : null}
         {phase === "pulled" && !auto ? <Button data-testid="lottery-next" onClick={advance}>
           {activePull?.accepted ? "Draw next pick" : "Draw next ball"}
         </Button> : null}
-        {phase !== "ready" && !done && !replayError ? <Button variant="outline" className="border-white/30 bg-transparent text-white hover:text-white"
+        {phase !== "ready" && !done && !replayError ? <Button variant="outline"
           onClick={() => setAuto(x => !x)}>{auto ? "Pause after this ball" : "Auto-play remaining picks"}</Button> : null}
         {phase !== "ready" && !done && modernHole ?
-          <Button variant="outline" className="border-white/30 bg-transparent text-white hover:text-white"
+          <Button variant="outline"
             data-testid="lottery-playback-speed"
             onClick={() => setPlaybackSpeed(x => x === "cinematic" ? "quick" : "cinematic")}>
             Playback: {playbackSpeed === "cinematic" ? "Cinematic 1×" : "Quick 2×"}
           </Button> : null}
-        {!done ? <Button variant="ghost" className="text-slate-200 hover:text-white"
+        {!done ? <Button variant="ghost"
           data-testid="lottery-skip" onClick={skip}>Skip to final order</Button> : null}
-        {done ? <p role="status" className="text-sm font-semibold text-emerald-300">
+        {done ? <p role="status" className="text-sm font-medium text-muted-foreground">
           Every pick is recorded. Continue to scouting and the combine.
         </p> : null}
       </div>
     </div>
 
-    <div className="p-4 sm:p-6">
+    <div className="border-t border-border bg-card p-4 sm:p-6">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h4 className="font-bold">Drawn picks</h4>
+        <h4 className="text-base font-semibold tracking-tight">Drawn picks</h4>
         <span className="text-xs text-muted-foreground">Only confirmed selections are visible</span>
       </div>
       {visibleRows.length ? <ol className="grid gap-2 sm:grid-cols-2" data-testid="lottery-revealed-order">
-        {visibleRows.map(p => <li key={p.pick} className={"flex items-center gap-2 rounded-lg border px-3 py-2 text-sm " +
-          (p.owner === league.userTeamId ? "border-primary bg-primary/10" : "border-border")}>
-          <strong className="w-10 shrink-0 tabular-nums">#{p.pick}</strong>
+        {visibleRows.map(p => <li key={p.pick} style={p.owner === league.userTeamId ? teamColorStyle(p.owner) : undefined} className={"flex min-w-0 items-center gap-2 rounded-lg border px-3 py-2.5 text-sm " +
+          (p.owner === league.userTeamId ? "border-border border-l-[3px] border-l-[var(--team-primary)] bg-secondary/30" : "border-border bg-background")}>
+          <strong className="w-10 shrink-0 font-semibold tabular-nums">#{p.pick}</strong>
           <ClubMark teamId={p.owner} label={nameOf(p.owner)} />
           <span className="truncate font-medium">{nameOf(p.owner)}</span>
           {p.owner !== p.origin ? <span className="ml-auto text-xs text-muted-foreground">
@@ -344,5 +343,5 @@ export function GmLotteryMachine({
         .gm-lotto-eject,.gm-lotto-team-in { animation:none }
       }
     `}</style>
-  </div>;
+  </section>;
 }

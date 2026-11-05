@@ -2010,3 +2010,30 @@ html [data-gm] .gm-bracket-card.is-yours { border-color: var(--team-primary); }
 @media(prefers-reduced-motion: no-preference) {
   html [data-gm] .gm-desk-nav__link, html [data-gm] .gm-mast__tool, html [data-gm] .gm-stage-rail__action { transition: background 140ms ease, color 140ms ease; }
 }
+
+
+/* Draft-lottery drum: same neutral materials as the rest of Franchise Lab.
+   A narrow team-color rim on each numbered ball carries club identity
+   without turning the ceremony into a separate navy/cyan arcade skin. */
+html [data-gm] .gm-lottery-chamber {
+  --gm-lottery-well: #e8e8ed;
+  --gm-lottery-highlight: #ffffff;
+  --gm-lottery-track: #d2d2d7;
+  --gm-lottery-rim: #83858d;
+  --gm-lottery-gate: #62656e;
+  --gm-lottery-ball-ink: #1d1d1f;
+  --gm-lottery-ball-edge: #c8cbd1;
+}
+html.dark [data-gm] .gm-lottery-chamber {
+  --gm-lottery-well: #23262c;
+  --gm-lottery-highlight: #343841;
+  --gm-lottery-track: #353943;
+  --gm-lottery-rim: #b7bbc5;
+  --gm-lottery-gate: #d2d5dd;
+  --gm-lottery-ball-ink: #1d1d1f;
+  --gm-lottery-ball-edge: #bcc1cb;
+}
+html [data-gm] .gm-lottery-ceremony {
+  border-radius: var(--card-radius, 14px);
+  box-shadow: var(--shadow-xs, 0 1px 2px rgb(0 0 0 / 5%));
+}

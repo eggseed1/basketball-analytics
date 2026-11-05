@@ -390,6 +390,37 @@ try {
   // through the hole before the browser reveals its number.
   const chamber = page.getByTestId("lottery-hole-chamber");
   await chamber.waitFor();
+  const lotteryAppearance = () => ceremony.evaluate(node => {
+    const canvas = node.querySelector('[data-testid="lottery-hole-chamber"]');
+    const skin = getComputedStyle(node);
+    const drum = canvas ? getComputedStyle(canvas) : null;
+    return {
+      card: skin.backgroundColor,
+      text: skin.color,
+      well: drum?.getPropertyValue("--gm-lottery-well").trim(),
+      rim: drum?.getPropertyValue("--gm-lottery-rim").trim(),
+      overflow: document.documentElement.scrollWidth - innerWidth,
+    };
+  });
+  const startingDark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
+  await page.evaluate(() => document.documentElement.classList.remove("dark"));
+  const lightAppearance = await lotteryAppearance();
+  assert.equal(lightAppearance.card, "rgb(255, 255, 255)",
+    "lottery ceremony should use the standard light GM card, not a navy standalone theme");
+  assert.equal(lightAppearance.well, "#e8e8ed");
+  assert.ok(lightAppearance.overflow <= 2, "lottery should fit a mobile screen");
+  await page.screenshot({ path: `${dir}/lottery-site-light-mobile.png`, fullPage: true, animations: "disabled" });
+  await page.evaluate(() => document.documentElement.classList.add("dark"));
+  const darkAppearance = await lotteryAppearance();
+  assert.notEqual(darkAppearance.card, lightAppearance.card, "dark mode must theme the lottery surface");
+  assert.notEqual(darkAppearance.well, lightAppearance.well, "dark mode must theme the actual drum canvas");
+  assert.ok(darkAppearance.overflow <= 2, "lottery should fit a dark mobile screen");
+  await page.screenshot({ path: `${dir}/lottery-site-dark-mobile.png`, fullPage: true, animations: "disabled" });
+  await page.evaluate(wasDark => document.documentElement.classList.toggle("dark", wasDark), startingDark);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  assert.ok((await lotteryAppearance()).overflow <= 2, "lottery should fit the desktop GM page");
+  await page.screenshot({ path: `${dir}/lottery-site-desktop.png`, fullPage: true, animations: "disabled" });
+  await page.setViewportSize({ width: 390, height: 844 });
   const firstFrame = await chamber.evaluate(canvas => canvas.toDataURL());
   await page.getByTestId("lottery-start").click();
   const speedControl = page.getByTestId("lottery-playback-speed");
