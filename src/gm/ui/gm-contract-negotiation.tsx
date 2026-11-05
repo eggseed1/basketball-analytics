@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useGmStore } from "@/gm/state/gm-store";
 import { displayOverall, displayPlayerName } from "@/gm/lib/selectors";
 import { overallOf } from "@/gm/engine/lineup";
+import { BADGES, BADGE_LEVELS, badgeLevel } from "@/gm/engine/badges";
 import { extensionQuote, extensionInterest, extensionSalaryTarget } from "@/gm/engine/extensions";
 import { GmContractSigningCelebration } from "@/gm/ui/gm-contract-signing-celebration";
 import { exceptionAmounts } from "@/gm/engine/cap";
@@ -169,6 +170,50 @@ export function GmContractNegotiation({ playerId, mode }: { playerId: string; mo
           <div className="mt-1 font-semibold"><ClubMark teamId={userTeam.id} label={userTeam.abbr}/></div>
         </div>
       </div>
+      <details className="mt-4 rounded-xl border border-border bg-secondary/25 p-3" data-testid="negotiation-player-scouting">
+        <summary className="cursor-pointer text-sm font-semibold">
+          View player scouting · attributes, recent production and badges
+        </summary>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <section>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recent production</h2>
+            {(() => {
+              const line = player.seasonLine?.gp ? player.seasonLine : player.priorLine?.gp ? player.priorLine : player.nbaSeason;
+              return line?.gp ? <div className="mt-2 grid grid-cols-4 gap-2">
+                {([["PPG",line.pts],["RPG",line.reb],["APG",line.ast],["MPG",line.min]] as const).map(([label,value])=>
+                  <div key={label} className="rounded-md bg-background/70 p-2 text-center">
+                    <p className="text-[10px] text-muted-foreground">{label}</p>
+                    <p className="mt-1 text-sm font-bold tabular-nums">{(value / line.gp).toFixed(1)}</p>
+                  </div>)}
+              </div> : <p className="mt-2 text-xs text-muted-foreground">No saved season totals available yet.</p>;
+            })()}
+          </section>
+          <section>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Key attributes</h2>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {([["3PT","threePoint"],["Mid","midrange"],["Pass","passAccuracy"],["Per D","perimeterDefense"],["Rim D","interiorDefense"],["Speed","speed"]] as const).map(([label,key])=>
+                <div key={key} className="rounded-md bg-background/70 p-2 text-center">
+                  <p className="text-[10px] text-muted-foreground">{label}</p>
+                  <p className="mt-1 text-sm font-bold tabular-nums">{player.sheet?.attributes[key] ?? "—"}</p>
+                </div>)}
+            </div>
+          </section>
+        </div>
+        <section className="mt-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Earned badges</h2>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {BADGES.map(badge => ({ id: badge.id, name: badge.name, level: badgeLevel(player, badge.id) }))
+              .filter(badge => badge.level > 0)
+              .sort((a,b) => b.level-a.level)
+              .slice(0,8)
+              .map(badge => <span key={badge.id} className="rounded-md border border-border bg-background/70 px-2 py-1 text-xs">
+                {badge.name} · {BADGE_LEVELS[badge.level]}
+              </span>)}
+            {!BADGES.some(badge => badgeLevel(player, badge.id) > 0) ?
+              <p className="text-xs text-muted-foreground">No active earned badges yet.</p> : null}
+          </div>
+        </section>
+      </details>
     </header>
 
     {feedback ? <div role="status" className={cn("rounded-xl border p-4 text-sm font-medium",
