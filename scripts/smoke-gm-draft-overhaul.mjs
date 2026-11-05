@@ -52,14 +52,16 @@ try{
   await page.getByRole("button",{name:"Sim to my pick",exact:true}).click();await page.getByRole("heading",{name:"You are on the clock",exact:true}).waitFor();
   await page.getByRole("button",{name:"Open report for "+manifest.targetName,exact:true}).click();await page.getByRole("button",{name:"Review this selection",exact:true}).click();await page.getByRole("dialog").getByRole("button",{name:"Submit draft pick",exact:true}).click();
   const rookieReveal=page.getByRole("dialog",{name:"Draft pick reveal"});
-  await rookieReveal.getByText("Career path",{exact:true}).waitFor();
-  await rookieReveal.getByText("Unwritten",{exact:true}).waitFor();
-  assert.equal(await rookieReveal.getByText("Dev trait",{exact:true}).count(),0,
-    "generated rookies cannot reveal secret career traits on draft night");
+  await rookieReveal.getByText("Learning trait",{exact:true}).waitFor();
+  await rookieReveal.getByText(/^(Bust|Normal|Star|Superstar|X-Factor)$/, {exact:true}).waitFor();
+  assert.equal(await rookieReveal.getByText("Unwritten",{exact:true}).count(),0,
+    "post-draft learning ability is now a real tier, not a sealed career prediction");
+  assert.match(await rookieReveal.innerText(), /not a.*rating|still decide how far|still decide/i,
+    "draft celebration must not imply a guaranteed career ceiling");
   await rookieReveal.getByRole("button",{name:"Continue",exact:true}).click();
   saved=await exported();assert.equal(saved.players.find(player=>player.id===manifest.targetId).teamId,"bos");assert.equal(saved.draftPickIndex,manifest.tradeSlot+1,"the next CPU pick waits");report.tasks.push("Trade up, cancellation, confirmation, pick ownership, draft selection and manual pacing");
   await load("results");await page.getByRole("heading",{name:/You took/}).waitFor();const plan=page.getByRole("combobox",{name:/Development plan for/}).first();await plan.selectOption("practice");saved=await exported();assert.ok(saved.players.some(player=>player.teamId==="bos"&&player.developmentPlan==="practice"));await capture("mobile-draft-results");
-  await load("development");await page.goto("http://127.0.0.1:3109/gm/player/"+encodeURIComponent(manifest.developmentId),{waitUntil:"domcontentloaded"});await page.getByRole("heading",{name:"Latest development check-in",exact:true}).waitFor();await page.getByTestId("development-outlook").waitFor();assert.match(await page.getByTestId("player-draft-history").innerText(),/draft · Pick #\d+/);for(const label of ["Bust","Normal","Star","Superstar","X-Factor"])assert.equal(await page.getByText(label,{exact:true}).count(),0,"generated rookies cannot reveal a fixed career label");await capture("mobile-rookie-development");
+  await load("development");await page.goto("http://127.0.0.1:3109/gm/player/"+encodeURIComponent(manifest.developmentId),{waitUntil:"domcontentloaded"});await page.getByRole("heading",{name:"Latest development check-in",exact:true}).waitFor();await page.getByTestId("development-outlook").waitFor();assert.match(await page.getByTestId("player-draft-history").innerText(),/draft · Pick #\d+/);const earnedTier=await page.getByTestId("gm-player-development-trait").innerText();assert.match(earnedTier,/^(Bust|Normal|Star|Superstar|X-Factor)$/,"post-draft rookie profile shows his learning trait");await capture("mobile-rookie-development");
   await page.setViewportSize({width:1440,height:1000});await load("prep");await page.getByTestId("draft-war-room").waitFor();await capture("desktop-draft-preparation");await load("night");await page.getByRole("button",{name:"Trade picks",exact:true}).click();await capture("desktop-draft-trade");report.tasks.push("Development plans, explained growth, desktop and mobile layouts");
   assert.deepEqual(errors,[]);console.log("Draft browser checks passed across "+report.screens.length+" screens: research, comparison, reloads, trade up, confirmation, picks and development plans.");
 }catch(error){report.error=error.stack??String(error);if(page){await page.screenshot({path:dir+"/failure.png",fullPage:true});writeFileSync(dir+"/failure.html",await page.content());}throw error;}
