@@ -6,6 +6,7 @@
 import assert from "node:assert/strict";
 
 import { playerSheet, progressSheet } from "../src/gm/engine/attributes";
+import { developmentProfileOf } from "../src/gm/engine/development-profile";
 import {
   autoBalanceRotation,
   coachingBoost,
@@ -94,18 +95,36 @@ assert.ok(
   "discourse star should not roll Bust"
 );
 
-function growYears(base: GmPlayer, trait: "xfactor" | "bust", years: number): number {
+function growYears(base: GmPlayer, tier: "xfactor" | "bust", years: number): number {
+  const profile = developmentProfileOf(base);
+  const elite = tier === "xfactor";
   let p: GmPlayer = {
     ...base,
-    // Hold the rookie and random sample constant: only growth disposition changes.
-    id: `${base.id}-trait-paired`, 
+    // Hold the rookie, player seed and random sample constant. Model-2
+    // tier differences are derived from persistent learning DNA, not from
+    // manually editing the old sheet potential trait.
+    id: `${base.id}-trait-paired`,
     age: 20,
+    developmentProfile: {
+      ...profile,
+      learning: elite ? 1.35 : 0.74,
+      adaptability: elite ? 1.25 : 0.74,
+      learningSurge: elite ? 2.45 : 1,
+      aptitudes: {
+        shooting: elite ? 1.25 : 0.72,
+        creation: elite ? 1.25 : 0.72,
+        defense: elite ? 1.25 : 0.72,
+        rebounding: elite ? 1.25 : 0.72,
+        finishing: elite ? 1.25 : 0.72,
+      },
+      discovery: 0,
+    },
     sheet: {
       ...playerSheet(base),
       potential: {
         ...playerSheet(base).potential,
-        trait,
-        path: trait === "bust" ? "bust" : "boom",
+        trait: "normal",
+        path: "average",
         // Obsolete fixed estimates must not decide a model-2 rookie career.
         ceiling: 78,
         floor: 62,
@@ -113,6 +132,7 @@ function growYears(base: GmPlayer, trait: "xfactor" | "bust", years: number): nu
       overall: 74,
     },
   };
+  assert.equal(playerDevTrait(p), tier, "the profile, not the legacy stamp, sets the learning tier");
   for (let y = 0; y < years; y++) {
     p = progressSheet(
       { ...p, age: 20 + y },
