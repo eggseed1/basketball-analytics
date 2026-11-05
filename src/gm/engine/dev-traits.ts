@@ -230,7 +230,7 @@ export function generatedLearningTrait(player: GmPlayer): GmDevTrait {
  * displayed as Normal merely because a legacy save carried an old stamp.
  * It never gives an unproven rookie a guaranteed future overall.
  */
-export function abilityTraitFloor(player: GmPlayer, overall: number): GmDevTrait | null {
+export function abilityTraitFloor(overall: number): GmDevTrait | null {
   if (overall >= 98) return "xfactor";
   if (overall >= 95) return "superstar";
   if (overall >= 90) return "star";
@@ -241,7 +241,7 @@ function generatedTrait(player: GmPlayer, overall: number): GmDevTrait {
   return maxTrait(
     generatedLearningTrait(player),
     player.traitHistory?.at(-1)?.after,
-    abilityTraitFloor(player, overall)
+    abilityTraitFloor(overall)
   ) ?? "normal";
 }
 
@@ -485,12 +485,16 @@ export function playerDevTrait(player: GmPlayer): GmDevTrait {
   const overall = Math.max(player.sheet?.overall ?? 0, overallOf(player));
   if (player.draftModel === 2) return generatedTrait(player, overall);
   const reviewed = player.traitHistory?.at(-1);
-  if (reviewed) return maxTrait(reviewed.after, abilityTraitFloor(player, overall)) ?? reviewed.after;
+  if (reviewed) return maxTrait(
+    reviewed.after,
+    abilityTraitFloor(overall),
+    !isDraftProspect(player) ? leagueProductionFloor(player, overall) : null
+  ) ?? reviewed.after;
   if (!isDraftProspect(player)) {
     const floor = maxTrait(
       discourseTraitHint(player, overall),
       leagueProductionFloor(player, overall),
-      abilityTraitFloor(player, overall)
+      abilityTraitFloor(overall)
     );
     if (floor) return floor;
     const stamped = player.sheet?.potential?.trait;
