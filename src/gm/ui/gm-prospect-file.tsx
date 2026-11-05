@@ -33,7 +33,20 @@ export function GmProspectFile({league,player}:{league:GmLeagueState;player:GmPl
   const summary=highlight?.entry.note??read.strengths[0]??signal.reasons[0]??"Needs another look before investing a pick.";
   const caution=highlight?.entry.caution??read.risks[0]??"NBA translation remains uncertain.";
   return <section aria-label={"Prospect file for "+displayPlayerName(player)} className="flex min-w-0 flex-col gap-4 rounded-xl border border-border p-4">
-    <header className="flex items-start gap-3 rounded-xl bg-secondary/35 p-3"><GmPlayerPortrait player={player} size="md"/><div className="min-w-0"><p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Prospect report · market #{read.marketRank}</p><h3 className="mt-1 text-xl font-bold">{displayPlayerName(player)}</h3><p className="mt-1 text-sm text-muted-foreground">{player.position} · {player.age} years · {player.college??stats.competition}</p>{player.identity?<p className="mt-1 text-xs text-muted-foreground">{player.identity.hometown}, {originLabel(player.identity.countryCode)} · {player.identity.temperament}</p>:null}</div></header>
+    <header className="flex flex-wrap items-center gap-3 rounded-xl bg-secondary/35 p-3 sm:p-4">
+      <GmPlayerPortrait player={player} size="lg"/>
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-semibold uppercase tracking-[.14em] text-muted-foreground">Prospect profile · consensus #{read.marketRank}</p>
+        <h3 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">{displayPlayerName(player)}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{player.position}{player.secondaryPosition?" / "+player.secondaryPosition:""} · Age {player.age} · {player.college??stats.competition}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{Math.floor(player.heightIn/12)}′{player.heightIn%12}″ · {player.weightLbs} lb · {player.scoutProfile?.archetypeLabel ?? "Prospect"}</p>
+        {player.identity?<p className="mt-1 text-xs text-muted-foreground">{player.identity.hometown}, {originLabel(player.identity.countryCode)} · {player.identity.temperament}</p>:null}
+      </div>
+      <div className="ml-auto rounded-lg border border-border bg-background px-3 py-2 text-center">
+        <strong className="block text-lg font-black tabular-nums">{read.readyLow}–{read.readyHigh}</strong>
+        <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Scouted OVR</span>
+      </div>
+    </header>
     <nav aria-label="Prospect detail sections" className="grid grid-cols-3 overflow-hidden rounded-lg border border-border">
       {(["overview","scouting","production"] as const).map(item=>
         <button type="button" key={item} aria-pressed={view===item}
