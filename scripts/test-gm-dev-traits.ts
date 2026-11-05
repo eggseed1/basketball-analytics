@@ -146,6 +146,7 @@ assert.ok(
 const generatedLeague = prepareFranchise(createGeneratedLeague({
   userTeamId: "bos", season: 2027, seed: 91,
 }));
+const reviewLeague = { ...generatedLeague, draftPool: [] };
 const source = generatedLeague.players.find(p => p.draftModel === 2 && p.sheet) ??
   { ...klass[0]!, draftModel: 2 as const, teamId: "bos", draftYear: 2027, sheet: playerSheet(klass[0]!) };
 const exemplar = { ...source, teamId: "bos", draftYear: 2027, age: 23, identityRevealed: true,
@@ -185,9 +186,9 @@ for (const overall of [95,96,97]) {
   assert.equal(playerDevTrait(elite), "superstar", `${overall}+ cannot show a below-superstar label`);
   assert.equal(playerSheet(elite).potential.trait, "superstar",
     "sheet migrations and detail views must agree with the public tier");
-  const assessment = annualTraitDecision(generatedLeague, elite);
+  const assessment = annualTraitDecision(reviewLeague, elite);
   assert.equal(assessment.after, "superstar", "annual assessment must preserve proven elite ability");
-  const stamped = reviewDevelopmentTrait(generatedLeague, elite);
+  const stamped = reviewDevelopmentTrait(reviewLeague, elite);
   assert.equal(stamped.sheet!.potential.trait, "superstar",
     "annual review must persist the visible tier instead of leaving the legacy stamp");
 }
