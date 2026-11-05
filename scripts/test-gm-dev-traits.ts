@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 
-import { playerSheet } from "../src/gm/engine/attributes";
+import { ensurePlayerSheet, playerSheet } from "../src/gm/engine/attributes";
 import { developmentProfileOf } from "../src/gm/engine/development-profile";
 import { annualTraitDecision, reviewDevelopmentTrait, advanceDynamicProgression } from "../src/gm/engine/dynamic-progression";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
@@ -196,6 +196,18 @@ assert.equal(playerDevTrait({ ...slow, sheet: { ...slow.sheet!, overall: 98 } })
 assert.equal(abilityTraitFloor(94), "star");
 assert.equal(abilityTraitFloor(95), "superstar");
 assert.equal(abilityTraitFloor(98), "xfactor");
+// Real NBA historical saves must retain exactly the same stored potential and
+// ratings during load/rotation migrations. The public trait can still apply
+// a clear observable 95+ quality floor, without rewriting the source.
+const importedElite: GmPlayer = { ...vet,
+  sheet: { ...playerSheet(vet), overall: 96,
+    potential: { ...playerSheet(vet).potential, trait: "normal", path: "average" } },
+};
+const importedRepaired = ensurePlayerSheet(importedElite);
+assert.deepEqual(importedRepaired.sheet, importedElite.sheet,
+  "loading an existing NBA 96 OVR save must not rewrite its development data");
+assert.ok(["superstar", "xfactor"].includes(playerDevTrait(importedRepaired)),
+  "an observed NBA 96+ OVR talent must have an elite public badge");
 // For model 2 the ceiling value is a historical compatibility field, never
 // a promise that controls the tier or how high a player can eventually grow.
 const lowCeiling = { ...starLearner, sheet: { ...starLearner.sheet!,
