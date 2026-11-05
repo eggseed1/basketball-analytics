@@ -119,10 +119,12 @@ export function annualTraitDecision(league: GmLeagueState, player: GmPlayer): Tr
   // Generated players may cool off after a breakout, but their actual
   // learning profile and proven elite quality remain the minimum tier.
   if (player.draftModel === 2) {
-    after = maxTrait(after, generatedLearningTrait(player), abilityTraitFloor(player, ovr)) ?? after;
-    if (after === current && reason !== (awards.reasons[0] ?? "Development assessment held steady")) {
-      reason = "Development assessment held steady";
-    }
+    after = maxTrait(after, generatedLearningTrait(player), abilityTraitFloor(ovr)) ?? after;
+  } else {
+    after = maxTrait(after, abilityTraitFloor(ovr)) ?? after;
+  }
+  if (after === current && reason !== (awards.reasons[0] ?? "Development assessment held steady")) {
+    reason = "Development assessment held steady";
   }
   return { before: current, after, reason };
 }
