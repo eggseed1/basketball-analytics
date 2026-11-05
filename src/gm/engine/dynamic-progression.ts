@@ -75,13 +75,8 @@ export function accoladeScore(league: GmLeagueState, playerId: string): { score:
 }
 
 export function annualTraitDecision(league: GmLeagueState, player: GmPlayer): TraitDecision {
-  // Anchor an established player's annual decision to the more established
-  // of the saved tier and the last reviewed tier. Otherwise natural OVR
-  // decline can lower an old stamp between checkpoints and the offseason
-  // review demotes it AGAIN, reporting a two-tier drop in a single year.
   const current: GmDevTrait = player.draftModel === 2
-    ? playerDevTrait(player)
-    : maxTrait(player.sheet?.potential.trait, player.traitHistory?.at(-1)?.after) ?? "normal";
+    ? playerDevTrait(player) : player.sheet?.potential.trait ?? "normal";
   if (player.traitHistory?.some(row => row.season === league.season)) {
     return { before: current, after: current, reason: "Already reviewed this offseason" };
   }
@@ -125,8 +120,6 @@ export function annualTraitDecision(league: GmLeagueState, player: GmPlayer): Tr
   // learning profile and proven elite quality remain the minimum tier.
   if (player.draftModel === 2) {
     after = maxTrait(after, generatedLearningTrait(player), abilityTraitFloor(ovr)) ?? after;
-  } else {
-    after = maxTrait(after, abilityTraitFloor(ovr)) ?? after;
   }
   if (after === current && reason !== (awards.reasons[0] ?? "Development assessment held steady")) {
     reason = "Development assessment held steady";
