@@ -482,7 +482,7 @@ html [data-gm]:-webkit-full-screen::backdrop {
    fullscreen. The loading boundary uses the same fixed transparent surface
    rather than flashing back to the regular page during tab navigation. */
 html[data-gm-full] .page-atmosphere { display: block; }
-html [data-gm] .gm-route-loading {
+html [data-gm].gm-route-loading {
   width: 100%;
   min-width: 0;
 }
