@@ -840,7 +840,11 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
     ? clamp(0.78+Math.max(0,profile.learning-1.02)*0.55,0.78,1.08) *
       (profile.learningSurge ?? 1)
     : 1;
-  const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*(0.85+rng()*0.3),0,5.5);
+  // Model-2 growth is driven by its underlying learning DNA only once.
+  // The small cohort-normalization factor preserves the audited second-round
+  // rotation-hit rate after retiring the old independent label multiplier.
+  const cohortBalance = openPath ? 0.98 : 1;
+  const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*cohortBalance*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;
   const budget=annual*pace*(1+clamp(opts.mentorBonus??0,0,0.18))*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
   const steps=Math.min(Math.max(0,ratingLimit-sheet.overall),Math.floor(budget));
