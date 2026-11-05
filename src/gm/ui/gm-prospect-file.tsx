@@ -89,7 +89,7 @@ export function GmProspectFile({league,player}:{league:GmLeagueState;player:GmPl
     </> : null}
     {view==="scouting" ? <>
       <section className="rounded-lg border border-border p-3">
-        <h4 className="text-sm font-bold">Your scout's grades</h4>
+        <h4 className="text-sm font-bold">Your scout&apos;s grades</h4>
         <p className="mt-1 text-xs text-muted-foreground">Unscouted areas stay unknown; the draft board does not reveal true potential.</p>
         <dl className="mt-3 grid grid-cols-2 gap-2">
           {Object.entries(player.scoutProfile?.grades ?? {}).map(([key,grade])=>
