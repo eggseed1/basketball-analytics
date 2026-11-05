@@ -25,7 +25,6 @@ import {
 } from "@/data/providers/historical/season-range";
 import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
-import "./gm-stage.css";
 
 type FullscreenNode = HTMLElement & {
   webkitRequestFullscreen?: () => void;
