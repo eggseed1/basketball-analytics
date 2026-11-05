@@ -18,7 +18,7 @@ import {
   simpleCategoryMeans,
   type LetterGrade,
 } from "@/gm/engine/attributes";
-import { traitLabel } from "@/gm/engine/dev-traits";
+import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import { developmentOutlook } from "@/gm/engine/development-profile";
 import { formatHeight, scoutPotentialView } from "@/gm/engine/scouting";
 import { perGame, rateLabel, shotLabel } from "@/gm/lib/counting";
@@ -340,14 +340,14 @@ function SelectedHero({
             </span>
           ) : null}
         </div>
-        {sheet.potential.trait && player.draftModel!==2 ? (
-          <span
-            className="gm-roster__trait"
-            data-trait={sheet.potential.trait}
-          >
-            {traitLabel(sheet.potential.trait)}
-          </span>
-        ) : null}
+        <span className="gm-roster__trait"
+          data-trait={playerDevTrait(player)}
+          data-testid="gm-roster-dev-trait"
+          title={player.draftModel === 2
+            ? "Learning tier reflects how this player responds to coaching, plus earned growth and current ability. It does not set a career ceiling."
+            : "Development trait reflects playing ability and growth tendencies."}>
+          {traitLabel(playerDevTrait(player))}
+        </span>
       </div>
 
       <div className="gm-roster__hero-main">
@@ -442,7 +442,7 @@ function SimpleTable({
               {cat.label}
             </th>
           ))}
-          <th title="Generated players show observed development; historic players show a scouted potential grade">Dev</th>
+          <th title="Generated players show a learning tier; established players show a scouted potential grade">Dev</th>
         </tr>
       </thead>
       <tbody>
@@ -474,8 +474,12 @@ function SimpleTable({
               {means.map((value, index) => (
                 <GradeCell key={SIMPLE_CATS[index]!.id} value={value} prior={prior?.[index]} />
               ))}
-              <td className="gm-roster__grade" title={outlook?.detail ?? `Scouted potential: ${pot.low}-${pot.high}`}>
-                {outlook ? <span className="text-[11px] font-medium">{outlook.label}</span> : potGrade}
+              <td className="gm-roster__grade" title={outlook
+                ? `Learning tier: ${traitLabel(playerDevTrait(player))}. ${outlook.label}: ${outlook.detail} No fixed final OVR.`
+                : `Scouted potential: ${pot.low}-${pot.high}`}>
+                {outlook ? <span data-trait={playerDevTrait(player)} className="text-[11px] font-semibold">
+                  {traitLabel(playerDevTrait(player))}
+                </span> : potGrade}
               </td>
             </tr>
           );
