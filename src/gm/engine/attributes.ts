@@ -742,7 +742,15 @@ export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
 
 /** Older saves have no sheet, or a sheet from an earlier formula. */
 export function ensurePlayerSheet(player: GmPlayer): GmPlayer {
-  if (player.sheet?.version === SHEET_VERSION) return player;
+  if (player.sheet?.version === SHEET_VERSION) {
+    if (player.draftModel !== 2) return player;
+    // Correct obsolete pre-open-development stamps when a save is first
+    // loaded, not as a surprise multilevel "promotion" at the next summer.
+    // No OVR, attributes, history or learning DNA are altered.
+    const potential = ensurePotentialTrait(player.sheet.potential, player);
+    return potential === player.sheet.potential ? player
+      : { ...player, sheet: { ...player.sheet, potential } };
+  }
   const sheet = playerSheet(player);
   const old = player.sheet?.attributes;
   const profile = player.simProfile;
