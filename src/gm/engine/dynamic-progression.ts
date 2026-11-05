@@ -75,8 +75,13 @@ export function accoladeScore(league: GmLeagueState, playerId: string): { score:
 }
 
 export function annualTraitDecision(league: GmLeagueState, player: GmPlayer): TraitDecision {
+  // Anchor an established player's annual decision to the more established
+  // of the saved tier and the last reviewed tier. Otherwise natural OVR
+  // decline can lower an old stamp between checkpoints and the offseason
+  // review demotes it AGAIN, reporting a two-tier drop in a single year.
   const current: GmDevTrait = player.draftModel === 2
-    ? playerDevTrait(player) : player.sheet?.potential.trait ?? "normal";
+    ? playerDevTrait(player)
+    : maxTrait(player.sheet?.potential.trait, player.traitHistory?.at(-1)?.after) ?? "normal";
   if (player.traitHistory?.some(row => row.season === league.season)) {
     return { before: current, after: current, reason: "Already reviewed this offseason" };
   }
