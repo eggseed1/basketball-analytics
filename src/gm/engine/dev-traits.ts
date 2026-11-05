@@ -442,14 +442,12 @@ export function ensurePotentialTrait(potential: GmPotential, player: GmPlayer): 
       ? potential
       : { ...potential, trait: tier, path: pathFromTrait(tier) };
   }
+  // The legacy player sheet and its annual history remain authoritative.
+  // The public playerDevTrait() can still show a 95+ ability floor without
+  // mutating an imported NBA career or rewriting historical evaluations.
   const reviewed = player.traitHistory?.at(-1);
-  if (reviewed) {
-    const overall = Math.max(player.sheet?.overall ?? 0, overallOf(player));
-    const live = maxTrait(reviewed.after, abilityTraitFloor(overall),
-      !isDraftProspect(player) ? leagueProductionFloor(player, overall) : null) ?? reviewed.after;
-    return potential.trait === live && potential.path === pathFromTrait(live)
-      ? potential : { ...potential, trait: live, path: pathFromTrait(live) };
-  }
+  if (reviewed) return potential.trait === reviewed.after && potential.path === pathFromTrait(reviewed.after)
+    ? potential : { ...potential, trait: reviewed.after, path: pathFromTrait(reviewed.after) };
   // Current overall only — never potential.ceiling. A 95 ceiling is upside,
   // not a reason to stamp X-Factor on every high-upside kid.
   const overall = Math.max(player.sheet?.overall ?? 0, overallOf(player));
