@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-05T18:19:03.720Z",
-  "apiCount": 430,
+  "fetchedAt": "2026-11-05T22:02:29.902Z",
+  "apiCount": 431,
   "rows": [
+    {
+      "date": "2026-11-05T08:00Z",
+      "description": "Signed G Kevin McCullar Jr. to a two-way contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
     {
       "date": "2026-11-04T08:00Z",
       "description": "Signed F Dalen Terry to a contract for the remainder of the season.",

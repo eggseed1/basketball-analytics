@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-05",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-05T18:20:15.111Z",
-    "rosterPlayerCount": 504,
-    "headlinesScanned": 10859,
-    "latestHeadlineAt": "2026-11-05T18:15:08.000Z",
+    "builtAt": "2026-11-05T22:03:36.527Z",
+    "rosterPlayerCount": 505,
+    "headlinesScanned": 10935,
+    "latestHeadlineAt": "2026-11-05T22:00:34.000Z",
     "latestTransactionDate": "2026-11-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -84,7 +84,7 @@
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:espn": {
       "label": "ESPN",
@@ -1987,6 +1987,24 @@
       ],
       "linkedTeamIds": [
         "18"
+      ]
+    },
+    {
+      "id": "mv-contract-4578893-20261105",
+      "headline": "Vít Krejčí: contract future",
+      "primaryClaimId": "mv-d38255d8d2d8c9ba",
+      "claimIds": [
+        "mv-d38255d8d2d8c9ba"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-05T19:18:20.000Z",
+      "lastMeaningfulAt": "2026-11-05T19:18:20.000Z",
+      "linkedPlayerIds": [
+        "4578893"
+      ],
+      "linkedTeamIds": [
+        "22"
       ]
     },
     {
@@ -10540,6 +10558,24 @@
         "9",
         "27"
       ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-d38255d8d2d8c9ba",
+      "clusterId": "mv-contract-4578893-20261105",
+      "summary": "Portland's Vit Krejci suffers lower leg fracture, expected to miss extended time",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-05T19:18:20.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/portlands-vit-krejci-suffers-lower-191820483.html",
+      "playerIds": [
+        "4578893"
+      ],
+      "teamIds": [],
       "isOriginal": false
     },
     {

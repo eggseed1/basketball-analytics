@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-11-05",
-    "retrievedAt": "2026-11-05T18:29:41.329Z",
+    "retrievedAt": "2026-11-05T22:09:42.223Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "392020e707d4c7556b71d8df7bb7225799914f7e38b33ea29b1c717172e90f8d",
+    "sourceHash": "d2b8f4565a154bcdc23bfffd2837c6d675766832c59ae3bd4df627b57af8aef0",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -12351,6 +12351,29 @@
             "href": "/players/1642918"
           },
           {
+            "playerId": "1641755",
+            "playerName": "Kevin McCullar Jr.",
+            "age": null,
+            "contractId": "cy-1641755-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1641755-2026",
+                "playerId": "1641755",
+                "franchiseId": "28",
+                "season": "2026-27",
+                "salary": 1366314,
+                "capHit": 1366314,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "salary-index-carry-forward"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1641755"
+          },
+          {
             "playerId": "1643558",
             "playerName": "Jaden Bradley",
             "age": null,
@@ -12423,12 +12446,12 @@
         "futureCommitments": [
           {
             "season": "2026-27",
-            "totalSalaryDollars": 201188888,
-            "playersUnderContract": 14
+            "totalSalaryDollars": 202555202,
+            "playersUnderContract": 15
           }
         ],
-        "playerSalaryCommitments": 201188888,
-        "playersWithSalary": 14,
+        "playerSalaryCommitments": 202555202,
+        "playersWithSalary": 15,
         "playersWithoutSalary": 2
       },
       "draftAssets": {
@@ -13353,7 +13376,7 @@
     "salaryNullAsZero": 0,
     "teamsWithPayroll": 30,
     "teamsWithContracts": 30,
-    "playersWithSalary": 472,
+    "playersWithSalary": 473,
     "unmatchedSalaryNames": 21,
     "draftAssetsStructured": 0
   }
