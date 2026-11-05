@@ -208,8 +208,9 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
     : age <= 31 ? -0.30 : age <= 33 ? -0.82 : age <= 35 ? -1.36 : -1.90;
   const bonus = trait === "xfactor" ? 1.24 : trait === "superstar" ? 1.18 : trait === "star" ? 1.1 : trait === "bust" ? 0.55 : 1;
   // Draft-day boom/bust labels become modest tendencies, not destinies.
-  const path = sheet.potential.path === "boom" ? (openPath ? 1.06 : 1.13)
-    : sheet.potential.path === "bust" ? (openPath ? 0.92 : 0.72) : 1;
+  const activePath = openPath ? pathFromTrait(trait) : sheet.potential.path;
+  const path = activePath === "boom" ? (openPath ? 1.06 : 1.13)
+    : activePath === "bust" ? (openPath ? 0.92 : 0.72) : 1;
   const play = withSheet.seasonLine;
   const availability = play && play.gp >= 12 ? clamp(play.gp / 65, 0.35, 1) : 0.86;
   let activity = play && play.gp >= 12 ? clamp(play.min / play.gp / 25, 0.65, 1.12) : 0.85;
