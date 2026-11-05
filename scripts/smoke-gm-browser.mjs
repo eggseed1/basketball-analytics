@@ -323,6 +323,9 @@ try {
   await page.screenshot({ path: `${dir}/free-agency-dossier-mobile.png`, fullPage: true, animations: "disabled" });
   await page.getByRole("link", { name: "Review terms for " + faManifest.playerName, exact: true }).click();
   await page.waitForURL("**/gm/free-agency/offer/**");
+  const playerScouting = page.getByTestId("negotiation-player-scouting");
+  await playerScouting.locator("summary").click();
+  await playerScouting.getByRole("heading", { name: "Key attributes" }).waitFor();
   const faSlider = page.getByRole("slider", { name: "Annual salary offer", exact: true });
   assert.ok(Number(await faSlider.getAttribute("max")) <= faManifest.maxSalaryM + 0.01,
     "free-agent salary slider must respect the contract evaluator's legal maximum");
