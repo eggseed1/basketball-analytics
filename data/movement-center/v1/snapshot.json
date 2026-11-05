@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-04",
+    "snapshotDate": "2026-11-05",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-04T21:58:01.462Z",
+    "builtAt": "2026-11-05T18:20:15.111Z",
     "rosterPlayerCount": 504,
-    "headlinesScanned": 10494,
-    "latestHeadlineAt": "2026-11-04T21:53:50.000Z",
-    "latestTransactionDate": "2026-11-04",
+    "headlinesScanned": 10859,
+    "latestHeadlineAt": "2026-11-05T18:15:08.000Z",
+    "latestTransactionDate": "2026-11-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -148,7 +148,7 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
@@ -681,12 +681,13 @@
         "mv-4b2754d7aad75d47",
         "mv-c055063cb53c6fbd",
         "mv-67ca1f7613163faa",
-        "mv-c4ca4d7a30da8f6e"
+        "mv-c4ca4d7a30da8f6e",
+        "mv-3952e8efc7a5f9b5"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-04T15:43:31.000Z",
+      "lastMeaningfulAt": "2026-11-05T17:01:21.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -698,6 +699,7 @@
         "18",
         "8",
         "14",
+        "9",
         "27",
         "29"
       ]
@@ -838,16 +840,18 @@
         "mv-69d9c8c662606edf",
         "mv-1b28e4e9318fa264",
         "mv-f543a430a8bc72af",
-        "mv-abaa2bba65f55291"
+        "mv-abaa2bba65f55291",
+        "mv-5e51bf863d4940c3"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-03T23:44:56.000Z",
+      "lastMeaningfulAt": "2026-11-04T16:53:15.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
-        "5106058"
+        "5106058",
+        "4868423"
       ],
       "linkedTeamIds": [
         "9",
@@ -1025,20 +1029,22 @@
     {
       "id": "mv-trade-3202-20261007",
       "headline": "Kevin Durant, Rudy Gobert and others: trade talk",
-      "primaryClaimId": "mv-6287f889f0b5ecbe",
+      "primaryClaimId": "mv-b76c42107d1755af",
       "claimIds": [
         "mv-f6a93efa0cda8c42",
         "mv-c1fabda3717d7f60",
-        "mv-6287f889f0b5ecbe"
+        "mv-6287f889f0b5ecbe",
+        "mv-b76c42107d1755af"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-07T12:59:38.000Z",
-      "lastMeaningfulAt": "2026-10-12T12:20:00.000Z",
+      "lastMeaningfulAt": "2026-11-04T18:20:39.000Z",
       "linkedPlayerIds": [
         "3202",
         "3032976",
-        "4279888"
+        "4279888",
+        "4683021"
       ],
       "linkedTeamIds": [
         "2",
@@ -1760,12 +1766,14 @@
       "primaryClaimId": "mv-81703f46baec2589",
       "claimIds": [
         "mv-81703f46baec2589",
-        "mv-44d538b33b57e02e"
+        "mv-44d538b33b57e02e",
+        "mv-cbb551e056c972e9",
+        "mv-5217fcdd1a3cbf5c"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-28T15:58:25.000Z",
-      "lastMeaningfulAt": "2026-11-04T16:12:55.000Z",
+      "lastMeaningfulAt": "2026-11-05T15:27:04.000Z",
       "linkedPlayerIds": [
         "3112335",
         "3936299",
@@ -1885,12 +1893,15 @@
         "mv-3990bfcfeab0fb36",
         "mv-b956d61b59f4e321",
         "mv-73e685752a27693c",
-        "mv-b9818516ef6efda3"
+        "mv-b9818516ef6efda3",
+        "mv-477f6e52579663fe",
+        "mv-ad8a2730f0ad8c36",
+        "mv-0ef940ee1fa284a8"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-01T13:58:47.000Z",
-      "lastMeaningfulAt": "2026-11-04T17:15:15.000Z",
+      "lastMeaningfulAt": "2026-11-05T12:37:35.000Z",
       "linkedPlayerIds": [
         "2595516",
         "4066336",
@@ -1958,6 +1969,24 @@
       ],
       "linkedTeamIds": [
         "25"
+      ]
+    },
+    {
+      "id": "mv-trade-3147657-20261105",
+      "headline": "Mikal Bridges: trade talk",
+      "primaryClaimId": "mv-d6c2a1e6b18e4fe9",
+      "claimIds": [
+        "mv-d6c2a1e6b18e4fe9"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-05T00:09:21.000Z",
+      "lastMeaningfulAt": "2026-11-05T00:09:21.000Z",
+      "linkedPlayerIds": [
+        "3147657"
+      ],
+      "linkedTeamIds": [
+        "18"
       ]
     },
     {
@@ -10285,6 +10314,28 @@
       "isOriginal": false
     },
     {
+      "id": "mv-5e51bf863d4940c3",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers May Trade Jaden Hardy And Waive Bronny James, Per NBA Insider",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-04T16:53:15.000Z",
+      "sourceId": "reporter:jovan-buha",
+      "sourceLabel": "Fadeaway World, citing Jovan Buha (The Athletic)",
+      "reporterLabel": "Jovan Buha",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/los-angeles-lakers/lakers-may-trade-jaden-hardy-and-waive-bronny-james-per-nba-insider",
+      "playerIds": [
+        "4683774",
+        "4868423"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-38fa6be9dfd6e322",
       "clusterId": "mv-trade-3945274-20261009",
       "summary": "Luka Doncic trade pressure mounts as Lakers insider puts odds of a major move at 65%",
@@ -10324,6 +10375,170 @@
         "4",
         "9",
         "15"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b76c42107d1755af",
+      "clusterId": "mv-trade-3202-20261007",
+      "summary": "Deni Avdija Admits He Had Concerns When Trail Blazers Traded For Ja Morant",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-04T18:20:39.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/portland-trail-blazers/deni-avdija-admits-he-had-concerns-when-trail-blazers-traded-for-ja-morant",
+      "playerIds": [
+        "4279888",
+        "4683021"
+      ],
+      "teamIds": [
+        "22"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-477f6e52579663fe",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Warriors Withhold Kristaps Porzingis’ $20 Million Salary While Exploring Trade Options",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-04T19:28:18.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/golden-state-warriors/warriors-withhold-kristaps-porzingis-20-million-salary-while-exploring-trade-options",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-cbb551e056c972e9",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "NBA Teams Monitoring Situations Of Nikola Jokic, Bam Adebayo, And Devin Booker Before Trade Deadline",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-04T22:15:18.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/nba-teams-monitoring-situations-of-nikola-jokic-bam-adebayo-and-devin-booker-before-trade-deadline",
+      "playerIds": [
+        "3112335",
+        "3136193",
+        "4066261"
+      ],
+      "teamIds": [],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-ad8a2730f0ad8c36",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Kristaps Porzingis Likely To Retire Amid Warriors Trade, Contract Drama: Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-04T22:51:56.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/kristaps-porzingis-retire-warriors-trade-contract-drama/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-d6c2a1e6b18e4fe9",
+      "clusterId": "mv-trade-3147657-20261105",
+      "summary": "Knicks Facing Growing Calls For Mikal Bridges Trade As Solution To Cap Concerns",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-05T00:09:21.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/new-york-knick/knicks-facing-growing-calls-for-mikal-bridges-trade-as-solution-to-cap-concerns",
+      "playerIds": [
+        "3147657"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-0ef940ee1fa284a8",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Warriors Trade Pitch Moves Kristaps Porzingis for $9 Million Center",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-05T12:37:35.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/porzingis-trade-bulls-jalen-smith-warriors/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5217fcdd1a3cbf5c",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Nikola Jokic In-Season Trade Unlikely, Rival Execs Eyeing 2027 Offseason",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-05T15:27:04.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288038/Nikola-Jokic-In-Season-Trade-Unlikely-Rival-Execs-Eyeing-2027-Offseason",
+      "playerIds": [
+        "3112335"
+      ],
+      "teamIds": [],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-3952e8efc7a5f9b5",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Blockbuster Warriors Trade Pitch Lands Anthony Davis From Washington Wizards",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-05T17:01:21.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/blockbuster-trade-pitch-anthony-davis-wizards/",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "9",
+        "27"
       ],
       "isOriginal": false
     },
