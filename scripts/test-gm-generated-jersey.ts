@@ -22,12 +22,19 @@ const html = (player: GmPlayer, size: "xs" | "sm" | "md" | "lg" | "xl" = "xl") =
   }));
 const originalHtml = html(original);
 const faceRegion = (markup: string) => {
-  const a = markup.indexOf("<ellipse");
+  const a = markup.indexOf('<g data-face-layer="true">');
   const b = markup.indexOf("<text", a);
-  assert.ok(a > 0 && b > a, "rendered SVG must contain facial layers and uniform wordmark");
+  assert.ok(a > 0 && b > a, "rendered SVG must contain isolated facial artwork and uniform lettering");
   return markup.slice(a, b);
 };
 
+assert.match(originalHtml, /data-portrait-version="2"/);
+assert.match(originalHtml, /data-jersey-layer="true"/);
+assert.match(originalHtml, /data-face-layer="true"/);
+assert.match(originalHtml, /stroke-width="6.5"/,
+  "jersey collar must have a prominent ribbed trim");
+assert.match(originalHtml, /M30 164L35 143/,
+  "jersey must have a proper sleeveless shoulder and V-neck silhouette");
 assert.match(originalHtml, /data-generated-portrait="true"/);
 assert.match(originalHtml, /data-jersey-team="bos"/);
 assert.match(originalHtml, /data-jersey-color="#007A33"/);
@@ -63,6 +70,11 @@ const small = html(original, "xs");
 assert.match(small, /data-jersey-color="#007A33"/);
 assert.ok(!small.includes(">BOS</text>"),
   "smallest portraits should stay clear instead of rendering illegible text");
+const compact = html(original, "sm");
+assert.ok(!compact.includes(">BOS</text>") && !compact.includes(">23</text>"),
+  "small portraits must emphasize faces instead of micro-jersey lettering");
+const medium = html(original, "md");
+assert.ok(!medium.includes(">BOS</text>"), "medium avatars avoid illegible uniform lettering");
 const largeOther = html({ ...original, teamId: "lal" }, "xl");
 assert.match(largeOther, /data-jersey-color="#552583"/);
 assert.match(largeOther, />LAL<\/text>/);
@@ -88,4 +100,19 @@ assert.deepEqual(moved.identity, candidate.identity);
 assert.equal(faceRegion(html({ ...candidate, jersey: "12" })),faceRegion(html({ ...moved, jersey: "12" })));
 assert.match(html({ ...candidate, jersey: "12" }), /data-jersey-team="bos"/);
 assert.match(html({ ...moved, jersey: "12" }), /data-jersey-team="lal"/);
-console.log("Generated jerseys: 30 NBA teams, free agency, compact avatars, same-face trades, and number safety passed");
+const recipes = Array.from({ length: 750 }, (_, index) =>
+  generatedPortraitRecipe(portraitSeedForId("procedural-variety-" + index)));
+const signatures = new Set(recipes.map(r => [
+  r.headWidth,r.jawWidth,r.chinDepth,r.cheekWidth,r.noseWidth.toFixed(1),
+  r.noseLength.toFixed(1),r.eyeSpacing,r.eyeHeight,r.eyeTilt,r.browThickness.toFixed(1),
+  r.lipWidth.toFixed(1),r.style,r.beard,r.glasses,
+].join(":")));
+assert.ok(signatures.size >= 740, "750 generated rookies must look distinctly different");
+assert.ok(new Set(recipes.map(r=>r.style)).size >= 12, "the hair system must offer twelve distinct silhouettes");
+assert.ok(new Set(recipes.map(r=>r.jawWidth)).size >= 8, "jaw shape should vary across the league");
+assert.ok(recipes.some(r=>r.glasses) && recipes.some(r=>r.freckles), "minor details must be seed-driven");
+const otherIdentity = { ...original, identity: {
+  ...original.identity!, countryCode: "JP", hometown: "Osaka" } };
+assert.equal(faceRegion(html(otherIdentity)), faceRegion(originalHtml),
+  "nationality cannot alter complexion, facial morphology or hair");
+console.log("Generated jerseys and faces: 30 team uniforms, stable trades, 750 diverse identities, facial independence and jersey safety passed");
