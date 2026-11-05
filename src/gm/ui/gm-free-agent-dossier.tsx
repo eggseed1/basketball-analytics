@@ -104,7 +104,7 @@ export function GmFreeAgentDossier({
           {tab === "overview" ? "Overview" : tab === "ratings" ? "Ratings & badges" : "Market & fit"}
         </button>)}
     </nav>
-    <div className="max-h-[min(64vh,740px)] space-y-4 overflow-y-auto p-4 sm:p-5">
+    <div className="space-y-4 p-4 sm:p-5 lg:max-h-[min(64vh,740px)] lg:overflow-y-auto">
       {view === "overview" ? <>
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recent production</p>
