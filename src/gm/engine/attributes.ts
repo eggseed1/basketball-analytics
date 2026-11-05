@@ -743,10 +743,10 @@ export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
 /** Older saves have no sheet, or a sheet from an earlier formula. */
 export function ensurePlayerSheet(player: GmPlayer): GmPlayer {
   if (player.sheet?.version === SHEET_VERSION) {
-    if (player.draftModel !== 2) return player;
-    // Correct obsolete pre-open-development stamps when a save is first
-    // loaded, not as a surprise multilevel "promotion" at the next summer.
-    // No OVR, attributes, history or learning DNA are altered.
+    // Repair obsolete trait stamps across BOTH legacy NBA and generated saves
+    // at load time, before any simulation checkpoints. Otherwise a 95+ real
+    // player with an old Normal stamp appears to jump 2-3 tiers in one summer.
+    // Only the designation changes, never skill, OVR or history.
     const potential = ensurePotentialTrait(player.sheet.potential, player);
     return potential === player.sheet.potential ? player
       : { ...player, sheet: { ...player.sheet, potential } };
