@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import {
   Suspense,
   useEffect,
@@ -28,6 +29,13 @@ import {
   type NavLink,
   type PrimaryNavItem,
 } from "@/components/sports/site-nav";
+
+// Load the substantial Franchise Lab store only inside GM. This component
+// remains mounted across its client-side tab transitions.
+const GmTeamAtmosphere = dynamic(
+  () => import("@/gm/ui/gm-team-atmosphere").then(mod => mod.GmTeamAtmosphere),
+  { ssr: false }
+);
 
 function useNavLabel() {
   const t = useTranslations("Nav");
@@ -205,8 +213,8 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
   const active = useMemo(() => activePrimaryNav(pathname), [pathname]);
   const isMenuOpen = menuOpen && menuOpenedAt === pathname;
   /** Franchise Lab has its own front-office nav. The arcade game strip sits on top of it when sticky and eats clicks. */
-  const hideDomainSubnav =
-    pathname === "/gm" || pathname.startsWith("/gm/");
+  const isGmRoute = pathname === "/gm" || pathname.startsWith("/gm/");
+  const hideDomainSubnav = isGmRoute;
   const destinationWash =
     pathname.startsWith("/teams/") ||
     pathname.startsWith("/players/") ||
@@ -245,7 +253,9 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
     <RouteTransitionProvider>
       <div className="app-shell flex min-h-full min-w-0 flex-1 flex-col overflow-x-clip">
         <PrefetchPrimaryDestinations />
-        {destinationWash ? null : (
+        {destinationWash ? null : isGmRoute ? (
+          <GmTeamAtmosphere />
+        ) : (
           <PageAtmosphere
             colorA={NBA_ATMOSPHERE.colorA}
             colorB={NBA_ATMOSPHERE.colorB}
