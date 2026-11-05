@@ -1,6 +1,6 @@
 DRBL Cloudflare production deployment request
 Target: main
-Reason: Franchise Lab fullscreen restoration PR #194. The GM desk was transparent after the page atmosphere was hidden in fullscreen, exposing a black browser backdrop. Fullscreen now paints the ordinary themed background and retains a readable 80rem content width in desktop and mobile viewports.
-Validated release commit: 8a888e5e37fbc08d5826b30eacb3ca82a2dd413d
-Validation: fullscreen desktop/mobile/reload browser smoke passed; TypeScript and lint checks passed. Full general CI and simulation jobs were still running at the deployment request.
-Data safety: code-only production release; preserve up-to-date NBA runtime snapshots and run existing regression protection checks before Cloudflare deployment.
+Reason: Ship PR #199 procedural generated-player headshot overhaul: cleaner studio portraits, wider seed-based facial variety, proper sleeveless basketball jersey necklines/armholes, team wordmarks and colors; faces stay constant across trades.
+Merged feature commit: 43b1b21b1222e001af0fc2d50ef0cf0f6d03a91e
+Validation: Repository CI passed; generated identity/jersey tests passed; Franchise Lab Playwright browser, balance and fidelity checks passed. Broad gameplay simulation was still running draft-accessibility checks at time of merge.
+Data safety: Code-only production release; preserve freshest runtime NBA snapshots using existing deployment guards. No feature branch deploy.
