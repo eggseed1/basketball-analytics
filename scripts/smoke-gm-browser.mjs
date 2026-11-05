@@ -141,6 +141,11 @@ try {
   await checkFullscreenSurface();
   await page.reload();
   await page.waitForFunction(() => document.documentElement.dataset.gmFull === "1");
+  await page.getByRole("button", { name: "Exit fullscreen", exact: true }).waitFor();
+  await page.waitForFunction(() => {
+    const orb = document.querySelector(".page-atmosphere");
+    return orb && getComputedStyle(orb).getPropertyValue("--atmosphere-a").trim() === "#007A33";
+  });
   await checkFullscreenSurface();
   assert.equal(await page.evaluate(() => document.documentElement.dataset.gmFull), "1",
     "the fullscreen fallback must persist across a page reload");
