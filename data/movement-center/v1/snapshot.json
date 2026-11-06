@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-06",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-06T17:44:47.645Z",
+    "builtAt": "2026-11-06T21:34:24.366Z",
     "rosterPlayerCount": 503,
-    "headlinesScanned": 11188,
-    "latestHeadlineAt": "2026-11-06T17:42:09.000Z",
+    "headlinesScanned": 11273,
+    "latestHeadlineAt": "2026-11-06T21:29:53.000Z",
     "latestTransactionDate": "2026-11-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -1776,12 +1776,14 @@
         "mv-cbb551e056c972e9",
         "mv-5217fcdd1a3cbf5c",
         "mv-71fdf66b2b71d73f",
-        "mv-91027c7516631fe9"
+        "mv-91027c7516631fe9",
+        "mv-94298f785ba51080",
+        "mv-9789a9a1b3b1e92a"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-28T15:58:25.000Z",
-      "lastMeaningfulAt": "2026-11-06T13:58:46.000Z",
+      "lastMeaningfulAt": "2026-11-06T19:48:31.000Z",
       "linkedPlayerIds": [
         "3112335",
         "3936299",
@@ -1793,6 +1795,7 @@
         "7",
         "9",
         "4",
+        "29",
         "21",
         "14"
       ]
@@ -1909,12 +1912,14 @@
         "mv-ad8a2730f0ad8c36",
         "mv-0ef940ee1fa284a8",
         "mv-a27bf91917fc0436",
-        "mv-6589ca30f1f6f530"
+        "mv-6589ca30f1f6f530",
+        "mv-ca7ebec79eb2fd05",
+        "mv-1c78450245202da3"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-01T13:58:47.000Z",
-      "lastMeaningfulAt": "2026-11-06T16:01:50.000Z",
+      "lastMeaningfulAt": "2026-11-06T18:23:55.000Z",
       "linkedPlayerIds": [
         "2595516",
         "4066336",
@@ -1926,6 +1931,7 @@
         "9",
         "4",
         "15",
+        "3",
         "26"
       ]
     },
@@ -2056,6 +2062,24 @@
       "linkedTeamIds": [
         "15",
         "14"
+      ]
+    },
+    {
+      "id": "mv-trade-4277847-20261106",
+      "headline": "Wendell Carter Jr.: trade talk",
+      "primaryClaimId": "mv-561502f9a504d48f",
+      "claimIds": [
+        "mv-561502f9a504d48f"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-06T20:03:33.000Z",
+      "lastMeaningfulAt": "2026-11-06T20:03:33.000Z",
+      "linkedPlayerIds": [
+        "4277847"
+      ],
+      "linkedTeamIds": [
+        "19"
       ]
     },
     {
@@ -10817,6 +10841,110 @@
       ],
       "isOriginal": false,
       "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-ca7ebec79eb2fd05",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Report: Warriors expected to trade Kristaps Porzingis by December 16th",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-06T17:42:37.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Yahoo Sports, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://sports.yahoo.com/articles/report-warriors-expected-trade-kristaps-174237576.html",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-1c78450245202da3",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Report: Warriors contact Bulls, Pelicans, and Bucks about Kristaps Porzingis trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-06T18:23:55.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/report-warriors-contact-bulls-pelicans-182355697.html",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "3",
+        "4",
+        "9",
+        "15"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-94298f785ba51080",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Rumor Opens Door For Memphis Grizzlies To Make Game-Changing Trade For Jamal Murray",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-06T19:04:32.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/memphis-grizzlies-jamal-murray-trade-speculation",
+      "playerIds": [
+        "3936299"
+      ],
+      "teamIds": [
+        "29"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-9789a9a1b3b1e92a",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Nuggets rumors: Why Zach Lowe’s Spidey Senses are tingling for Jamal Murray trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-06T19:48:31.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/denver-nuggets/nuggets-rumors-why-zach-lowe-spidey-senses-tingling-jamal-murray-trade",
+      "playerIds": [
+        "3936299"
+      ],
+      "teamIds": [
+        "7"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-561502f9a504d48f",
+      "clusterId": "mv-trade-4277847-20261106",
+      "summary": "Magic rumors: Wendell Carter Jr. trade buzz surfaces amid cold start to season",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-06T20:03:33.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/orlando-magic/magic-rumors-wendell-carter-jr-trade-buzz-surfaces-amid-cold-start-season",
+      "playerIds": [
+        "4277847"
+      ],
+      "teamIds": [
+        "19"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
