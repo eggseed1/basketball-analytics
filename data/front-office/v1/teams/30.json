@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-05",
-    "retrievedAt": "2026-11-05T22:09:42.223Z",
+    "snapshotDate": "2026-11-06",
+    "retrievedAt": "2026-11-06T17:53:42.696Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d2b8f4565a154bcdc23bfffd2837c6d675766832c59ae3bd4df627b57af8aef0",
+    "sourceHash": "392020e707d4c7556b71d8df7bb7225799914f7e38b33ea29b1c717172e90f8d",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -421,6 +421,29 @@
           "href": "/players/1641790"
         },
         {
+          "playerId": "1642369",
+          "playerName": "Michael Ajayi",
+          "age": null,
+          "contractId": "cy-1642369-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642369-2026",
+              "playerId": "1642369",
+              "franchiseId": "30",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642369"
+        },
+        {
           "playerId": "1643573",
           "playerName": "Kylan Boswell",
           "age": null,
@@ -453,7 +476,7 @@
       ],
       "playerSalaryCommitments": 159086100,
       "playersWithSalary": 16,
-      "playersWithoutSalary": 1
+      "playersWithoutSalary": 2
     },
     "draftAssets": {
       "franchiseId": "30",

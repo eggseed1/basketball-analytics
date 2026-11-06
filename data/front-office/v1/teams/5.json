@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-05",
-    "retrievedAt": "2026-11-05T22:09:42.223Z",
+    "snapshotDate": "2026-11-06",
+    "retrievedAt": "2026-11-06T17:53:42.696Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d2b8f4565a154bcdc23bfffd2837c6d675766832c59ae3bd4df627b57af8aef0",
+    "sourceHash": "392020e707d4c7556b71d8df7bb7225799914f7e38b33ea29b1c717172e90f8d",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -306,29 +306,6 @@
           "href": "/players/1642878"
         },
         {
-          "playerId": "1642434",
-          "playerName": "Riley Minix",
-          "age": null,
-          "contractId": "cy-1642434-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642434-2026",
-              "playerId": "1642434",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642434"
-        },
-        {
           "playerId": "1643509",
           "playerName": "Meleek Thomas",
           "age": null,
@@ -375,6 +352,29 @@
           "href": "/players/1642400"
         },
         {
+          "playerId": "1641807",
+          "playerName": "Norchad Omier",
+          "age": null,
+          "contractId": "cy-1641807-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1641807-2026",
+              "playerId": "1641807",
+              "franchiseId": "5",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1641807"
+        },
+        {
           "playerId": "1643640",
           "playerName": "Ernest Udeh Jr.",
           "age": null,
@@ -401,13 +401,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 204323307,
-          "playersUnderContract": 13
+          "totalSalaryDollars": 202956993,
+          "playersUnderContract": 12
         }
       ],
-      "playerSalaryCommitments": 204323307,
-      "playersWithSalary": 13,
-      "playersWithoutSalary": 2
+      "playerSalaryCommitments": 202956993,
+      "playersWithSalary": 12,
+      "playersWithoutSalary": 3
     },
     "draftAssets": {
       "franchiseId": "5",

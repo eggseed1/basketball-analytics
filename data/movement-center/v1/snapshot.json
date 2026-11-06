@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-05",
+    "snapshotDate": "2026-11-06",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-05T22:03:36.527Z",
-    "rosterPlayerCount": 505,
-    "headlinesScanned": 10935,
-    "latestHeadlineAt": "2026-11-05T22:00:34.000Z",
+    "builtAt": "2026-11-06T17:44:47.645Z",
+    "rosterPlayerCount": 503,
+    "headlinesScanned": 11188,
+    "latestHeadlineAt": "2026-11-06T17:42:09.000Z",
     "latestTransactionDate": "2026-11-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 8
+      "credibility": 16
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -572,23 +572,25 @@
     },
     {
       "id": "mv-contract-3112335-20260928",
-      "headline": "Nikola Jokić: contract future with the Nuggets",
-      "primaryClaimId": "mv-4db5818888af6370",
+      "headline": "Nikola Jokić: free agency",
+      "primaryClaimId": "mv-f3d45539fa3718f9",
       "claimIds": [
         "mv-93f1c209f853bc38",
         "mv-941d78a0033dbed0",
         "mv-4db5818888af6370",
-        "mv-98b7512700852435"
+        "mv-98b7512700852435",
+        "mv-f3d45539fa3718f9"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-28T18:36:30.000Z",
-      "lastMeaningfulAt": "2026-10-14T13:57:18.000Z",
+      "lastMeaningfulAt": "2026-11-06T00:23:24.000Z",
       "linkedPlayerIds": [
         "3112335"
       ],
       "linkedTeamIds": [
-        "7"
+        "7",
+        "9"
       ]
     },
     {
@@ -841,12 +843,13 @@
         "mv-1b28e4e9318fa264",
         "mv-f543a430a8bc72af",
         "mv-abaa2bba65f55291",
-        "mv-5e51bf863d4940c3"
+        "mv-5e51bf863d4940c3",
+        "mv-bdfae5ede30a7ed1"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-04T16:53:15.000Z",
+      "lastMeaningfulAt": "2026-11-06T03:40:06.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -858,7 +861,9 @@
         "13",
         "23",
         "2",
-        "8"
+        "8",
+        "28",
+        "30"
       ]
     },
     {
@@ -1725,12 +1730,13 @@
         "mv-cc929e62966a1f63",
         "mv-9b917abbc662b8aa",
         "mv-a78ec4b73f687dad",
-        "mv-034df1ee25a047d5"
+        "mv-034df1ee25a047d5",
+        "mv-92f019179cb07085"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-27T14:31:34.000Z",
-      "lastMeaningfulAt": "2026-10-30T19:59:00.000Z",
+      "lastMeaningfulAt": "2026-11-06T00:11:31.000Z",
       "linkedPlayerIds": [
         "4065733"
       ],
@@ -1763,25 +1769,30 @@
     {
       "id": "mv-trade-3112335-20261028",
       "headline": "Nikola Jokić, Jamal Murray and others: trade talk",
-      "primaryClaimId": "mv-81703f46baec2589",
+      "primaryClaimId": "mv-91027c7516631fe9",
       "claimIds": [
         "mv-81703f46baec2589",
         "mv-44d538b33b57e02e",
         "mv-cbb551e056c972e9",
-        "mv-5217fcdd1a3cbf5c"
+        "mv-5217fcdd1a3cbf5c",
+        "mv-71fdf66b2b71d73f",
+        "mv-91027c7516631fe9"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-28T15:58:25.000Z",
-      "lastMeaningfulAt": "2026-11-05T15:27:04.000Z",
+      "lastMeaningfulAt": "2026-11-06T13:58:46.000Z",
       "linkedPlayerIds": [
         "3112335",
         "3936299",
         "3136193",
-        "4066261"
+        "4066261",
+        "6589"
       ],
       "linkedTeamIds": [
         "7",
+        "9",
+        "4",
         "21",
         "14"
       ]
@@ -1896,12 +1907,14 @@
         "mv-b9818516ef6efda3",
         "mv-477f6e52579663fe",
         "mv-ad8a2730f0ad8c36",
-        "mv-0ef940ee1fa284a8"
+        "mv-0ef940ee1fa284a8",
+        "mv-a27bf91917fc0436",
+        "mv-6589ca30f1f6f530"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-01T13:58:47.000Z",
-      "lastMeaningfulAt": "2026-11-05T12:37:35.000Z",
+      "lastMeaningfulAt": "2026-11-06T16:01:50.000Z",
       "linkedPlayerIds": [
         "2595516",
         "4066336",
@@ -2005,6 +2018,44 @@
       ],
       "linkedTeamIds": [
         "22"
+      ]
+    },
+    {
+      "id": "mv-trade-4898010-20261106",
+      "headline": "Jaylin Sellers: trade talk",
+      "primaryClaimId": "mv-d171045dee3433d7",
+      "claimIds": [
+        "mv-d171045dee3433d7"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-06T14:09:27.000Z",
+      "lastMeaningfulAt": "2026-11-06T14:09:27.000Z",
+      "linkedPlayerIds": [
+        "4898010"
+      ],
+      "linkedTeamIds": [
+        "12",
+        "4"
+      ]
+    },
+    {
+      "id": "mv-trade-3032977-20261106",
+      "headline": "Giannis Antetokounmpo: trade talk",
+      "primaryClaimId": "mv-87a92f3e085efd81",
+      "claimIds": [
+        "mv-87a92f3e085efd81"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-06T16:00:33.000Z",
+      "lastMeaningfulAt": "2026-11-06T16:00:33.000Z",
+      "linkedPlayerIds": [
+        "3032977"
+      ],
+      "linkedTeamIds": [
+        "15",
+        "14"
       ]
     },
     {
@@ -10577,6 +10628,195 @@
       ],
       "teamIds": [],
       "isOriginal": false
+    },
+    {
+      "id": "mv-92f019179cb07085",
+      "clusterId": "mv-trade-4065733-20261027",
+      "summary": "NBA rumors: Ty Jerome, Grizzlies trade expected by insider at deadline",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-06T00:11:31.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-ty-jerome-grizzlies-trade-expected-by-insider-at-deadline",
+      "playerIds": [
+        "4065733"
+      ],
+      "teamIds": [
+        "29"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-f3d45539fa3718f9",
+      "clusterId": "mv-contract-3112335-20260928",
+      "summary": "Warriors Believe They Can Attract “Big Name” In 2027 Free Agency: Hoping Nikola Jokic Is Available",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-06T00:23:24.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/golden-state-warriors/warriors-believe-they-can-attract-big-name-in-2027-free-agency-hoping-nikola-jokic-is-available",
+      "playerIds": [
+        "3112335"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-bdfae5ede30a7ed1",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "NBA rumors: Insider labels Raptors, Hornets as prime Domantas Sabonis trade destinations",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-06T03:40:06.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/sacramento-kings/nba-rumors-insider-labels-raptors-hornets-as-prime-domantas-sabonis-trade-destinations",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [
+        "28",
+        "30"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-71fdf66b2b71d73f",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Warriors eye Nikola Jokic as potential 2027 target",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-06T08:53:31.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "TalkBasket, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/226510-warriors-eye-nikola-jokic-as-potential-2027-target",
+      "playerIds": [
+        "3112335"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-91027c7516631fe9",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "NBA Trade Rumors: ‘Seismic’ Jamal Murray Talk, Bulls’ Big Chip, Draymond Green & More",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-06T13:58:46.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/nba-trade-rumors-seismic-jamal-murray-talk-bulls-draymond-green/",
+      "playerIds": [
+        "6589",
+        "3936299"
+      ],
+      "teamIds": [
+        "4"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-d171045dee3433d7",
+      "clusterId": "mv-trade-4898010-20261106",
+      "summary": "Clippers Considered Likely Sellers During Trade Season",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-06T14:09:27.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288047/Clippers-Considered-Likely-Sellers-During-Trade-Season",
+      "playerIds": [
+        "4898010"
+      ],
+      "teamIds": [
+        "12"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a27bf91917fc0436",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Report: Warriors Hold Trade Talks For Ex-NBA Finals Center In Exchange For Porzingis",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-06T15:38:22.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/trade-talks-with-center-porzingis/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-87a92f3e085efd81",
+      "clusterId": "mv-trade-3032977-20261106",
+      "summary": "Doc Rivers Says Giannis Antetokounmpo Was 'Yo-Yoing' On Trade Request From Bucks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-06T16:00:33.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288051/Doc-Rivers-Says-Giannis-Antetokounmpo-Was-Yo-Yoing-On-Trade-Request-From-Bucks",
+      "playerIds": [
+        "3032977"
+      ],
+      "teamIds": [
+        "15"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-6589ca30f1f6f530",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Report: Warriors Show Trade Interest In Chicago Bulls Center For Kristaps Porzingis",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-06T16:01:50.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/trade-interest-in-center-for-kristaps-porzingis/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "4",
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",

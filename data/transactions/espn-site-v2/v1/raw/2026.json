@@ -2,8 +2,8 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-05T22:02:29.902Z",
-  "apiCount": 431,
+  "fetchedAt": "2026-11-06T17:43:31.535Z",
+  "apiCount": 432,
   "rows": [
     {
       "date": "2026-11-05T08:00Z",
@@ -14,6 +14,17 @@
         "displayName": "Toronto Raptors",
         "location": "Toronto",
         "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-11-05T08:00Z",
+      "description": "Signed F Norchad Omier to a two-way contract. Waived F Riley Minix.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
       }
     },
     {
