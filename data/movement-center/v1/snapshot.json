@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-06",
+    "snapshotDate": "2026-11-07",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-06T21:34:24.366Z",
+    "builtAt": "2026-11-07T16:41:19.540Z",
     "rosterPlayerCount": 503,
-    "headlinesScanned": 11273,
-    "latestHeadlineAt": "2026-11-06T21:29:53.000Z",
+    "headlinesScanned": 11525,
+    "latestHeadlineAt": "2026-11-07T16:37:27.000Z",
     "latestTransactionDate": "2026-11-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -595,17 +595,19 @@
     },
     {
       "id": "mv-contract-6583-20260929",
-      "headline": "Anthony Davis: contract talks with the Wizards",
+      "headline": "Anthony Davis: extension talks with the Wizards",
       "primaryClaimId": "mv-fe22382571817f01",
       "claimIds": [
         "mv-fe22382571817f01",
         "mv-e60edd87d81db95b",
-        "mv-500720ece277bd6d"
+        "mv-500720ece277bd6d",
+        "mv-3dfc173ec5bd72c3",
+        "mv-752271738148b154"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-29T16:09:17.000Z",
-      "lastMeaningfulAt": "2026-10-06T15:07:16.000Z",
+      "lastMeaningfulAt": "2026-11-07T14:55:40.000Z",
       "linkedPlayerIds": [
         "6583"
       ],
@@ -684,12 +686,13 @@
         "mv-c055063cb53c6fbd",
         "mv-67ca1f7613163faa",
         "mv-c4ca4d7a30da8f6e",
-        "mv-3952e8efc7a5f9b5"
+        "mv-3952e8efc7a5f9b5",
+        "mv-5a471c460ab22b90"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-05T17:01:21.000Z",
+      "lastMeaningfulAt": "2026-11-07T04:32:00.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -844,12 +847,13 @@
         "mv-f543a430a8bc72af",
         "mv-abaa2bba65f55291",
         "mv-5e51bf863d4940c3",
-        "mv-bdfae5ede30a7ed1"
+        "mv-bdfae5ede30a7ed1",
+        "mv-8e5084f175548216"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-06T03:40:06.000Z",
+      "lastMeaningfulAt": "2026-11-07T01:46:07.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -863,7 +867,8 @@
         "2",
         "8",
         "28",
-        "30"
+        "30",
+        "17"
       ]
     },
     {
@@ -1914,12 +1919,13 @@
         "mv-a27bf91917fc0436",
         "mv-6589ca30f1f6f530",
         "mv-ca7ebec79eb2fd05",
-        "mv-1c78450245202da3"
+        "mv-1c78450245202da3",
+        "mv-884c423318deb2f4"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-01T13:58:47.000Z",
-      "lastMeaningfulAt": "2026-11-06T18:23:55.000Z",
+      "lastMeaningfulAt": "2026-11-06T21:57:07.000Z",
       "linkedPlayerIds": [
         "2595516",
         "4066336",
@@ -10943,6 +10949,109 @@
       ],
       "teamIds": [
         "19"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-884c423318deb2f4",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Warriors reportedly have interest in former lottery pick amid Kristaps Porzingis concerns",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-06T21:57:07.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/golden-state-warriors/news/warriors-reportedly-interest-lottery-pick-kristaps-porzingis/897497950726995449f2ef5f%3E",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-8e5084f175548216",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Brooklyn Nets Linked To Trading Star For Domantas Sabonis",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-07T01:46:07.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/brooklyn-nets/brooklyn-nets-linked-trading-domantas-sabonis/",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [
+        "17"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5a471c460ab22b90",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Anthony Davis Trade Rumors Put Wizards in Tough Spot",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-07T04:32:00.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/washington-wizards/anthony-davis-trade-rumors-put-wizards-in-tough-spot/",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "27"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-3dfc173ec5bd72c3",
+      "clusterId": "mv-contract-6583-20260929",
+      "summary": "Wizards To See How Anthony Davis Fits Before Deciding On Extension Or Trade",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-07T13:58:31.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "RealGM, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288058/Wizards-To-See-How-Anthony-Davis-Fits-Before-Deciding-On-Extension-Or-Trade",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "27"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-752271738148b154",
+      "clusterId": "mv-contract-6583-20260929",
+      "summary": "Wizards plan to evaluate Anthony Davis before extension decision",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-07T14:55:40.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/226744-wizards-plan-to-evaluate-anthony-davis-before-extension-decision",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "27"
       ],
       "isOriginal": false
     },
