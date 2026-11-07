@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { createRng } from "../src/gm/engine/rng";
 import { createLotteryHoleScene, LOTTERY_HOLE, simulateLotteryHoleExit } from "../src/gm/engine/lottery-hole-physics";
+import { createLotteryGravityScene, LOTTERY_GRAVITY, simulateLotteryGravityExit } from "../src/gm/engine/lottery-gravity-physics";
 import { legalNew321PickProtection } from "../src/gm/engine/lottery-balls";
 import { draw321PhysicalUrn, build321BallPool } from "../src/gm/engine/lottery-balls";
 import { drawDraftLottery } from "../src/gm/engine/standings";
@@ -48,32 +49,46 @@ assert.ok(first.draws.slice(12).every(draw => !relegated.has(draw.teamId)),
 
 // The physical exit, NOT a separate weighted result, must decide every draw.
 // Rebuild the same chamber from the saved seed and prove each extraction
-// crossed the ball-sized top opening with the same physics frame.
+// crossed the ball-sized bottom opening with the same physics frame.
 const remainingTeams = new Set(teams);
 let totalCollisions = 0;
 for (const pick of first.draws) {
   const surviving = pool.filter(ball => remainingTeams.has(ball.teamId));
   for (const attempt of pick.attempts) {
     assert.ok(Number.isInteger(attempt.physicsSeed), "every pull saves its physics seed");
-    assert.ok((attempt.exitFrame ?? 0) >= LOTTERY_HOLE.openFrame);
-    const replay = simulateLotteryHoleExit(surviving, attempt.physicsSeed!);
-    assert.equal(replay.ballId, attempt.ballId, "physics must select the persisted numbered ball");
+    assert.equal(attempt.physicsVersion, 2, "new draws use gravity, not the archived upward mixer");
+    assert.ok((attempt.exitFrame ?? 0) >= LOTTERY_GRAVITY.openFrame);
+    const replay = simulateLotteryGravityExit(surviving, attempt.physicsSeed!);
+    assert.equal(replay.ballId, attempt.ballId, "gravity must select the saved numbered ball");
     assert.equal(replay.frame, attempt.exitFrame, "the exit frame must survive serialization");
     totalCollisions += replay.collisions;
-    const scene = createLotteryHoleScene(surviving, attempt.physicsSeed!);
+    const scene = createLotteryGravityScene(surviving, attempt.physicsSeed!);
     for (let t = 0; t < replay.frame; t++) scene.step();
     assert.equal(scene.exit?.ballId, attempt.ballId);
     const escaped = scene.particles.find(ball => ball.id === attempt.ballId)!;
-    assert.ok(Math.abs(escaped.x - LOTTERY_HOLE.center) <
-      LOTTERY_HOLE.gapWidth / 2 - LOTTERY_HOLE.ballRadius + 1,
-      "the extracted ball must fit through the actual ball-sized hole");
-    assert.ok(Math.hypot(escaped.x - LOTTERY_HOLE.center,
-      escaped.y - LOTTERY_HOLE.center) > LOTTERY_HOLE.radius - LOTTERY_HOLE.ballRadius,
-      "the ball must really cross the chamber boundary");
+    assert.ok(Math.abs(escaped.x - LOTTERY_GRAVITY.center) <
+      LOTTERY_GRAVITY.gapWidth / 2 - LOTTERY_GRAVITY.ballRadius + 1,
+      "the exiting ball must fit through the actual bottom opening");
+    assert.ok(escaped.y > LOTTERY_GRAVITY.center,
+      "new extractions must leave DOWNWARD rather than float upward");
+    assert.ok(Math.hypot(escaped.x - LOTTERY_GRAVITY.center,
+      escaped.y - LOTTERY_GRAVITY.center) > LOTTERY_GRAVITY.radius - LOTTERY_GRAVITY.ballRadius,
+      "the ball must physically cross the chamber boundary");
   }
   remainingTeams.delete(pick.teamId);
 }
 assert.ok(totalCollisions > 100, "the draw must actually simulate ball-to-ball collisions");
+
+// Version 1 draws already stored in user saves must NEVER be regenerated or
+// treated as version 2. Their original simulation/exit remain deterministic
+// even if the new browser renders their coordinates vertically mirrored.
+const archivedBalls = pool.slice(0, 9);
+const archived = simulateLotteryHoleExit(archivedBalls, 80424);
+const archivedScene = createLotteryHoleScene(archivedBalls, 80424);
+for (let t = 0; t < archived.frame; t++) archivedScene.step();
+assert.equal(archivedScene.exit?.ballId, archived.ballId);
+assert.ok(archived.frame >= LOTTERY_HOLE.openFrame);
+
 
 
 const restricted = one(99, first.draws[0]!.teamId,
