@@ -97,7 +97,10 @@ for(const seed of SEEDS) {
       const to=ordered.indexOf(trait);
       if(to>from) promotions++;
       if(to<from) demotions++;
-      assert.ok(Math.abs(to-from)<=1,"single-year trait change at most one tier");
+      assert.ok(Math.abs(to-from)<=1, "single-year trait change at most one tier: " +
+        JSON.stringify({ season, seed, id:p.id, beforeTrait:beforeTraits.get(p.id),
+          afterTrait:trait, beforeOverall:before.get(p.id), afterOverall:p.sheet!.overall,
+          model:p.draftModel, age:p.age, lastReview:p.traitHistory?.at(-1) }));
     }
     const ratings=league.players.map(p=>p.sheet!.overall);
     const report:Report={seed,season,count:ratings.length,mean:mean(ratings),

@@ -46,6 +46,13 @@ try {
   // Real UI visual regression: generated headshots should show studio-vector
   // faces with actual sleeveless jerseys while roster navigation still works.
   await page.goto("http://127.0.0.1:3107/gm/roster", { waitUntil: "domcontentloaded" });
+  // Every rostered player, including open-development rookies, must show an
+  // actual ability/learning tier rather than hiding it behind "Developing".
+  const rosterTier = page.getByTestId("gm-roster-dev-trait");
+  await rosterTier.waitFor();
+  assert.match(await rosterTier.innerText(), /^(X-Factor|Superstar|Star|Normal|Bust)$/i,
+    "roster player hero must show a real development tier");
+  await page.screenshot({ path: `${dir}/gm-roster-learning-tier.png`, fullPage: true, animations: "disabled" });
   const generatedPortraits = page.locator('[data-generated-portrait="true"][data-portrait-version="2"]');
   await generatedPortraits.first().waitFor();
   assert.ok(await generatedPortraits.count() >= 5,
