@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-07",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-07T16:41:19.540Z",
+    "builtAt": "2026-11-07T20:18:37.940Z",
     "rosterPlayerCount": 503,
-    "headlinesScanned": 11525,
-    "latestHeadlineAt": "2026-11-07T16:37:27.000Z",
+    "headlinesScanned": 11598,
+    "latestHeadlineAt": "2026-11-07T20:17:28.000Z",
     "latestTransactionDate": "2026-11-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -148,7 +148,7 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
@@ -955,7 +955,7 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: contract talks",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Knicks",
       "primaryClaimId": "mv-abb18f46843d904e",
       "claimIds": [
         "mv-d46db2f4a349df07",
@@ -998,6 +998,7 @@
         "mv-c4d2e8b2148c13ae",
         "mv-0043d78ec4ed4591",
         "mv-84902237e652ecd4",
+        "mv-15bb50651c28783e",
         "mv-espn-tx-34855363e48984d2"
       ],
       "evidenceClass": "reported",
@@ -1920,6 +1921,7 @@
         "mv-6589ca30f1f6f530",
         "mv-ca7ebec79eb2fd05",
         "mv-1c78450245202da3",
+        "mv-700748facb77782e",
         "mv-884c423318deb2f4"
       ],
       "evidenceClass": "reported",
@@ -10913,6 +10915,26 @@
       "isOriginal": false
     },
     {
+      "id": "mv-700748facb77782e",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Warriors Reportedly Contacted Three Teams About Kristaps Porzingis Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-06T19:42:50.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/golden-state-warriors/warriors-reportedly-contact-three-teams-about-kristaps-porzingis-trade",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-9789a9a1b3b1e92a",
       "clusterId": "mv-trade-3112335-20261028",
       "summary": "Nuggets rumors: Why Zach Lowe’s Spidey Senses are tingling for Jamal Murray trade",
@@ -11052,6 +11074,26 @@
       ],
       "teamIds": [
         "27"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-15bb50651c28783e",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks Reportedly Make Karl-Anthony Towns Trade Decision Amid Contract Dispute",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-07T17:15:20.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-new-york-knicks-reportedly-make-karl-anthony-towns-trade-decision-amid-contract-dispute/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
       ],
       "isOriginal": false
     },

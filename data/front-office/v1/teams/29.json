@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-11-07",
-    "retrievedAt": "2026-11-07T16:50:38.803Z",
+    "retrievedAt": "2026-11-07T20:23:25.044Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "f29d6ecac5d4fc8271dee4125d64088a51c53fe7bbe682fb027cfdba6401cc24",
+    "sourceHash": "ddb0ddb4317af597eeca95d5aac5b8f5f042b26c413e76bcd6fa2bf56fd81484",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -465,6 +465,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1642942"
+        },
+        {
+          "playerId": "5105462",
+          "playerName": "Richie Saunders",
+          "age": null,
+          "contractId": "cy-5105462-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-5105462-2026",
+              "playerId": "5105462",
+              "franchiseId": "29",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/5105462"
         }
       ],
       "futureCommitments": [
@@ -476,7 +499,7 @@
       ],
       "playerSalaryCommitments": 121203080,
       "playersWithSalary": 16,
-      "playersWithoutSalary": 2
+      "playersWithoutSalary": 3
     },
     "draftAssets": {
       "franchiseId": "29",
