@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-07T20:17:33.137Z",
-  "apiCount": 432,
+  "fetchedAt": "2026-11-08T16:49:45.911Z",
+  "apiCount": 433,
   "rows": [
+    {
+      "date": "2026-11-07T08:00Z",
+      "description": "Signed G Richie Saunders to two-way contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
     {
       "date": "2026-11-05T08:00Z",
       "description": "Signed G Kevin McCullar Jr. to a two-way contract.",

@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-07",
+    "snapshotDate": "2026-11-08",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-07T20:18:37.940Z",
-    "rosterPlayerCount": 503,
-    "headlinesScanned": 11598,
-    "latestHeadlineAt": "2026-11-07T20:17:28.000Z",
-    "latestTransactionDate": "2026-11-05",
+    "builtAt": "2026-11-08T16:50:51.399Z",
+    "rosterPlayerCount": 504,
+    "headlinesScanned": 11806,
+    "latestHeadlineAt": "2026-11-08T16:40:18.000Z",
+    "latestTransactionDate": "2026-11-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -999,6 +999,7 @@
         "mv-0043d78ec4ed4591",
         "mv-84902237e652ecd4",
         "mv-15bb50651c28783e",
+        "mv-f42db6e154a2193d",
         "mv-espn-tx-34855363e48984d2"
       ],
       "evidenceClass": "reported",
@@ -11096,6 +11097,27 @@
         "18"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-f42db6e154a2193d",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks Put Karl-Anthony Towns’ Free-Agency Exit ‘on the Table’ Amid Stalled Extension Talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-07T21:39:43.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/knicks-put-karl-anthony-towns-free-agency-exit-on-the-table-amid-stalled-extension-talks/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
