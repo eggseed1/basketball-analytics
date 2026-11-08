@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-08",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-08T16:50:51.399Z",
+    "builtAt": "2026-11-08T20:33:14.502Z",
     "rosterPlayerCount": 504,
-    "headlinesScanned": 11806,
-    "latestHeadlineAt": "2026-11-08T16:40:18.000Z",
+    "headlinesScanned": 11871,
+    "latestHeadlineAt": "2026-11-08T20:15:54.000Z",
     "latestTransactionDate": "2026-11-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 16
+      "credibility": 8
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -1785,12 +1785,14 @@
         "mv-71fdf66b2b71d73f",
         "mv-91027c7516631fe9",
         "mv-94298f785ba51080",
-        "mv-9789a9a1b3b1e92a"
+        "mv-9789a9a1b3b1e92a",
+        "mv-94768674d28be64a",
+        "mv-ab02efca26017067"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-28T15:58:25.000Z",
-      "lastMeaningfulAt": "2026-11-06T19:48:31.000Z",
+      "lastMeaningfulAt": "2026-11-08T20:15:54.000Z",
       "linkedPlayerIds": [
         "3112335",
         "3936299",
@@ -2089,6 +2091,31 @@
       ],
       "linkedTeamIds": [
         "19"
+      ]
+    },
+    {
+      "id": "mv-trade-4702384-20261108",
+      "headline": "Nique Clifford: trade talk",
+      "primaryClaimId": "mv-e47224cc7f2deae8",
+      "claimIds": [
+        "mv-22d24448e3554d02",
+        "mv-627a823b229edd53",
+        "mv-e47224cc7f2deae8",
+        "mv-1cc1a38b2cfe27f9",
+        "mv-112ee74eb0917279"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-08T10:18:15.000Z",
+      "lastMeaningfulAt": "2026-11-08T20:15:51.000Z",
+      "linkedPlayerIds": [
+        "4702384"
+      ],
+      "linkedTeamIds": [
+        "23",
+        "25",
+        "7",
+        "13"
       ]
     },
     {
@@ -11118,6 +11145,155 @@
       ],
       "isOriginal": true,
       "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-22d24448e3554d02",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Kings reportedly trade Nique Clifford to Thunder for two second-round picks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-08T10:18:15.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/kings-reportedly-trade-nique-clifford-101815497.html",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "23",
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-627a823b229edd53",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Thunder reportedly trade for Kings' Nique Clifford in wake of injuries",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-08T18:15:38.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/nba/breaking-news/article/thunder-reportedly-trade-for-kings-nique-clifford-in-wake-of-injuries-185731868.html",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "23",
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-94768674d28be64a",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "NBA rumors: Warriors insider teases anonymous Nuggets trade target after recent Nikola Jokic buzz",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-08T18:18:03.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-rumors-warriors-insider-teases-anonymous-nuggets-trade-target-after-recent-nikola-jokic-buzz",
+      "playerIds": [
+        "3112335"
+      ],
+      "teamIds": [
+        "7",
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e47224cc7f2deae8",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Kings Trading Nique Clifford To Thunder For Two Second-Round Picks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-08T18:18:52.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "Hoops Rumors, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick, Shams Charania",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/11/kings-trading-nique-clifford-to-thunder-for-two-second-round-picks.html",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "23",
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-1cc1a38b2cfe27f9",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Thunder Acquiring Nique Clifford From Kings For Two Second-Round Picks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-08T18:21:44.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288065/Thunder-Acquiring-Nique-Clifford-From-Kings-For-Two-Second-Round-Picks",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "23",
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-112ee74eb0917279",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "NBA rumors: Thunder beat out Lakers, Nuggets for Nique Clifford trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-08T20:15:51.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-thunder-beat-lakers-nuggets-nique-clifford-trade",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "7",
+        "13",
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ab02efca26017067",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Nikola Jokic’s Health Becomes a Major Concern Amid Warriors Trade Rumor",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-08T20:15:54.000Z",
+      "sourceId": "reporter:chris-mannix",
+      "sourceLabel": "EssentiallySports, citing Chris Mannix (Sports Illustrated)",
+      "reporterLabel": "Chris Mannix",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-nikola-jokics-health-becomes-a-major-concern-amid-warriors-trade-rumor/",
+      "playerIds": [
+        "3112335"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
