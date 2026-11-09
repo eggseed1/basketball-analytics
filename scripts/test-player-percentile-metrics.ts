@@ -492,6 +492,55 @@ function main() {
     "DARKO stays live when the overlay is present"
   );
 
+  // Published live-season DRBL after 8 games must not rank anyone yet.
+  const drblRow = (id: string, gamesPlayed: number, war1: number): PlayerSeason => ({
+    ...row({
+      playerId: id,
+      playerName: id,
+      season: "2026-27",
+      gamesPlayed,
+      minutes: gamesPlayed * 30,
+    }),
+    drbl100: war1,
+    rawAbilityRate: war1,
+    drblPossessions: gamesPlayed * 65,
+    r1WinEquivalents: war1,
+  });
+  const earlyBoard = Array.from({ length: 40 }, (_, i) => drblRow(`p${i}`, 8, i / 20));
+  const earlyLeader = earlyBoard[37]!;
+  const leaderMetrics = buildPlayerPercentileMetrics(
+    earlyLeader,
+    [earlyLeader],
+    earlyBoard,
+    [],
+    earlyLeader.playerId
+  );
+  const leaderWar1 = leaderMetrics.find((m) => m.id === "r1WinEquivalents");
+  assert.equal(leaderWar1?.qualified, false, "8-game WAR1 is not qualified");
+  assert.equal(
+    leaderMetrics.find((m) => m.id === "drbl100")?.qualified,
+    false,
+    "8-game DRBL/100 is not qualified"
+  );
+
+  const lateBoard = [
+    ...earlyBoard,
+    ...Array.from({ length: 20 }, (_, i) => drblRow(`q${i}`, 20, i / 10)),
+  ];
+  const lateFocal = lateBoard.find((r) => r.playerId === "q10")!;
+  const lateWar1 = buildPlayerPercentileMetrics(
+    lateFocal,
+    [lateFocal],
+    lateBoard,
+    [],
+    lateFocal.playerId
+  ).find((m) => m.id === "r1WinEquivalents");
+  assert.notEqual(lateWar1?.qualified, false, "20-game WAR1 is qualified");
+  assert.ok(
+    lateWar1 && Math.abs(lateWar1.percentile - 50) <= 5,
+    `WAR1 ranks only against qualified peers (got ${lateWar1?.percentile})`
+  );
+
   console.log("test-player-percentile-metrics: ok");
 }
 
