@@ -18,7 +18,10 @@ import { isDrblSeason } from "@/data/drbl/season-registry";
 import {
   getPlayerIdAliasIndex,
 } from "@/data/identity/player-identity";
-import { hasValidatedDrblEstimate } from "@/data/queries/percentiles";
+import {
+  hasValidatedDrblEstimate,
+  meetsPercentileQualification,
+} from "@/data/queries/percentiles";
 import { normalizePlayerName } from "@/lib/player-name";
 import {
   priorSeasonForStats,
@@ -540,7 +543,8 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
       }
       return b.drbl100 - a.drbl100;
     });
-    for (const row of valid.slice(0, 20)) {
+    for (const row of valid) {
+      if (drblLeaders.length >= 20) break;
       const nbaId = String(row.playerId);
       const alias = aliasIndex.byNba.get(nbaId);
       const displayName =
@@ -552,6 +556,7 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
       // Alias ESPN id is a navigation crosswalk, not a model join.
       const profileId = alias?.espnPlayerId ?? espnFromName ?? nbaId;
       const season = seasonByName.get(nameKey);
+      if (!season || !meetsPercentileQualification(season)) continue;
       const team = productTeamForHomeLeader({
         profileId,
         nbaPlayerId: nbaId,

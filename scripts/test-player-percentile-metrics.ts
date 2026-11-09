@@ -16,6 +16,7 @@ import {
   type SheetStatId,
 } from "../src/lib/player-stat-sheet-registry";
 import { gradeFromPercentile } from "../src/components/players/player-percentile-panel";
+import { getPlayerSortOption } from "../src/lib/player-explore-sort";
 import type { PlayerSeason } from "../src/data/types";
 
 function row(
@@ -540,6 +541,11 @@ function main() {
     lateWar1 && Math.abs(lateWar1.percentile - 50) <= 5,
     `WAR1 ranks only against qualified peers (got ${lateWar1?.percentile})`
   );
+
+  const war1Column = getPlayerSortOption("r1WinEquivalents");
+  assert.equal(war1Column.format(earlyLeader), "-", "Explore hides 8-game WAR1");
+  assert.equal(war1Column.value(earlyLeader), Number.NEGATIVE_INFINITY);
+  assert.equal(war1Column.format(lateFocal), "1.0", "Explore shows qualified WAR1");
 
   console.log("test-player-percentile-metrics: ok");
 }

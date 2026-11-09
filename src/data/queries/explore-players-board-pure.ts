@@ -4,7 +4,7 @@
  */
 
 import { getPlayerMedia } from "@/data/media/get-player-media";
-import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { hasRankedDrblEstimate } from "@/data/queries/percentiles";
 import type { PlayerSeason } from "@/data/types";
 import {
   defaultPlayerSeasonSortDir,
@@ -359,7 +359,7 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
     const value = getSheetStatValue(p, sheetId, "totals");
     if (value != null) row[field] = value;
   }
-  if (hasValidDrblEstimate(p)) {
+  if (hasRankedDrblEstimate(p)) {
     row.drbl100 = p.drbl100;
     row.r1Points = p.r1Points ?? null;
     row.r1WinEquivalents = p.r1WinEquivalents ?? null;
