@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-10-10",
+  "retrievedAt": "2026-11-09",
   "tables": [
     {
       "rows": [
@@ -2874,10 +2874,10 @@
         {
           "year": "2030",
           "img": "nba_min_2026.png",
-          "bar": "OKC",
+          "bar": "SAC",
           "arrow": true,
           "swap": false,
-          "terms": "(via DET)"
+          "terms": "(via DET to OKC)"
         },
         {
           "year": "2031",
@@ -3360,14 +3360,6 @@
           "terms": "Two least favorable of GSW, MIL and OKC to PHI then other to BOS"
         },
         {
-          "year": "2028",
-          "img": "uta_20251.png",
-          "bar": "OKC",
-          "arrow": true,
-          "swap": false,
-          "terms": ""
-        },
-        {
           "year": "2029",
           "img": "nba_bos.png",
           "bar": "OKC",
@@ -3414,14 +3406,6 @@
           "arrow": true,
           "swap": false,
           "terms": "Two least favorable picks of DEN, HOU and MIA then other to MEM"
-        },
-        {
-          "year": "2030",
-          "img": "nba_min_2026.png",
-          "bar": "OKC",
-          "arrow": true,
-          "swap": false,
-          "terms": "(via DET)"
         },
         {
           "year": "2030",
@@ -4200,12 +4184,28 @@
           "terms": "(via CHI to SAC to MEM)"
         },
         {
+          "year": "2028",
+          "img": "uta_20251.png",
+          "bar": "SAC",
+          "arrow": true,
+          "swap": false,
+          "terms": "(via OKC)"
+        },
+        {
           "year": "2029",
           "img": "nba_sac.png",
           "bar": "NYK",
           "arrow": true,
           "swap": false,
           "terms": "(via WAS to HOU)"
+        },
+        {
+          "year": "2030",
+          "img": "nba_min_2026.png",
+          "bar": "SAC",
+          "arrow": true,
+          "swap": false,
+          "terms": "(via DET to OKC)"
         },
         {
           "year": "2030",
@@ -4690,10 +4690,10 @@
         {
           "year": "2028",
           "img": "uta_20251.png",
-          "bar": "OKC",
+          "bar": "SAC",
           "arrow": true,
           "swap": false,
-          "terms": ""
+          "terms": "(via OKC)"
         },
         {
           "year": "2029",

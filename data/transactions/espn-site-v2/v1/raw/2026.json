@@ -2,9 +2,31 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-08T20:32:02.090Z",
-  "apiCount": 433,
+  "fetchedAt": "2026-11-09T21:04:43.735Z",
+  "apiCount": 435,
   "rows": [
+    {
+      "date": "2026-11-08T08:00Z",
+      "description": "Waived F Dalen Terry.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-11-08T08:00Z",
+      "description": "Traded G Nique Clifford to the Oklahoma City Thunder.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
     {
       "date": "2026-11-07T08:00Z",
       "description": "Signed G Richie Saunders to two-way contract.",

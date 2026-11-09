@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-08",
+    "snapshotDate": "2026-11-09",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-08T20:33:14.502Z",
-    "rosterPlayerCount": 504,
-    "headlinesScanned": 11871,
-    "latestHeadlineAt": "2026-11-08T20:15:54.000Z",
-    "latestTransactionDate": "2026-11-07",
+    "builtAt": "2026-11-09T21:05:49.326Z",
+    "rosterPlayerCount": 503,
+    "headlinesScanned": 12206,
+    "latestHeadlineAt": "2026-11-09T21:02:58.000Z",
+    "latestTransactionDate": "2026-11-08",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -220,6 +220,10 @@
     },
     "reporter:tim-macmahon": {
       "label": "Tim MacMahon (ESPN)",
+      "credibility": 18
+    },
+    "reporter:shams-charania-on": {
+      "label": "Shams Charania. On (ESPN)",
       "credibility": 18
     },
     "ledger:nba-player-movement": {
@@ -848,12 +852,13 @@
         "mv-abaa2bba65f55291",
         "mv-5e51bf863d4940c3",
         "mv-bdfae5ede30a7ed1",
-        "mv-8e5084f175548216"
+        "mv-8e5084f175548216",
+        "mv-6b07b0efa7290757"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-07T01:46:07.000Z",
+      "lastMeaningfulAt": "2026-11-09T21:01:39.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -1286,12 +1291,13 @@
         "mv-bed5ef87d7e300f5",
         "mv-b6352aec0c6a4ad5",
         "mv-a73cea72acb9c5ff",
-        "mv-ead2ce4e4bc0e1ee"
+        "mv-ead2ce4e4bc0e1ee",
+        "mv-17fd846f0ba4af04"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-10-21T14:09:56.000Z",
+      "lastMeaningfulAt": "2026-11-09T17:41:08.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
@@ -1299,6 +1305,7 @@
       ],
       "linkedTeamIds": [
         "16",
+        "13",
         "17",
         "30"
       ]
@@ -1596,12 +1603,13 @@
         "mv-0808f2364afafa98",
         "mv-e3ac87411d8d9d38",
         "mv-f0294f7e0e3b3dcc",
-        "mv-99b84137d89490c3"
+        "mv-99b84137d89490c3",
+        "mv-f24fb05510153750"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-11-02T13:27:35.000Z",
+      "lastMeaningfulAt": "2026-11-09T16:44:56.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
@@ -1925,12 +1933,14 @@
         "mv-ca7ebec79eb2fd05",
         "mv-1c78450245202da3",
         "mv-700748facb77782e",
-        "mv-884c423318deb2f4"
+        "mv-884c423318deb2f4",
+        "mv-bb342e323d93ae79",
+        "mv-2e10dd3c6f332c82"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-01T13:58:47.000Z",
-      "lastMeaningfulAt": "2026-11-06T21:57:07.000Z",
+      "lastMeaningfulAt": "2026-11-09T16:50:55.000Z",
       "linkedPlayerIds": [
         "2595516",
         "4066336",
@@ -1977,25 +1987,6 @@
       "lastMeaningfulAt": "2026-11-02T10:08:24.000Z",
       "linkedPlayerIds": [
         "4683778"
-      ],
-      "linkedTeamIds": [
-        "25"
-      ]
-    },
-    {
-      "id": "mv-contract-4433159-20261103",
-      "headline": "Dalen Terry: contract talks with the Thunder",
-      "primaryClaimId": "mv-485b97ad42ecdb00",
-      "claimIds": [
-        "mv-485b97ad42ecdb00",
-        "mv-espn-tx-2e90470fff83677e"
-      ],
-      "evidenceClass": "reported",
-      "state": "completed",
-      "firstSeenAt": "2026-11-03T14:06:43.000Z",
-      "lastMeaningfulAt": "2026-11-04T12:00:00.000Z",
-      "linkedPlayerIds": [
-        "4433159"
       ],
       "linkedTeamIds": [
         "25"
@@ -2061,18 +2052,20 @@
       "headline": "Giannis Antetokounmpo: trade talk",
       "primaryClaimId": "mv-87a92f3e085efd81",
       "claimIds": [
-        "mv-87a92f3e085efd81"
+        "mv-87a92f3e085efd81",
+        "mv-ab1174c1ced27883"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-06T16:00:33.000Z",
-      "lastMeaningfulAt": "2026-11-06T16:00:33.000Z",
+      "lastMeaningfulAt": "2026-11-09T14:36:53.000Z",
       "linkedPlayerIds": [
         "3032977"
       ],
       "linkedTeamIds": [
         "15",
-        "14"
+        "14",
+        "22"
       ]
     },
     {
@@ -2096,18 +2089,22 @@
     {
       "id": "mv-trade-4702384-20261108",
       "headline": "Nique Clifford: trade talk",
-      "primaryClaimId": "mv-e47224cc7f2deae8",
+      "primaryClaimId": "mv-7179085e2f8b28fa",
       "claimIds": [
         "mv-22d24448e3554d02",
         "mv-627a823b229edd53",
         "mv-e47224cc7f2deae8",
         "mv-1cc1a38b2cfe27f9",
-        "mv-112ee74eb0917279"
+        "mv-112ee74eb0917279",
+        "mv-e1b45818e87f3687",
+        "mv-7179085e2f8b28fa",
+        "mv-espn-tx-a5a81ef7213dce23",
+        "mv-nba-tx-5c64a960de248a10"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "completed",
       "firstSeenAt": "2026-11-08T10:18:15.000Z",
-      "lastMeaningfulAt": "2026-11-08T20:15:51.000Z",
+      "lastMeaningfulAt": "2026-11-08T12:00:00.000Z",
       "linkedPlayerIds": [
         "4702384"
       ],
@@ -2115,8 +2112,30 @@
         "23",
         "25",
         "7",
-        "13"
-      ]
+        "13",
+        "9"
+      ],
+      "deal": {
+        "date": "2026-11-08",
+        "sides": [
+          {
+            "teamId": "25",
+            "teamName": "Thunder",
+            "receives": [
+              {
+                "label": "Nique Clifford",
+                "playerId": "4702384",
+                "fromTeamId": "23"
+              }
+            ]
+          },
+          {
+            "teamId": "23",
+            "teamName": "Kings",
+            "receives": []
+          }
+        ]
+      }
     },
     {
       "deal": {
@@ -10150,27 +10169,6 @@
       "isOriginal": false
     },
     {
-      "id": "mv-485b97ad42ecdb00",
-      "clusterId": "mv-contract-4433159-20261103",
-      "summary": "Dalen Terry, Thunder Agree To Two-Year Contract",
-      "claimType": "contract_movement",
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "provenanceKind": "aggregation",
-      "publishedAt": "2026-11-03T14:06:43.000Z",
-      "sourceId": "outlet:realgm",
-      "sourceLabel": "RealGM",
-      "sourceUrl": "https://basketball.realgm.com/wiretap/288020/Dalen-Terry-Thunder-Agree-To-Two-Year-Contract",
-      "playerIds": [
-        "4433159"
-      ],
-      "teamIds": [
-        "25"
-      ],
-      "isOriginal": false,
-      "negotiationSpecificity": "offer"
-    },
-    {
       "id": "mv-f543a430a8bc72af",
       "clusterId": "mv-trade-3155942-20261005",
       "summary": "Kings reportedly discussed Domantas Sabonis trade with Celtics, Pistons",
@@ -11296,6 +11294,174 @@
       "isOriginal": false
     },
     {
+      "id": "mv-e1b45818e87f3687",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Why the Nuggets are the Biggest Losers in Thunder’s Trade for Nique Clifford",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-08T21:43:39.000Z",
+      "sourceId": "reporter:shams-charania-on",
+      "sourceLabel": "Heavy, citing Shams Charania. On (ESPN)",
+      "reporterLabel": "Shams Charania. On, Shams Charania",
+      "sourceUrl": "https://heavy.com/sports/nba/denver-nuggets/nuggets-biggest-losers-thunder-trade-for-nique-clifford/",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "7",
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-7179085e2f8b28fa",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Stein’s Latest: Warriors, Clifford Trade, Vincent, Porter, Dillingham",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-09T03:59:27.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "Hoops Rumors, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein, Jake Fischer",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/11/steins-latest-warriors-clifford-trade-vincent-porter-sochan-dillingham.html",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-bb342e323d93ae79",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Warriors Looking To Trade Kristaps Porzingis As Soon As Possible",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-09T06:15:42.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "RealGM, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein, Jake Fischer",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288071/Warriors-Looking-To-Trade-Kristaps-Porzingis-As-Soon-As-Possible",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ab1174c1ced27883",
+      "clusterId": "mv-trade-3032977-20261106",
+      "summary": "NBA rumors: Blazers join Heat in pursuit of Giannis Antetokounmpo’s ex-Bucks teammate",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-09T14:36:53.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-blazers-join-heat-in-pursuit-of-giannis-antetokounmpos-ex-bucks-teammate",
+      "playerIds": [
+        "3032977"
+      ],
+      "teamIds": [
+        "14",
+        "15",
+        "22"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-f24fb05510153750",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Celtics rumors: What Jaylen Brown actually demanded to Boston before bombshell 76ers trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-09T16:44:56.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/boston-celtics/celtics-rumors-what-jaylen-brown-actually-demanded-boston-before-bombshell-76ers-trade",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2",
+        "20"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-2e10dd3c6f332c82",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Warriors seeking Kristaps Porzingis trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-09T16:50:55.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "TalkBasket, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein, Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/227151-warriors-seeking-kristaps-porzingis-trade",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-17fd846f0ba4af04",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Lakers Linked to Naz Reid Trade Amid Shocking New Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-09T17:41:08.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-trade-naz-reid/",
+      "playerIds": [
+        "4396971"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-6b07b0efa7290757",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers’ Bronny James Linked to 2 Surprise Teams in Latest Next-Team Odds",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-09T21:01:39.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-bronny-james-next-team-odds-revealed/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -11665,19 +11831,39 @@
       "isOriginal": true
     },
     {
-      "id": "mv-espn-tx-2e90470fff83677e",
-      "clusterId": "mv-contract-4433159-20261103",
-      "summary": "Signed F Dalen Terry to a contract for the remainder of the season.",
-      "claimType": "contract_movement",
+      "id": "mv-espn-tx-a5a81ef7213dce23",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Traded G Nique Clifford to the Oklahoma City Thunder.",
+      "claimType": "trade_interest",
       "evidenceClass": "reported",
       "state": "completed",
       "provenanceKind": "completed_transaction",
-      "publishedAt": "2026-11-04T12:00:00.000Z",
+      "publishedAt": "2026-11-08T12:00:00.000Z",
       "sourceId": "ledger:espn-transactions",
       "sourceLabel": "Transaction log",
       "sourceUrl": "/offseason",
       "playerIds": [
-        "4433159"
+        "4702384"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-5c64a960de248a10",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Acquired guard Nique Clifford from Sacramento Kings.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-11-08T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "Player movement log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4702384"
       ],
       "teamIds": [
         "25"
@@ -12747,14 +12933,14 @@
       "suppressTradeSpeculation": false
     },
     {
-      "clusterId": "mv-contract-4433159-20261103",
+      "clusterId": "mv-trade-4702384-20261108",
       "playerIds": [
-        "4433159"
+        "4702384"
       ],
       "outcome": "materialized",
-      "resolvedAt": "2026-11-04T12:00:00.000Z",
-      "transactionRef": "espn-tx-2e90470fff83677e",
-      "suppressTradeSpeculation": false
+      "resolvedAt": "2026-11-08T12:00:00.000Z",
+      "transactionRef": "nba-tx-5c64a960de248a10",
+      "suppressTradeSpeculation": true
     },
     {
       "clusterId": "mv-tx-nba-tx-f528b60b36bb502b",

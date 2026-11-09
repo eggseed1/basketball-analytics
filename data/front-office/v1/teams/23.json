@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-08",
-    "retrievedAt": "2026-11-08T20:37:26.893Z",
+    "snapshotDate": "2026-11-09",
+    "retrievedAt": "2026-11-09T21:14:48.051Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "80fafe3e7baa67123c2bf6350afa9dbb7ccb6f5311034392942f85d4ac639261",
+    "sourceHash": "ddb0ddb4317af597eeca95d5aac5b8f5f042b26c413e76bcd6fa2bf56fd81484",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -212,29 +212,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630173"
-        },
-        {
-          "playerId": "1642363",
-          "playerName": "Nique Clifford",
-          "age": null,
-          "contractId": "cy-1642363-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642363-2026",
-              "playerId": "1642363",
-              "franchiseId": "23",
-              "season": "2026-27",
-              "salary": 3263400,
-              "capHit": 3263400,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642363"
         },
         {
           "playerId": "1642284",
@@ -447,12 +424,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 195117598,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 191854198,
+          "playersUnderContract": 14
         }
       ],
-      "playerSalaryCommitments": 195117598,
-      "playersWithSalary": 15,
+      "playerSalaryCommitments": 191854198,
+      "playersWithSalary": 14,
       "playersWithoutSalary": 2
     },
     "draftAssets": {
