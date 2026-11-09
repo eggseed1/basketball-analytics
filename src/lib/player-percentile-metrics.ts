@@ -5,7 +5,11 @@
 
 import type { PlayerSeason } from "@/data/types";
 import { historySeasonSupportsDrbl } from "@/data/history/player-career-types";
-import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import {
+  PERCENTILE_QUALIFY,
+  hasValidDrblEstimate,
+  meetsPercentileQualification,
+} from "@/data/queries/percentiles";
 import { hustlePerGame } from "@/data/transformers/hustle-stats";
 import { maskUnrecordedEraStats } from "@/data/transformers/stat-eras";
 import { formatNumber, formatPct } from "@/lib/format";
@@ -204,10 +208,7 @@ function perGame(row: PlayerSeason, key: keyof PlayerSeason): number {
   return raw / Math.max(1, row.gamesPlayed);
 }
 
-export const PLAYER_PERCENTILE_QUALIFY = {
-  minGames: 15,
-  minMpg: 12,
-} as const;
+export const PLAYER_PERCENTILE_QUALIFY = PERCENTILE_QUALIFY;
 
 /** Metrics in the Advanced percentile tab (BRef box + ratings). */
 export const ADVANCED_PERCENTILE_METRIC_IDS = new Set([
@@ -225,13 +226,7 @@ export const ADVANCED_PERCENTILE_METRIC_IDS = new Set([
   "pie",
 ]);
 
-export function isQualifiedPeer(row: PlayerSeason): boolean {
-  return (
-    row.gamesPlayed >= PLAYER_PERCENTILE_QUALIFY.minGames &&
-    row.minutes / Math.max(1, row.gamesPlayed) >=
-      PLAYER_PERCENTILE_QUALIFY.minMpg
-  );
-}
+export const isQualifiedPeer = meetsPercentileQualification;
 
 /**
  * Advanced box ratings exist only when the season was enriched with ORtg/DRtg.

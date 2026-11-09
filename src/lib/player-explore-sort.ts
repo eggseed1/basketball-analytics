@@ -1,6 +1,6 @@
 import { perGame } from "@/data/providers/nba/compute-advanced";
 import type { PlayerSeason } from "@/data/types";
-import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { hasRankedDrblEstimate } from "@/data/queries/percentiles";
 import { formatMinutes, formatNumber, formatPct } from "@/lib/format";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 
@@ -145,11 +145,14 @@ export const PLAYER_SORT_OPTIONS: PlayerSortOption[] = [
     label: "WAR1",
     defaultDir: "desc",
     numeric: true,
-    value: (r) => r.r1WinEquivalents ?? Number.NEGATIVE_INFINITY,
+    value: (r) =>
+      r.r1WinEquivalents != null && hasRankedDrblEstimate(r)
+        ? r.r1WinEquivalents
+        : Number.NEGATIVE_INFINITY,
     format: (r) =>
-      r.r1WinEquivalents == null
-        ? "-"
-        : formatNumber(r.r1WinEquivalents, 1),
+      r.r1WinEquivalents != null && hasRankedDrblEstimate(r)
+        ? formatNumber(r.r1WinEquivalents, 1)
+        : "-",
   },
   {
     key: "drbl100",
@@ -157,9 +160,9 @@ export const PLAYER_SORT_OPTIONS: PlayerSortOption[] = [
     defaultDir: "desc",
     numeric: true,
     value: (r) =>
-      hasValidDrblEstimate(r) ? r.drbl100 : Number.NEGATIVE_INFINITY,
+      hasRankedDrblEstimate(r) ? r.drbl100 : Number.NEGATIVE_INFINITY,
     format: (r) =>
-      hasValidDrblEstimate(r) ? formatNumber(r.drbl100, 1) : "-",
+      hasRankedDrblEstimate(r) ? formatNumber(r.drbl100, 1) : "-",
   },
   {
     key: "minutes",

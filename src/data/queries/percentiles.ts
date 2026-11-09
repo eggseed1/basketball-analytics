@@ -52,6 +52,26 @@ export function hasValidDrblEstimate(row: PlayerSeason): boolean {
   });
 }
 
+/** Games and minutes a player-season needs before it gets a percentile or a DRBL/WAR1 rank. */
+export const PERCENTILE_QUALIFY = {
+  minGames: 15,
+  minMpg: 12,
+} as const;
+
+export function meetsPercentileQualification(
+  row: Pick<PlayerSeason, "gamesPlayed" | "minutes">
+): boolean {
+  return (
+    row.gamesPlayed >= PERCENTILE_QUALIFY.minGames &&
+    row.minutes / Math.max(1, row.gamesPlayed) >= PERCENTILE_QUALIFY.minMpg
+  );
+}
+
+/** DRBL/WAR1 shown on leaderboards: a published estimate on a qualified sample. */
+export function hasRankedDrblEstimate(row: PlayerSeason): boolean {
+  return hasValidDrblEstimate(row) && meetsPercentileQualification(row);
+}
+
 export {
   VALIDATED_PERCENTILE_PRODUCT_MIN_MINUTES,
   VALIDATED_PERCENTILE_ELIGIBILITY_VERSION,

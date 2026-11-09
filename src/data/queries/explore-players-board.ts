@@ -9,7 +9,7 @@ import {
   type LeaderboardContextIndex,
 } from "@/analytics/leaderboard-context";
 import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health";
-import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { hasRankedDrblEstimate } from "@/data/queries/percentiles";
 import type { BasketballFilters } from "@/data/types";
 import {
   DEFAULT_PLAYER_BOARD_VIEWS,
@@ -126,7 +126,7 @@ export async function getExplorePlayersBoardView(options: {
   const board = await getPlayerSeasonBoardSnapshot(options.filters);
   const hasDarko = board.rows.some((p) => p.darkoDpm != null);
   const hasRaptor = board.rows.some((p) => p.raptor != null);
-  const hasDrbl = board.rows.some((p) => hasValidDrblEstimate(p));
+  const hasDrbl = board.rows.some((p) => hasRankedDrblEstimate(p));
   const hasHustle = board.rows.some(
     (p) =>
       p.hustleDeflections != null ||
