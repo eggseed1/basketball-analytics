@@ -1,6 +1,6 @@
 {
  "source": "NBA Stats teamyearbyyearstats and franchiseplayers; ABA seasons from Wikipedia season lists. Career leaders count NBA games only.",
- "generatedAt": "2026-11-02",
+ "generatedAt": "2026-11-09",
  "franchises": {
   "atl": {
    "teamId": 1610612737,
@@ -480,11 +480,11 @@
     },
     "rebounds": {
      "player": "Nikola Jokić",
-     "value": 9026
+     "value": 9058
     },
     "assists": {
      "player": "Nikola Jokić",
-     "value": 6126
+     "value": 6153
     },
     "steals": {
      "player": "Lafayette Lever",
@@ -496,7 +496,7 @@
     },
     "threes": {
      "player": "Jamal Murray",
-     "value": 1414
+     "value": 1422
     }
    }
   },
@@ -606,7 +606,7 @@
    "leaders": {
     "points": {
      "player": "Stephen Curry",
-     "value": 26674
+     "value": 26778
     },
     "rebounds": {
      "player": "Nate Thurmond",
@@ -614,11 +614,11 @@
     },
     "assists": {
      "player": "Stephen Curry",
-     "value": 6763
+     "value": 6780
     },
     "steals": {
      "player": "Stephen Curry",
-     "value": 1609
+     "value": 1611
     },
     "blocks": {
      "player": "Adonal Foyle",
@@ -626,7 +626,7 @@
     },
     "threes": {
      "player": "Stephen Curry",
-     "value": 4270
+     "value": 4286
     }
    }
   },
@@ -986,7 +986,7 @@
     },
     "rebounds": {
      "player": "Bam Adebayo",
-     "value": 5803
+     "value": 5840
     },
     "assists": {
      "player": "Dwyane Wade",
@@ -1167,7 +1167,7 @@
     },
     "threes": {
      "player": "Trey Murphy III",
-     "value": 826
+     "value": 834
     }
    }
   },
@@ -1401,7 +1401,7 @@
     },
     "threes": {
      "player": "Tyrese Maxey",
-     "value": 935
+     "value": 944
     }
    }
   },
@@ -1434,7 +1434,7 @@
    "leaders": {
     "points": {
      "player": "Devin Booker",
-     "value": 18209
+     "value": 18322
     },
     "rebounds": {
      "player": "Alvan Adams",
@@ -1454,7 +1454,7 @@
     },
     "threes": {
      "player": "Devin Booker",
-     "value": 1551
+     "value": 1561
     }
    }
   },
@@ -1491,7 +1491,7 @@
    "leaders": {
     "points": {
      "player": "Damian Lillard",
-     "value": 19472
+     "value": 19551
     },
     "rebounds": {
      "player": "LaMarcus Aldridge",
@@ -1511,7 +1511,7 @@
     },
     "threes": {
      "player": "Damian Lillard",
-     "value": 2403
+     "value": 2412
     }
    }
   },
