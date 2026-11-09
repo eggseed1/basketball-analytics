@@ -24,6 +24,7 @@ jobs:
     timeout-minutes: 25
     permissions:
       contents: read
+      actions: read
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -88,6 +89,13 @@ jobs:
         run: |
           node --test scripts/test-live-runtime-guard.mjs
           node scripts/protect-live-runtime.mjs --repair
+
+      # The nightly deploys the live season's DRBL/WAR1 but commits it only on
+      # season-commit days, so main's copy lags and a code ship would unpublish it.
+      - name: Restore live-season DRBL from the latest nightly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/restore-drbl-nightly-artifact.mjs
 
       - name: Copy runtime JSON to Static Assets
         run: node scripts/copy-runtime-json-assets.mjs

@@ -554,12 +554,15 @@ function buildMaskedPercentileMetrics(
 
   // --- Value (impact) — WAR1 / DRBL first in the list; default selection
   // prefers DARKO when present (continuous history). See defaultPercentileMetricId.
-  if (hasValidDrblEstimate(seasonStats)) {
+  // DRBL/WAR1 never fall back to the unqualified pool: a few early-season games
+  // would otherwise rank a player against everyone's small-sample noise.
+  const drblPeers = qualified;
+  if (hasValidDrblEstimate(seasonStats) && isQualifiedPeer(seasonStats)) {
     if (
       seasonStats.r1WinEquivalents != null &&
       Number.isFinite(seasonStats.r1WinEquivalents)
     ) {
-      const winEqPool = pool
+      const winEqPool = drblPeers
         .filter(
           (p) =>
             hasValidDrblEstimate(p) &&
@@ -582,7 +585,7 @@ function buildMaskedPercentileMetrics(
         interpretation: "higher_is_better",
       });
     }
-    const drblPool = pool
+    const drblPool = drblPeers
       .filter(hasValidDrblEstimate)
       .map((p) => p.drbl100)
       .filter((n): n is number => Number.isFinite(n));
@@ -600,7 +603,7 @@ function buildMaskedPercentileMetrics(
       interpretation: "higher_is_better",
     });
     if (Number.isFinite(seasonStats.drblO)) {
-      const oPool = pool
+      const oPool = drblPeers
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblO)
         .filter((n): n is number => Number.isFinite(n));
@@ -616,7 +619,7 @@ function buildMaskedPercentileMetrics(
       });
     }
     if (Number.isFinite(seasonStats.drblD)) {
-      const dPool = pool
+      const dPool = drblPeers
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblD)
         .filter((n): n is number => Number.isFinite(n));
@@ -633,7 +636,7 @@ function buildMaskedPercentileMetrics(
     }
     // Diagnostics live under Advanced — not first-view Value/Overview.
     if (Number.isFinite(seasonStats.drblP)) {
-      const pPool = pool
+      const pPool = drblPeers
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblP)
         .filter((n): n is number => Number.isFinite(n));
@@ -649,7 +652,7 @@ function buildMaskedPercentileMetrics(
       });
     }
     if (Number.isFinite(seasonStats.drblLn)) {
-      const lnPool = pool
+      const lnPool = drblPeers
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblLn)
         .filter((n): n is number => Number.isFinite(n));
@@ -667,7 +670,7 @@ function buildMaskedPercentileMetrics(
       });
     }
     if (Number.isFinite(seasonStats.drblB)) {
-      const bPool = pool
+      const bPool = drblPeers
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblB)
         .filter((n): n is number => Number.isFinite(n));
