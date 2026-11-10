@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { FolderOpen, Maximize2, Minimize2, Settings2 } from "lucide-react";
 
@@ -25,14 +25,16 @@ import {
 } from "@/data/providers/historical/season-range";
 import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
-import "./gm-stage.css";
 
 type FullscreenNode = HTMLElement & {
   webkitRequestFullscreen?: () => void;
 };
 
-async function enterFullscreen(el: HTMLElement) {
-  const node = el as FullscreenNode;
+async function enterFullscreen() {
+  // The page-owned GM desk unmounts on every route transition. Fullscreening
+  // it makes the browser leave native fullscreen before the loading fallback
+  // can render. The document root is stable across all /gm soft navigations.
+  const node = document.documentElement as FullscreenNode;
   if (typeof node.requestFullscreen === "function") {
     await node.requestFullscreen({ navigationUI: "hide" });
     return;
@@ -50,7 +52,6 @@ async function exitFullscreen() {
 }
 
 async function toggleFullscreen(
-  el: HTMLElement | null,
   full: boolean,
   setFull: (next: boolean) => void
 ) {
@@ -64,16 +65,10 @@ async function toggleFullscreen(
   window.sessionStorage.setItem("gm-full", "1");
   document.documentElement.dataset.gmFull = "1";
   setFull(true);
-  if (!el) return;
-  try {
-    await enterFullscreen(el);
-  } catch {
-    try {
-      await document.documentElement.requestFullscreen({ navigationUI: "hide" });
-    } catch {
-      /* The desk still covers the site header if the window stays. */
-    }
-  }
+  // Keep the CSS fullscreen fallback if native fullscreen is unavailable.
+  // Do not request the API a second time: a rejected request generally
+  // consumes the user activation, and a remounted desk cannot restore it.
+  await enterFullscreen().catch(() => undefined);
 }
 
 function formatSaveWhen(iso: string): string {
@@ -120,7 +115,6 @@ export function GmShell({
   const [creationSettings, setCreationSettings] = useState({ injuryFrequency: 1, developmentSpeed: 1, tradeDifficulty: 1, simPace: 1 });
   const [creationCommissioner, setCreationCommissioner] = useState(false);
   const [full, setFull] = useState(false);
-  const deskRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const stored = window.sessionStorage.getItem("gm-full") === "1";
@@ -129,9 +123,9 @@ export function GmShell({
       setFull(true);
     }
     const onChange = () => {
-      // Browser Fullscreen API drops on tab switches and when GmShell remounts
-      // between nav links (each page owns its own desk). Keep the desk-cover
-      // preference; only the minimize control clears it.
+      // The persistent document root stays in native fullscreen while GM
+      // pages swap. If the browser exits (Esc or tab switch), retain the CSS
+      // desk-cover preference until the user explicitly minimizes it.
       if (document.fullscreenElement) return;
       if (window.sessionStorage.getItem("gm-full") === "1") {
         document.documentElement.dataset.gmFull = "1";
@@ -144,39 +138,6 @@ export function GmShell({
     document.addEventListener("fullscreenchange", onChange);
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
-
-  const hasLeague = Boolean(league);
-
-  // After a soft nav remount or returning to the tab, put the new desk back
-  // into the Fullscreen API when the user still wants immersive mode.
-  useEffect(() => {
-    if (!full || !hasLeague) return;
-    const el = deskRef.current;
-    if (!el) return;
-
-    let cancelled = false;
-    const tryEnter = () => {
-      if (cancelled || document.visibilityState !== "visible") return;
-      if (document.fullscreenElement === el) return;
-      if (document.fullscreenElement) return;
-      void enterFullscreen(el).catch(() => {
-        void document.documentElement
-          .requestFullscreen({ navigationUI: "hide" })
-          .catch(() => undefined);
-      });
-    };
-
-    const timer = window.setTimeout(tryEnter, 40);
-    const onVis = () => {
-      if (document.visibilityState === "visible") tryEnter();
-    };
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [full, hasLeague]);
 
   useEffect(() => {
     if (!hydrated) {
@@ -394,7 +355,6 @@ export function GmShell({
 
   return (
     <main
-      ref={deskRef}
       data-gm
       data-motion-page
       className="site-shell flex flex-1 flex-col gap-4 py-4 sm:py-6"
@@ -428,7 +388,7 @@ export function GmShell({
             aria-label={full ? t("exitFullscreen") : t("fullscreen")}
             title={full ? t("exitFullscreen") : t("fullscreen")}
             onClick={() => {
-              void toggleFullscreen(deskRef.current, full, setFull);
+              void toggleFullscreen(full, setFull);
             }}
           >
             {full ? <Minimize2 aria-hidden /> : <Maximize2 aria-hidden />}

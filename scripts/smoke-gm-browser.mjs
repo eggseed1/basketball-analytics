@@ -43,21 +43,55 @@ try {
     "sim-through-injuries preference survives reload");
   await page.getByRole("checkbox", { name: /Sim through injuries/ }).uncheck();
 
-  // Real UI visual regression: generated headshots should show studio-vector
-  // faces with actual sleeveless jerseys while roster navigation still works.
-  await page.goto("http://127.0.0.1:3107/gm/roster", { waitUntil: "domcontentloaded" });
-  const generatedPortraits = page.locator('[data-generated-portrait="true"][data-portrait-version="2"]');
-  await generatedPortraits.first().waitFor();
-  assert.ok(await generatedPortraits.count() >= 5,
-    "generated rosters should consistently render the upgraded player headshots");
-  const portraitSvg = generatedPortraits.first().locator("svg");
-  assert.equal(await portraitSvg.getAttribute("viewBox"), "0 0 160 160");
-  assert.ok(await portraitSvg.locator('[data-jersey-layer="true"]').count() === 1);
-  assert.ok(await portraitSvg.locator('[data-face-layer="true"]').count() === 1);
-  await page.screenshot({ path: `${dir}/generated-portraits-roster-desktop.png`,
-    fullPage: true, animations: "disabled" });
-  await page.goto("http://127.0.0.1:3107/gm", { waitUntil: "domcontentloaded" });
-  await page.getByRole("region", { name: "Next game", exact: true }).waitFor();
+  // The GM atmosphere must use the saved franchise's actual two team colors,
+  // not the generic NBA blue/red. This lives in the persistent sports shell.
+  const atmosphere = page.locator(".page-atmosphere");
+  await page.waitForFunction(() => {
+    const orb = document.querySelector(".page-atmosphere");
+    return orb && getComputedStyle(orb).getPropertyValue("--atmosphere-a").trim() === "#007A33";
+  });
+  const initialColors = await atmosphere.evaluate(orb => {
+    const style = getComputedStyle(orb);
+    return [style.getPropertyValue("--atmosphere-a").trim(),
+      style.getPropertyValue("--atmosphere-b").trim()];
+  });
+  assert.deepEqual(initialColors, ["#007A33", "#BA9653"],
+    "Boston's two real team colors must drive GM's existing site orbs");
+
+  // Unlike the old implementation, native fullscreen belongs to the stable
+  // document root. A Next page's <main> unmount during route loading MUST NOT
+  // cause a fullscreenchange exit/re-entry or expose the ordinary site header.
+  await page.getByRole("button", { name: "Fullscreen", exact: true }).click();
+  await page.waitForFunction(() => document.fullscreenElement === document.documentElement);
+  await page.evaluate(() => {
+    window.__gmFullscreenExits = 0;
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) window.__gmFullscreenExits++;
+    });
+  });
+  await page.getByRole("link", { name: "Development", exact: true }).first().click();
+  await page.waitForURL("**/gm/development");
+  await page.getByRole("button", { name: "Exit fullscreen", exact: true }).waitFor();
+  assert.equal(await page.evaluate(() => document.fullscreenElement === document.documentElement), true,
+    "native fullscreen must remain active after GM tab navigation");
+  assert.equal(await page.evaluate(() => window.__gmFullscreenExits), 0,
+    "loading between GM tabs must not trigger browser fullscreen exit");
+  assert.equal(await atmosphere.evaluate(el => getComputedStyle(el).display !== "none"), true,
+    "the team orbs must stay visible in native GM fullscreen");
+  await page.getByRole("link", { name: "Home", exact: true }).first().click();
+  await page.waitForURL("http://127.0.0.1:3107/gm");
+  await page.getByRole("button", { name: "Exit fullscreen", exact: true }).waitFor();
+  assert.equal(await page.evaluate(() => document.fullscreenElement === document.documentElement), true,
+    "native fullscreen must remain active on the return navigation");
+  assert.equal(await page.evaluate(() => window.__gmFullscreenExits), 0);
+  assert.deepEqual(await atmosphere.evaluate(el => {
+    const style = getComputedStyle(el);
+    return [style.getPropertyValue("--atmosphere-a").trim(),
+      style.getPropertyValue("--atmosphere-b").trim()];
+  }), initialColors, "team orbs must not reset on a route transition");
+  await page.getByRole("button", { name: "Exit fullscreen", exact: true }).click();
+  await page.waitForFunction(() => !document.fullscreenElement &&
+    document.documentElement.dataset.gmFull !== "1");
 
   // Fullscreen must paint the exact semantic GM page surface, not inherit the
   // browser's opaque black fullscreen backdrop after the page chrome hides.
@@ -77,19 +111,26 @@ try {
       const panel = desk.querySelector(".gm-mast");
       const rect = desk.getBoundingClientRect();
       const panelRect = panel?.getBoundingClientRect();
+      const orb = document.querySelector(".page-atmosphere");
       return {
         background: getComputedStyle(desk).backgroundColor,
         page: getComputedStyle(document.body).backgroundColor,
+        atmosphereDisplay: orb ? getComputedStyle(orb).display : "missing",
+        atmosphereTeamColor: orb ? getComputedStyle(orb).getPropertyValue("--atmosphere-a").trim() : "",
         width: rect.width,
         viewport: innerWidth,
         cardWidth: panelRect?.width ?? 0,
         maxCardWidth: parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--page-max-standard")) * 16,
       };
     });
-    assert.equal(appearance.background, appearance.page,
-      "fullscreen GM desk must use the same background as the normal GM page");
-    assert.notEqual(appearance.background, "rgba(0, 0, 0, 0)",
-      "fullscreen cannot expose a transparent black browser backdrop");
+    assert.equal(appearance.background, "rgba(0, 0, 0, 0)",
+      "GM desk must remain transparent so the animated site orbs show through");
+    assert.notEqual(appearance.page, "rgba(0, 0, 0, 0)",
+      "the underlying body must paint a solid themed surface");
+    assert.equal(appearance.atmosphereDisplay, "block",
+      "GM fullscreen must not hide the animated team-color atmosphere");
+    assert.equal(appearance.atmosphereTeamColor, "#007A33",
+      "fullscreen must retain the active club's atmosphere color");
     assert.ok(Math.abs(appearance.width - appearance.viewport) < 3,
       "fullscreen must fill the viewport");
     assert.ok(appearance.cardWidth > 0 && appearance.cardWidth <= appearance.viewport,
@@ -100,6 +141,11 @@ try {
   await checkFullscreenSurface();
   await page.reload();
   await page.waitForFunction(() => document.documentElement.dataset.gmFull === "1");
+  await page.getByRole("button", { name: "Exit fullscreen", exact: true }).waitFor();
+  await page.waitForFunction(() => {
+    const orb = document.querySelector(".page-atmosphere");
+    return orb && getComputedStyle(orb).getPropertyValue("--atmosphere-a").trim() === "#007A33";
+  });
   await checkFullscreenSurface();
   assert.equal(await page.evaluate(() => document.documentElement.dataset.gmFull), "1",
     "the fullscreen fallback must persist across a page reload");

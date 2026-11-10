@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { RouteMessagesProvider } from "@/components/i18n/route-messages-provider";
+import "@/gm/ui/gm-stage.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("GmUi");
