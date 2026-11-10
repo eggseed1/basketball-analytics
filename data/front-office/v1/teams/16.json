@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-11-10",
-    "retrievedAt": "2026-11-10T00:24:04.148Z",
+    "retrievedAt": "2026-11-10T18:25:10.305Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "ddb0ddb4317af597eeca95d5aac5b8f5f042b26c413e76bcd6fa2bf56fd81484",
+    "sourceHash": "d2b8f4565a154bcdc23bfffd2837c6d675766832c59ae3bd4df627b57af8aef0",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026

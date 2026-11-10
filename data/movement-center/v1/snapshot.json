@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-10",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-10T00:18:47.253Z",
+    "builtAt": "2026-11-10T18:15:36.264Z",
     "rosterPlayerCount": 503,
-    "headlinesScanned": 12247,
-    "latestHeadlineAt": "2026-11-10T00:17:08.000Z",
+    "headlinesScanned": 12552,
+    "latestHeadlineAt": "2026-11-10T18:13:49.000Z",
     "latestTransactionDate": "2026-11-08",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -172,7 +172,7 @@
     },
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:brian-windhorst": {
       "label": "Brian Windhorst (ESPN)",
@@ -691,12 +691,13 @@
         "mv-67ca1f7613163faa",
         "mv-c4ca4d7a30da8f6e",
         "mv-3952e8efc7a5f9b5",
-        "mv-5a471c460ab22b90"
+        "mv-5a471c460ab22b90",
+        "mv-f5dbf9ed7312b343"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-07T04:32:00.000Z",
+      "lastMeaningfulAt": "2026-11-10T06:09:20.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -940,19 +941,22 @@
     },
     {
       "id": "mv-trade-3133628-20261005",
-      "headline": "Myles Turner: trade talk",
-      "primaryClaimId": "mv-2d26905b75c3db32",
+      "headline": "Myles Turner and Kristaps Porziņģis: trade talk",
+      "primaryClaimId": "mv-0643e2bcf7805f83",
       "claimIds": [
         "mv-5a1cb98dae861c8d",
         "mv-1075a6f7192260ec",
-        "mv-2d26905b75c3db32"
+        "mv-2d26905b75c3db32",
+        "mv-9e18bcd0a08610a7",
+        "mv-0643e2bcf7805f83"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T23:59:00.000Z",
-      "lastMeaningfulAt": "2026-11-09T22:46:14.000Z",
+      "lastMeaningfulAt": "2026-11-10T10:45:00.000Z",
       "linkedPlayerIds": [
-        "3133628"
+        "3133628",
+        "3102531"
       ],
       "linkedTeamIds": [
         "18",
@@ -1607,19 +1611,21 @@
         "mv-e3ac87411d8d9d38",
         "mv-f0294f7e0e3b3dcc",
         "mv-99b84137d89490c3",
-        "mv-f24fb05510153750"
+        "mv-f24fb05510153750",
+        "mv-a8e1df2b9809ada1"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-11-09T16:44:56.000Z",
+      "lastMeaningfulAt": "2026-11-10T14:36:14.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
       ],
       "linkedTeamIds": [
         "2",
-        "20"
+        "20",
+        "15"
       ]
     },
     {
@@ -1798,24 +1804,29 @@
         "mv-94298f785ba51080",
         "mv-9789a9a1b3b1e92a",
         "mv-94768674d28be64a",
-        "mv-ab02efca26017067"
+        "mv-ab02efca26017067",
+        "mv-39dd2ee1443c0b32",
+        "mv-99e5bdd4fa79bcbb",
+        "mv-8584315a43104765"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-28T15:58:25.000Z",
-      "lastMeaningfulAt": "2026-11-08T20:15:54.000Z",
+      "lastMeaningfulAt": "2026-11-10T16:26:42.000Z",
       "linkedPlayerIds": [
         "3112335",
         "3936299",
         "3136193",
         "4066261",
-        "6589"
+        "6589",
+        "5142620"
       ],
       "linkedTeamIds": [
         "7",
         "9",
         "4",
         "29",
+        "23",
         "21",
         "14"
       ]
@@ -11502,6 +11513,154 @@
         "3155942"
       ],
       "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-9e18bcd0a08610a7",
+      "clusterId": "mv-trade-3133628-20261005",
+      "summary": "Warriors Give Major Deal Breaker in Porzingis Trade For Myles Turner",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T04:15:56.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/deal-breaker-porzingis-trade-for-turner/",
+      "playerIds": [
+        "3133628",
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-39dd2ee1443c0b32",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Kings Linked to Draymond Green Trade With Darius Acuff Jr. in Mind",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T04:25:50.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "Heavy, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://heavy.com/sports/nba/sacramento-kings/kings-linked-to-draymond-green-trade-with-darius-acuff-jr-in-mind/",
+      "playerIds": [
+        "6589",
+        "5142620"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-f5dbf9ed7312b343",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Mavericks’ Kyrie Irving Addresses Trade Rumors With Firm Locker Room Warning",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-10T06:09:20.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/dallas-mavericks/mavericks-kyrie-irving-trade-rumors-locker-room/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-0643e2bcf7805f83",
+      "clusterId": "mv-trade-3133628-20261005",
+      "summary": "Warriors Reportedly Get Tempting Trade Option for Kristaps Porzingis’ $20M Contract but Turn It Down for One Reason",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T10:45:00.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-warriors-reportedly-get-tempting-trade-option-for-kristaps-porzingis-twenty-million-contract-but-turn-it-down-for-one-reason/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a8e1df2b9809ada1",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "NBA rumors: Celtics totally blew off Jaylen Brown’s request to work together on trade during Bucks, 76ers talks",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-10T14:36:14.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-celtics-totally-blew-off-jaylen-browns-request-to-work-together-on-trade-during-bucks-76ers-talks",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2",
+        "15",
+        "20"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-99e5bdd4fa79bcbb",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Warriors Reportedly Make Draymond Green Trade Decision Amid Mounting Criticism",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T15:50:40.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "Basketball News, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-golden-state-warriors-reportedly-make-draymond-green-trade-decision-amid-mounting-criticism/",
+      "playerIds": [
+        "6589"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-8584315a43104765",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Warriors' Draymond Green's future in Golden State reportedly in limbo ahead of NBA trade deadline",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T16:26:42.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/golden-state-warriors/news/warriors-draymond-greens-future-golden-state-reportedly-limbo-ahead-nba-trade-deadline/0fd4c6717bc79a6a098adf01%3E",
+      "playerIds": [
+        "6589"
+      ],
+      "teamIds": [
+        "9"
+      ],
       "isOriginal": false
     },
     {
