@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-09",
+    "snapshotDate": "2026-11-10",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-09T21:05:49.326Z",
+    "builtAt": "2026-11-10T00:18:47.253Z",
     "rosterPlayerCount": 503,
-    "headlinesScanned": 12206,
-    "latestHeadlineAt": "2026-11-09T21:02:58.000Z",
+    "headlinesScanned": 12247,
+    "latestHeadlineAt": "2026-11-10T00:17:08.000Z",
     "latestTransactionDate": "2026-11-08",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -853,12 +853,13 @@
         "mv-5e51bf863d4940c3",
         "mv-bdfae5ede30a7ed1",
         "mv-8e5084f175548216",
-        "mv-6b07b0efa7290757"
+        "mv-6b07b0efa7290757",
+        "mv-0fb6483174f3f84d"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-09T21:01:39.000Z",
+      "lastMeaningfulAt": "2026-11-10T00:17:08.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -940,21 +941,23 @@
     {
       "id": "mv-trade-3133628-20261005",
       "headline": "Myles Turner: trade talk",
-      "primaryClaimId": "mv-1075a6f7192260ec",
+      "primaryClaimId": "mv-2d26905b75c3db32",
       "claimIds": [
         "mv-5a1cb98dae861c8d",
-        "mv-1075a6f7192260ec"
+        "mv-1075a6f7192260ec",
+        "mv-2d26905b75c3db32"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T23:59:00.000Z",
-      "lastMeaningfulAt": "2026-10-06T14:04:51.000Z",
+      "lastMeaningfulAt": "2026-11-09T22:46:14.000Z",
       "linkedPlayerIds": [
         "3133628"
       ],
       "linkedTeamIds": [
         "18",
         "28",
+        "9",
         "15"
       ]
     },
@@ -11459,6 +11462,46 @@
       "teamIds": [
         "13"
       ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-2d26905b75c3db32",
+      "clusterId": "mv-trade-3133628-20261005",
+      "summary": "Myles Turner Trade Proposal Comes With a Catch for Warriors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-09T22:46:14.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/milwaukee-bucks/myles-turner-trade-proposal-comes-with-a-catch-for-warriors/",
+      "playerIds": [
+        "3133628"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-0fb6483174f3f84d",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Domantas Sabonis is getting linked to 1 new team in trade rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T00:17:08.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Larry Brown Sports, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://larrybrownsports.com/basketball/domantas-sabonis-linked-1-new-team-nets/777805",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [],
       "isOriginal": false
     },
     {
