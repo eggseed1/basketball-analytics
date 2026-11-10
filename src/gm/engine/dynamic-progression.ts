@@ -7,7 +7,7 @@ import type { GmDevTrait, GmLeagueState, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { developmentSeed, workEthicOf } from "@/gm/engine/development";
 import { ATTRIBUTE_LABEL, ensurePlayerSheet, overallFromAttributes, simpleCategoryMeans } from "@/gm/engine/attributes";
-import { pathFromTrait } from "@/gm/engine/dev-traits";
+import { pathFromTrait, playerDevTrait, generatedLearningTrait, abilityTraitFloor, maxTrait } from "@/gm/engine/dev-traits";
 import { evolveTendencies } from "@/gm/engine/tendency-development";
 import {
   developmentProfileOf, developmentFocusSkill, developmentSkillKeys,
@@ -75,7 +75,8 @@ export function accoladeScore(league: GmLeagueState, playerId: string): { score:
 }
 
 export function annualTraitDecision(league: GmLeagueState, player: GmPlayer): TraitDecision {
-  const current: GmDevTrait = player.sheet?.potential.trait ?? "normal";
+  const current: GmDevTrait = player.draftModel === 2
+    ? playerDevTrait(player) : player.sheet?.potential.trait ?? "normal";
   if (player.traitHistory?.some(row => row.season === league.season)) {
     return { before: current, after: current, reason: "Already reviewed this offseason" };
   }
@@ -106,13 +107,24 @@ export function annualTraitDecision(league: GmLeagueState, player: GmPlayer): Tr
   if (player.age >= 33 && awards.score === 0 && current !== "normal" && current !== "bust") demotion = Math.max(demotion, 0.13 + (player.age - 33) * 0.045);
   if (!enough && player.age <= 31) demotion = 0; // Never punish low-minute young players for no data.
   const index = order.indexOf(current);
+  let after = current;
+  let reason = awards.reasons[0] ?? "Development assessment held steady";
   if (index < order.length - 1 && rng() < Math.min(0.68, promotion)) {
-    return { before: current, after: order[index + 1]!, reason: awards.reasons[0] ?? "Breakout production and a stronger season" };
+    after = order[index + 1]!;
+    reason = awards.reasons[0] ?? "Breakout production and a stronger season";
+  } else if (index > 0 && rng() < demotion) {
+    after = order[index - 1]!;
+    reason = player.age >= 33 ? "Aging and diminished impact" : "A difficult season reduced confidence";
   }
-  if (index > 0 && rng() < demotion) {
-    return { before: current, after: order[index - 1]!, reason: player.age >= 33 ? "Aging and diminished impact" : "A difficult season reduced confidence" };
+  // Generated players may cool off after a breakout, but their actual
+  // learning profile and proven elite quality remain the minimum tier.
+  if (player.draftModel === 2) {
+    after = maxTrait(after, generatedLearningTrait(player), abilityTraitFloor(ovr)) ?? after;
   }
-  return { before: current, after: current, reason: awards.reasons[0] ?? "Development assessment held steady" };
+  if (after === current && reason !== (awards.reasons[0] ?? "Development assessment held steady")) {
+    reason = "Development assessment held steady";
+  }
+  return { before: current, after, reason };
 }
 
 function changeRating(player: GmPlayer, target: number, label: string, checkpoint: DevelopmentCheckpoint): GmPlayer {
@@ -177,7 +189,8 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const sheet = withSheet.sheet!;
   const isSummer = context.checkpoint === "summer";
   const baseline = sheet.overall;
-  const trait = sheet.potential.trait ?? "normal";
+  const trait = withSheet.draftModel === 2
+    ? playerDevTrait(withSheet) : sheet.potential.trait ?? "normal";
   const signal = performanceSignal(withSheet, context.league.season);
   const accolade = isSummer ? accoladeScore(context.league, player.id).score : 0;
   // Generated players have no preordained final OVR. Each skill has a
@@ -193,10 +206,15 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const ageDelta = age <= 21 ? 2.4 : age <= 23 ? 2.05 : age <= 25 ? 1.5
     : age <= 27 ? 0.95 : age <= peak + 1 ? 0.3
     : age <= 31 ? -0.30 : age <= 33 ? -0.82 : age <= 35 ? -1.36 : -1.90;
-  const bonus = trait === "xfactor" ? 1.24 : trait === "superstar" ? 1.18 : trait === "star" ? 1.1 : trait === "bust" ? 0.55 : 1;
-  // Draft-day boom/bust labels become modest tendencies, not destinies.
-  const path = sheet.potential.path === "boom" ? (openPath ? 1.06 : 1.13)
-    : sheet.potential.path === "bust" ? (openPath ? 0.92 : 0.72) : 1;
+  // Generated players already receive their learning speed from their
+  // persistent developmentProfile. Their label is a faithful summary, not
+  // an extra multiplier that distorts the calibrated rookie talent supply.
+  const bonus = openPath ? 1
+    : trait === "xfactor" ? 1.24 : trait === "superstar" ? 1.18
+    : trait === "star" ? 1.1 : trait === "bust" ? 0.55 : 1;
+  const path = openPath ? 1
+    : sheet.potential.path === "boom" ? 1.13
+    : sheet.potential.path === "bust" ? 0.72 : 1;
   const play = withSheet.seasonLine;
   const availability = play && play.gp >= 12 ? clamp(play.gp / 65, 0.35, 1) : 0.86;
   let activity = play && play.gp >= 12 ? clamp(play.min / play.gp / 25, 0.65, 1.12) : 0.85;
@@ -250,9 +268,13 @@ export function reviewDevelopmentTrait(league: GmLeagueState, player: GmPlayer):
   if (!player.teamId || league.draftPool.includes(player.id) || player.traitHistory?.some(row => row.season === league.season)) return player;
   const assessed = annualTraitDecision(league, player);
   const sheet = ensurePlayerSheet(player).sheet!;
-  const changed = assessed.before !== assessed.after;
+  // The persisted trait may predate open development. Synchronize it even
+  // when the annual review holds steady, so future game ticks and exported
+  // saves see the same tier as the roster/profile UI.
+  const needsStamp = sheet.potential.trait !== assessed.after ||
+    sheet.potential.path !== pathFromTrait(assessed.after);
   return { ...player,
-    sheet: { ...sheet, potential: changed ? { ...sheet.potential, trait: assessed.after, path: pathFromTrait(assessed.after) } : sheet.potential },
+    sheet: { ...sheet, potential: needsStamp ? { ...sheet.potential, trait: assessed.after, path: pathFromTrait(assessed.after) } : sheet.potential },
     traitHistory: [...(player.traitHistory ?? []), { season: league.season, ...assessed }].slice(-12),
   };
 }

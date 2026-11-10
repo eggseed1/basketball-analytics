@@ -742,7 +742,14 @@ export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
 
 /** Older saves have no sheet, or a sheet from an earlier formula. */
 export function ensurePlayerSheet(player: GmPlayer): GmPlayer {
-  if (player.sheet?.version === SHEET_VERSION) return player;
+  if (player.sheet?.version === SHEET_VERSION) {
+    if (player.draftModel !== 2) return player;
+    // Model-2 learning DNA replaces its obsolete independent trait stamp.
+    // Never rewrite legacy NBA potential when opening a save or rotations.
+    const potential = ensurePotentialTrait(player.sheet.potential, player);
+    return potential === player.sheet.potential ? player
+      : { ...player, sheet: { ...player.sheet, potential } };
+  }
   const sheet = playerSheet(player);
   const old = player.sheet?.attributes;
   const profile = player.simProfile;
@@ -813,13 +820,14 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   const rng=createRng(hashId(player.id+":"+(opts.pace??"summer"))+age*997);
   const reasons:string[]=[];
   const ageFactor=age<=21?1.08:age<=23?0.95:age<=25?0.86:age<=27?0.58:0.25;
-  let path=openPath
-    ? potential.path==="boom"?1.06:potential.path==="bust"?0.92:1
+  // Open-development labels already summarize the persisted learning DNA.
+  // That DNA is applied by softGrowthFactor/learningPace below; adding a
+  // second tier multiplier made second-round hits too common.
+  let path=openPath ? 1
     : potential.path==="boom"?1.45:potential.path==="bust"?0.2:1;
   if(!openPath&&potential.path==="bust"&&age>=22&&age<=25&&rng()<0.08) {path=0.85;reasons.push("A better development stretch after a slow start");}
   else if(!openPath&&potential.path==="average"&&age<=25&&player.personality>=10&&rng()<0.1) {path=1.45;reasons.push("A productive development stretch");}
-  const trait=openPath
-    ? potential.trait==="xfactor"?1.2:potential.trait==="superstar"?1.14:potential.trait==="star"?1.08:potential.trait==="bust"?0.88:1
+  const trait=openPath ? 1
     : potential.trait==="xfactor"?1.25:potential.trait==="superstar"?1.18:potential.trait==="star"?1.08:potential.trait==="bust"?0.65:1;
   let opportunity=0.72+Math.min(minutes,24)/24*0.4;
   if(player.developmentPlan==="practice") {opportunity=minutes<18?0.94+coach*0.05:0.91;reasons.push("Skills work preserves a path while rotation minutes are limited");}
@@ -839,7 +847,12 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
     ? clamp(0.78+Math.max(0,profile.learning-1.02)*0.55,0.78,1.08) *
       (profile.learningSurge ?? 1)
     : 1;
-  const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*(0.85+rng()*0.3),0,5.5);
+  // Model-2 growth is driven by its underlying learning DNA only once.
+  // The ordinary cohort retains the audited second-round rotation-hit rate;
+  // existing near-star players need a little extra runway to maintain a
+  // realistic number of elite players over decades. No draft-rank shortcut.
+  const cohortBalance = openPath ? (sheet.overall >= 84 ? 1.12 : 0.98) : 1;
+  const annual=clamp((0.9+growthInput*0.14)*ageFactor*path*trait*opportunity*staff*work*growthFriction*learningPace*cohortBalance*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;
   const budget=annual*pace*(1+clamp(opts.mentorBonus??0,0,0.18))*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
   const steps=Math.min(Math.max(0,ratingLimit-sheet.overall),Math.floor(budget));

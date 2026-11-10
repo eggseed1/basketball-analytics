@@ -6,6 +6,7 @@
 import type { GmCountingLine, GmDevPath, GmDevTrait, GmPlayer, GmPotential } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { overallOf } from "@/gm/engine/lineup";
+import { developmentProfileOf } from "@/gm/engine/development-profile";
 
 export const DEV_TRAIT_LABEL: Record<GmDevTrait, string> = {
   xfactor: "X-Factor",
@@ -198,6 +199,52 @@ export function leagueProductionFloor(
   return null;
 }
 
+/**
+ * Open-development players have *learning traits*, not predetermined career
+ * ceilings. Derive the tier from the persistent learning DNA that the game
+ * actually uses for skill development, plus earned learning discoveries.
+ * Never use draft position, nationality, name or a projected peak overall.
+ */
+export function generatedLearningTrait(player: GmPlayer): GmDevTrait {
+  const profile = developmentProfileOf(player);
+  const skills = Object.values(profile.aptitudes).filter(
+    (value): value is number => typeof value === "number" && Number.isFinite(value)
+  );
+  const skillMean = skills.reduce((sum, value) => sum + value, 0) / Math.max(1, skills.length);
+  const pace = profile.learning * 0.52 +
+    profile.adaptability * 0.16 +
+    skillMean * 0.32 +
+    Math.max(0, profile.discovery) * 0.12;
+  // The exceptionally rare nonlinear learner earns the genuine X-Factor
+  // label, but still needs reps, health and coaching to reach elite ability.
+  if ((profile.learningSurge ?? 1) >= 1.5 ||
+    (pace >= 1.265 && profile.learning >= 1.20)) return "xfactor";
+  if (pace >= 1.185) return "superstar";
+  if (pace >= 1.065) return "star";
+  if (pace < 0.845) return "bust";
+  return "normal";
+}
+
+/**
+ * Observable excellence sets a floor. A proven 95+ OVR player cannot be
+ * displayed as Normal merely because a legacy save carried an old stamp.
+ * It never gives an unproven rookie a guaranteed future overall.
+ */
+export function abilityTraitFloor(overall: number): GmDevTrait | null {
+  if (overall >= 98) return "xfactor";
+  if (overall >= 95) return "superstar";
+  if (overall >= 90) return "star";
+  return null;
+}
+
+function generatedTrait(player: GmPlayer, overall: number): GmDevTrait {
+  return maxTrait(
+    generatedLearningTrait(player),
+    player.traitHistory?.at(-1)?.after,
+    abilityTraitFloor(overall)
+  ) ?? "normal";
+}
+
 function applyTraitFloors(
   rolled: GmDevTrait,
   player: GmPlayer,
@@ -388,8 +435,19 @@ export function rollDevTrait(
 }
 
 export function ensurePotentialTrait(potential: GmPotential, player: GmPlayer): GmPotential {
+  if (player.draftModel === 2) {
+    const current = Math.max(player.sheet?.overall ?? 0, overallOf(player));
+    const tier = generatedTrait(player, current);
+    return potential.trait === tier && potential.path === pathFromTrait(tier)
+      ? potential
+      : { ...potential, trait: tier, path: pathFromTrait(tier) };
+  }
+  // The legacy player sheet and its annual history remain authoritative.
+  // The public playerDevTrait() can still show a 95+ ability floor without
+  // mutating an imported NBA career or rewriting historical evaluations.
   const reviewed = player.traitHistory?.at(-1);
-  if (reviewed) return potential.trait === reviewed.after && potential.path === pathFromTrait(reviewed.after) ? potential : { ...potential, trait: reviewed.after, path: pathFromTrait(reviewed.after) };
+  if (reviewed) return potential.trait === reviewed.after && potential.path === pathFromTrait(reviewed.after)
+    ? potential : { ...potential, trait: reviewed.after, path: pathFromTrait(reviewed.after) };
   // Current overall only — never potential.ceiling. A 95 ceiling is upside,
   // not a reason to stamp X-Factor on every high-upside kid.
   const overall = Math.max(player.sheet?.overall ?? 0, overallOf(player));
@@ -428,13 +486,19 @@ export function ensurePotentialTrait(potential: GmPotential, player: GmPlayer): 
 }
 
 export function playerDevTrait(player: GmPlayer): GmDevTrait {
+  const overall = Math.max(player.sheet?.overall ?? 0, overallOf(player));
+  if (player.draftModel === 2) return generatedTrait(player, overall);
   const reviewed = player.traitHistory?.at(-1);
-  if (reviewed) return reviewed.after;
-  const overall = overallOf(player);
+  if (reviewed) return maxTrait(
+    reviewed.after,
+    abilityTraitFloor(overall),
+    !isDraftProspect(player) ? leagueProductionFloor(player, overall) : null
+  ) ?? reviewed.after;
   if (!isDraftProspect(player)) {
     const floor = maxTrait(
       discourseTraitHint(player, overall),
-      leagueProductionFloor(player, overall)
+      leagueProductionFloor(player, overall),
+      abilityTraitFloor(overall)
     );
     if (floor) return floor;
     const stamped = player.sheet?.potential?.trait;

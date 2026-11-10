@@ -8,7 +8,18 @@ four in-season checkpoints and a larger offseason progression window.
 Current attributes, minutes, efficiency, awards, age, coach/development
 staff, work ethic, injury and the selected focus influence those results.
 For generated players, the hidden learning profile affects *how fast* a
-skill responds; it does not set a final overall destination.
+skill responds; it does not set a final overall destination. Once drafted,
+they show a **development trait** (Bust, Normal, Star, Superstar, X-Factor)
+derived from their actual learning pace, adaptability, skill aptitudes and
+earned learning discoveries. Scouting never reveals the exact trait before
+the pick, and the tier is not a predicted final OVR. Short-term outlooks
+(Developing, Rising, Veteran, etc.) remain distinct from the learning trait.
+
+A player's demonstrated strength also sets a minimum: 90+ OVR cannot be
+below Star, **95–97 OVR cannot be below Superstar**, and 98+ OVR displays
+X-Factor. This applies even to existing imported saves with obsolete
+development labels. The effective tier guides growth calculations on the
+open development path and syncs to saved sheet data on the next review.
 
 - **Practice-first:** keeps a young bench player developing at limited
   minutes, though game evidence still helps.
@@ -83,6 +94,9 @@ reroll a failed attempt; a completed review does not double-award progress.
   calibration during this rollout.
 
 ## Verification
+
+`npx tsx scripts/test-gm-dev-traits.ts` checks generated learning tiers, elite
+OVR floors, deterministic identities and alignment with actual growth.
 
 `npm run test:franchise-development` validates team limits, eligibility,
 mentorship continuity, real co-appearances, rare annual reviews, legacy

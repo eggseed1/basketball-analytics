@@ -1,5 +1,6 @@
 import { mentorshipBonus, reviewPlayerDevelopment } from "@/gm/engine/development";
 import { developmentProfileOf } from "@/gm/engine/development-profile";
+import { playerDevTrait, pathFromTrait } from "@/gm/engine/dev-traits";
 import { draftScoutingOf } from "@/gm/engine/draft-intel";
 import { maybeCpuDraftTrade } from "@/gm/engine/draft-trades";
 import { rookieContractForPick } from "@/gm/engine/draft-order";
@@ -332,7 +333,14 @@ export function runDraftPick(
     // mentors or other user actions change the player's actual attributes.
     const draftedProfile=stamped.draftModel===2
       ? { developmentProfile: developmentProfileOf(stamped) } : {};
-    return {...stamped,...draftedProfile,teamId,identityRevealed:true,contract:state.seasonFlow?null:contract,pendingRookieContract:state.seasonFlow?contract:undefined,serviceYears:0,draftedByTeamId:teamId,draftPick:pickNum,draftYear:state.season,developmentPlan:"balanced" as const,scouted:{impact:player.ratings.impact,offense:player.ratings.offense,defense:player.ratings.defense,uncertainty:0.05}};
+    const selected = {...stamped,...draftedProfile,teamId,identityRevealed:true,contract:state.seasonFlow?null:contract,pendingRookieContract:state.seasonFlow?contract:undefined,serviceYears:0,draftedByTeamId:teamId,draftPick:pickNum,draftYear:state.season,developmentPlan:"balanced" as const,scouted:{impact:player.ratings.impact,offense:player.ratings.offense,defense:player.ratings.defense,uncertainty:0.05}};
+    if (!selected.sheet || selected.draftModel !== 2) return selected;
+    // Reveal the learning tier at the pick and persist the SAME tier used
+    // in progression; the profile shapes growth but fixes no final OVR.
+    const trait = playerDevTrait(selected);
+    return { ...selected, sheet: { ...selected.sheet,
+      potential: { ...selected.sheet.potential, trait, path: pathFromTrait(trait) },
+    } };
   });
   const drafted=fixed.find(player=>player.id===playerId);
   const round=index<state.teams.length?1:2;

@@ -11,6 +11,7 @@ import { CAMP_FOCUSES, campSkillChanges, campSlots } from "@/gm/engine/season-de
 import { ATTRIBUTE_LABEL } from "@/gm/engine/attributes";
 import { flowOf } from "@/gm/engine/season-flow-state";
 import { developmentOutlook } from "@/gm/engine/development-profile";
+import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import type { GmCampFocus } from "@/gm/types";
 
 const control = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
@@ -55,7 +56,7 @@ export function GmDevelopment() {
         })}</ol>
         <div className="mt-4 overflow-x-auto rounded-lg border border-border">
           <table className="w-full min-w-[540px] text-left text-sm">
-            <thead className="bg-secondary/40 text-xs text-muted-foreground"><tr><th className="p-3">Player</th><th className="p-3">Current OVR</th><th className="p-3">Season change</th><th className="p-3">Focus</th><th className="p-3">Outlook</th></tr></thead>
+            <thead className="bg-secondary/40 text-xs text-muted-foreground"><tr><th className="p-3">Player</th><th className="p-3">Current OVR</th><th className="p-3">Season change</th><th className="p-3">Focus</th><th className="p-3">Dev trait</th><th className="p-3">Outlook</th></tr></thead>
             <tbody className="divide-y divide-border">{changedPlayers.map(({player,before,after}) => {
               const delta = Math.round(after-before);
               return <tr key={player.id}>
@@ -63,12 +64,13 @@ export function GmDevelopment() {
                 <td className="p-3 font-bold tabular-nums">{Math.round(after)}</td>
                 <td className={"p-3 font-bold tabular-nums " + (delta>0?"text-emerald-700 dark:text-emerald-300":delta<0?"text-rose-700 dark:text-rose-300":"text-muted-foreground")}>{delta>0?"+":""}{delta}</td>
                 <td className="p-3 capitalize">{player.developmentFocus ?? "balanced"}</td>
+                <td className="p-3 font-semibold" data-trait={playerDevTrait(player)}>{traitLabel(playerDevTrait(player))}</td>
                 <td className="p-3">{developmentOutlook(player, league.season).label}</td>
               </tr>;
             })}</tbody>
           </table>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">An early breakout can change a young player&apos;s trajectory. Playing time alone never guarantees growth.</p>
+        <p className="mt-3 text-xs text-muted-foreground">Development traits describe learning speed and proven ability, not a fixed future rating. Outlook describes recent progress. Reps and coaching matter, but do not guarantee growth.</p>
       </SectionFrame>
     </div></details>
     <details className="rounded-xl border border-border p-3 text-sm"><summary className="cursor-pointer font-semibold">Skill badges</summary><div className="mt-3"><GmBadges roster={roster} /></div></details>
