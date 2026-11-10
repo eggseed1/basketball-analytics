@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-10",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-10T18:15:36.264Z",
+    "builtAt": "2026-11-10T21:52:59.064Z",
     "rosterPlayerCount": 503,
-    "headlinesScanned": 12552,
-    "latestHeadlineAt": "2026-11-10T18:13:49.000Z",
+    "headlinesScanned": 12636,
+    "latestHeadlineAt": "2026-11-10T21:41:18.000Z",
     "latestTransactionDate": "2026-11-08",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -84,7 +84,7 @@
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:espn": {
       "label": "ESPN",
@@ -855,12 +855,13 @@
         "mv-bdfae5ede30a7ed1",
         "mv-8e5084f175548216",
         "mv-6b07b0efa7290757",
-        "mv-0fb6483174f3f84d"
+        "mv-0fb6483174f3f84d",
+        "mv-c846671c3c960ad4"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-10T00:17:08.000Z",
+      "lastMeaningfulAt": "2026-11-10T20:57:48.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -1612,12 +1613,14 @@
         "mv-f0294f7e0e3b3dcc",
         "mv-99b84137d89490c3",
         "mv-f24fb05510153750",
-        "mv-a8e1df2b9809ada1"
+        "mv-a8e1df2b9809ada1",
+        "mv-3e6470d801a6a506",
+        "mv-0d01f2eae87ca349"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-11-10T14:36:14.000Z",
+      "lastMeaningfulAt": "2026-11-10T21:09:53.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
@@ -2103,7 +2106,7 @@
     {
       "id": "mv-trade-4702384-20261108",
       "headline": "Nique Clifford: trade talk",
-      "primaryClaimId": "mv-7179085e2f8b28fa",
+      "primaryClaimId": "mv-64b8a394485a669c",
       "claimIds": [
         "mv-22d24448e3554d02",
         "mv-627a823b229edd53",
@@ -2112,6 +2115,7 @@
         "mv-112ee74eb0917279",
         "mv-e1b45818e87f3687",
         "mv-7179085e2f8b28fa",
+        "mv-64b8a394485a669c",
         "mv-espn-tx-a5a81ef7213dce23",
         "mv-nba-tx-5c64a960de248a10"
       ],
@@ -2150,6 +2154,45 @@
           }
         ]
       }
+    },
+    {
+      "id": "mv-trade-4277956-20261110",
+      "headline": "Jordan Poole: trade talk",
+      "primaryClaimId": "mv-12c814d23d4c0601",
+      "claimIds": [
+        "mv-12c814d23d4c0601"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-10T17:59:44.000Z",
+      "lastMeaningfulAt": "2026-11-10T17:59:44.000Z",
+      "linkedPlayerIds": [
+        "4277956"
+      ],
+      "linkedTeamIds": [
+        "9",
+        "3"
+      ]
+    },
+    {
+      "id": "mv-contract-3917376-20261110",
+      "headline": "Jaylen Brown and Jayson Tatum: free agency",
+      "primaryClaimId": "mv-75bcd59b69de2f87",
+      "claimIds": [
+        "mv-75bcd59b69de2f87"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-10T20:32:32.000Z",
+      "lastMeaningfulAt": "2026-11-10T20:32:32.000Z",
+      "linkedPlayerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "linkedTeamIds": [
+        "20",
+        "2"
+      ]
     },
     {
       "deal": {
@@ -11660,6 +11703,134 @@
       ],
       "teamIds": [
         "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-12c814d23d4c0601",
+      "clusterId": "mv-trade-4277956-20261110",
+      "summary": "Jordan Poole Interested In Return To Warriors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-10T17:59:44.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288090/Jordan-Poole-Interested-In-Return-To-Warriors",
+      "playerIds": [
+        "4277956"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-64b8a394485a669c",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Lakers ‘registered interest’ in Nique Clifford before trade to Thunder",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-10T18:16:43.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/lakers-registered-interest-nique-clifford-181643344.html",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "13",
+        "25"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-3e6470d801a6a506",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown Confronted Jayson Tatum Before Celtics Blockbuster Trade: Shams",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T20:21:03.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Heavy, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://heavy.com/sports/nba/boston-celtics/celtics-jaylen-brown-jayson-tatum-trade-confrontation/",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-75bcd59b69de2f87",
+      "clusterId": "mv-contract-3917376-20261110",
+      "summary": "76ers Star Jaylen Brown’s Final Meeting With Jayson Tatum Takes New Twist",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T20:32:32.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Heavy, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://heavy.com/sports/nba/philadelphia-76ers/jaylen-brown-celtics-trade-tatum-sixers-reunion/",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [
+        "20"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c846671c3c960ad4",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Closer To Big Man Trade After New Bronny James Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-10T20:57:48.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/closer-moussa-cisse-trade-bronny-james-report/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "framework"
+    },
+    {
+      "id": "mv-0d01f2eae87ca349",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown Only Asked Celtics To Be Involved In Trade Process",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-10T21:09:53.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288091/Jaylen-Brown-Only-Asked-Celtics-To-Be-Involved-In-Trade-Process",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
       ],
       "isOriginal": false
     },
