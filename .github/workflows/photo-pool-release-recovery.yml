@@ -40,7 +40,7 @@ jobs:
           d=json.load(open('/tmp/photo-assets-diff.json'))
           assert d['status']=='ahead' and d['ahead_by']==1, (d['status'],d['ahead_by'])
           paths=[f['filename'] for f in d['files']]
-          assert len(paths)>=900,len(paths)
+          assert len(paths)>=200,len(paths) # GitHub compare API truncates its changed-file list
           assert all(p.startswith('public/gm/portraits/') for p in paths)
           assert all(p.endswith(('.webp','.jpg','.json')) for p in paths)
           print('Verified exactly one asset-only commit, files:',len(paths))
@@ -56,6 +56,15 @@ jobs:
           print('All five required checks passed for the exact pre-assets code commit.')
           PY
           git fetch origin feat/gm-generated-photo-pool-20261111
+          git diff --name-only 91be16e4cd858647af8f39097e0ce156afa2fde7 751884a64909be1a4dc26cd2ae295f40554a5b2e > /tmp/all-photo-changed-files.txt
+          python - <<'PY'
+          from pathlib import Path
+          paths=Path('/tmp/all-photo-changed-files.txt').read_text().splitlines()
+          assert len(paths)>=900,len(paths)
+          assert all(p.startswith('public/gm/portraits/') for p in paths)
+          assert all(p.endswith(('.webp','.jpg','.json')) for p in paths)
+          print('Verified complete asset-only change list:',len(paths))
+          PY
           git checkout --detach 751884a64909be1a4dc26cd2ae295f40554a5b2e
       - name: Verify 500 unique photo/mask asset pairs
         shell: bash
