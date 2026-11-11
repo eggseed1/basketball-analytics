@@ -1,0 +1,1 @@
+User-authorized DRBL fal photo iteration 02: 12 candidates, three identities and two prompts across FLUX.2 dev and pro. Estimated API cost $0.252, no production deployment. Purpose: tighter basketball roster crop, neutral light gray background, lifelike skin, jersey consistency.
