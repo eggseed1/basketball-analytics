@@ -26,6 +26,10 @@ report["images"].extend(old["images"])
 
 for shard in range(9):
     root=ROOT/("portrait-shard-"+str(shard))
+    if not (root/"manifest.json").exists():
+        nested=list(root.glob("portrait-scale-*/manifest.json"))
+        if len(nested)!=1:raise RuntimeError("Missing or ambiguous shard manifest: "+str(shard))
+        root=nested[0].parent
     manifest=json.loads((root/"manifest.json").read_text())
     if manifest["shard"]!=shard or manifest["expected"]!=50 or manifest["model"]!="fal-ai/flux-2":
         raise ValueError("Shard mismatch")
