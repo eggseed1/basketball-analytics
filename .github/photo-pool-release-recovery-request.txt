@@ -1,3 +1,5 @@
 User-requested release of completed 500-portrait DRBL player pool, using the asset-only bot-commit validation path. Strictly verify prior green CI, exact 500 pairs, current revision typecheck and persistence tests, then merge PR #207 and request standard Cloudflare deploy.
 
 Retry release gate using full git diff for all 900+ portrait assets rather than truncated GitHub compare response.
+
+Release retry: generated catalog is an expected static asset-index change in the 450-photo commit.
