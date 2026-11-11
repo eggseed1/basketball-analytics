@@ -27,13 +27,15 @@ const fakePlayer=(i:number,real=false): GmPlayer => ({
 const partial=(players:GmPlayer[],reserved?:Record<string,string>)=>({
   players,draftPool:[],portraitPoolReservations:reserved,
 } as unknown as GmLeagueState);
-const base=partial(Array.from({length:65},(_,i)=>fakePlayer(i)).concat(fakePlayer(999,true)));
+const poolCount=GENERATED_PHOTO_POOL_IDS.length;
+assert.ok(poolCount>=50 && poolCount<=600,"pool size must remain within audited capacity");
+const base=partial(Array.from({length:poolCount+15},(_,i)=>fakePlayer(i)).concat(fakePlayer(999,true)));
 const allocated=assignGeneratedPhotoPool(base);
 const ids=allocated.players.filter(p=>p.identity?.portraitPoolId).map(p=>p.identity!.portraitPoolId!);
-assert.equal(GENERATED_PHOTO_POOL_IDS.length,50);
-assert.equal(ids.length,50,"never assign more photographic identities than the pilot asset pool");
+assert.equal(poolCount,new Set(GENERATED_PHOTO_POOL_IDS).size,"catalog cannot contain duplicate IDs");
+assert.equal(ids.length,poolCount,"never assign more photographic identities than the local asset catalog");
 assert.equal(new Set(ids).size,ids.length,"no two active players may share an image");
-assert.equal(allocated.portraitPoolReservations && Object.keys(allocated.portraitPoolReservations).length,50);
+assert.equal(allocated.portraitPoolReservations && Object.keys(allocated.portraitPoolReservations).length,poolCount);
 assert.equal(allocated.players.at(-1)?.identity,undefined,"real NBA player must never receive a generated face");
 assert.equal(assignGeneratedPhotoPool(allocated),allocated,"migrated league should be idempotent");
 for(const id of GENERATED_PHOTO_POOL_IDS){
@@ -55,7 +57,7 @@ const retired=allocated.players.filter(p=>!["prospect-photo-0001","prospect-phot
 const late=assignGeneratedPhotoPool({
  ...allocated,players:retired.concat([fakePlayer(1000),fakePlayer(1001)]),
 });
-assert.equal(Object.keys(late.portraitPoolReservations??{}).length,50,"retirement keeps portrait slots permanently reserved within save");
+assert.equal(Object.keys(late.portraitPoolReservations??{}).length,poolCount,"retirement keeps portrait slots permanently reserved within save");
 assert.equal(late.players.find(p=>p.id==="prospect-photo-1000")?.identity?.portraitPoolId,undefined,"new fictional players fall back to illustration when photo slots are exhausted");
 for(const [playerId,id] of Object.entries(originalMappings)){
  assert.equal(late.portraitPoolReservations?.[playerId],id,"retired players must keep historical mapping");
@@ -93,7 +95,7 @@ assert.notEqual(tradedMarkup,originalMarkup,"current team should change uniform 
 assert.ok(tradedMarkup.includes(generatedPhotoUrl(photograph.identity!.portraitPoolId)!),
   "photo URL must remain unchanged through trade");
 const notAllocated=allocated.players.find(p=>p.identity && !p.identity.portraitPoolId)!;
-assert.ok(notAllocated,"pilot pool must leave some characters on the SVG fallback");
+assert.ok(notAllocated,"the limited local pool must leave some characters on the SVG fallback");
 const fallback=renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{player:notAllocated,name:notAllocated.name,size:"sm"}));
 assert.match(fallback,/data-portrait-version="2"/,"unassigned players retain procedural fallback");
 console.log("GM photo pool: unique assignments, team priority, migration, retirement, trades, jersey recolor and fallback passed.");
