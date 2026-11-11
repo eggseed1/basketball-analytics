@@ -6,7 +6,7 @@ export const GM_PHOTO_PORTRAIT_POOL_SIZE = 50;
 
 /** No directory traversal, uncontrolled external URLs, or live image requests. */
 export function gmPhotoPortraitPath(id: number | undefined): string | null {
-  if (!Number.isInteger(id) || id == null || id < 1 || id > GM_PHOTO_PORTRAIT_POOL_SIZE) return null;
+  if (typeof id !== "number" || !Number.isInteger(id) || id < 1 || id > GM_PHOTO_PORTRAIT_POOL_SIZE) return null;
   return "/gm/generated-headshots/" + String(id).padStart(3, "0") + ".jpg";
 }
 
