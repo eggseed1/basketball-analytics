@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { Button } from "@/components/ui/button";
@@ -21,19 +21,15 @@ export function GmPlayoffBracket({ league, controls = false }: { league: GmLeagu
   const sim = useGmStore(state => state.simPlayoffDay);
   const round = useGmStore(state => state.finishPlayoffRound);
   const finish = useGmStore(state => state.simRestOfPlayoffs);
-  const userConf = league.teams.find(team => team.id === league.userTeamId)?.conference ?? "East";
-  const [conference, setConference] = useState<"East" | "West">(userConf);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const details = useRef<HTMLDivElement>(null);
-  const selected = series.find(s => s.id === selectedId) ?? series.find(s => !s.done && (s.teamAId === league.userTeamId || s.teamBId === league.userTeamId)) ?? series.find(s => s.conf === conference);
+  const selected = series.find(s => s.id === selectedId) ?? series.find(s => !s.done && (s.teamAId === league.userTeamId || s.teamBId === league.userTeamId)) ?? finals;
   const finals = series.find(s => s.conf === "Finals");
   const selectedBoxes = selected ? seriesGameBoxes(league, selected) : [];
   const openRound = Math.min(...series.filter(s => !s.done).map(s => s.round));
   const live = league.phase === "playoffs" && !league.champion;
   function choose(id: string) {
     setSelectedId(id);
-    requestAnimationFrame(() => details.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
   function run(kind: "game" | "round" | "all") {
     setError(null);
@@ -41,43 +37,52 @@ export function GmPlayoffBracket({ league, controls = false }: { league: GmLeagu
     catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to simulate. Review your healthy rotation and try again."); }
   }
   return <SectionFrame title="Playoff bracket" description={finals?.winnerId ? `${abbr(league, finals.winnerId)} won the Finals.` : "Follow each path to the Finals. Select a matchup for game scores, box scores and watch mode."}>
-    {controls && live ? <div className="flex flex-wrap gap-2">
+    {controls && live ? <div className="sticky top-0 z-30 -mx-2 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background/95 p-2 shadow-sm backdrop-blur" data-testid="playoff-sim-controls">
       <Button onClick={() => run("game")}>Sim tonight</Button>
       <Button variant="outline" onClick={() => run("round")}>Finish round</Button>
       <Button variant="outline" onClick={() => run("all")}>Finish playoffs</Button>
     </div> : null}
     {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
-    <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Bracket conference">
-      {(["East", "West"] as const).map(conf => <Button key={conf} variant={conference === conf ? "default" : "outline"} aria-pressed={conference === conf} onClick={() => {
-        setConference(conf);
-        setSelectedId(series.find(s => s.conf === conf && !s.done)?.id ?? series.find(s => s.conf === conf)?.id ?? null);
-      }}>{conf}</Button>)}
-      <p className="text-xs text-muted-foreground">Best of seven · Select any matchup · Scroll across rounds</p>
-    </div>
-    <div className="gm-bracket-scroll" role="region" aria-label={`${conference} playoff bracket, scroll horizontally for later rounds`} tabIndex={0}>
-      <div className="gm-bracket-tree" data-testid="playoff-bracket-tree">
-        {ROUNDS.map((label, index) => {
-          const entries = series.filter(s => s.conf === conference && s.round === index + 1);
-          const previous = series.filter(s => s.conf === conference && s.round === index);
-          return <div className="gm-bracket-round" key={label}>
-            <h3>{label}</h3>
-            <div className={`gm-bracket-slots gm-bracket-slots--${index + 1}`}>
-              {Array.from({ length: 4 / 2 ** index }, (_, slot) => <div className={cn("gm-bracket-node", index < 2 && "has-next")} key={slot}>
-                <SeriesCard series={entries[slot]} league={league} selected={entries[slot]?.id === selected?.id} onSelect={choose}
-                  pending={index === 0 ? "Seeds pending" : `${abbr(league, previous[slot * 2]?.winnerId)} / ${abbr(league, previous[slot * 2 + 1]?.winnerId)}`} />
-              </div>)}
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Western Conference</p>
+        <h2 className="text-base font-black tracking-wide">NBA Playoffs</h2>
+        <p className="text-right text-xs font-semibold uppercase tracking-widest text-muted-foreground">Eastern Conference</p>
+      </div>
+      <div className="overflow-x-auto pb-2" role="region" aria-label="Full NBA playoff tree, West to East" tabIndex={0}>
+        <div className="grid min-w-[920px] grid-cols-[1.5fr_1.15fr_1fr_1.35fr_1fr_1.15fr_1.5fr] items-stretch gap-2 lg:min-w-0" data-testid="playoff-bracket-tree">
+          {(["West"] as const).map(conf => [1,2,3].map(roundNum => (
+            <div key={conf+roundNum} className="flex min-h-[390px] flex-col gap-2">
+              <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{ROUNDS[roundNum-1]}</p>
+              <div className="flex flex-1 flex-col justify-around gap-2">
+                {Array.from({length: 4 / (2 ** (roundNum-1))}, (_,slot) => {
+                  const matches = series.filter(row => row.conf === conf && row.round === roundNum);
+                  return <SeriesCard key={slot} series={matches[slot]} league={league} selected={matches[slot]?.id===selected?.id} pending="Winner TBD" onSelect={choose}/>;
+                })}
+              </div>
             </div>
-          </div>;
-        })}
+          )))}
+          <div className="flex min-h-[390px] flex-col items-center justify-center gap-3">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-amber-500/50 bg-amber-500/10 text-3xl" aria-hidden="true">🏆</div>
+            <p className="text-center text-xs font-bold uppercase tracking-wider">NBA Finals</p>
+            <SeriesCard series={finals} league={league} selected={finals?.id===selected?.id} pending="Conference winners" onSelect={choose}/>
+          </div>
+          {([3,2,1] as const).map(roundNum => (
+            <div key={"East"+roundNum} className="flex min-h-[390px] flex-col gap-2">
+              <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{ROUNDS[roundNum-1]}</p>
+              <div className="flex flex-1 flex-col justify-around gap-2">
+                {Array.from({length: 4 / (2 ** (roundNum-1))}, (_,slot) => {
+                  const matches = series.filter(row => row.conf === "East" && row.round === roundNum);
+                  return <SeriesCard key={slot} series={matches[slot]} league={league} selected={matches[slot]?.id===selected?.id} pending="Winner TBD" onSelect={choose}/>;
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+      <p className="mt-2 text-xs text-muted-foreground">Select a matchup to review game scores and box scores below. The sim controls remain at the top as rounds advance.</p>
     </div>
-    <div className="gm-finals-path" aria-label="Path to the Finals">
-      <div className="gm-finals-feeders">
-        {(["East", "West"] as const).map(conf => <div key={conf} className="gm-postseason-card"><p className="text-xs text-muted-foreground">{conf} champion</p><p className="font-semibold">{abbr(league, series.find(s => s.conf === conf && s.round === 3)?.winnerId)}</p></div>)}
-      </div>
-      <div className="gm-finals-match"><h3 className="mb-2 text-sm font-semibold">NBA Finals</h3><SeriesCard series={finals} league={league} selected={finals?.id === selected?.id} pending="East winner / West winner" onSelect={choose} /></div>
-    </div>
-    {selected ? <div ref={details} className="gm-series-details" data-testid="postseason-series-details">
+    {selected ? <div className="gm-series-details" data-testid="postseason-series-details">
       <h3 className="text-lg font-semibold">{abbr(league, selected.teamAId)} vs {abbr(league, selected.teamBId)}</h3>
       <p className="text-sm text-muted-foreground">{selected.conf === "Finals" ? "NBA Finals" : `${selected.conf} · ${ROUNDS[selected.round - 1]}`} · {selected.winsA}–{selected.winsB}{selected.done ? ` · ${abbr(league, selected.winnerId)} ${selected.conf === "Finals" ? "wins the title" : "advances"}` : ""}</p>
       <ol className="gm-series-games">
