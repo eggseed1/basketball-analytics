@@ -1,0 +1,37 @@
+name: DRBL photographic portrait iteration 02
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/fal-photo-iteration-02-request.txt'
+permissions:
+  contents: read
+concurrency:
+  group: drbl-fal-photo-iteration-02
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify FAL_KEY is present
+        run: test -n "$FAL_KEY"
+      - name: Show generation plan
+        run: node scripts/test-fal-portrait-photo-iteration-02.mjs
+      - name: Generate 12 candidate headshots
+        run: node scripts/test-fal-portrait-photo-iteration-02.mjs --execute
+      - name: Upload images and review metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-fal-photo-iteration-02
+          path: portrait-photo-iteration-02/
+          if-no-files-found: warn
+          retention-days: 14
