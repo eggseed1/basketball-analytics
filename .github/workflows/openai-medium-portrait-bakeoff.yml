@@ -1,0 +1,44 @@
+name: DRBL GPT Image Medium portrait bakeoff
+
+# Manual-only on purpose: no unexpected image-generation charges on pushes.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: drbl-openai-portrait-medium-bakeoff
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify API key availability (never print it)
+        shell: bash
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "::error::Add OPENAI_API_KEY to repository Actions secrets first"
+            exit 1
+          fi
+          echo "OpenAI API secret is configured."
+      - name: Print generation plan without charges
+        run: node scripts/generate-openai-medium-portrait-bakeoff.mjs
+      - name: Generate 12 separate 1024x1024 images at medium quality
+        run: node scripts/generate-openai-medium-portrait-bakeoff.mjs --execute
+      - name: Save images, manifest and HTML contact sheet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-gpt-image-medium-12-player-test
+          path: openai-portrait-medium-output/
+          if-no-files-found: warn
+          retention-days: 14
