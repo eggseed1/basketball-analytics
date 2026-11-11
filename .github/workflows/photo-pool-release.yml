@@ -1,5 +1,8 @@
 name: Release DRBL photographic player pool
 on:
+  workflow_run:
+    workflows: ['Assemble generated DRBL portraits without regeneration']
+    types: [completed]
   push:
     branches: [main]
     paths:
@@ -13,6 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   verify-merge-and-deploy:
+    if: github.event_name == 'push' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'feat/gm-generated-photo-pool-20261111')
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -59,8 +63,10 @@ jobs:
           set -euo pipefail
           head=$(git rev-parse HEAD)
           echo "Checking release SHA $head"
-          gh api "repos/$GH_REPO/actions/runs?head_sha=$head&per_page=100" > /tmp/photo-checks.json
-          python - <<'PY'
+          passed=0
+          for attempt in $(seq 1 90); do
+            gh api "repos/$GH_REPO/actions/runs?head_sha=$head&per_page=100" > /tmp/photo-checks.json
+            if python - <<'PY'
           import json,sys
           runs=json.load(open('/tmp/photo-checks.json'))['workflow_runs']
           required=['CI','Franchise generated identities','Franchise Lab','Franchise continuous five-year simulation','Cursor runtime parity check']
@@ -70,10 +76,17 @@ jobs:
             if not match or match[0]['status']!='completed' or match[0]['conclusion']!='success':
               bad.append((name,[(m['status'],m['conclusion']) for m in match[:2]]))
           if bad:
-            print('Release blocked by incomplete or failed checks:',bad)
+            print('Required checks not all successful yet:',bad)
             sys.exit(1)
           print('All required checks passed')
           PY
+            then
+              passed=1
+              break
+            fi
+            sleep 15
+          done
+          test "$passed" -eq 1
       - name: Merge PR using GitHub native PR merge API
         shell: bash
         run: |
