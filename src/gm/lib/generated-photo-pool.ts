@@ -1,5 +1,6 @@
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
 import { isFictionalGmPlayer } from "@/gm/lib/player-portrait-ids";
+import { GM_PHOTO_POOL_CATALOG } from "@/gm/lib/generated-photo-pool-catalog";
 
 /**
  * Hand-reviewed starting cohort of FLUX.2 Dev fictional player photographs.
@@ -7,10 +8,7 @@ import { isFictionalGmPlayer } from "@/gm/lib/player-portrait-ids";
  * first release: everyone without an available slot keeps the SVG portrait.
  */
 export const GENERATED_PHOTO_POOL_VERSION = 1;
-export const GENERATED_PHOTO_POOL_IDS: readonly string[] = Array.from(
-  { length: 50 },
-  (_, index) => "v3-" + String(index + 1).padStart(2, "0"),
-);
+export const GENERATED_PHOTO_POOL_IDS: readonly string[] = GM_PHOTO_POOL_CATALOG;
 const VALID_PHOTO_IDS = new Set(GENERATED_PHOTO_POOL_IDS);
 
 export function generatedPhotoUrl(portraitId: string | null | undefined): string | null {
