@@ -1,0 +1,34 @@
+name: DRBL photographic portrait iteration 03
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/fal-photo-iteration-03-request.txt'
+permissions:
+  contents: read
+jobs:
+  portrait-validation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check secret
+        run: test -n "$FAL_KEY"
+      - name: Preview 6-image budget
+        run: node scripts/test-fal-portrait-photo-iteration-03.mjs
+      - name: Generate final prompt validation portraits
+        run: node scripts/test-fal-portrait-photo-iteration-03.mjs --execute
+      - name: Store six results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-fal-photo-iteration-03
+          path: portrait-photo-iteration-03/
+          if-no-files-found: warn
+          retention-days: 14
