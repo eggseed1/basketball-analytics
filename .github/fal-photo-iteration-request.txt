@@ -1,0 +1,3 @@
+User-authorized 18-image fal.ai photographic portrait test for DRBL, November 2026.
+Three invented identities x two prompt styles x three endpoints: Schnell, FLUX.2 dev, FLUX.2 pro.
+Images 960x960. Estimated cost $0.27, bounded count 18, no deploy.
