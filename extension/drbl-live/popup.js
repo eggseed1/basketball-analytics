@@ -1,8 +1,28 @@
 'use strict';
-const { TEAM_COLORS, isLive, isFinal, isUpcoming, showScore, gameStatus, favorited, nbaDateNow } = DRBL;
-const $ = id => document.getElementById(id);
+const {
+  isLive,
+  isFinal,
+  isUpcoming,
+  showScore,
+  gameStatus,
+  favorited,
+  nbaDateNow,
+  teamLogoUrl,
+  teamShortName,
+  teamWashColor,
+} = DRBL;
+
+const $ = (id) => document.getElementById(id);
 let currentFilter = 'all';
-let snapshot = { games:[], favorites:[], updatedAt:null, isStale:false, error:null, theme:'system', showScores:true };
+let snapshot = {
+  games: [],
+  favorites: [],
+  updatedAt: null,
+  isStale: false,
+  error: null,
+  theme: 'system',
+  showScores: true,
+};
 
 function el(tag, className = '', text = null) {
   const node = document.createElement(tag);
@@ -37,145 +57,296 @@ function applyTheme(theme) {
   root.classList.toggle('dark', dark);
 }
 
-function makeTeamRow(game, side, show, leader, final) {
-  const team = side === 'away' ? game.away : game.home;
-  const avatar = el('span', 'team-mark', team || '?');
-  avatar.style.setProperty('--team-color', TEAM_COLORS[team] || '#67748a');
-  avatar.setAttribute('aria-hidden', 'true');
-
-  const identity = el('span', 'team-identity');
-  const name = el('span', 'team-name' + (show && final && !leader ? ' is-muted' : ''), team || (side === 'away' ? 'Away' : 'Home'));
-  identity.append(name);
-  const rec = side === 'away' ? game.awayRecord : game.homeRecord;
-  if (rec && rec !== '0-0') identity.append(el('span', 'record', rec));
-
-  const scoreCell = el('span', 'score-cell');
-  const score = el(
-    'span',
-    'team-score' + (show && final && !leader ? ' trailing' : '') + (show && leader ? ' leading' : ''),
-    show ? (side === 'away' ? game.awayScore : game.homeScore) : ''
-  );
-  const marker = el('span', 'win-marker' + (show && final && leader ? '' : ' is-hidden'));
-  marker.setAttribute('aria-hidden', 'true');
-  scoreCell.append(score, marker);
-
-  return { avatar, identity, scoreCell };
+function teamMark(abbr) {
+  const img = el('img', 'team-mark');
+  const url = teamLogoUrl(abbr);
+  img.alt = '';
+  img.width = 28;
+  img.height = 28;
+  img.decoding = 'async';
+  img.loading = 'lazy';
+  img.dataset.logo = 'sm';
+  if (url) {
+    img.src = url;
+    img.addEventListener('error', () => {
+      img.replaceWith(el('span', 'team-mark-fallback', abbr || '?'));
+    });
+  } else {
+    return el('span', 'team-mark-fallback', abbr || '?');
+  }
+  return img;
 }
 
-function orbLayer(awayColor, homeColor, winner) {
+function teamRow(game, side, score, emphasis, winner) {
+  const abbr = side === 'away' ? game.away : game.home;
+  const recordRaw = (side === 'away' ? game.awayRecord : game.homeRecord)?.trim();
+  const record = recordRaw && recordRaw !== '0-0' ? recordRaw : null;
+
+  const mark = teamMark(abbr);
+
+  const identity = el('div', 'team-identity');
+  const name = el(
+    'span',
+    'team-name' + (emphasis === 'muted' ? ' is-muted' : ''),
+    teamShortName(abbr) ||
+      (side === 'away' ? game.awayName : game.homeName) ||
+      (side === 'away' ? 'Away' : 'Home')
+  );
+  identity.append(name);
+  if (record) identity.append(el('span', 'team-record', record));
+
+  const scoreCell = el('span', 'score-cell');
+  if (score != null) {
+    scoreCell.append(
+      el(
+        'span',
+        'team-score' +
+          (emphasis === 'strong' ? ' is-leading' : '') +
+          (emphasis === 'muted' ? ' is-muted' : ''),
+        score
+      )
+    );
+  }
+  const marker = el('span', 'win-marker' + (winner ? '' : ' is-hidden'));
+  marker.setAttribute('aria-hidden', 'true');
+  scoreCell.append(marker);
+
+  return [mark, identity, scoreCell];
+}
+
+function headshotStack(players, showPts) {
+  if (!players?.length) return null;
+  const row = el('div', 'headshot-stack');
+  for (const p of players.slice(0, 3)) {
+  const chip = el('span', 'headshot-chip');
+  chip.dataset.avatar = 'xs';
+  chip.title = showPts && p.pts != null ? `${p.name} · ${p.pts} pts` : p.name;
+    if (p.headshot) {
+      const img = el('img', 'headshot');
+      img.src = p.headshot;
+      img.alt = '';
+      img.width = 22;
+      img.height = 22;
+      img.decoding = 'async';
+      img.loading = 'lazy';
+      img.addEventListener('error', () => {
+        img.replaceWith(el('span', 'headshot-fallback', (p.short || p.name || '?').slice(0, 1)));
+      });
+      chip.append(img);
+    } else {
+      chip.append(el('span', 'headshot-fallback', (p.short || p.name || '?').slice(0, 1)));
+    }
+    row.append(chip);
+  }
+  return row;
+}
+
+function playersFooter(game, showScores) {
+  const away = game.awayLeaders || [];
+  const home = game.homeLeaders || [];
+  if (!away.length && !home.length) return null;
+
+  const footer = el('div', 'tile-footer');
+  if (away.length) {
+    const side = el('div', 'starter-side');
+    side.append(el('span', 'starter-label', game.away || 'AWAY'));
+    const stack = headshotStack(away, showScores);
+    if (stack) side.append(stack);
+    footer.append(side);
+  }
+  if (home.length) {
+    const side = el('div', 'starter-side starter-side--home');
+    const stack = headshotStack(home, showScores);
+    if (stack) side.append(stack);
+    side.append(el('span', 'starter-label', game.home || 'HOME'));
+    footer.append(side);
+  }
+  return footer;
+}
+
+function matchupOrbs(awayColor, homeColor, winner) {
   const wrap = el('span', 'strip-orbs');
   wrap.setAttribute('aria-hidden', 'true');
   const strength = (side) => (winner == null ? 0.8 : winner === side ? 1 : 0.45);
   const away = el('span', 'strip-orb');
   away.style.setProperty('--orb-color', awayColor);
   away.style.setProperty('--orb-strength', String(strength('away')));
-  away.style.left = '-48px';
+  away.style.left = '-60px';
   away.style.top = '2px';
   const home = el('span', 'strip-orb strip-orb--b');
   home.style.setProperty('--orb-color', homeColor);
   home.style.setProperty('--orb-strength', String(strength('home')));
-  home.style.right = '-48px';
-  home.style.bottom = '-12px';
-  wrap.append(away, home);
+  home.style.right = '-60px';
+  home.style.bottom = '-16px';
+  const rim = el('span', 'matchup-rim');
+  rim.style.setProperty('--rim-away', awayColor);
+  rim.style.setProperty('--rim-home', homeColor);
+  wrap.append(away, home, rim);
   return wrap;
 }
 
-function card(game, favorites, showScores) {
-  const show = showScores && showScore(game) && game.awayScore != null && game.homeScore != null;
+function scoreTile(game, favorites, showScoresPref) {
+  const show = showScoresPref && showScore(game) && game.awayScore != null && game.homeScore != null;
   const final = isFinal(game.status);
   const live = isLive(game.status);
-  const awayColor = TEAM_COLORS[game.away] || '#8e8e93';
-  const homeColor = TEAM_COLORS[game.home] || '#aeaeb2';
+  const awayWash = teamWashColor(game.away);
+  const homeWash = teamWashColor(game.home);
+  const awayAhead = show && game.awayScore > game.homeScore;
+  const homeAhead = show && game.homeScore > game.awayScore;
+  const emphasisFor = (ahead, behind) => (ahead ? 'strong' : behind && final ? 'muted' : 'plain');
   let winner = null;
   if (final && show && game.awayScore !== game.homeScore) {
-    winner = game.awayScore > game.homeScore ? 'away' : 'home';
+    winner = awayAhead ? 'away' : 'home';
   }
 
-  const box = el('article', 'sports-card' + (live ? ' is-live' : ''));
-  box.append(orbLayer(awayColor, homeColor, winner));
+  const card = el('article', 'sports-card score-tile' + (live ? ' is-live' : ''));
+  card.dataset.motion = 'card';
+  card.dataset.motionTile = '';
+  if (favorited(game, favorites)) card.classList.add('is-favorite');
+  card.append(matchupOrbs(awayWash, homeWash, winner));
 
-  const body = el('div', 'card-body');
-  const heading = el('div', 'card-header');
-  const status = el('span', 'game-status' + (live ? ' live-text' : ''));
-  if (live) status.append(el('span', 'live-dot'));
-  status.append(el('span', '', isUpcoming(game.status) ? fmtTip(game.tipOffAt) : gameStatus(game)));
-  heading.append(status);
+  const hit = el('a', 'tile-hit');
+  hit.href = `https://drbl.io/games/${encodeURIComponent(game.id)}`;
+  hit.target = '_blank';
+  hit.rel = 'noopener noreferrer';
+  hit.setAttribute(
+    'aria-label',
+    `${teamShortName(game.away) || game.away} at ${teamShortName(game.home) || game.home}`
+  );
+  card.append(hit);
 
-  const fav = el('button', 'favorite-button' + (favorited(game, favorites) ? ' selected' : ''), favorited(game, favorites) ? '★' : '☆');
-  fav.type = 'button';
-  fav.setAttribute('aria-label', 'Open favorite team settings');
-  fav.title = 'Favorite teams';
-  fav.addEventListener('click', (event) => {
-    event.stopPropagation();
-    chrome.runtime.openOptionsPage();
-  });
-  heading.append(fav);
-  body.append(heading);
+  const body = el('div', 'tile-body');
 
-  const link = el('a', 'game-link');
-  link.href = `https://drbl.io/games/${encodeURIComponent(game.id)}`;
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
-  link.setAttribute('aria-label', `${game.away} at ${game.home}, open on DRBL`);
+  const statusRow = el('div', 'status-row');
+  const status = el('span', 'status-line');
+  if (live) {
+    const liveBadge = el('span', 'live-indicator');
+    liveBadge.append(el('span', 'live-ping'), el('span', '', 'LIVE'));
+    status.append(liveBadge);
+    const clock = gameStatus(game);
+    if (clock && clock !== 'LIVE') status.append(el('span', 'status-clock', clock));
+  } else if (isUpcoming(game.status)) {
+    status.append(el('span', 'status-clock', fmtTip(game.tipOffAt)));
+  } else {
+    status.append(el('span', 'status-tag', gameStatus(game)));
+  }
+  statusRow.append(status);
 
-  const rows = el('div', 'team-rows');
-  const away = makeTeamRow(game, 'away', show, show && game.awayScore > game.homeScore, final);
-  const home = makeTeamRow(game, 'home', show, show && game.homeScore > game.awayScore, final);
-  rows.append(away.avatar, away.identity, away.scoreCell, home.avatar, home.identity, home.scoreCell);
-  link.append(rows);
-  body.append(link);
-
-  if (game.type !== 'regular') {
-    body.append(
+  if (game.type && game.type !== 'regular') {
+    statusRow.append(
       el(
-        'div',
-        'type-label',
+        'span',
+        'glass-pill type-badge',
         game.type === 'play-in' ? 'Play-In' : game.type === 'playoff' ? 'Playoffs' : 'Preseason'
       )
     );
   }
+  body.append(statusRow);
 
-  box.append(body);
-  return box;
+  const rows = el('div', 'team-rows');
+  rows.append(
+    ...teamRow(
+      game,
+      'away',
+      show ? game.awayScore : null,
+      emphasisFor(awayAhead, homeAhead),
+      final && awayAhead
+    ),
+    ...teamRow(
+      game,
+      'home',
+      show ? game.homeScore : null,
+      emphasisFor(homeAhead, awayAhead),
+      final && homeAhead
+    )
+  );
+  body.append(rows);
+
+  const footer = playersFooter(game, showScoresPref);
+  if (footer) body.append(footer);
+
+  card.append(body);
+  return card;
 }
 
 function visibleGames(games) {
-  if (currentFilter === 'favorites') return games.filter((game) => favorited(game, snapshot.favorites));
-  if (currentFilter === 'live') return games.filter((game) => isLive(game.status));
+  if (currentFilter === 'favorites') return games.filter((g) => favorited(g, snapshot.favorites));
+  if (currentFilter === 'live') return games.filter((g) => isLive(g.status));
   return games;
 }
 
-function renderSection(id, listId, games, favorites, showScores) {
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let revealedOnce = false;
+let tileObserver = null;
+
+function observeTiles(scope) {
+  const tiles = [...scope.querySelectorAll('.score-tile:not(.is-in)')];
+  if (!tiles.length) return;
+  if (reduceMotion) {
+    tiles.forEach((tile) => tile.classList.add('is-in'));
+    return;
+  }
+  if (tileObserver) tileObserver.disconnect();
+  const scroller = document.querySelector('.popup-main');
+  tileObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add('is-in');
+        tileObserver.unobserve(entry.target);
+      }
+    },
+    { root: scroller, threshold: 0.14, rootMargin: '0px 0px -6% 0px' }
+  );
+  tiles.forEach((tile) => tileObserver.observe(tile));
+}
+
+function renderSection(id, listId, games, favorites, showScores, animate) {
   const section = $(id);
   section.hidden = !games.length;
   const parent = $(listId);
-  parent.replaceChildren(...games.map((g) => card(g, favorites, showScores)));
+  const tiles = games.map((game, index) => {
+    const tile = scoreTile(game, favorites, showScores);
+    tile.style.setProperty('--i', String(Math.min(index, 12)));
+    if (!animate) tile.classList.add('is-in');
+    return tile;
+  });
+  parent.replaceChildren(...tiles);
 }
 
-function render() {
+function render(opts = {}) {
   applyTheme(snapshot.theme);
+  const animate = Boolean(opts.animate) || !revealedOnce;
   const all = snapshot.games || [];
   const selected = visibleGames(all);
-  const live = selected.filter((game) => isLive(game.status));
+  const live = selected.filter((g) => isLive(g.status));
   const todayString = nbaDateNow(new Date());
-  const today = selected.filter((game) => !isLive(game.status) && game.gameDate === todayString);
+  const today = selected.filter((g) => !isLive(g.status) && g.gameDate === todayString);
   const upcoming = selected
-    .filter((game) => !isLive(game.status) && isUpcoming(game.status) && game.gameDate !== todayString)
+    .filter((g) => !isLive(g.status) && isUpcoming(g.status) && g.gameDate !== todayString)
     .sort((a, b) => (a.tipOffAt || '').localeCompare(b.tipOffAt || ''))
     .slice(0, 6);
   const other = selected.filter(
-    (game) => !live.includes(game) && !today.includes(game) && !upcoming.includes(game) && !isUpcoming(game.status)
+    (g) => !live.includes(g) && !today.includes(g) && !upcoming.includes(g) && !isUpcoming(g.status)
   );
   const todayShown = [...today, ...other].sort((a, b) => (a.tipOffAt || '').localeCompare(b.tipOffAt || ''));
+  const showScores = snapshot.showScores !== false;
 
-  renderSection('live-section', 'live-games', live, snapshot.favorites, snapshot.showScores !== false);
-  renderSection('today-section', 'today-games', todayShown, snapshot.favorites, snapshot.showScores !== false);
-  renderSection('upcoming-section', 'upcoming-games', upcoming, snapshot.favorites, snapshot.showScores !== false);
+  renderSection('live-section', 'live-games', live, snapshot.favorites, showScores, animate);
+  renderSection('today-section', 'today-games', todayShown, snapshot.favorites, showScores, animate);
+  renderSection('upcoming-section', 'upcoming-games', upcoming, snapshot.favorites, showScores, animate);
+
+  if (animate) {
+    requestAnimationFrame(() => observeTiles(document.querySelector('.popup-main-inner') || document));
+  }
+  if (selected.length) revealedOnce = true;
 
   $('live-count').textContent = String(all.filter((g) => isLive(g.status)).length);
   $('live-meta').textContent = `${live.length} game${live.length !== 1 ? 's' : ''}`;
   $('today-meta').textContent = `${todayShown.length} game${todayShown.length !== 1 ? 's' : ''}`;
-  $('upcoming-meta').textContent = upcoming.length ? dateLabel(upcoming[0].tipOffAt, upcoming[0].gameDate) : '';
+  $('upcoming-meta').textContent = upcoming.length
+    ? dateLabel(upcoming[0].tipOffAt, upcoming[0].gameDate)
+    : '';
   $('updated').textContent = snapshot.updatedAt
     ? `Updated ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(snapshot.updatedAt))}`
     : 'Waiting for first sync';
@@ -216,7 +387,15 @@ function render() {
 async function load() {
   snapshot = {
     ...snapshot,
-    ...(await chrome.storage.local.get(['games', 'updatedAt', 'error', 'isStale', 'favorites', 'theme', 'showScores'])),
+    ...(await chrome.storage.local.get([
+      'games',
+      'updatedAt',
+      'error',
+      'isStale',
+      'favorites',
+      'theme',
+      'showScores',
+    ])),
   };
   render();
 }
@@ -224,16 +403,19 @@ async function load() {
 document.querySelectorAll('.filter').forEach((button) =>
   button.addEventListener('click', () => {
     currentFilter = button.dataset.filter;
-    render();
+    render({ animate: true });
   })
 );
 
 $('refresh').addEventListener('click', async () => {
-  $('refresh').disabled = true;
+  const btn = $('refresh');
+  btn.disabled = true;
+  btn.classList.add('is-spinning');
   try {
     await chrome.runtime.sendMessage({ type: 'refresh' });
   } finally {
-    $('refresh').disabled = false;
+    btn.disabled = false;
+    window.setTimeout(() => btn.classList.remove('is-spinning'), 500);
     await load();
   }
 });

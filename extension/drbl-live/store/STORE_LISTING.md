@@ -1,4 +1,4 @@
-# Chrome Web Store listing — DRBL Live 1.0.0
+# Chrome Web Store listing — DRBL Live 1.2.2
 
 Paste these into the [Chrome Developer Dashboard](https://chrome.google.com/webstore/devconsole). Assets live in `store/dist/` after:
 
@@ -13,7 +13,7 @@ Upload package: `store/dist/drbl-live-chrome-web-store.zip`
 | Field | Value |
 | --- | --- |
 | Name | DRBL Live |
-| Summary (manifest description) | Live NBA scores and favorite-team final alerts from drbl.io. |
+| Summary (manifest description) | Live NBA scores in the same ScoreTile style as drbl.io/scores, with team logos and in-game headshots. |
 | Category | Sports |
 | Language | English |
 | Official URL | https://drbl.io |
@@ -25,7 +25,8 @@ Upload package: `store/dist/drbl-live-chrome-web-store.zip`
 ```
 DRBL Live shows live and upcoming NBA scores in your Chrome toolbar, powered by the same public scoreboard on drbl.io.
 
-• Live, today, and upcoming games in a compact popup
+• Live, today, and upcoming games with official NBA team logos
+• In-game player headshots for the top contributors in each live or final game
 • Favorite teams, with optional desktop alerts when a favorite finishes
 • Spoiler-safe mode that hides scores in the popup
 • Light, dark, or match-your-device theme using DRBL’s site palette

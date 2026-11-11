@@ -11,101 +11,164 @@
       display: grid;
       place-items: center;
       margin: 0;
-      background:
-        radial-gradient(90% 70% at 12% 0%, rgb(29 66 138 / 0.14), transparent 55%),
-        radial-gradient(70% 60% at 100% 10%, rgb(200 16 46 / 0.1), transparent 50%),
-        #e8eaf0;
+      background: #dfe3eb;
     }
     .frame {
-      width: 388px;
-      border-radius: 18px;
+      width: 380px;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 24px 64px rgb(0 0 0 / 0.18), 0 2px 8px rgb(0 0 0 / 0.08);
-      border: 1px solid rgb(0 0 0 / 0.08);
+      box-shadow: 0 24px 64px rgb(0 0 0 / 0.16), 0 2px 8px rgb(0 0 0 / 0.06);
+      border: 1px solid rgb(0 0 0 / 0.06);
       background: var(--background);
     }
     body.dark-shot {
-      background:
-        radial-gradient(90% 70% at 12% 0%, rgb(61 148 255 / 0.16), transparent 55%),
-        radial-gradient(70% 60% at 100% 10%, rgb(255 90 79 / 0.12), transparent 50%),
-        #0a0b0f;
+      background: #0a0b0f;
     }
   </style>
 </head>
 <body>
   <div class="frame extension-popup">
     <div class="app">
-      <header class="header">
+      <header class="chrome liquid-glass">
         <a class="brand" href="#">
           <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 32 32" fill="none"><path class="arc-outer" d="M10 6.5c7.2 0 13 5.8 13 13" stroke-width="2.4" stroke-linecap="round"/><path class="arc-inner" d="M10 11c4.7 0 8.5 3.8 8.5 8.5" stroke-width="1.7" stroke-linecap="round"/><path class="spine" d="M10 6.5v13" stroke-width="2.4" stroke-linecap="round"/><circle class="ball" cx="22.5" cy="19.2" r="2.35"/></svg>
           </span>
-          <span class="brand-name"><strong>DRBL</strong><small>ANALYTICS</small></span>
+          <span class="brand-word">DRBL</span>
         </a>
-        <div class="header-actions">
-          <span class="feed-indicator"><span class="status-dot"></span><span>Connected</span></span>
-          <span class="icon-button" aria-hidden="true">↻</span>
-          <span class="icon-button settings-icon" aria-hidden="true">⚙</span>
+        <div class="chrome-actions">
+          <span class="feed-pill"><span class="status-dot"></span><span>Connected</span></span>
+          <span class="icon-btn" aria-hidden="true">↻</span>
+          <span class="icon-btn" aria-hidden="true">⚙</span>
         </div>
       </header>
-      <main>
-        <div class="heading">
-          <div>
-            <h1>Scores</h1>
-            <p class="subtitle">Live and upcoming NBA games from drbl.io.</p>
+      <main class="popup-main">
+        <span class="brand-atmosphere" aria-hidden="true">
+          <span class="brand-orb brand-orb--blue"></span>
+          <span class="brand-orb brand-orb--red"></span>
+        </span>
+        <div class="popup-main-inner">
+          <div class="page-head">
+            <div>
+              <h1 class="type-page">Scores</h1>
+              <p class="type-caption muted">Same board as drbl.io/scores.</p>
+            </div>
+            <span class="text-link">All scores ↗</span>
           </div>
-          <span class="site-link">All scores ↗</span>
+          <div class="filter-row">
+            <button class="glass-pill filter">All</button>
+            <button class="glass-pill filter active">Live <span class="count">2</span></button>
+            <button class="glass-pill filter">Favorites</button>
+          </div>
+          <section class="board-section">
+            <div class="section-head">
+              <h2 class="type-heading"><span class="live-ping"></span> Live</h2>
+              <span class="type-caption muted">2 games</span>
+            </div>
+            <div class="tile-grid" id="games"></div>
+          </section>
         </div>
-        <div class="filterbar">
-          <button class="filter">All</button>
-          <button class="filter active">Live <span class="count">2</span></button>
-          <button class="filter">Favorites</button>
-        </div>
-        <section class="score-section">
-          <div class="section-heading"><h2><span class="live-dot"></span> Live</h2><span>2 games</span></div>
-          <div class="game-list" id="games"></div>
-        </section>
       </main>
-      <footer>
+      <footer class="chrome footer liquid-glass">
         <span>Updated 8:42 PM</span>
         <span class="footer-links"><span>drbl.io ↗</span><span>Settings</span></span>
       </footer>
     </div>
   </div>
   <script>
-    const COLORS = {BOS:'#007a33',LAL:'#552583',NYK:'#006bb6',MIA:'#98002e',GSW:'#1d428a',DEN:'#0e2240'};
-    const games = [
-      {away:'BOS',home:'LAL',awayScore:98,homeScore:101,status:'Q4 · 3:12',live:true,awayRec:'4-1',homeRec:'3-2'},
-      {away:'NYK',home:'MIA',awayScore:87,homeScore:84,status:'Q3 · 7:44',live:true,awayRec:'5-0',homeRec:'2-3'},
+    const WASH = {
+      BOS:'#007A33',LAL:'#552583',NYK:'#006BB6',PHI:'#006BB6',
+      OKC:'#007AC1',DEN:'#0E2240',GSW:'#1D428A',MIA:'#98002E',
+    };
+    const SLUG = {
+      BOS:'bos',LAL:'lal',NYK:'ny',PHI:'phi',
+      OKC:'okc',DEN:'den',GSW:'gs',MIA:'mia',
+    };
+    const NICK = {
+      BOS:'Celtics',LAL:'Lakers',NYK:'Knicks',PHI:'76ers',
+      OKC:'Thunder',DEN:'Nuggets',GSW:'Warriors',MIA:'Heat',
+    };
+    const logo = (a) => `https://a.espncdn.com/i/teamlogos/nba/500/${SLUG[a]}.png`;
+    const head = (id) => `https://a.espncdn.com/i/headshots/nba/players/full/${id}.png`;
+
+    const LIGHT = [
+      {
+        away:'BOS',home:'LAL',awayScore:112,homeScore:108,clock:'Q4 · 2:18',
+        awayRec:'5-1',homeRec:'4-2',
+        // Tatum, Paul George · Luka, Austin Reaves
+        awayIds:['4065648','4251'], homeIds:['3945274','4066457'],
+      },
+      {
+        away:'NYK',home:'PHI',awayScore:99,homeScore:101,clock:'Q3 · 5:41',
+        awayRec:'5-0',homeRec:'3-3',
+        // Brunson, KAT · Embiid, LeBron
+        awayIds:['3934672','3136195'], homeIds:['3059318','1966'],
+      },
     ];
-    const list = document.getElementById('games');
-    for (const g of games) {
-      const card = document.createElement('article');
-      card.className = 'sports-card is-live';
-      const orbs = document.createElement('span');
-      orbs.className = 'strip-orbs';
-      orbs.innerHTML = `<span class="strip-orb" style="left:-48px;top:2px;--orb-color:${COLORS[g.away]};--orb-strength:0.8"></span><span class="strip-orb strip-orb--b" style="right:-48px;bottom:-12px;--orb-color:${COLORS[g.home]};--orb-strength:0.8"></span>`;
-      const body = document.createElement('div');
-      body.className = 'card-body';
-      body.innerHTML = `
-        <div class="card-header"><span class="game-status live-text"><span class="live-dot"></span><span>${g.status}</span></span><span class="favorite-button selected">★</span></div>
-        <div class="team-rows">
-          <span class="team-mark" style="--team-color:${COLORS[g.away]}">${g.away}</span>
-          <span class="team-identity"><span class="team-name">${g.away}</span><span class="record">${g.awayRec}</span></span>
-          <span class="score-cell"><span class="team-score ${g.awayScore>g.homeScore?'leading':''}">${g.awayScore}</span><span class="win-marker is-hidden"></span></span>
-          <span class="team-mark" style="--team-color:${COLORS[g.home]}">${g.home}</span>
-          <span class="team-identity"><span class="team-name">${g.home}</span><span class="record">${g.homeRec}</span></span>
-          <span class="score-cell"><span class="team-score ${g.homeScore>g.awayScore?'leading':''}">${g.homeScore}</span><span class="win-marker is-hidden"></span></span>
-        </div>`;
-      card.append(orbs, body);
-      list.append(card);
-    }
+
+    const DARK = [
+      {
+        away:'OKC',home:'DEN',awayScore:118,homeScore:114,clock:'Q4 · 1:06',
+        awayRec:'6-0',homeRec:'4-2',
+        // SGA, Jalen Williams · Jokic, Jamal Murray
+        awayIds:['4278073','4593803'], homeIds:['3112335','3936299'],
+      },
+      {
+        away:'GSW',home:'MIA',awayScore:105,homeScore:109,clock:'Q4 · 4:33',
+        awayRec:'3-3',homeRec:'4-2',
+        // Curry, Draymond · Giannis, Bam
+        awayIds:['3975','6589'], homeIds:['3032977','4066261'],
+      },
+    ];
+
     const params = new URLSearchParams(location.search);
-    if (params.get('theme') === 'dark') {
+    const dark = params.get('theme') === 'dark';
+    if (dark) {
       document.documentElement.dataset.theme = 'dark';
       document.documentElement.classList.add('dark');
       document.body.classList.add('dark-shot');
     }
+    const games = dark ? DARK : LIGHT;
+
+    function stack(ids) {
+      return `<div class="headshot-stack">${ids.map((id)=>`<span class="headshot-chip"><img class="headshot" src="${head(id)}" width="22" height="22" alt=""></span>`).join('')}</div>`;
+    }
+    function row(abbr, rec, score, lead) {
+      return `
+        <img class="team-mark" src="${logo(abbr)}" width="28" height="28" alt="">
+        <div class="team-identity"><span class="team-name">${NICK[abbr]}</span><span class="team-record">${rec}</span></div>
+        <span class="score-cell"><span class="team-score ${lead?'is-leading':''}">${score}</span><span class="win-marker is-hidden"></span></span>`;
+    }
+    const list = document.getElementById('games');
+    games.forEach((g, i) => {
+      const card = document.createElement('article');
+      card.className = 'sports-card score-tile is-live is-in';
+      card.dataset.motion = 'card';
+      card.style.setProperty('--i', String(i));
+      card.innerHTML = `
+        <span class="strip-orbs" aria-hidden="true">
+          <span class="strip-orb" style="left:-60px;top:2px;--orb-color:${WASH[g.away]};--orb-strength:0.8"></span>
+          <span class="strip-orb strip-orb--b" style="right:-60px;bottom:-16px;--orb-color:${WASH[g.home]};--orb-strength:0.8"></span>
+          <span class="matchup-rim" style="--rim-away:${WASH[g.away]};--rim-home:${WASH[g.home]}"></span>
+        </span>
+        <div class="tile-body">
+          <div class="status-row">
+            <span class="status-line">
+              <span class="live-indicator"><span class="live-ping"></span><span>LIVE</span></span>
+              <span class="status-clock">${g.clock}</span>
+            </span>
+          </div>
+          <div class="team-rows">
+            ${row(g.away, g.awayRec, g.awayScore, g.awayScore>g.homeScore)}
+            ${row(g.home, g.homeRec, g.homeScore, g.homeScore>g.awayScore)}
+          </div>
+          <div class="tile-footer">
+            <div class="starter-side"><span class="starter-label">${g.away}</span>${stack(g.awayIds)}</div>
+            <div class="starter-side starter-side--home">${stack(g.homeIds)}<span class="starter-label">${g.home}</span></div>
+          </div>
+        </div>`;
+      list.append(card);
+    });
   </script>
 </body>
 </html>

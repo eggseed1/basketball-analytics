@@ -20,7 +20,12 @@ function harness(initial, feeds) {
     alarms: {create:()=>{},onAlarm:{addListener:f=>listeners.alarm=f}},
     runtime:{onInstalled:{addListener:f=>listeners.installed=f},onStartup:{addListener:f=>listeners.startup=f},onMessage:{addListener:f=>listeners.message=f}},
   };
-  const ctx=vm.createContext({chrome,console,Promise,Set,Map,Intl,Date, self:{}, fetch:async url=>{
+  const ctx=vm.createContext({chrome,console,Promise,Set,Map,Intl,Date,Array, self:{}, fetch:async url=>{
+    if(String(url).includes('/box-score')){
+      const box = feeds.box;
+      if(box instanceof Error) throw box;
+      return {ok:true,json:async()=>box ?? {data:{players:[]}}};
+    }
     const payload = url.includes('/api/scores/live')?feeds.live:feeds.upcoming;
     if(payload instanceof Error) throw payload;
     return {ok:true,json:async()=>payload};
@@ -56,4 +61,21 @@ test('network failure preserves saved scores and marks stale',async()=>{
   const app=harness({games:[old]}, {live:new Error('offline'),upcoming:new Error('offline')});
   await app.listeners.message({type:'refresh'},null,()=>{});
   await new Promise(r=>setImmediate(r));assert.equal(app.store.games.length,1);assert.equal(app.store.isStale,true);
+});
+test('enriches live games with box-score leaders',async()=>{
+  const app=harness({}, {
+    live:{data:[live()]},
+    upcoming:{data:[]},
+    box:{data:{players:[
+      {playerId:'2544',playerName:'LeBron James',isHome:false,minutes:34,points:30,didNotPlay:false},
+      {playerId:'1966',playerName:'Jalen Brunson',isHome:true,minutes:36,points:28,didNotPlay:false},
+    ]}},
+  });
+  await app.listeners.message({type:'refresh'},null,()=>{});
+  await new Promise(r=>setImmediate(r));
+  await new Promise(r=>setImmediate(r));
+  const game=app.store.games[0];
+  assert.equal(game.awayLeaders.length,1);
+  assert.equal(game.awayLeaders[0].id,'2544');
+  assert.equal(game.homeLeaders[0].id,'1966');
 });
