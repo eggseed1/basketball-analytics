@@ -1,0 +1,44 @@
+name: DRBL independent-shuffle portrait v3
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/fal-balanced-portrait-v3-request.txt'
+permissions:
+  contents: read
+concurrency:
+  group: drbl-fal-portrait-v3
+  cancel-in-progress: false
+jobs:
+  evaluate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    env:
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check key
+        run: test -n "$FAL_KEY"
+      - name: Verify independent category shuffling
+        run: node scripts/generate-fal-portrait-diversity-v3-50.mjs
+      - name: Generate 50 FLUX.2 Dev images with revised profiles
+        run: node scripts/generate-fal-portrait-diversity-v3-50.mjs --execute
+      - name: Install QA requirements
+        run: python -m pip install Pillow==11.2.1 numpy==2.2.6 opencv-python-headless==4.11.0.86
+      - name: Audit generation and produce contact sheet
+        run: python scripts/qa-fal-portrait-diversity-v3-50.py
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-fal-v3-50-independent-identities
+          path: fal-portrait-diversity-v3-50/
+          if-no-files-found: warn
+          retention-days: 14
