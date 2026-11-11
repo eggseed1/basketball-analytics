@@ -3,7 +3,7 @@
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { displayPlayerName } from "@/gm/lib/selectors";
 import { gmPlayerPortraitIds, isFictionalGmPlayer } from "@/gm/lib/player-portrait-ids";
-import { GmGeneratedPortrait } from "@/gm/ui/gm-generated-portrait";
+import { GmPhotoPoolPortrait } from "@/gm/ui/gm-photo-pool-portrait";
 import type { GmPlayer } from "@/gm/types";
 
 /**
@@ -24,7 +24,7 @@ export function GmPlayerPortrait({
   className?: string;
 }) {
   if (isFictionalGmPlayer(player)) {
-    return <GmGeneratedPortrait player={player} name={displayPlayerName(player)} size={size} className={className} />;
+    return <GmPhotoPoolPortrait player={player} name={displayPlayerName(player)} size={size} priority={priority} className={className} />;
   }
   const ids = gmPlayerPortraitIds(player);
   return (
