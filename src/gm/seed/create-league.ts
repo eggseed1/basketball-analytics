@@ -17,6 +17,7 @@ import { applyBalancedRotations } from "@/gm/engine/coaching";
 import { coachForTeam, openCoachMarket, trainerForLevel } from "@/gm/seed/coaches";
 import { createDraftClass } from "@/gm/seed/prospect-identities";
 import { withGeneratedPlayerIdentity } from "@/gm/lib/generated-player-identity";
+import { assignGmPhotoPortraits } from "@/gm/lib/generated-photo-pool";
 import { sealProspect } from "@/gm/engine/scouting";
 import {
   defaultTeamDeveloper,
@@ -253,5 +254,5 @@ export function createGeneratedLeague(options?: {
     ));
   }
   state.schedule = generateSchedule(state.teams, season, seed, state.cupGroups);
-  return applyBalancedRotations(state);
+  return applyBalancedRotations(assignGmPhotoPortraits(state));
 }
