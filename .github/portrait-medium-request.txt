@@ -1,0 +1,9 @@
+GPT Image 1.5 Medium portrait research request
+Batch: twelve separately specified fictional basketball identities
+Model: gpt-image-1.5
+Quality: medium
+Resolution: 1024x1024
+Expected image output charge: about $0.41 plus input tokens
+Authorization: user confirmed OPENAI_API_KEY has been added and requested starting the test
+Purpose: compare portrait realism and facial diversity; no live deployment
+Trigger: one-time change to this request file.
