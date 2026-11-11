@@ -1,0 +1,3 @@
+Approved experimental asset import request for the November 11 FLUX.2 Dev v3 50-image cohort.
+Source GitHub Actions run 43035986031, artifact drbl-fal-v3-50-independent-identities.
+Convert to 512px WebP + jersey-only alpha masks. Commit to this feature branch only; do not deploy until tests and review pass.
