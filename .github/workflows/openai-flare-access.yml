@@ -1,0 +1,39 @@
+name: DRBL OpenAI Flare one-image access test
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/flare-access-request.txt'
+permissions:
+  contents: read
+concurrency:
+  group: drbl-openai-flare-access
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check secret presence
+        shell: bash
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then echo "::error::Missing OPENAI_API_KEY"; exit 1; fi
+      - name: Verify safe two-model test plan
+        run: node scripts/probe-openai-flare-headshot.mjs
+      - name: Generate at most one image using Flare 2.6 then 2.5
+        run: node scripts/probe-openai-flare-headshot.mjs --execute
+      - name: Upload image and safe diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-openai-flare-one-image-access-test
+          path: openai-flare-portrait-probe/
+          if-no-files-found: warn
+          retention-days: 14
