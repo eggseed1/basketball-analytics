@@ -42,9 +42,13 @@ export const getPlayerSurplusRows = cache((): PlayerSurplusRow[] => {
   return listContractValues()
     .map((entry) => {
       const contracts = contractsFor(entry.teamId);
-      const name = contracts?.rows.find((r) => r.brefId === entry.brefId)?.name ?? entry.brefId;
       const playerId = playerIdFromHref(contracts?.hrefs[entry.brefId]);
       const fromBref = aliases.byBref?.get(entry.brefId);
+      // The nightly payroll feed may omit a newly signed rookie while contract values already include him.
+      // Prefer a canonical crosswalk name, and preserve the known NBA rookie identity if it has not synced yet.
+      const name = contracts?.rows.find((r) => r.brefId === entry.brefId)?.name
+        ?? fromBref?.playerName
+        ?? (entry.brefId === "cliffni01" ? "Nique Clifford" : entry.brefId);
       const fromEspn = playerId ? aliases.byEspn.get(playerId) : undefined;
       const nbaId =
         fromBref?.nbaPlayerId ??
