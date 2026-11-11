@@ -45,7 +45,7 @@ jobs:
           assert all(p.endswith(('.webp','.jpg','.json')) for p in paths)
           print('Verified exactly one asset-only commit, files:',len(paths))
           PY
-          gh api "repos/$GH_REPO/actions/runs?head_sha=91be16e4&per_page=100" > /tmp/photo-green-checks.json
+          gh api "repos/$GH_REPO/actions/runs?head_sha=91be16e4cd858647af8f39097e0ce156afa2fde7&per_page=100" > /tmp/photo-green-checks.json
           python - <<'PY'
           import json
           runs=json.load(open('/tmp/photo-green-checks.json'))['workflow_runs']
