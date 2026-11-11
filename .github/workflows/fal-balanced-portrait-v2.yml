@@ -1,0 +1,44 @@
+name: DRBL balanced fictional portraits v2
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/fal-balanced-portrait-v2-request.txt'
+permissions:
+  contents: read
+concurrency:
+  group: drbl-fal-balanced-portrait-v2
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    env:
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Confirm FAL secret
+        run: test -n "$FAL_KEY"
+      - name: Verify balanced identity quotas without spending
+        run: node scripts/generate-fal-portrait-diversity-v2-50.mjs
+      - name: Generate 50 distinct portraits (estimated 60 cents)
+        run: node scripts/generate-fal-portrait-diversity-v2-50.mjs --execute
+      - name: Install QA tools
+        run: python -m pip install Pillow==11.2.1 numpy==2.2.6 opencv-python-headless==4.11.0.86
+      - name: Produce comparison contact sheet and frame QA
+        run: python scripts/qa-fal-portrait-diversity-v2-50.py
+      - name: Upload review bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-fal-balanced-v2-50-portraits
+          path: fal-portrait-diversity-v2-50/
+          if-no-files-found: warn
+          retention-days: 14
