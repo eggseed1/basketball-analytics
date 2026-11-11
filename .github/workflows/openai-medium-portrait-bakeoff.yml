@@ -1,8 +1,13 @@
 name: DRBL GPT Image Medium portrait bakeoff
 
-# Manual-only on purpose: no unexpected image-generation charges on pushes.
+# Opt-in only: run manually or by committing the dedicated request file.
+# Ordinary application pushes will never trigger image generation.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/portrait-medium-request.txt'
 
 permissions:
   contents: read
