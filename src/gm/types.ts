@@ -1095,6 +1095,8 @@ export interface GmLeagueState {
   settings: GmLeagueSettings;
   teams: GmTeam[];
   players: GmPlayer[];
+  /** Permanent reservation ledger for curated portrait slots in this save. */
+  portraitPoolReserved?: number[];
   freeAgents: string[]; // player ids
   /** Live free-agency market. Set when the summer opens. */
   faMarket?: GmFaMarket;
