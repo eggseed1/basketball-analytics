@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-10",
-    "retrievedAt": "2026-11-10T21:58:37.558Z",
+    "snapshotDate": "2026-11-11",
+    "retrievedAt": "2026-11-11T18:22:07.893Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d2b8f4565a154bcdc23bfffd2837c6d675766832c59ae3bd4df627b57af8aef0",
+    "sourceHash": "26f484de0dc429bccd75cee6da39c142f99b59793be9a62b333407ffe228b1b4",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -375,29 +375,6 @@
           "href": "/players/1642911"
         },
         {
-          "playerId": "1642912",
-          "playerName": "Isaiah Evans",
-          "age": null,
-          "contractId": "cy-1642912-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642912-2026",
-              "playerId": "1642912",
-              "franchiseId": "16",
-              "season": "2026-27",
-              "salary": 1357763,
-              "capHit": 1357763,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642912"
-        },
-        {
           "playerId": "1642389",
           "playerName": "Zyon Pullin",
           "age": null,
@@ -424,12 +401,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 214638731,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 213280968,
+          "playersUnderContract": 14
         }
       ],
-      "playerSalaryCommitments": 214638731,
-      "playersWithSalary": 15,
+      "playerSalaryCommitments": 213280968,
+      "playersWithSalary": 14,
       "playersWithoutSalary": 1
     },
     "draftAssets": {

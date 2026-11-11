@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-10T21:51:55.760Z",
-  "apiCount": 435,
+  "fetchedAt": "2026-11-11T18:05:05.379Z",
+  "apiCount": 436,
   "rows": [
+    {
+      "date": "2026-11-10T08:00Z",
+      "description": "Waived C Lawson Lovering.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
     {
       "date": "2026-11-08T08:00Z",
       "description": "Waived F Dalen Terry.",

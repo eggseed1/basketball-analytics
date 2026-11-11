@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-10",
+    "snapshotDate": "2026-11-11",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-10T21:52:59.064Z",
-    "rosterPlayerCount": 503,
-    "headlinesScanned": 12636,
-    "latestHeadlineAt": "2026-11-10T21:41:18.000Z",
-    "latestTransactionDate": "2026-11-08",
+    "builtAt": "2026-11-11T18:06:19.724Z",
+    "rosterPlayerCount": 501,
+    "headlinesScanned": 12973,
+    "latestHeadlineAt": "2026-11-11T18:00:55.000Z",
+    "latestTransactionDate": "2026-11-10",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -361,7 +361,7 @@
         "mv-fade36f5e44d5326"
       ],
       "evidenceClass": "rumored",
-      "state": "unresolved",
+      "state": "expired",
       "firstSeenAt": "2026-09-11T22:20:36.000Z",
       "lastMeaningfulAt": "2026-09-11T22:20:36.000Z",
       "linkedPlayerIds": [
@@ -711,7 +711,7 @@
         "14",
         "9",
         "27",
-        "29"
+        "13"
       ]
     },
     {
@@ -1320,17 +1320,19 @@
     },
     {
       "id": "mv-contract-3032977-20261013",
-      "headline": "Giannis Antetokounmpo: free agency",
-      "primaryClaimId": "mv-a590cde37ba884d3",
+      "headline": "Giannis Antetokounmpo: contract future with the Heat",
+      "primaryClaimId": "mv-e3bddb873b46b93b",
       "claimIds": [
         "mv-d3b0498977a48f7e",
         "mv-a590cde37ba884d3",
-        "mv-ff2844633366d1ff"
+        "mv-ff2844633366d1ff",
+        "mv-d4dfd7d628a69941",
+        "mv-e3bddb873b46b93b"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T16:02:16.000Z",
-      "lastMeaningfulAt": "2026-10-29T00:50:42.000Z",
+      "lastMeaningfulAt": "2026-11-11T16:20:09.000Z",
       "linkedPlayerIds": [
         "3032977"
       ],
@@ -2116,6 +2118,7 @@
         "mv-e1b45818e87f3687",
         "mv-7179085e2f8b28fa",
         "mv-64b8a394485a669c",
+        "mv-1566704c06fe02de",
         "mv-espn-tx-a5a81ef7213dce23",
         "mv-nba-tx-5c64a960de248a10"
       ],
@@ -11835,6 +11838,69 @@
       "isOriginal": false
     },
     {
+      "id": "mv-d4dfd7d628a69941",
+      "clusterId": "mv-contract-3032977-20261013",
+      "summary": "Giannis Antetokounmpo expected to sign Heat extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-11T15:44:15.000Z",
+      "sourceId": "reporter:bobby-marks",
+      "sourceLabel": "TalkBasket, citing Bobby Marks (ESPN)",
+      "reporterLabel": "Bobby Marks",
+      "sourceUrl": "https://www.talkbasket.net/227487-giannis-antetokounmpo-expected-to-sign-heat-extension",
+      "playerIds": [
+        "3032977"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-1566704c06fe02de",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Doug Christie's Rotation Choices Drove Kings' Nique Clifford Trade To Thunder",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-11T15:56:02.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "RealGM, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288098/Doug-Christies-Rotation-Choices-Drove-Kings-Nique-Clifford-Trade-To-Thunder",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "23",
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e3bddb873b46b93b",
+      "clusterId": "mv-contract-3032977-20261013",
+      "summary": "Giannis Antetokounmpo Reportedly Working on an Extension with the Heat",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-11T16:20:09.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/miami-heat/giannis-antetokounmpo-reportedly-working-on-extension/",
+      "playerIds": [
+        "3032977"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -13168,6 +13234,14 @@
       "resolvedAt": "2026-10-02T12:00:00.000Z",
       "transactionRef": "espn-tx-48599cfb4807969c",
       "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-trade-4433247-20260911",
+      "playerIds": [
+        "4433247"
+      ],
+      "outcome": "expired",
+      "resolvedAt": "2026-11-11T18:06:19.724Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
