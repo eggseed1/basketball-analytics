@@ -4,6 +4,8 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { displayPlayerName } from "@/gm/lib/selectors";
 import { gmPlayerPortraitIds, isFictionalGmPlayer } from "@/gm/lib/player-portrait-ids";
 import { GmGeneratedPortrait } from "@/gm/ui/gm-generated-portrait";
+import { GmPhotoPortrait } from "@/gm/ui/gm-photo-portrait";
+import { gmPhotoPortraitPath } from "@/gm/lib/generated-photo-pool";
 import type { GmPlayer } from "@/gm/types";
 
 /**
@@ -24,6 +26,9 @@ export function GmPlayerPortrait({
   className?: string;
 }) {
   if (isFictionalGmPlayer(player)) {
+    if (gmPhotoPortraitPath(player.identity?.portraitPoolId)) {
+      return <GmPhotoPortrait player={player} name={displayPlayerName(player)} size={size} className={className} priority={priority} />;
+    }
     return <GmGeneratedPortrait player={player} name={displayPlayerName(player)} size={size} className={className} />;
   }
   const ids = gmPlayerPortraitIds(player);
