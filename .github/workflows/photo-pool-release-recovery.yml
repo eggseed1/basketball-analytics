@@ -61,9 +61,10 @@ jobs:
           from pathlib import Path
           paths=Path('/tmp/all-photo-changed-files.txt').read_text().splitlines()
           assert len(paths)>=900,len(paths)
-          assert all(p.startswith('public/gm/portraits/') for p in paths)
-          assert all(p.endswith(('.webp','.jpg','.json')) for p in paths)
-          print('Verified complete asset-only change list:',len(paths))
+          permitted='src/gm/lib/generated-photo-pool-catalog.ts'
+          assert all(p.startswith('public/gm/portraits/') or p==permitted for p in paths), [p for p in paths if not(p.startswith('public/gm/portraits/') or p==permitted)]
+          assert all(p==permitted or p.endswith(('.webp','.jpg','.json')) for p in paths)
+          print('Verified complete static-asset and catalog-only change list:',len(paths))
           PY
           git checkout --detach 751884a64909be1a4dc26cd2ae295f40554a5b2e
       - name: Verify 500 unique photo/mask asset pairs
