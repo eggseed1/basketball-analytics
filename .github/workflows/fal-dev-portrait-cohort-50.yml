@@ -1,0 +1,44 @@
+name: DRBL FLUX.2 Dev 50-player cohort evaluation
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/fal-dev-portrait-cohort-50-request.txt'
+permissions:
+  contents: read
+concurrency:
+  group: drbl-flux-dev-50-cohort
+  cancel-in-progress: false
+jobs:
+  evaluate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 48
+    env:
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Confirm private secret available
+        run: test -n "$FAL_KEY"
+      - name: Dry-run costs and diversity
+        run: node scripts/generate-fal-dev-portrait-cohort-50.mjs
+      - name: Generate 50 distinct faces (roughly 60 cents, no deploy)
+        run: node scripts/generate-fal-dev-portrait-cohort-50.mjs --execute
+      - name: Set up QA
+        run: python -m pip install Pillow==11.2.1 numpy==2.2.6 opencv-python-headless==4.11.0.86
+      - name: Create contact sheet and QA report
+        run: python scripts/qa-fal-dev-portrait-cohort-50.py
+      - name: Upload review package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-flux2-dev-50-face-cohort
+          path: fal-dev-portrait-cohort-50/
+          if-no-files-found: warn
+          retention-days: 14
