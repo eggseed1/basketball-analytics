@@ -1,0 +1,87 @@
+name: Expand DRBL generated-player photo library to 500
+on:
+  push:
+    branches:
+      - feat/gm-generated-photo-pool-20261111
+    paths:
+      - '.github/gm-photo-scale-request.txt'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: drbl-photo-scale-v1
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    env:
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Require existing paid-generation credential
+        run: test -n "$FAL_KEY"
+      - name: Validate exact per-shard generation cost and inputs
+        run: node scripts/generate-gm-portrait-pool-450.mjs --shard=${{ matrix.shard }}
+      - name: Generate exactly 50 images once, no retries
+        run: node scripts/generate-gm-portrait-pool-450.mjs --shard=${{ matrix.shard }} --execute
+      - name: Upload generated raw images and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portrait-shard-${{ matrix.shard }}
+          path: portrait-scale-*/
+          if-no-files-found: error
+          retention-days: 14
+  assemble:
+    needs: generate
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download all completed generation shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: portrait-shard-*
+          path: .portrait-parts
+          merge-multiple: false
+      - name: Install conversion dependencies
+        run: python -m pip install Pillow==11.2.1 numpy==2.2.6
+      - name: Assemble accepted WebP assets, masks and catalog
+        run: python scripts/assemble-gm-portrait-pool.py
+      - name: Upload preview and validation metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-scaled-portrait-review
+          path: |
+            public/gm/portraits/review-contact.jpg
+            public/gm/portraits/manifest.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Commit generated images and catalog only on the working branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/gm/portraits/ src/gm/lib/generated-photo-pool-catalog.ts
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets(gm): expand curated candidate image pool to ~500 portraits'
+            git push origin HEAD:feat/gm-generated-photo-pool-20261111
+          fi
