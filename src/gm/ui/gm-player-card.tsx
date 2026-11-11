@@ -13,6 +13,7 @@ import {
   playerSheet,
 } from "@/gm/engine/attributes";
 import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
+import { playerMentality } from "@/gm/engine/mentality";
 import { developmentOutlook } from "@/gm/engine/development-profile";
 import { scoutPotentialView, trajectoryRead } from "@/gm/engine/scouting";
 import {
@@ -124,6 +125,7 @@ export function GmPlayerCard({
   const onRoster = player.teamId === mine.id;
   const shownName = displayPlayerName(player);
   const trait = inDraft || player.draftModel===2 ? null : playerDevTrait(player);
+  const mentality = playerMentality(player);
   const profile = player.scoutProfile;
   const [careerApi, setCareerApi] = useState<CareerRow[] | null>(null);
   const [careerNote, setCareerNote] = useState<string | null>(null);
@@ -259,9 +261,9 @@ export function GmPlayerCard({
             >
               {traitLabel(trait)}
             </p>
-          ) : inDraft ? (
-            <p>Trait sealed</p>
-          ) : null}
+          ) : (
+            <p className={cn("font-semibold", mentality.tone)} title={mentality.description}>Mentality: {mentality.label}</p>
+          )}
           {!inDraft ? (
             <>
               <p>
@@ -292,7 +294,7 @@ export function GmPlayerCard({
         {inDraft ? (
           <>
             <p className="mt-1 text-sm text-muted-foreground">
-              Overall and the development trait unlock when the pick is in.
+              Overall unlocks when the pick is in. Mentality describes learning habits, not a fixed future ceiling.
               Grades below can be wrong depending on your scout.
             </p>
             <div className="mt-3 rounded-lg bg-secondary/70 px-3 py-2">
