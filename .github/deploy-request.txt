@@ -1,6 +1,6 @@
 DRBL Cloudflare production deployment request
 Target: main
-Reason: Ship PR #199 procedural generated-player headshot overhaul: cleaner studio portraits, wider seed-based facial variety, proper sleeveless basketball jersey necklines/armholes, team wordmarks and colors; faces stay constant across trades.
-Merged feature commit: 43b1b21b1222e001af0fc2d50ef0cf0f6d03a91e
-Validation: Repository CI passed; generated identity/jersey tests passed; Franchise Lab Playwright browser, balance and fidelity checks passed. Broad gameplay simulation was still running draft-accessibility checks at time of merge.
+Reason: Ship validated Franchise Lab fullscreen navigation fix and persistent team-color site atmosphere, integrated from PR #198 via release PR #203. Also fix missing Nique Clifford name in contract-surplus rankings during payroll snapshot lag.
+Merged feature commit: 7d210703e31fe3717031a2f36bd90f4aacbe8947
+Validation: CI success (42942075754); Franchise Lab success (42942075774); Cursor runtime parity success (42942075776). All checks ran on exact integrated commit.
 Data safety: Code-only production release; preserve freshest runtime NBA snapshots using existing deployment guards. No feature branch deploy.
