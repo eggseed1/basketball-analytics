@@ -1,0 +1,512 @@
+{
+  "version": 1,
+  "sourceModel": "fal-ai/flux-2",
+  "sourceRunId": 43035986031,
+  "status": "pilot",
+  "outputSize": [
+    512,
+    512
+  ],
+  "images": [
+    {
+      "id": "v3-01",
+      "portrait": "v3-01.webp",
+      "jerseyMask": "v3-01-jersey-mask.webp",
+      "sourceSha256": "13621e8f4c1bd2a1e4287d7afcde2074f61da9c12daae70b2f4329c73009f330",
+      "sourceSeed": 906700,
+      "sourceDescription": "A 27-year-old Black American adult with deep brown skin, square face with strong jaw, straight prominent nose, prominent ears, tight buzz cut, faint mustache or light stubble, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 24190,
+      "maskBytes": 3044
+    },
+    {
+      "id": "v3-02",
+      "portrait": "v3-02.webp",
+      "jerseyMask": "v3-02-jersey-mask.webp",
+      "sourceSha256": "78911b9b88da65f96b85eaeda06d7304855cda9f3c678ca489e0c5bb069682ef",
+      "sourceSeed": 907709,
+      "sourceDescription": "A 28-year-old East Asian adult with light to medium skin, long oval face, slightly asymmetric nose, long chin, short naturally wavy hair, short trimmed goatee, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19166,
+      "maskBytes": 3210
+    },
+    {
+      "id": "v3-03",
+      "portrait": "v3-03.webp",
+      "jerseyMask": "v3-03-jersey-mask.webp",
+      "sourceSha256": "88819102a1dde737f934ea4d31dc036cd6062aff4de2e586869a96eb607dc666",
+      "sourceSeed": 908718,
+      "sourceDescription": "A 21-year-old mixed Black and white adult with medium light brown skin, square face with strong jaw, blunt nose tip, high cheekbones, medium-length neat braids, close short beard, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 22668,
+      "maskBytes": 3630
+    },
+    {
+      "id": "v3-04",
+      "portrait": "v3-04.webp",
+      "jerseyMask": "v3-04-jersey-mask.webp",
+      "sourceSha256": "23e73f1c716d902ff0fc9d231c7aa299e7ab0cfb2ef04e77dffceee3b0f2dce0",
+      "sourceSeed": 909727,
+      "sourceDescription": "A 26-year-old Latino adult with olive or tan skin, round broad face, hooked nose, low cheekbones, short straight natural textured hair, clean-shaven, small mole on one cheek. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 17992,
+      "maskBytes": 3574
+    },
+    {
+      "id": "v3-05",
+      "portrait": "v3-05.webp",
+      "jerseyMask": "v3-05-jersey-mask.webp",
+      "sourceSha256": "2bcd28d3b35ef9481306f577c97f6d6acbcaac119253adae608fe8d31abafc91",
+      "sourceSeed": 910736,
+      "sourceDescription": "A 23-year-old white European adult with fair skin, narrow angular face, wide rounded nose, close-set eyes, cropped natural coils, short trimmed goatee, slightly uneven eyebrows. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 17350,
+      "maskBytes": 3476
+    },
+    {
+      "id": "v3-06",
+      "portrait": "v3-06.webp",
+      "jerseyMask": "v3-06-jersey-mask.webp",
+      "sourceSha256": "7dc82a9a61c7ff07f814303125ac2b4cfe8c81feccfe994bd7c2cc7c0799de05",
+      "sourceSeed": 911745,
+      "sourceDescription": "A 28-year-old white European adult with fair skin, square face with strong jaw, broad low-bridge nose, high cheekbones, short low taper fade, clean-shaven, subtle freckles. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 16454,
+      "maskBytes": 3370
+    },
+    {
+      "id": "v3-07",
+      "portrait": "v3-07.webp",
+      "jerseyMask": "v3-07-jersey-mask.webp",
+      "sourceSha256": "8393b66fae1bf5023118268d3d36931d003a47e228973dd9258f2ec2f5369bd5",
+      "sourceSeed": 912754,
+      "sourceDescription": "A 31-year-old Black American adult with deep brown skin, rectangular face with pronounced forehead, wide rounded nose, asymmetric eyebrows, short naturally wavy hair, clean-shaven, slightly uneven eyebrows. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 21768,
+      "maskBytes": 3176
+    },
+    {
+      "id": "v3-08",
+      "portrait": "v3-08.webp",
+      "jerseyMask": "v3-08-jersey-mask.webp",
+      "sourceSha256": "0c289f0b6f74fc5b4db5932912b7c45a945ac03fe93f57dee393a28eb0af4e9f",
+      "sourceSeed": 913763,
+      "sourceDescription": "A 22-year-old Middle Eastern adult with olive skin, rectangular face with pronounced forehead, hooked nose, close-set eyes, cropped natural coils, faint mustache or light stubble, mild under-eye creases. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 21056,
+      "maskBytes": 2728
+    },
+    {
+      "id": "v3-09",
+      "portrait": "v3-09.webp",
+      "jerseyMask": "v3-09-jersey-mask.webp",
+      "sourceSha256": "8427e2c244e206d19265f640837cd76a3b10ac04e8015a61d1b35a8c7435751f",
+      "sourceSeed": 914772,
+      "sourceDescription": "A 23-year-old Black American adult with medium brown skin, long oval face, hooked nose, strong brow ridge, short straight natural textured hair, clean-shaven, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19934,
+      "maskBytes": 3940
+    },
+    {
+      "id": "v3-10",
+      "portrait": "v3-10.webp",
+      "jerseyMask": "v3-10-jersey-mask.webp",
+      "sourceSha256": "a75c153c6d4b85c55258f388c2a5014a1c7a3584e7d412fc4c0424a194897ed7",
+      "sourceSeed": 915781,
+      "sourceDescription": "A 28-year-old Black American adult with medium brown skin, diamond face with prominent cheekbones, narrow high-bridge nose, high cheekbones, short-to-medium natural curls, clean-shaven, small mole on one cheek. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 20410,
+      "maskBytes": 2644
+    },
+    {
+      "id": "v3-11",
+      "portrait": "v3-11.webp",
+      "jerseyMask": "v3-11-jersey-mask.webp",
+      "sourceSha256": "16ac88ee5b7ae12741d2006ca7119eafcc9861974b4706e02ea4c15e7871f535",
+      "sourceSeed": 916790,
+      "sourceDescription": "A 25-year-old Black American adult with deep brown skin, soft triangular face with tapered chin, narrow high-bridge nose, thick straight eyebrows, cropped natural coils, close short beard, slightly uneven eyebrows. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 23580,
+      "maskBytes": 3226
+    },
+    {
+      "id": "v3-12",
+      "portrait": "v3-12.webp",
+      "jerseyMask": "v3-12-jersey-mask.webp",
+      "sourceSha256": "8aa52f0cd2e21590ce4cc8bf0b0913543f3a2dd6bd2de801d73ac03fad7342c4",
+      "sourceSeed": 917799,
+      "sourceDescription": "A 26-year-old South Asian adult with medium brown skin, narrow angular face, broad low-bridge nose, long chin, clean-shaven scalp, short trimmed goatee, faint acne marks. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 18522,
+      "maskBytes": 3520
+    },
+    {
+      "id": "v3-13",
+      "portrait": "v3-13.webp",
+      "jerseyMask": "v3-13-jersey-mask.webp",
+      "sourceSha256": "a8ffd6b346207e2fa142014bf64b2f590852cd4f1ecb563cf72b71930c8aeedc",
+      "sourceSeed": 918808,
+      "sourceDescription": "A 27-year-old East Asian adult with light to medium skin, narrow angular face, narrow high-bridge nose, large expressive eyes, short naturally wavy hair, faint mustache or light stubble, subtle freckles. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 18410,
+      "maskBytes": 2576
+    },
+    {
+      "id": "v3-14",
+      "portrait": "v3-14.webp",
+      "jerseyMask": "v3-14-jersey-mask.webp",
+      "sourceSha256": "3b6427cb2a8b02e8e369cd812655d2b482583576685fce07f19da0ce94f40c00",
+      "sourceSeed": 919817,
+      "sourceDescription": "A 32-year-old Middle Eastern adult with olive skin, rectangular face with pronounced forehead, long slightly crooked nose, strong brow ridge, short low taper fade, short trimmed goatee, subtle freckles. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19662,
+      "maskBytes": 3648
+    },
+    {
+      "id": "v3-15",
+      "portrait": "v3-15.webp",
+      "jerseyMask": "v3-15-jersey-mask.webp",
+      "sourceSha256": "dd52c8c37e49ade529e2544f84be2f21e8adcb367588b09e0af343d0d88734ef",
+      "sourceSeed": 920826,
+      "sourceDescription": "A 33-year-old East Asian adult with light to medium skin, narrow angular face, long broad nose, long chin, thinning hair with receding temples, faint mustache or light stubble, subtle freckles. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 16640,
+      "maskBytes": 3342
+    },
+    {
+      "id": "v3-16",
+      "portrait": "v3-16.webp",
+      "jerseyMask": "v3-16-jersey-mask.webp",
+      "sourceSha256": "b8d6e56611cdf626c44266666a90cac368b203428b6ef822ca1c230f2bf633cf",
+      "sourceSeed": 921835,
+      "sourceDescription": "A 30-year-old mixed Black and white adult with medium light brown skin, diamond face with prominent cheekbones, narrow high-bridge nose, prominent ears, medium-length neat braids, faint mustache or light stubble, visible smile lines. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 22808,
+      "maskBytes": 3304
+    },
+    {
+      "id": "v3-17",
+      "portrait": "v3-17.webp",
+      "jerseyMask": "v3-17-jersey-mask.webp",
+      "sourceSha256": "9d07b358645ad67d7316ea303c74446616bd225efbd46c9132fc2c9edfc48d10",
+      "sourceSeed": 922844,
+      "sourceDescription": "A 23-year-old Latino adult with olive or tan skin, square face with strong jaw, long slightly crooked nose, thick straight eyebrows, short naturally wavy hair, faint mustache or light stubble, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 22234,
+      "maskBytes": 2432
+    },
+    {
+      "id": "v3-18",
+      "portrait": "v3-18.webp",
+      "jerseyMask": "v3-18-jersey-mask.webp",
+      "sourceSha256": "dcd687e0dc4288da5ad9df23ac4920af05d2dc0deba82fa444982657f804f807",
+      "sourceSeed": 923853,
+      "sourceDescription": "A 36-year-old Latino adult with olive or tan skin, diamond face with prominent cheekbones, straight prominent nose, slightly hooded eyes, short low taper fade, clean-shaven, faint acne marks. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19084,
+      "maskBytes": 3046
+    },
+    {
+      "id": "v3-19",
+      "portrait": "v3-19.webp",
+      "jerseyMask": "v3-19-jersey-mask.webp",
+      "sourceSha256": "9f301d57c13dc9ac6c94fb9b33d04e93d5779dbaa76313e90de13253560d2b09",
+      "sourceSeed": 924862,
+      "sourceDescription": "A 29-year-old Latino adult with olive or tan skin, diamond face with prominent cheekbones, long broad nose, large expressive eyes, short low taper fade, close short beard, minor realistic skin texture variation. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 18004,
+      "maskBytes": 3056
+    },
+    {
+      "id": "v3-20",
+      "portrait": "v3-20.webp",
+      "jerseyMask": "v3-20-jersey-mask.webp",
+      "sourceSha256": "4bb6b853f93ec81a06f8356f65418e0313309c98159bb0abc292db085ff124c2",
+      "sourceSeed": 925871,
+      "sourceDescription": "A 30-year-old white European adult with fair skin, round broad face, long broad nose, asymmetric eyebrows, short-to-medium natural curls, clean-shaven, slightly uneven eyebrows. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 22032,
+      "maskBytes": 3360
+    },
+    {
+      "id": "v3-21",
+      "portrait": "v3-21.webp",
+      "jerseyMask": "v3-21-jersey-mask.webp",
+      "sourceSha256": "cbcd33ee0dc336b907266f92ba8d5397bfae7f308294e920048bf305b4c17109",
+      "sourceSeed": 926880,
+      "sourceDescription": "A 19-year-old South Asian adult with medium brown skin, diamond face with prominent cheekbones, blunt nose tip, close-set eyes, shoulder-length locs, clean-shaven, subtle freckles. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 25334,
+      "maskBytes": 2494
+    },
+    {
+      "id": "v3-22",
+      "portrait": "v3-22.webp",
+      "jerseyMask": "v3-22-jersey-mask.webp",
+      "sourceSha256": "c1158801f24438f7e218b8760df596f7064303642b9048a9bba70083d9644690",
+      "sourceSeed": 927889,
+      "sourceDescription": "A 34-year-old Black American adult with medium brown skin, diamond face with prominent cheekbones, short broad nose, strong brow ridge, medium-length neat braids, clean-shaven, mild under-eye creases. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 25530,
+      "maskBytes": 2680
+    },
+    {
+      "id": "v3-23",
+      "portrait": "v3-23.webp",
+      "jerseyMask": "v3-23-jersey-mask.webp",
+      "sourceSha256": "c7e5b4786b63a80809a8142f79d6d426a820c330eddd0fbcb5dc269c7bc13a4d",
+      "sourceSeed": 928898,
+      "sourceDescription": "A 25-year-old Southeast Asian adult with warm tan skin, long oval face, wide rounded nose, strong brow ridge, shoulder-length locs, clean-shaven, slightly uneven eyebrows. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 25082,
+      "maskBytes": 3592
+    },
+    {
+      "id": "v3-24",
+      "portrait": "v3-24.webp",
+      "jerseyMask": "v3-24-jersey-mask.webp",
+      "sourceSha256": "f02b36fde52e92c29d8c1192d8dee5efb099925b5eca41f43ede6b8630a17d6f",
+      "sourceSeed": 929907,
+      "sourceDescription": "A 30-year-old South Asian adult with medium brown skin, rectangular face with pronounced forehead, long broad nose, large expressive eyes, tight buzz cut, faint mustache or light stubble, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 20748,
+      "maskBytes": 2716
+    },
+    {
+      "id": "v3-25",
+      "portrait": "v3-25.webp",
+      "jerseyMask": "v3-25-jersey-mask.webp",
+      "sourceSha256": "6277b27873e893ecfac87964f62a3b0a8a34751576b26d1be8a1bce7d20558ce",
+      "sourceSeed": 930916,
+      "sourceDescription": "A 23-year-old white European adult with fair skin, long oval face, short broad nose, prominent ears, cropped natural coils, full natural beard, visible smile lines. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 23016,
+      "maskBytes": 3868
+    },
+    {
+      "id": "v3-26",
+      "portrait": "v3-26.webp",
+      "jerseyMask": "v3-26-jersey-mask.webp",
+      "sourceSha256": "13332dbfed47d165ae5bca6748ec79a95b14edce9b2bc7e3d9fc93037f3f9061",
+      "sourceSeed": 931925,
+      "sourceDescription": "A 20-year-old Black American adult with deep brown skin, round broad face, long broad nose, slightly hooded eyes, loose shoulder-length wavy hair, clean-shaven, faint acne marks. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 24280,
+      "maskBytes": 2596
+    },
+    {
+      "id": "v3-27",
+      "portrait": "v3-27.webp",
+      "jerseyMask": "v3-27-jersey-mask.webp",
+      "sourceSha256": "c85e55a0cee6a2390732459c2564db51743bc70db417f9f7cadf2fa77feba8d4",
+      "sourceSeed": 932934,
+      "sourceDescription": "A 25-year-old Latino adult with olive or tan skin, rectangular face with pronounced forehead, wide rounded nose, close-set eyes, short-to-medium natural curls, faint mustache or light stubble, mild under-eye creases. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 22736,
+      "maskBytes": 2556
+    },
+    {
+      "id": "v3-28",
+      "portrait": "v3-28.webp",
+      "jerseyMask": "v3-28-jersey-mask.webp",
+      "sourceSha256": "11eb77977efafb9388283a50a8db66e5172e3c6eb24447980ea5f8f966f968ce",
+      "sourceSeed": 933943,
+      "sourceDescription": "A 30-year-old white European adult with fair skin, narrow angular face, straight prominent nose, asymmetric eyebrows, shoulder-length locs, clean-shaven, faint acne marks. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 23648,
+      "maskBytes": 2988
+    },
+    {
+      "id": "v3-29",
+      "portrait": "v3-29.webp",
+      "jerseyMask": "v3-29-jersey-mask.webp",
+      "sourceSha256": "b9ee4fc61601d6b8768cc146209128be41822ee26c96d6bd51856acb542ab07c",
+      "sourceSeed": 934952,
+      "sourceDescription": "A 35-year-old Southeast Asian adult with warm tan skin, square face with strong jaw, slightly asymmetric nose, prominent ears, thinning hair with receding temples, faint mustache or light stubble, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19716,
+      "maskBytes": 2922
+    },
+    {
+      "id": "v3-30",
+      "portrait": "v3-30.webp",
+      "jerseyMask": "v3-30-jersey-mask.webp",
+      "sourceSha256": "a29d9d1613b2a23d80bc27028b9a4356e46038642efd067d4c01693730a19070",
+      "sourceSeed": 935961,
+      "sourceDescription": "A 20-year-old East Asian adult with light to medium skin, long oval face, slightly asymmetric nose, slightly hooded eyes, short low taper fade, clean-shaven, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 14318,
+      "maskBytes": 3026
+    },
+    {
+      "id": "v3-31",
+      "portrait": "v3-31.webp",
+      "jerseyMask": "v3-31-jersey-mask.webp",
+      "sourceSha256": "8ed874d40bf2d20d079ee0d2353a9517ed42875ac1d705012bd19b366707b1e5",
+      "sourceSeed": 936970,
+      "sourceDescription": "A 25-year-old Middle Eastern adult with olive skin, soft triangular face with tapered chin, narrow high-bridge nose, long chin, tight buzz cut, close short beard, subtle natural facial asymmetry. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19066,
+      "maskBytes": 2948
+    },
+    {
+      "id": "v3-32",
+      "portrait": "v3-32.webp",
+      "jerseyMask": "v3-32-jersey-mask.webp",
+      "sourceSha256": "8033ce4d52cbd669e12cab0e4a7f8cf2ad46b1e3cdcadc20923f1fc3f5fce648",
+      "sourceSeed": 937979,
+      "sourceDescription": "A 26-year-old East Asian adult with light to medium skin, round broad face, slightly asymmetric nose, close-set eyes, short straight natural textured hair, close short beard, minor realistic skin texture variation. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 17378,
+      "maskBytes": 3498
+    },
+    {
+      "id": "v3-33",
+      "portrait": "v3-33.webp",
+      "jerseyMask": "v3-33-jersey-mask.webp",
+      "sourceSha256": "4cf419d0d16e3d3c9d4b330c2efcc79179ef28e233f942306a86ba27bd398e47",
+      "sourceSeed": 938988,
+      "sourceDescription": "A 33-year-old Black American adult with deep brown skin, round broad face, hooked nose, low cheekbones, short straight natural textured hair, faint mustache or light stubble, faint acne marks. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 20726,
+      "maskBytes": 2748
+    },
+    {
+      "id": "v3-34",
+      "portrait": "v3-34.webp",
+      "jerseyMask": "v3-34-jersey-mask.webp",
+      "sourceSha256": "c2f7c731414be6d700afd852d56c90348bbdc25a132a675abc662ac1d5e9aa7c",
+      "sourceSeed": 939997,
+      "sourceDescription": "A 28-year-old white European adult with fair skin, rectangular face with pronounced forehead, broad low-bridge nose, low cheekbones, short straight natural textured hair, faint mustache or light stubble, small mole on one cheek. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 16378,
+      "maskBytes": 3598
+    },
+    {
+      "id": "v3-35",
+      "portrait": "v3-35.webp",
+      "jerseyMask": "v3-35-jersey-mask.webp",
+      "sourceSha256": "c8bf673bfe2808fd0d029d8344de411512646bf5e58960301e0fbdb3541ca18d",
+      "sourceSeed": 941006,
+      "sourceDescription": "A 21-year-old Black American adult with medium brown skin, diamond face with prominent cheekbones, hooked nose, large expressive eyes, tight buzz cut, clean-shaven, faint acne marks. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 20442,
+      "maskBytes": 2620
+    },
+    {
+      "id": "v3-36",
+      "portrait": "v3-36.webp",
+      "jerseyMask": "v3-36-jersey-mask.webp",
+      "sourceSha256": "63ad93edb2ab371997064d704736c20854fa3959a1540b38e39cbe3fca3a02ae",
+      "sourceSeed": 942015,
+      "sourceDescription": "A 22-year-old Black American adult with medium brown skin, long oval face, long slightly crooked nose, low cheekbones, short-to-medium natural curls, close short beard, mild under-eye creases. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 20830,
+      "maskBytes": 3368
+    },
+    {
+      "id": "v3-37",
+      "portrait": "v3-37.webp",
+      "jerseyMask": "v3-37-jersey-mask.webp",
+      "sourceSha256": "f7ef3c706a08ce2f222b5202b1631fe1f7d6461f6e7b8c1635f5a290966bb057",
+      "sourceSeed": 943024,
+      "sourceDescription": "A 31-year-old Black American adult with deep brown skin, square face with strong jaw, broad low-bridge nose, large expressive eyes, cropped natural coils, clean-shaven, faint acne marks. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 23248,
+      "maskBytes": 2250
+    },
+    {
+      "id": "v3-38",
+      "portrait": "v3-38.webp",
+      "jerseyMask": "v3-38-jersey-mask.webp",
+      "sourceSha256": "9e01e0928827361934c82a4c02d8631f9e3fffbb1ceef4eb54a27c6a63dc4413",
+      "sourceSeed": 944033,
+      "sourceDescription": "A 20-year-old Black American adult with deep brown skin, soft triangular face with tapered chin, slightly asymmetric nose, slightly hooded eyes, cropped natural coils, faint mustache or light stubble, slightly uneven eyebrows. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 16840,
+      "maskBytes": 2690
+    },
+    {
+      "id": "v3-39",
+      "portrait": "v3-39.webp",
+      "jerseyMask": "v3-39-jersey-mask.webp",
+      "sourceSha256": "1ad6cf1c01e3944ccf1fe2cc1db65dbfbb20ae84296f03998afe9f6ce7e70d38",
+      "sourceSeed": 945042,
+      "sourceDescription": "A 25-year-old Black American adult with deep brown skin, soft triangular face with tapered chin, straight prominent nose, high cheekbones, cropped natural coils, close short beard, minor realistic skin texture variation. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 22200,
+      "maskBytes": 3400
+    },
+    {
+      "id": "v3-40",
+      "portrait": "v3-40.webp",
+      "jerseyMask": "v3-40-jersey-mask.webp",
+      "sourceSha256": "109c075bd4150daeda87fc141784067f6b9e688c84beabe67f28f5eaf596a39d",
+      "sourceSeed": 946051,
+      "sourceDescription": "A 22-year-old Latino adult with olive or tan skin, narrow angular face, wide rounded nose, high cheekbones, short low taper fade, clean-shaven, visible smile lines. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 20554,
+      "maskBytes": 4248
+    },
+    {
+      "id": "v3-41",
+      "portrait": "v3-41.webp",
+      "jerseyMask": "v3-41-jersey-mask.webp",
+      "sourceSha256": "6dd85732b66db0d5b81b03482b21bb352d1f90249841a135b2e6d992a039b465",
+      "sourceSeed": 947060,
+      "sourceDescription": "A 19-year-old Black American adult with deep brown skin, soft triangular face with tapered chin, long slightly crooked nose, asymmetric eyebrows, cropped natural coils, short trimmed goatee, minor realistic skin texture variation. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 23792,
+      "maskBytes": 2400
+    },
+    {
+      "id": "v3-42",
+      "portrait": "v3-42.webp",
+      "jerseyMask": "v3-42-jersey-mask.webp",
+      "sourceSha256": "20c3ffa93d98af54cbb64c8941707100b5f466723c467a7fca01ba3557b75762",
+      "sourceSeed": 948069,
+      "sourceDescription": "A 24-year-old Black American adult with deep brown skin, round broad face, blunt nose tip, strong brow ridge, short low taper fade, close short beard, small mole on one cheek. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19752,
+      "maskBytes": 4342
+    },
+    {
+      "id": "v3-43",
+      "portrait": "v3-43.webp",
+      "jerseyMask": "v3-43-jersey-mask.webp",
+      "sourceSha256": "792c5252629cd4c03772aee625e0d5d6918e03f106855fd1e1d8824ebf62dea7",
+      "sourceSeed": 949078,
+      "sourceDescription": "A 31-year-old white European adult with fair skin, narrow angular face, short broad nose, thick straight eyebrows, tight buzz cut, clean-shaven, mild under-eye creases. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 14174,
+      "maskBytes": 3150
+    },
+    {
+      "id": "v3-44",
+      "portrait": "v3-44.webp",
+      "jerseyMask": "v3-44-jersey-mask.webp",
+      "sourceSha256": "bdf89b7367fb2570fa54426a588c7f08fe97b51b7e0637642016aa1d440f2c87",
+      "sourceSeed": 950087,
+      "sourceDescription": "A 26-year-old white European adult with fair skin, round broad face, broad low-bridge nose, thick straight eyebrows, short straight natural textured hair, clean-shaven, slightly uneven eyebrows. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 15036,
+      "maskBytes": 3322
+    },
+    {
+      "id": "v3-45",
+      "portrait": "v3-45.webp",
+      "jerseyMask": "v3-45-jersey-mask.webp",
+      "sourceSha256": "d627e44dc8c750c63d044f5a524d90170530ca7db22eaef6fb98c935fca0e4fc",
+      "sourceSeed": 951096,
+      "sourceDescription": "A 23-year-old Southeast Asian adult with warm tan skin, long oval face, long slightly crooked nose, prominent ears, short-to-medium natural curls, clean-shaven, visible smile lines. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 18868,
+      "maskBytes": 2296
+    },
+    {
+      "id": "v3-46",
+      "portrait": "v3-46.webp",
+      "jerseyMask": "v3-46-jersey-mask.webp",
+      "sourceSha256": "af36b39c2e76973d0f54e331969eec0e8a96866a48454f30eb8b05117f5d376a",
+      "sourceSeed": 952105,
+      "sourceDescription": "A 28-year-old Black American adult with medium brown skin, soft triangular face with tapered chin, blunt nose tip, thick straight eyebrows, short naturally wavy hair, full natural beard, mild under-eye creases. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19938,
+      "maskBytes": 4248
+    },
+    {
+      "id": "v3-47",
+      "portrait": "v3-47.webp",
+      "jerseyMask": "v3-47-jersey-mask.webp",
+      "sourceSha256": "5525687b690a6b4d5e08f384f767f41ec147752f409066f8c38445bcb3a943f0",
+      "sourceSeed": 953114,
+      "sourceDescription": "A 29-year-old white European adult with fair skin, soft triangular face with tapered chin, straight prominent nose, asymmetric eyebrows, short low taper fade, short trimmed goatee, slightly uneven eyebrows. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 14554,
+      "maskBytes": 3286
+    },
+    {
+      "id": "v3-48",
+      "portrait": "v3-48.webp",
+      "jerseyMask": "v3-48-jersey-mask.webp",
+      "sourceSha256": "aca1555775fcae72de0a6b86a0426f3018ac562c89462326988a1e2be3becbd9",
+      "sourceSeed": 954123,
+      "sourceDescription": "A 22-year-old South Asian adult with medium brown skin, square face with strong jaw, short broad nose, slightly hooded eyes, short straight natural textured hair, faint mustache or light stubble, small mole on one cheek. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19650,
+      "maskBytes": 2370
+    },
+    {
+      "id": "v3-49",
+      "portrait": "v3-49.webp",
+      "jerseyMask": "v3-49-jersey-mask.webp",
+      "sourceSha256": "408b29c0d920dc67230ca12be01f79c268761ab8579af052e44540f897692b64",
+      "sourceSeed": 955132,
+      "sourceDescription": "A 19-year-old mixed Black and white adult with medium light brown skin, long oval face, blunt nose tip, low cheekbones, cropped natural coils, short trimmed goatee, visible smile lines. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19506,
+      "maskBytes": 3270
+    },
+    {
+      "id": "v3-50",
+      "portrait": "v3-50.webp",
+      "jerseyMask": "v3-50-jersey-mask.webp",
+      "sourceSha256": "d253f283e7b054bf90b21fdc2444c82fed6ee6c97c728c31cbf773f37abd6b42",
+      "sourceSeed": 956141,
+      "sourceDescription": "A 20-year-old Latino adult with olive or tan skin, square face with strong jaw, short broad nose, long chin, short naturally wavy hair, short trimmed goatee, mild under-eye creases. Natural hair coloring appropriate for the individual's appearance, not dyed red, orange, blond or blue.",
+      "portraitBytes": 19854,
+      "maskBytes": 3352
+    }
+  ]
+}
