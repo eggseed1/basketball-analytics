@@ -1,1 +1,1 @@
-Release 500-photo Franchise Lab player pool after verified PR #207 merge.
+User-authorized deploy: merged PR #207, 500 fictional headshots and jersey masks, verified 2026-11-11. Trigger Cloudflare Deploy site via direct repository commit.
