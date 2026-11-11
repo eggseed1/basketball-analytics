@@ -1,0 +1,94 @@
+name: Release DRBL photographic player pool
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/photo-pool-release-request.txt'
+permissions:
+  contents: write
+  actions: read
+  pull-requests: write
+concurrency:
+  group: drbl-photo-pool-release
+  cancel-in-progress: false
+jobs:
+  verify-merge-and-deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Check exact PR, head branch and static image count
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr view 207 --json number,state,headRefName,baseRefName --jq 'select(.number==207 and .state=="OPEN" and .headRefName=="feat/gm-generated-photo-pool-20261111" and .baseRefName=="main") | .number' | grep -qx 207
+          git fetch origin feat/gm-generated-photo-pool-20261111
+          git checkout --detach FETCH_HEAD
+          python - <<'PY'
+          import json,re,pathlib
+          text=pathlib.Path('src/gm/lib/generated-photo-pool-catalog.ts').read_text()
+          ids=re.findall(r'v3-\d+',text)
+          assert len(ids)>=470 and len(ids)==len(set(ids)),(len(ids),len(set(ids)))
+          for id in ids:
+            assert pathlib.Path(f'public/gm/portraits/{id}.webp').is_file(),id
+            assert pathlib.Path(f'public/gm/portraits/{id}-jersey-mask.webp').is_file(),id
+          print('Validated photo count:',len(ids))
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Release-level type and persistence checks
+        run: |
+          npm run typecheck
+          npm run test:franchise-photo-pool
+          npm run test:franchise-generated-identity
+          npm run test:franchise-generated-jersey
+      - name: Verify required CI checks on exact current feature head
+        shell: bash
+        run: |
+          set -euo pipefail
+          head=$(git rev-parse HEAD)
+          echo "Checking release SHA $head"
+          gh api "repos/$GH_REPO/actions/runs?head_sha=$head&per_page=100" > /tmp/photo-checks.json
+          python - <<'PY'
+          import json,sys
+          runs=json.load(open('/tmp/photo-checks.json'))['workflow_runs']
+          required=['CI','Franchise generated identities','Franchise Lab','Franchise continuous five-year simulation','Cursor runtime parity check']
+          bad=[]
+          for name in required:
+            match=[r for r in runs if r['name']==name and r['event']=='pull_request']
+            if not match or match[0]['status']!='completed' or match[0]['conclusion']!='success':
+              bad.append((name,[(m['status'],m['conclusion']) for m in match[:2]]))
+          if bad:
+            print('Release blocked by incomplete or failed checks:',bad)
+            sys.exit(1)
+          print('All required checks passed')
+          PY
+      - name: Merge PR using GitHub native PR merge API
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr ready 207 || true
+          gh api -X PUT "repos/$GH_REPO/pulls/207/merge" -f merge_method=merge -f commit_title='Merge photographic player identity pool into Franchise Lab'
+      - name: Trigger standard Cloudflare deploy from latest main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git checkout -B main origin/main
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          printf 'Release DRBL photographic player pool PR #207 after validated merge.\n' > .github/deploy-request.txt
+          git add .github/deploy-request.txt
+          git commit -m 'deploy: ship photographic Franchise Lab player pool'
+          git push origin HEAD:main
