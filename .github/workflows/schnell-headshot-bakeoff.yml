@@ -1,0 +1,52 @@
+name: DRBL FLUX Schnell first portrait bakeoff
+
+# This initial workflow push triggers one inexpensive 12-image batch.
+# Later application commits do not re-run it. Rerun manually when requested.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/schnell-headshot-bakeoff.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: schnell-portrait-bakeoff
+  cancel-in-progress: false
+
+jobs:
+  generate-review:
+    name: Generate 12 fictional headshots and review sheet
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm secret configured
+        shell: bash
+        run: |
+          if [ -z "$FAL_KEY" ]; then
+            echo "::error::Missing FAL_KEY GitHub repository secret"
+            exit 1
+          fi
+          echo "FAL_KEY is configured (value never printed)."
+      - name: Verify model, prompts, seeds and cost limit without spending
+        run: node scripts/generate-schnell-headshot-bakeoff.mjs
+      - name: Call fal-ai/flux/schnell (12 x 960px, estimated $0.036)
+        run: node scripts/generate-schnell-headshot-bakeoff.mjs --execute
+      - name: Upload portrait ZIP and HTML contact sheet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-schnell-first-bakeoff
+          path: portrait-bakeoff-output/
+          if-no-files-found: warn
+          retention-days: 14
