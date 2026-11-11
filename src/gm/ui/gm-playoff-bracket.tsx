@@ -23,8 +23,8 @@ export function GmPlayoffBracket({ league, controls = false }: { league: GmLeagu
   const finish = useGmStore(state => state.simRestOfPlayoffs);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const selected = series.find(s => s.id === selectedId) ?? series.find(s => !s.done && (s.teamAId === league.userTeamId || s.teamBId === league.userTeamId)) ?? finals;
   const finals = series.find(s => s.conf === "Finals");
+  const selected = series.find(s => s.id === selectedId) ?? series.find(s => !s.done && (s.teamAId === league.userTeamId || s.teamBId === league.userTeamId)) ?? finals;
   const selectedBoxes = selected ? seriesGameBoxes(league, selected) : [];
   const openRound = Math.min(...series.filter(s => !s.done).map(s => s.round));
   const live = league.phase === "playoffs" && !league.champion;
