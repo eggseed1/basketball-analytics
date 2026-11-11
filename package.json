@@ -16,6 +16,7 @@
     "test:franchise-postseason": "tsx scripts/test-gm-postseason.ts",
     "test:franchise-media": "tsx scripts/test-gm-player-identity.ts",
     "test:franchise-generated-identity": "tsx scripts/test-gm-generated-identity.ts",
+    "test:franchise-photo-pool": "tsx scripts/test-gm-photo-pool.ts",
     "test:franchise-generated-jersey": "tsx scripts/test-gm-generated-jersey.ts",
     "test:franchise-social": "tsx scripts/test-gm-social-timeline.ts",
     "test:franchise-rotations": "tsx scripts/test-gm-realistic-rotations.ts",

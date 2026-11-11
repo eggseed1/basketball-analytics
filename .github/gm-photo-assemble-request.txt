@@ -1,0 +1,1 @@
+Assembly only. All nine generated 50-image shards are present in GitHub Actions run 43083716218. Import 450 portraits as WebP assets and jersey masks, preserve the existing 50. This workflow must make no fal API calls and must incur no image-generation charges.

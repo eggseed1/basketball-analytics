@@ -1,0 +1,58 @@
+name: Assemble generated DRBL portraits without regeneration
+on:
+  push:
+    branches: [feat/gm-generated-photo-pool-20261111]
+    paths:
+      - '.github/gm-photo-assemble-request.txt'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: drbl-photo-assemble
+  cancel-in-progress: false
+jobs:
+  assemble:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download existing nine funded shard artifacts, no fal calls
+        shell: bash
+        run: |
+          set -euo pipefail
+          for shard in $(seq 0 8); do
+            mkdir -p ".portrait-parts/portrait-shard-$shard"
+            gh run download 43083716218 --name "portrait-shard-$shard" --dir ".portrait-parts/portrait-shard-$shard"
+          done
+      - name: Install image conversion dependencies
+        run: python -m pip install Pillow==11.2.1 numpy==2.2.6
+      - name: Convert originals and create static asset catalog
+        run: python scripts/assemble-gm-portrait-pool.py
+      - name: Upload contact sheet and manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-500-photo-pool-quality-review
+          path: |
+            public/gm/portraits/review-contact.jpg
+            public/gm/portraits/manifest.json
+          retention-days: 14
+      - name: Commit verified files without rerunning generation
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/gm/portraits/ src/gm/lib/generated-photo-pool-catalog.ts
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets(gm): add 450 fictional player photos to portrait library'
+            git push origin HEAD:feat/gm-generated-photo-pool-20261111
+          fi

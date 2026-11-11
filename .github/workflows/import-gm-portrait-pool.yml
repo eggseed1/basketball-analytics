@@ -1,0 +1,56 @@
+name: Import DRBL fictional portrait pilot assets
+on:
+  push:
+    branches:
+      - feat/gm-generated-photo-pool-20261111
+    paths:
+      - '.github/portrait-pool-import-request.txt'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: drbl-photo-pool-import
+  cancel-in-progress: false
+jobs:
+  import-assets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download previously generated and inspected FLUX.2 cohort
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          mkdir -p .portrait-source
+          gh run download 43035986031 --name drbl-fal-v3-50-independent-identities --dir .portrait-source
+          test -f .portrait-source/manifest.json
+          test -f .portrait-source/v3-01.jpg
+          test -f .portrait-source/v3-50.jpg
+      - name: Install image conversion dependencies
+        run: python -m pip install Pillow==11.2.1 numpy==2.2.6
+      - name: Convert approved pilot images and jersey-only masks to compact WebP
+        run: python scripts/import-gm-photographic-portraits.py
+      - name: Validate 50 unique image and mask paths
+        shell: bash
+        run: |
+          test "$(find public/gm/portraits -name 'v3-*.webp' | wc -l)" -eq 100
+          python -c 'import json; m=json.load(open("public/gm/portraits/manifest.json")); assert len(m["images"])==50; assert len({x["id"] for x in m["images"]})==50'
+      - name: Commit generated binary assets to the feature branch only
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/gm/portraits/
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets(gm): add 50 fictional portrait photos and team-jersey masks'
+            git push origin HEAD:feat/gm-generated-photo-pool-20261111
+          fi
