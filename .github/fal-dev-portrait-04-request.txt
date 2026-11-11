@@ -1,0 +1,1 @@
+User-authorized continuation of FLUX.2 Dev photographic portrait testing. Generate 12 identities x 2 prompt variants = 24 files, estimated cost $0.288, with QA, no production deploy. Compare baseline against less-retouched documentary style.
