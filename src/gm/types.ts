@@ -344,6 +344,8 @@ export interface GmPlayerIdentity {
   hometown: string;
   familyOriginCode?: string;
   portraitSeed: number;
+  /** Immutable pre-generated portrait slot, if the league assigned one. */
+  portraitPoolId?: number;
   temperament: string;
   interest: string;
 }
