@@ -1,0 +1,2 @@
+One-time user-requested lookup of organization IDs associated with the existing OPENAI_API_KEY secret.
+Read-only GET /v1/me; no paid image generation. IDs stored in temporary artifact, never printed to GitHub logs.
