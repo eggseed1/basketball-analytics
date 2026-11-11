@@ -1,0 +1,44 @@
+name: DRBL FLUX.2 Dev twelve-identity portrait QA
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/fal-dev-portrait-04-request.txt'
+permissions:
+  contents: read
+concurrency:
+  group: drbl-dev-portrait-validation-04
+  cancel-in-progress: false
+jobs:
+  portraits:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check FAL secret
+        run: test -n "$FAL_KEY"
+      - name: Confirm costs and profiles before run
+        run: node scripts/test-fal-dev-portrait-validation-04.mjs
+      - name: Generate 24 photographs (estimated $0.29)
+        run: node scripts/test-fal-dev-portrait-validation-04.mjs --execute
+      - name: Install image QA dependencies
+        run: python -m pip install Pillow==11.2.1
+      - name: Inspect crop proxies, background and image near-matches
+        run: python scripts/qa-fal-dev-portrait-validation-04.py
+      - name: Upload portraits and review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-dev-portrait-validation-04
+          path: fal-dev-portrait-validation-04/
+          if-no-files-found: warn
+          retention-days: 14
