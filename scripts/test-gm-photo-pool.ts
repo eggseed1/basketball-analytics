@@ -6,6 +6,11 @@ import {
   generatedPhotoJerseyMaskUrl,
 } from "../src/gm/lib/generated-photo-pool";
 import type { GmLeagueState, GmPlayer } from "../src/gm/types";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { GmPhotoPoolPortrait } from "../src/gm/ui/gm-photo-pool-portrait";
+import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { prepareFranchise } from "../src/gm/engine/franchise";
 
 const fakePlayer=(i:number,real=false): GmPlayer => ({
   id:real?String(9000+i):"prospect-photo-"+String(i).padStart(4,"0"),
@@ -66,4 +71,29 @@ const dupes=assignGeneratedPhotoPool(partial([
 ]));
 const active=dupes.players.map(p=>p.identity?.portraitPoolId).filter(Boolean);
 assert.equal(new Set(active).size,active.length,"legacy slot collision must be repaired deterministically");
-console.log("GM photo pool: unique assignments, migration, retirement, trades, pool exhaustion, asset allowlisting passed.");
+const prepared = prepareFranchise(createGeneratedLeague({userTeamId:"bos",season:2029,seed:20261111}));
+const humanRoster=prepared.players.filter(p=>p.teamId==="bos" && p.identity);
+assert.ok(humanRoster.length>10);
+assert.ok(humanRoster.every(p=>p.identity?.portraitPoolId),
+  "all generated starters on the human user's team must get photos first");
+const photograph=humanRoster[0]!;
+const html=(p:GmPlayer)=>renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{
+  player:p,name:p.name,size:"xl",
+}));
+const originalMarkup=html(photograph);
+assert.match(originalMarkup,/data-generated-photo="true"/);
+assert.match(originalMarkup,/data-generated-portrait="true"/);
+assert.match(originalMarkup,/data-portrait-version="photo-v1"/);
+assert.match(originalMarkup,/data-jersey-team="bos"/);
+assert.match(originalMarkup,/data-photo-jersey-tint="true"/);
+assert.ok(originalMarkup.includes(".webp"),"photo must use a static local WebP asset");
+const tradedMarkup=html({...photograph,teamId:"lal",age:38});
+assert.match(tradedMarkup,/data-jersey-team="lal"/);
+assert.notEqual(tradedMarkup,originalMarkup,"current team should change uniform accent");
+assert.ok(tradedMarkup.includes(generatedPhotoUrl(photograph.identity!.portraitPoolId)!),
+  "photo URL must remain unchanged through trade");
+const notAllocated=allocated.players.find(p=>p.id==="prospect-photo-0064")!;
+const fallback=renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{player:notAllocated,name:notAllocated.name,size:"sm"}));
+assert.match(fallback,/data-portrait-version="2"/,"unassigned players retain procedural fallback");
+console.log("GM photo pool: unique assignments, team priority, migration, retirement, trades, jersey recolor and fallback passed.");
+
