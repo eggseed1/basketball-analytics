@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Offline FLUX.1 Schnell bakeoff: 6 fictional players x 2 fixed prompt styles.
-// Intentional hard cap: 12 images, 1024-square each, approx $0.036 total at $0.003/MP.
+// Intentional hard cap: 12 images at 960x960 (<1 megapixel), approx $0.036 at $0.003/MP.
 import fs from "node:fs/promises";
 import path from "node:path";
 const OUT=path.resolve("portrait-bakeoff-output");
@@ -33,7 +33,7 @@ for(const job of jobs){
  const res=await fetch("https://fal.run/fal-ai/flux/schnell",{
    method:"POST",
    headers:{"Authorization":"Key "+process.env.FAL_KEY,"Content-Type":"application/json"},
-   body:JSON.stringify({prompt:job.prompt,image_size:"square_hd",num_inference_steps:4,guidance_scale:3.5,num_images:1,seed:job.seed,enable_safety_checker:true,output_format:"jpeg",acceleration:"none"}),
+   body:JSON.stringify({prompt:job.prompt,image_size:{width:960,height:960},num_inference_steps:4,guidance_scale:3.5,num_images:1,seed:job.seed,enable_safety_checker:true,output_format:"jpeg",acceleration:"none"}),
    signal:AbortSignal.timeout(120000)
  });
  if(!res.ok)throw Error("fal generation failed for "+job.file+": HTTP "+res.status);
