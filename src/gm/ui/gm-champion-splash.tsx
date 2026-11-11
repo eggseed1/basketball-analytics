@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { TeamLogo } from "@/components/brand/team-logo";
 import type { GmLeagueState } from "@/gm/types";
 import { overallOf } from "@/gm/engine/lineup";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export function GmChampionSplash({
   league,
@@ -28,6 +29,8 @@ export function GmChampionSplash({
   }
 
   const team = league.teams.find((row) => row.id === result.teamId);
+  const colors = resolveTeamBrand(result.teamId);
+  const confettiColors = [colors?.primary ?? "#facc15", colors?.secondary ?? "#ffffff", colors?.primary ?? "#facc15"];
   const mvp = league.players.find((row) => row.id === result.finalsMvpId);
   const yours = result.teamId === league.userTeamId;
   const seasonLabel = `${league.season - 1}–${String(league.season).slice(-2)}`;
@@ -39,6 +42,10 @@ export function GmChampionSplash({
   return (
     <section className="flex flex-col gap-4">
       <article className="sports-card relative overflow-hidden p-6 sm:p-10">
+        <style>{`@keyframes gm-title-confetti { 0% { transform: translate3d(0,-24px,0) rotate(0deg); opacity:0 } 10% { opacity:1 } 100% { transform: translate3d(var(--fall-x),620px,0) rotate(760deg); opacity:0 } }`}</style>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 overflow-hidden motion-reduce:hidden">
+          {Array.from({length:72},(_,i)=><span key={i} className="absolute top-0 block rounded-[1px]" style={{left:`${(i*37.7)%100}%`,width:i%3===0?7:5,height:i%4===0?13:9,backgroundColor:confettiColors[i%confettiColors.length],opacity:0,["--fall-x" as string]:`${((i*13)%85)-42}px`,animation:`gm-title-confetti ${3+(i%5)*0.6}s linear ${(i%12)*0.15}s 2`}} />)}
+        </div>
         <div
           className="pointer-events-none absolute inset-0"
           style={{
