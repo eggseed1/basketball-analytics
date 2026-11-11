@@ -1,0 +1,357 @@
+{
+  "version": 1,
+  "poolSize": 50,
+  "description": "Fictional DRBL media-day pilot images. 50-image cap, illustrated fallback for the rest. Individual assignments persist in player identity.",
+  "photos": [
+    {
+      "id": 1,
+      "file": "001.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-01.jpg"
+    },
+    {
+      "id": 2,
+      "file": "002.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-02.jpg"
+    },
+    {
+      "id": 3,
+      "file": "003.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-03.jpg"
+    },
+    {
+      "id": 4,
+      "file": "004.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-04.jpg"
+    },
+    {
+      "id": 5,
+      "file": "005.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-05.jpg"
+    },
+    {
+      "id": 6,
+      "file": "006.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-06.jpg"
+    },
+    {
+      "id": 7,
+      "file": "007.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-07.jpg"
+    },
+    {
+      "id": 8,
+      "file": "008.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-08.jpg"
+    },
+    {
+      "id": 9,
+      "file": "009.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-09.jpg"
+    },
+    {
+      "id": 10,
+      "file": "010.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-10.jpg"
+    },
+    {
+      "id": 11,
+      "file": "011.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-11.jpg"
+    },
+    {
+      "id": 12,
+      "file": "012.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-12.jpg"
+    },
+    {
+      "id": 13,
+      "file": "013.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-13.jpg"
+    },
+    {
+      "id": 14,
+      "file": "014.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-14.jpg"
+    },
+    {
+      "id": 15,
+      "file": "015.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-15.jpg"
+    },
+    {
+      "id": 16,
+      "file": "016.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-16.jpg"
+    },
+    {
+      "id": 17,
+      "file": "017.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-17.jpg"
+    },
+    {
+      "id": 18,
+      "file": "018.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-18.jpg"
+    },
+    {
+      "id": 19,
+      "file": "019.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-19.jpg"
+    },
+    {
+      "id": 20,
+      "file": "020.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-20.jpg"
+    },
+    {
+      "id": 21,
+      "file": "021.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-21.jpg"
+    },
+    {
+      "id": 22,
+      "file": "022.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-22.jpg"
+    },
+    {
+      "id": 23,
+      "file": "023.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-23.jpg"
+    },
+    {
+      "id": 24,
+      "file": "024.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-24.jpg"
+    },
+    {
+      "id": 25,
+      "file": "025.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-25.jpg"
+    },
+    {
+      "id": 26,
+      "file": "026.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-26.jpg"
+    },
+    {
+      "id": 27,
+      "file": "027.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-27.jpg"
+    },
+    {
+      "id": 28,
+      "file": "028.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-28.jpg"
+    },
+    {
+      "id": 29,
+      "file": "029.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-29.jpg"
+    },
+    {
+      "id": 30,
+      "file": "030.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-30.jpg"
+    },
+    {
+      "id": 31,
+      "file": "031.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-31.jpg"
+    },
+    {
+      "id": 32,
+      "file": "032.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-32.jpg"
+    },
+    {
+      "id": 33,
+      "file": "033.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-33.jpg"
+    },
+    {
+      "id": 34,
+      "file": "034.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-34.jpg"
+    },
+    {
+      "id": 35,
+      "file": "035.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-35.jpg"
+    },
+    {
+      "id": 36,
+      "file": "036.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-36.jpg"
+    },
+    {
+      "id": 37,
+      "file": "037.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-37.jpg"
+    },
+    {
+      "id": 38,
+      "file": "038.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-38.jpg"
+    },
+    {
+      "id": 39,
+      "file": "039.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-39.jpg"
+    },
+    {
+      "id": 40,
+      "file": "040.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-40.jpg"
+    },
+    {
+      "id": 41,
+      "file": "041.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-41.jpg"
+    },
+    {
+      "id": 42,
+      "file": "042.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-42.jpg"
+    },
+    {
+      "id": 43,
+      "file": "043.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-43.jpg"
+    },
+    {
+      "id": 44,
+      "file": "044.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-44.jpg"
+    },
+    {
+      "id": 45,
+      "file": "045.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-45.jpg"
+    },
+    {
+      "id": 46,
+      "file": "046.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-46.jpg"
+    },
+    {
+      "id": 47,
+      "file": "047.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-47.jpg"
+    },
+    {
+      "id": 48,
+      "file": "048.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-48.jpg"
+    },
+    {
+      "id": 49,
+      "file": "049.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-49.jpg"
+    },
+    {
+      "id": 50,
+      "file": "050.jpg",
+      "source": "FLUX.2 Dev v3 50-identity sample",
+      "reviewStatus": "pilot-unreviewed",
+      "sourceFile": "v3-50.jpg"
+    }
+  ]
+}
