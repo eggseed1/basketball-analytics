@@ -48,6 +48,8 @@ export function GmPhotoPoolPortrait({
   return (
     <span
       data-avatar={size}
+      data-generated-portrait="true"
+      data-portrait-version="photo-v1"
       data-generated-photo="true"
       data-photo-pool-id={portraitId}
       data-jersey-team={team.teamId ?? "free-agent"}
