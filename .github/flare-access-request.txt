@@ -1,0 +1,3 @@
+Request by user: test one portrait with gpt-image-2.6-flare, fallback gpt-image-2.5-flare only if blocked.
+Model: quality medium; 1024x1024; maximum 1 successful generation; no production deploy.
+Requested after GPT Image 1.5 HTTP 429 rate_limit_exceeded.
