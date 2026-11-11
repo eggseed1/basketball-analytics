@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-11",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-11T18:06:19.724Z",
+    "builtAt": "2026-11-11T22:46:43.156Z",
     "rosterPlayerCount": 501,
-    "headlinesScanned": 12973,
-    "latestHeadlineAt": "2026-11-11T18:00:55.000Z",
+    "headlinesScanned": 13075,
+    "latestHeadlineAt": "2026-11-11T22:45:52.000Z",
     "latestTransactionDate": "2026-11-10",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 8
+      "credibility": 16
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -224,6 +224,10 @@
     },
     "reporter:shams-charania-on": {
       "label": "Shams Charania. On (ESPN)",
+      "credibility": 18
+    },
+    "reporter:scott-kaplan": {
+      "label": "Scott Kaplan (ESPN)",
       "credibility": 18
     },
     "ledger:nba-player-movement": {
@@ -528,12 +532,13 @@
         "mv-cc10d92cf978bee0",
         "mv-2ea44a4bdf5240f9",
         "mv-fd7ac36f13f1a52a",
-        "mv-595659e5c96be45a"
+        "mv-595659e5c96be45a",
+        "mv-3fa306ae43f55f11"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-26T13:03:20.000Z",
-      "lastMeaningfulAt": "2026-10-29T03:36:46.000Z",
+      "lastMeaningfulAt": "2026-11-11T19:59:06.000Z",
       "linkedPlayerIds": [
         "3062679",
         "3136195",
@@ -692,12 +697,14 @@
         "mv-c4ca4d7a30da8f6e",
         "mv-3952e8efc7a5f9b5",
         "mv-5a471c460ab22b90",
-        "mv-f5dbf9ed7312b343"
+        "mv-f5dbf9ed7312b343",
+        "mv-ba88fd746573e7da",
+        "mv-647b51d52054fd78"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-10T06:09:20.000Z",
+      "lastMeaningfulAt": "2026-11-11T20:40:37.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -834,7 +841,7 @@
     {
       "id": "mv-trade-3155942-20261005",
       "headline": "Domantas Sabonis, Bronny James and others: trade talk",
-      "primaryClaimId": "mv-57d20a3caa662316",
+      "primaryClaimId": "mv-edf288a73d1a9f54",
       "claimIds": [
         "mv-981e58a85cc89efe",
         "mv-bf030a939aada1a7",
@@ -856,12 +863,13 @@
         "mv-8e5084f175548216",
         "mv-6b07b0efa7290757",
         "mv-0fb6483174f3f84d",
-        "mv-c846671c3c960ad4"
+        "mv-c846671c3c960ad4",
+        "mv-edf288a73d1a9f54"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-10T20:57:48.000Z",
+      "lastMeaningfulAt": "2026-11-11T21:35:44.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -1013,6 +1021,7 @@
         "mv-84902237e652ecd4",
         "mv-15bb50651c28783e",
         "mv-f42db6e154a2193d",
+        "mv-af1ac21a3d60fd3f",
         "mv-espn-tx-34855363e48984d2"
       ],
       "evidenceClass": "reported",
@@ -11901,6 +11910,108 @@
       "isOriginal": false
     },
     {
+      "id": "mv-af1ac21a3d60fd3f",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Karl-Anthony Towns Embracing 'Sacrifice' After Knicks Table Extension Talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-11T18:31:12.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288101/Karl-Anthony-Towns-Embracing-Sacrifice-After-Knicks-Table-Extension-Talks",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-3fa306ae43f55f11",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors linked to trade deadline move for 10X All-Star to pair with Stephen Curry",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-11T19:59:06.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/golden-state-warriors/news/warriors-trade-deadline-10x-all-star-pair-stephen-curry/071e1d0a73fac98204993755%3E",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ba88fd746573e7da",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Lakers Hit With Bad News on Potential Anthony Davis Trade Amid New Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-11T20:11:25.000Z",
+      "sourceId": "reporter:scott-kaplan",
+      "sourceLabel": "Heavy, citing Scott Kaplan (ESPN)",
+      "reporterLabel": "Scott Kaplan",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-anthony-davis-trade-news-report/",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-647b51d52054fd78",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Miami Heat Pivot to 2-Time All-Star as Kyrie Irving Trade Unlikely: Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-11T20:40:37.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/miami-heat/miami-heat-kyrie-irving-trade-zach/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-edf288a73d1a9f54",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Domantas Sabonis 0 Points Shows ‘Quiet Quitting’ on Kings in Trade Pursuit",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-11T21:35:44.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/sacramento-kings/domantas-sabonis-0-points-quiet-quitting-kings-trade/",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -13241,7 +13352,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-11T18:06:19.724Z"
+      "resolvedAt": "2026-11-11T22:46:43.156Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
