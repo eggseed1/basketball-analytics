@@ -1,0 +1,30 @@
+name: One-time private OpenAI organization lookup
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/openai-org-lookup-request.txt'
+permissions:
+  contents: read
+jobs:
+  lookup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Call OpenAI account endpoint privately
+        run: node scripts/diagnose-openai-orgs.mjs
+      - name: Upload private diagnostic artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: private-openai-organization-ids
+          path: private-org-diagnostic/organization-ids.json
+          if-no-files-found: warn
+          retention-days: 1
