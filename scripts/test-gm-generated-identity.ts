@@ -5,6 +5,7 @@ import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { generatedPlayerIdentity, withGeneratedPlayerIdentity, originLabel, portraitSeedForId } from "../src/gm/lib/generated-player-identity";
 import { generatedPortraitRecipe } from "../src/gm/ui/gm-generated-portrait";
 import { isFictionalGmPlayer } from "../src/gm/lib/player-portrait-ids";
+import { assignGmPhotoPortraits, gmPhotoPortraitPath, GM_PHOTO_PORTRAIT_POOL_SIZE } from "../src/gm/lib/generated-photo-pool";
 import type { GmPlayer } from "../src/gm/types";
 
 const fake=(id:string,pipeline:GmPlayer["pipeline"]="ncaa")=>({
@@ -64,6 +65,31 @@ assert.ok(countries.size>=15,"draft classes require meaningful geographic divers
 assert.ok(names.size>450,"the existing 24-by-22 mixed-name limitation must be gone");
 const sampleLeague=createGeneratedLeague({userTeamId:"bos",season:2029,seed:29});
 const generated=sampleLeague.players.filter(p=>p.id.startsWith("p_"));
+const photoAssigned=sampleLeague.players.filter(p=>p.identity?.portraitPoolId);
+assert.equal(photoAssigned.length,GM_PHOTO_PORTRAIT_POOL_SIZE,"pilot photos are exclusive and capped");
+assert.equal(new Set(photoAssigned.map(p=>p.identity!.portraitPoolId)).size,GM_PHOTO_PORTRAIT_POOL_SIZE,
+  "no duplicate portraits among active players or prospects");
+assert.ok(photoAssigned.some(p=>p.teamId===sampleLeague.userTeamId),"user roster receives pilot photos");
+assert.equal(sampleLeague.portraitPoolReserved?.length,GM_PHOTO_PORTRAIT_POOL_SIZE);
+assert.equal(gmPhotoPortraitPath(1),"/gm/generated-headshots/001.jpg");
+assert.equal(gmPhotoPortraitPath(50),"/gm/generated-headshots/050.jpg");
+assert.equal(gmPhotoPortraitPath(51),null);
+assert.equal(gmPhotoPortraitPath(0),null);
+assert.equal(assignGmPhotoPortraits(sampleLeague),sampleLeague,"assignment must be idempotent");
+const assignedPlayer=photoAssigned[0]!;
+const tradedLeague=assignGmPhotoPortraits({...sampleLeague,players:sampleLeague.players.map(p=>
+  p.id===assignedPlayer.id?{...p,teamId:"lal",age:p.age+4}:p
+)});
+assert.equal(tradedLeague.players.find(p=>p.id===assignedPlayer.id)?.identity?.portraitPoolId,
+  assignedPlayer.identity?.portraitPoolId,"photo identity must survive team changes");
+const retired=assignGmPhotoPortraits({...sampleLeague,players:sampleLeague.players.filter(p=>p.id!==assignedPlayer.id)});
+assert.ok(retired.portraitPoolReserved?.includes(assignedPlayer.identity!.portraitPoolId!),
+  "retirement must not release a historical face slot");
+const extra={...fake("p_new-rookie"),identity:generatedPlayerIdentity(fake("p_new-rookie")).identity};
+const crowded=assignGmPhotoPortraits({...sampleLeague,players:[...sampleLeague.players,extra]});
+assert.equal(crowded.players.find(p=>p.id===extra.id)?.identity?.portraitPoolId,undefined,
+  "unassigned players use illustrated fallback until the curated pool expands");
+
 assert.equal(generated.length,490);
 assert.ok(generated.every(p=>p.identity && p.identity.hometown.length>0));
 assert.equal(new Set(sampleLeague.players.map(p=>p.name)).size,sampleLeague.players.length,
