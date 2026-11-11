@@ -1,0 +1,101 @@
+name: Release DRBL 500-photo pool (asset-only bot commit)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/photo-pool-release-recovery-request.txt'
+permissions:
+  contents: write
+  actions: read
+  pull-requests: write
+concurrency:
+  group: drbl-500-photo-release-recovery
+  cancel-in-progress: false
+jobs:
+  check-merge-deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Confirm exact PR head and previous green code revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr view 207 --json number,state,headRefName,baseRefName --jq 'select(.number==207 and .state=="OPEN" and .headRefName=="feat/gm-generated-photo-pool-20261111" and .baseRefName=="main") | .number' | grep -qx 207
+          gh api "repos/$GH_REPO/pulls/207" --jq .head.sha | grep -qx 751884a64909be1a4dc26cd2ae295f40554a5b2e
+          gh api "repos/$GH_REPO/compare/91be16e4...751884a6" > /tmp/photo-assets-diff.json
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/photo-assets-diff.json'))
+          assert d['status']=='ahead' and d['ahead_by']==1, (d['status'],d['ahead_by'])
+          paths=[f['filename'] for f in d['files']]
+          assert len(paths)>=900,len(paths)
+          assert all(p.startswith('public/gm/portraits/') for p in paths)
+          assert all(p.endswith(('.webp','.jpg','.json')) for p in paths)
+          print('Verified exactly one asset-only commit, files:',len(paths))
+          PY
+          gh api "repos/$GH_REPO/actions/runs?head_sha=91be16e4&per_page=100" > /tmp/photo-green-checks.json
+          python - <<'PY'
+          import json
+          runs=json.load(open('/tmp/photo-green-checks.json'))['workflow_runs']
+          needed=['CI','Franchise generated identities','Franchise Lab','Franchise continuous five-year simulation','Cursor runtime parity check']
+          for name in needed:
+            matches=[x for x in runs if x['name']==name and x['event']=='pull_request' and x['conclusion']=='success']
+            assert matches, 'Missing prior green code check: '+name
+          print('All five required checks passed for the exact pre-assets code commit.')
+          PY
+          git fetch origin feat/gm-generated-photo-pool-20261111
+          git checkout --detach 751884a64909be1a4dc26cd2ae295f40554a5b2e
+      - name: Verify 500 unique photo/mask asset pairs
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib,re,json
+          root=pathlib.Path('public/gm/portraits')
+          text=pathlib.Path('src/gm/lib/generated-photo-pool-catalog.ts').read_text()
+          ids=re.findall(r'"(v3-\d+)"',text)
+          assert len(ids)==500 and len(set(ids))==500
+          for i in ids:
+            for suffix in ('.webp','-jersey-mask.webp'):
+              f=root/(i+suffix)
+              assert f.is_file() and f.stat().st_size>100, str(f)
+          manifest=json.loads((root/'manifest.json').read_text())
+          print('Verified catalog, 500 photo/mask pairs; manifest type:',type(manifest).__name__)
+          PY
+      - name: Install project dependencies
+        run: npm ci
+      - name: Recheck full feature head - type and photo identity tests
+        run: |
+          npm run typecheck
+          npm run test:franchise-photo-pool
+          npm run test:franchise-generated-identity
+          npm run test:franchise-generated-jersey
+      - name: Native merge via GitHub PR API
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr ready 207 || true
+          gh api -X PUT "repos/$GH_REPO/pulls/207/merge" -f merge_method=merge -f sha=751884a64909be1a4dc26cd2ae295f40554a5b2e -f commit_title='Merge 500-player photographic portrait pool into Franchise Lab'
+      - name: Trigger existing Cloudflare site deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git checkout -B main origin/main
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          printf 'Release 500-photo Franchise Lab player pool after verified PR #207 merge.\n' > .github/deploy-request.txt
+          git add .github/deploy-request.txt
+          git commit -m 'deploy: ship validated 500-player photo pool'
+          git push origin HEAD:main
