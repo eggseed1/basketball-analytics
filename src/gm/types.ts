@@ -344,6 +344,8 @@ export interface GmPlayerIdentity {
   hometown: string;
   familyOriginCode?: string;
   portraitSeed: number;
+  /** Immutable slot in the optional curated fictional photo library. */
+  portraitPoolId?: string;
   temperament: string;
   interest: string;
 }
@@ -1076,6 +1078,8 @@ export interface GmSeasonFlow {
 }
 
 export interface GmLeagueState {
+  /** Save-persistent reservations prevent photo reuse, including after retirement. */
+  portraitPoolReservations?: Record<string, string>;
   seasonFlow?: GmSeasonFlow;
   /** Summer's cap year, separate from the completed playing season. */
   financialSeason?: number;
