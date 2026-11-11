@@ -1,0 +1,46 @@
+name: Build pilot GM fictional portrait pool assets
+on:
+  push:
+    branches:
+      - feat/gm-generated-photo-portrait-pool-20261111
+    paths:
+      - .github/portrait-pool-assets-request.txt
+permissions:
+  actions: read
+  contents: write
+jobs:
+  import-assets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download generated face cohort artifact from earlier verified run
+        uses: actions/download-artifact@v4
+        with:
+          name: drbl-fal-v3-50-independent-identities
+          run-id: 43035986031
+          github-token: ${{ github.token }}
+          path: portrait-import-source
+      - name: Install PIL
+        run: python -m pip install Pillow==11.2.1
+      - name: Convert original portraits to small static JPGs
+        run: python scripts/import-fal-photo-pilot.py
+      - name: Verify exact images were written
+        shell: bash
+        run: |
+          count=$(find public/gm/generated-headshots -maxdepth 1 -name '*.jpg' | wc -l)
+          if [ "$count" -ne 50 ]; then echo "Expected 50 photos, found $count"; exit 1; fi
+      - name: Commit generated photo assets to feature branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/gm/generated-headshots/
+          git diff --cached --quiet && exit 0
+          git commit -m 'assets(gm): add compressed 50-player FLUX.2 Dev photo pilot'
+          git push origin HEAD:feat/gm-generated-photo-portrait-pool-20261111
