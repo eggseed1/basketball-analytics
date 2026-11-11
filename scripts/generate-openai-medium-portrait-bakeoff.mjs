@@ -70,7 +70,19 @@ for(const job of jobs){
     body:JSON.stringify({model:MODEL,quality:QUALITY,size:SIZE,n:1,output_format:"jpeg",output_compression:92,background:"opaque",prompt:job.prompt}),
     signal:AbortSignal.timeout(180000)
   });
-  if(!res.ok) throw Error(`Image generation failed at ${job.id} (HTTP ${res.status}). Check API balance, model access, and OpenAI API usage limits. No sensitive response data printed.`);
+  if(!res.ok) {
+    // Only disclose predefined public OpenAI error codes; never echo response body,
+    // API key, request headers, organization/project IDs, or free-form messages.
+    let code="unknown";
+    let type="unknown";
+    try {
+      const body=await res.json();
+      const candidates=["insufficient_quota","billing_hard_limit_reached","rate_limit_exceeded","image_generation_user_error","invalid_api_key","organization_verification_required","model_not_found","model_not_supported"];
+      if(candidates.includes(body?.error?.code)) code=body.error.code;
+      if(candidates.includes(body?.error?.type)) type=body.error.type;
+    } catch {}
+    throw Error("Image generation failed at "+job.id+" (HTTP "+res.status+", error_code="+code+", error_type="+type+"). No image charged by this failed request.");
+  }
   const data=await res.json();
   const b64=data?.data?.[0]?.b64_json;
   if(typeof b64!=="string" || b64.length<10000) throw Error("Missing image in API response for "+job.id);
