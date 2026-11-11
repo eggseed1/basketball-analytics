@@ -67,9 +67,18 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
   const available = GENERATED_PHOTO_POOL_IDS.filter(id => !claimed.has(id));
   // Selection order only affects newly eligible players; existing mappings
   // remain unchanged. A stable sorted order makes migrations deterministic.
+  const draftIds = new Set(league.draftPool);
+  const priority = (player: GmPlayer): number =>
+    player.teamId === league.userTeamId ? 0
+    : player.teamId ? 1
+    : draftIds.has(player.id) ? 3 : 2;
+  // Make the local team's fictional players visible first in a small pilot
+  // pool; distribute remaining slots stably across the rest of the league.
+  // Priority affects new allocations only and never rewrites existing saves.
   const awaiting = league.players
     .filter(player => isFictionalGmPlayer(player) && player.identity && !reservations[player.id])
-    .sort((a,b) => hashId(a.id) - hashId(b.id) || a.id.localeCompare(b.id));
+    .sort((a,b) => priority(a) - priority(b) ||
+      hashId(a.id) - hashId(b.id) || a.id.localeCompare(b.id));
   for (const player of awaiting) {
     const id = available.shift();
     if (!id) break;
