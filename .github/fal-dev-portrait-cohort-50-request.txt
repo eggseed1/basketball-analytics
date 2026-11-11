@@ -1,0 +1,1 @@
+User-authorized DRBL player portrait research cohort: 50 distinct fictional identities using FLUX.2 Dev, 960x960 JPEG, approximately $0.60 generation spend, manual visual and automated image QA, no production deploy. This is a one-time explicit trigger.
