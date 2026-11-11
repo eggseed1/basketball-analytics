@@ -12,34 +12,35 @@
       place-items: center;
       background:
         radial-gradient(90% 70% at 12% 0%, rgb(29 66 138 / 0.12), transparent 55%),
+        radial-gradient(70% 60% at 100% 10%, rgb(200 16 46 / 0.08), transparent 50%),
         #e8eaf0;
     }
     .sheet {
       width: 720px;
       max-height: 740px;
-      overflow: hidden;
-      border-radius: 18px;
-      box-shadow: 0 24px 64px rgb(0 0 0 / 0.16);
-      border: 1px solid rgb(0 0 0 / 0.08);
+      overflow: auto;
+      border-radius: 16px;
+      box-shadow: 0 24px 64px rgb(0 0 0 / 0.14);
+      border: 1px solid rgb(0 0 0 / 0.06);
       background: var(--background);
-      padding: 8px 0 18px;
+      padding: 0 0 16px;
     }
   </style>
 </head>
 <body>
   <div class="sheet options-page">
-    <header class="header">
+    <header class="chrome liquid-glass">
       <a class="brand" href="#">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" fill="none"><path class="arc-outer" d="M10 6.5c7.2 0 13 5.8 13 13" stroke-width="2.4" stroke-linecap="round"/><path class="arc-inner" d="M10 11c4.7 0 8.5 3.8 8.5 8.5" stroke-width="1.7" stroke-linecap="round"/><path class="spine" d="M10 6.5v13" stroke-width="2.4" stroke-linecap="round"/><circle class="ball" cx="22.5" cy="19.2" r="2.35"/></svg>
         </span>
-        <span class="brand-name"><strong>DRBL</strong><small>ANALYTICS</small></span>
+        <span class="brand-word">DRBL</span>
       </a>
-      <span class="site-link">Open scores ↗</span>
+      <span class="text-link">Open scores ↗</span>
     </header>
-    <div class="settings-body" style="padding-left:22px;padding-right:22px">
+    <div class="settings-body" style="padding-left:20px;padding-right:20px">
       <h1 class="settings-title">Settings</h1>
-      <p class="settings-subtitle">Favorites, theme, and final-score alerts.</p>
+      <p class="settings-subtitle">Pick teams, theme, and final-score alerts.</p>
       <section class="setting-card">
         <h2>Favorite teams</h2>
         <p>Pinned in the popup. Final alerts only fire for these teams.</p>
@@ -56,15 +57,22 @@
       </section>
     </div>
   </div>
+  <script src="../shared.js"></script>
   <script>
-    const teams = ['ATL','BOS','BKN','CHA','CHI','CLE','DAL','DEN','DET','GSW','HOU','IND','LAC','LAL','MEM','MIA'];
-    const fav = new Set(['BOS','LAL','NYK']);
+    const fav = new Set(['BOS', 'LAL', 'NYK']);
     const picker = document.getElementById('picker');
-    for (const t of teams) {
+    for (const t of DRBL.TEAM_ABBRS) {
       const b = document.createElement('button');
       b.className = 'team-choice';
-      b.textContent = t;
       b.setAttribute('aria-pressed', String(fav.has(t)));
+      b.setAttribute('aria-label', t);
+      const img = document.createElement('img');
+      img.className = 'team-choice-logo';
+      img.src = DRBL.teamLogoUrl(t);
+      img.width = 28;
+      img.height = 28;
+      img.alt = '';
+      b.append(img, document.createTextNode(t));
       picker.append(b);
     }
   </script>

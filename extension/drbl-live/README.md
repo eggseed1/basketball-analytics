@@ -6,10 +6,11 @@ Manifest V3 companion for [drbl.io](https://drbl.io). Reads the site’s existin
 
 1. **Background worker** (`background.js`) runs on install/startup and on a 1-minute `chrome.alarms` tick.
 2. It fetches `GET https://drbl.io/api/scores/live` and `GET https://drbl.io/api/scores/upcoming?limit=40` (same feeds as `/scores`).
-3. Responses are normalized to the site `GameSummary` shape in `shared.js`, merged, and stored in `chrome.storage.local`.
-4. The **popup** reads that storage, filters All / Live / Favorites, and links each card to `https://drbl.io/games/{id}`.
-5. **Final alerts** fire only when a game was previously seen as live, belongs to a favorite team, flips to final, and has not already been notified. First sync never spams history.
-6. The toolbar badge shows the count of live games. Theme, favorites, spoiler-safe score hiding, and notify toggle live in Options.
+3. For live and final games it also pulls `GET /api/games/{id}/box-score` and keeps the top scorers with minutes (headshots via ESPN CDN, same as the site).
+4. Responses are normalized to the site `GameSummary` shape in `shared.js`, merged, and stored in `chrome.storage.local`.
+5. The **popup** reads that storage, filters All / Live / Favorites, shows ESPN team logos and in-game player chips, and links each card to `https://drbl.io/games/{id}`.
+6. **Final alerts** fire only when a game was previously seen as live, belongs to a favorite team, flips to final, and has not already been notified. First sync never spams history.
+7. The toolbar badge shows the count of live games. Theme, favorites, spoiler-safe score hiding, and notify toggle live in Options.
 
 Chrome must be running for polls and notifications. Host permission is only `https://drbl.io/*`.
 
@@ -35,7 +36,7 @@ Tokens and glass/matchup card treatment follow `src/app/globals.css` and `src/st
 
 ## Chrome Web Store
 
-Version **1.0.0** is packaged for store upload.
+Version **1.2.2** is packaged for store upload.
 
 1. Privacy policy: https://drbl.io/privacy (section “DRBL Live Chrome extension”) — deploy the site if that section is not live yet.
 2. Build assets + zip: `node scripts/build-extension-store-assets.mjs`
@@ -48,4 +49,5 @@ Support: https://github.com/eggseed1/basketball-analytics/issues
 
 - Freshness matches the site’s ESPN-backed scoreboard; no independent score delay sync with the website setting.
 - Alerts need Chrome open and the alarm firing; they are not push from a server.
-- No player box scores or in-game play-by-play in the extension.
+- Player chips are top scorers with minutes from the box score (same idea as site top performers), not a true on-court five from play-by-play.
+- No full box score or play-by-play in the popup.

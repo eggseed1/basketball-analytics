@@ -25,9 +25,25 @@ for (const team of DRBL.TEAM_ABBRS) {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'team-choice';
-  button.textContent = team;
   button.dataset.team = team;
   button.setAttribute('aria-pressed', 'false');
+  button.setAttribute('aria-label', team);
+
+  const logoUrl = DRBL.teamLogoUrl(team, 100);
+  if (logoUrl) {
+    const img = document.createElement('img');
+    img.className = 'team-choice-logo';
+    img.src = logoUrl;
+    img.alt = '';
+    img.width = 28;
+    img.height = 28;
+    img.decoding = 'async';
+    img.loading = 'lazy';
+    img.addEventListener('error', () => img.remove());
+    button.append(img);
+  }
+  button.append(document.createTextNode(team));
+
   button.addEventListener('click', () => {
     if (picks.has(team)) picks.delete(team);
     else picks.add(team);
