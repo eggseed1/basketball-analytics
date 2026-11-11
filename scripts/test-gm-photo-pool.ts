@@ -92,7 +92,8 @@ assert.match(tradedMarkup,/data-jersey-team="lal"/);
 assert.notEqual(tradedMarkup,originalMarkup,"current team should change uniform accent");
 assert.ok(tradedMarkup.includes(generatedPhotoUrl(photograph.identity!.portraitPoolId)!),
   "photo URL must remain unchanged through trade");
-const notAllocated=allocated.players.find(p=>p.id==="prospect-photo-0064")!;
+const notAllocated=allocated.players.find(p=>p.identity && !p.identity.portraitPoolId)!;
+assert.ok(notAllocated,"pilot pool must leave some characters on the SVG fallback");
 const fallback=renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{player:notAllocated,name:notAllocated.name,size:"sm"}));
 assert.match(fallback,/data-portrait-version="2"/,"unassigned players retain procedural fallback");
 console.log("GM photo pool: unique assignments, team priority, migration, retirement, trades, jersey recolor and fallback passed.");
