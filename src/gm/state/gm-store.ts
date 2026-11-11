@@ -132,6 +132,7 @@ import {
 import type { GmCoaching } from "@/gm/types";
 import { editMinuteBook } from "@/gm/engine/rotation-minute-budget";
 import { prepareFranchise, franchisePlan, parseFranchise, importDraftClass as importDraftClassEngine } from "@/gm/engine/franchise";
+import { assignGeneratedPhotoPool } from "@/gm/lib/generated-photo-pool";
 import { overallFromAttributes } from "@/gm/engine/attributes";
 import { uid, clamp } from "@/gm/engine/rng";
 import {
@@ -425,7 +426,7 @@ function withCreationSettings(league: GmLeagueState, opts?: CreationOptions): Gm
 }
 
 function withUpdate(league: GmLeagueState): GmLeagueState {
-  return syncSocialTimeline({ ...league, updatedAt: new Date().toISOString() });
+  return syncSocialTimeline(assignGeneratedPhotoPool({ ...league, updatedAt: new Date().toISOString() }));
 }
 
 function syncMyLeague(league: GmLeagueState) {
