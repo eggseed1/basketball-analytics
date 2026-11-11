@@ -9,6 +9,7 @@ import { clamp, createRng } from "@/gm/engine/rng";
 import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
 import { ensureSimProfile, playerRoles } from "@/gm/engine/player-profile";
 import { withGeneratedPlayerIdentity } from "@/gm/lib/generated-player-identity";
+import { assignGeneratedPhotoPool } from "@/gm/lib/generated-photo-pool";
 import { normalizeSeasonFlow } from "@/gm/engine/season-flow-state";
 
 export function franchisePlan(league: GmLeagueState): GmFranchisePlan {
@@ -28,7 +29,7 @@ export function franchisePlan(league: GmLeagueState): GmFranchisePlan {
 /** Additive migration. Existing identities, attributes, rotations and results remain authoritative. */
 export function prepareFranchise(league: GmLeagueState): GmLeagueState {
   const players = league.players.map(p => { const player=ensureBadges(ensureSimProfile(ensurePlayerSheet(withGeneratedPlayerIdentity(p, { preserveName: true })))); const index=league.draftPool.indexOf(p.id); return index>=0&&player.consensusRank==null?{...player,consensusRank:index+1}:player; });
-  const prepared = pairCpuMentors(normalizeSeasonFlow(ensureDraftPickHorizon({ ...league, players, simulationBook: 1, franchise: franchisePlan({ ...league, players }), history: league.history ?? [] })));
+  const prepared = assignGeneratedPhotoPool(pairCpuMentors(normalizeSeasonFlow(ensureDraftPickHorizon({ ...league, players, simulationBook: 1, franchise: franchisePlan({ ...league, players }), history: league.history ?? [] }))));
   // The old editor saved every independent 0–48 slider even when its sum
   // exceeded 240. Repair the user's historical manual book once on load,
   // preserving relative priorities. Keep CPU calibration and true shift
