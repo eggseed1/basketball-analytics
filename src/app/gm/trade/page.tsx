@@ -630,28 +630,31 @@ function TradeBody() {
     if (!query.has("shop") && !query.has("target")) return;
     const key = query.toString();
     if (loadedEntrySearch === key) return;
-    setLoadedEntrySearch(key);
-    const entry = resolveTradeEntry(league, query);
-    if (!entry) {
-      setMessage("This trade link is no longer valid for the current franchise. Choose an available player below.");
-      return;
-    }
-    const selected: GmTradeAsset = { type: "player", id: entry.player.id };
-    const outgoing = entry.mode === "shop" ? [selected] : [];
-    const incoming = entry.mode === "target" ? [selected] : [];
-    setGive(outgoing);
-    setGet(incoming);
-    setCashSend(0);
-    setCashReceive(0);
-    setPartnerChoice(entry.partnerId);
-    setMachineInspectId(entry.player.id);
-    const suggestions = findSelectedTradePackages(
-      league, league.userTeamId, outgoing, incoming, entry.partnerId ?? undefined
-    );
-    setPackages(suggestions);
-    setMessage(suggestions.length
-      ? `${entry.player.name} selected. Compare ${suggestions.length} legal offer options below, or customize a proposal.`
-      : `${entry.player.name} selected. No ready-made acceptable deal; compare the stats and build your own offer.`);
+    const frame = window.requestAnimationFrame(() => {
+      setLoadedEntrySearch(key);
+      const entry = resolveTradeEntry(league, query);
+      if (!entry) {
+        setMessage("This trade link is no longer valid for the current franchise. Choose an available player below.");
+        return;
+      }
+      const selected: GmTradeAsset = { type: "player", id: entry.player.id };
+      const outgoing = entry.mode === "shop" ? [selected] : [];
+      const incoming = entry.mode === "target" ? [selected] : [];
+      setGive(outgoing);
+      setGet(incoming);
+      setCashSend(0);
+      setCashReceive(0);
+      setPartnerChoice(entry.partnerId);
+      setMachineInspectId(entry.player.id);
+      const suggestions = findSelectedTradePackages(
+        league, league.userTeamId, outgoing, incoming, entry.partnerId ?? undefined
+      );
+      setPackages(suggestions);
+      setMessage(suggestions.length
+        ? `${entry.player.name} selected. Compare ${suggestions.length} legal offer options below, or customize a proposal.`
+        : `${entry.player.name} selected. No ready-made acceptable deal; compare the stats and build your own offer.`);
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, [league, loadedEntrySearch]);
 
   const myPlayers = useMemo(
