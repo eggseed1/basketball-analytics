@@ -134,7 +134,7 @@ export function GmGeneratedPortrait({player,name,size="xs",className}:{
       xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id={studioGrad} cx="36%" cy="16%" r="92%"><stop offset="0%" stopColor="#fff" stopOpacity=".78"/><stop offset="100%" stopColor={BACKDROP[face.background]}/></radialGradient>
-        <linearGradient id={faceGrad} x1="14%" y1="8%" x2="95%" y2="100%"><stop offset="0%" stopColor={skin}/><stop offset="66%" stopColor={skin}/><stop offset="100%" stopColor={shade}/></linearGradient>
+        <linearGradient id={faceGrad} x1="8%" y1="15%" x2="94%" y2="90%"><stop offset="0%" stopColor="#fff" stopOpacity=".21"/><stop offset="18%" stopColor={skin}/><stop offset="58%" stopColor={skin}/><stop offset="100%" stopColor={shade}/></linearGradient>
         <linearGradient id={jerseyGrad} x1="0%" y1="0%" x2="95%" y2="100%"><stop offset="0%" stopColor={uniform.highlight} stopOpacity=".30"/><stop offset="37%" stopColor={uniform.base}/><stop offset="80%" stopColor={uniform.base}/><stop offset="100%" stopColor="#000" stopOpacity=".24"/></linearGradient>
       </defs>
       <rect width="160" height="160" fill={`url(#${studioGrad})`}/>
@@ -152,6 +152,8 @@ export function GmGeneratedPortrait({player,name,size="xs",className}:{
         <path d="M61 113Q68 129 80 136Q92 129 99 113" fill="none" stroke={uniform.piping} strokeWidth="6.5" strokeLinejoin="round"/>
         <path d="M61 113Q68 129 80 136Q92 129 99 113" fill="none" stroke={uniform.highlight} strokeOpacity=".76" strokeWidth="1.7"/>
         <path d="M53 128L56 156M107 128L104 156" stroke="#fff" opacity=".09" strokeWidth="1.4"/>
+        <path d="M41 138L46 160M119 138L114 160" stroke="#fff" opacity=".10" strokeWidth=".85"/>
+        <path d="M52 139Q80 144 108 139" stroke="#fff" opacity=".065" strokeWidth="1.1" fill="none"/>
       </g>
       <g data-face-layer="true">
         <path d="M65 102L65 119Q80 137 95 119L95 102Z" fill={shade}/>
@@ -159,6 +161,10 @@ export function GmGeneratedPortrait({player,name,size="xs",className}:{
         <ellipse cx={left+1} cy="79" rx={face.earSize*.46} ry={face.earSize} fill={shade}/>
         <ellipse cx={right-1} cy="79" rx={face.earSize*.46} ry={face.earSize} fill={shade}/>
         <path d={facePath} fill={`url(#${faceGrad})`}/>
+        <path d={`M${left+8} 64Q${left+5} 88 ${jawL+5} 104`} fill="none" stroke="#fff" strokeOpacity=".12" strokeWidth="5" strokeLinecap="round"/>
+        <path d={`M${right-8} 65Q${right-3} 86 ${jawR-4} 105`} fill="none" stroke={shade} strokeOpacity=".18" strokeWidth="6" strokeLinecap="round"/>
+        <ellipse cx="80" cy={noseY-5} rx={face.noseWidth*.65} ry={face.noseLength*.65} fill="#fff" opacity=".07"/>
+        <path d={`M${left+12} 88Q${left+18} 96 ${left+23} 92 M${right-12} 88Q${right-18} 96 ${right-23} 92`} fill="none" stroke={shade} strokeOpacity=".14" strokeWidth="2"/>
         <path d={`M${right-7} 58Q${right+2} 88 ${jawR} 111Q88 ${face.chinDepth+7} 80 ${face.chinDepth+7}`} fill="none" stroke={shade} strokeOpacity=".16" strokeWidth="5.5" strokeLinecap="round"/>
         <path d={`M${left+6} 88Q${left+9} 97 ${left+face.cheekWidth+5} 100 M${right-6} 88Q${right-9} 97 ${right-face.cheekWidth-5} 100`} fill="none" stroke={shade} strokeOpacity=".16" strokeWidth="2.5" strokeLinecap="round"/>
         <Hair face={face} color={hair} left={left} right={right}/>
@@ -174,6 +180,7 @@ export function GmGeneratedPortrait({player,name,size="xs",className}:{
         <path d={`M${80-face.noseWidth} ${noseY+1.5}l1 0M${79+face.noseWidth} ${noseY+1.5}l1 0`} stroke={shade} strokeWidth="1.4" strokeLinecap="round"/>
         {face.beard===1||face.beard===3?<path d="M71 99Q80 104 89 99" stroke={hair} strokeWidth={face.beard===3?3.1:2.4} fill="none" strokeLinecap="round"/>:null}
         {face.beard>=2?<path d={`M${left+7} 95Q${left+12} 113 80 ${face.chinDepth+5}Q${right-12} 113 ${right-7} 95Q99 110 80 109Q61 110 ${left+7} 95Z`} fill={hair} opacity={face.beard===3?.76:.21}/>:null}
+        <path d={`M${80-face.lipWidth-2} 106Q80 110 ${80+face.lipWidth+2} 106`} stroke={shade} strokeOpacity=".13" strokeWidth="1.6" fill="none"/>
         <path d={face.mouth===0?`M${80-face.lipWidth} 102Q80 104 ${80+face.lipWidth} 102`:face.mouth===1?`M${80-face.lipWidth} 102Q80 100 ${80+face.lipWidth} 102`:`M${80-face.lipWidth} 101Q80 107 ${80+face.lipWidth} 101`} stroke={shade} strokeOpacity=".92" strokeWidth="1.75" fill="none" strokeLinecap="round"/>
         {face.freckles?[0,1,2].map(i=><g key={i} fill={shade} opacity=".38"><circle cx={61+i*4} cy={86+i%2} r=".9"/><circle cx={91+i*4} cy={86+i%2} r=".9"/></g>):null}
         {face.glasses?<g stroke="#292d34" strokeWidth="1.45" fill="none" opacity=".9">

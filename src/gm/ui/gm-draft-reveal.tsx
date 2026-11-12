@@ -7,6 +7,7 @@ import { ClubMark } from "@/gm/ui/club-mark";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { playerSheet } from "@/gm/engine/attributes";
 import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
+import { playerMentality } from "@/gm/engine/mentality";
 import type { GmDevTrait, GmPlayer } from "@/gm/types";
 import { cn } from "@/lib/utils";
 
@@ -66,11 +67,12 @@ export function GmDraftReveal({
 }) {
   const openCareer = reveal.player.draftModel === 2;
   const trait = playerDevTrait(reveal.player);
+  const mentality = playerMentality(reveal.player);
   const ovr = playerSheet(reveal.player).overall;
   // A prospect with open-ended development has no revealed secret career
   // verdict on draft night. Celebrate the scout's pick, not hidden DNA.
-  const jackpot = !openCareer && (trait === "xfactor" || trait === "superstar");
-  const bust = !openCareer && trait === "bust";
+  const jackpot = openCareer ? mentality.rank === 5 : (trait === "xfactor" || trait === "superstar");
+  const bust = openCareer ? mentality.rank === 1 : trait === "bust";
   const longBeat = jackpot || reveal.userTeam;
   const [stage, setStage] = useState<Stage>("pick");
   const hit = openCareer ? null : scoutVsTruth(reveal.player, trait);
@@ -134,8 +136,8 @@ export function GmDraftReveal({
             <strong className="tabular-nums">{showOvr ? ovr : "—"}</strong>
           </div>
           <div className={cn("gm-draft-reveal__stat", showTrait && "is-on", jackpot && "is-hot")}>
-            <span>{openCareer ? "Career path" : "Dev trait"}</span>
-            <strong>{showTrait ? openCareer ? "Unwritten" : traitLabel(trait) : "Sealed"}</strong>
+            <span>{openCareer ? "Mentality" : "Dev trait"}</span>
+            <strong className={openCareer && showTrait ? mentality.tone : undefined}>{showTrait ? openCareer ? mentality.label : traitLabel(trait) : "···"}</strong>
           </div>
         </div>
 

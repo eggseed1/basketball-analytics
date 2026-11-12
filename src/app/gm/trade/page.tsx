@@ -218,6 +218,7 @@ function DealLane({
                     })()
                   ) : null}
                 </div>
+                {player ? <details className="mt-1 rounded-md border border-border/70 px-2 py-1.5"><summary className="cursor-pointer text-xs font-semibold">Full ratings · {player.name}</summary><div className="mt-2"><TradePlayerRatings player={player}/><TradePlayerSeasonStats league={league} player={player}/></div></details> : null}
               </li>
             );
           })}
@@ -225,6 +226,48 @@ function DealLane({
       )}
     </div>
   );
+}
+
+function TradePlayerSeasonStats({league,player}:{league:GmLeagueState;player:GmPlayer}) {
+  const nba=player.nbaSeason;
+  const line=simCountingLine(league,player.id) ?? (nba && !entrySeasonIsCurrentSaveYear(nba,league.season) ? nba : null);
+  const gp=line?.gp ?? 0;
+  const cells=[
+    ["GP",gp ? String(gp) : UNAVAILABLE_STAT_LABEL],
+    ["MPG",line ? rateLabel(line.min,gp) : UNAVAILABLE_STAT_LABEL],
+    ["PPG",line ? rateLabel(line.pts,gp) : UNAVAILABLE_STAT_LABEL],
+    ["RPG",line ? rateLabel(line.reb,gp) : UNAVAILABLE_STAT_LABEL],
+    ["APG",line ? rateLabel(line.ast,gp) : UNAVAILABLE_STAT_LABEL],
+    ["SPG",line ? rateLabel(line.stl,gp) : UNAVAILABLE_STAT_LABEL],
+    ["BPG",line ? rateLabel(line.blk,gp) : UNAVAILABLE_STAT_LABEL],
+    ["TS%",line && line.fga+0.44*line.fta>0 ? shotLabel(line.pts/2,line.fga+0.44*line.fta) : UNAVAILABLE_STAT_LABEL],
+  ];
+  return <div className="mt-3 grid grid-cols-4 gap-1.5 sm:grid-cols-8" data-testid="trade-player-stats">
+    {cells.map(([label,value])=><div key={label} className="rounded-md bg-secondary/60 px-1.5 py-2 text-center">
+      <p className="text-[10px] text-muted-foreground">{label}</p><p className="text-sm font-bold tabular-nums">{value}</p>
+    </div>)}
+  </div>;
+}
+
+/** Expand a player's actual saved attributes without leaving the trade negotiation. */
+function TradePlayerRatings({ player }: { player: GmPlayer }) {
+  const a = playerSheet(player).attributes;
+  const groups = [
+    ["Scoring", [["Close",a.closeShot],["Layup",a.drivingLayup],["Dunk",a.drivingDunk],["Midrange",a.midrange],["Three",a.threePoint],["FT",a.freeThrow],["Post",a.postControl]]],
+    ["Playmaking", [["Passing",a.passAccuracy],["Handle",a.ballHandle],["Ball speed",a.speedWithBall]]],
+    ["Defense & glass", [["Perimeter",a.perimeterDefense],["Interior",a.interiorDefense],["Steal",a.steal],["Block",a.block],["O. reb",a.offReb],["D. reb",a.defReb]]],
+    ["Athleticism", [["Speed",a.speed],["Agility",a.agility],["Strength",a.strength],["Vertical",a.vertical],["Stamina",a.stamina]]],
+  ] as const;
+  return <div className="grid gap-3 sm:grid-cols-2" data-testid="trade-player-ratings">
+    {groups.map(([title,ratings]) => <div key={title} className="rounded-lg border border-border bg-background/50 p-2.5">
+      <p className="mb-2 text-xs font-bold">{title}</p>
+      <dl className="grid grid-cols-2 gap-x-2 gap-y-1">
+        {ratings.map(([label,value]) => <div key={label} className="flex items-center justify-between gap-2 text-xs">
+          <dt className="text-muted-foreground">{label}</dt><dd className="font-semibold tabular-nums">{value}</dd>
+        </div>)}
+      </dl>
+    </div>)}
+  </div>;
 }
 
 function TradePlayerPeek({
@@ -323,6 +366,7 @@ function TradePlayerPeek({
         </table>
       </div>
 
+      <details open className="mt-3 rounded-lg border border-border p-3"><summary className="cursor-pointer text-sm font-semibold">All ratings · expand / collapse</summary><div className="mt-3"><TradePlayerRatings player={player}/></div></details>
       <p className="mt-3 text-sm text-muted-foreground">{scoutRead.comment}</p>
       <Surplus player={player} />
       <p className="mt-3 text-sm">
