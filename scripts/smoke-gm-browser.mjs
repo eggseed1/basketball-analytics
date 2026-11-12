@@ -288,16 +288,16 @@ try {
   const shopAction = page.getByTestId("gm-player-trade-action").getByRole("link", { name: "Find trades for player" });
   await shopAction.waitFor();
   await shopAction.click();
-  await page.waitForURL(/\\/gm\\/trade\\?shop=/);
+  await page.waitForURL(url => url.pathname === "/gm/trade" && url.searchParams.has("shop"));
   await page.getByTestId("trade-my-players").getByRole("checkbox", { checked: true }).first().waitFor();
-  assert.ok(await page.getByText(/selected\\. Compare|selected\\. No ready-made/).first().count(),
+  assert.ok(await page.getByText(/selected[.] Compare|selected[.] No ready-made/).first().count(),
     "a player profile should open a preselected market search, not an empty trade machine");
   await page.getByTestId("trade-partner-players").getByRole("button", { name: "Info" }).first().click();
   await page.getByRole("link", { name: "Open full player page" }).click();
   const targetAction = page.getByTestId("gm-player-trade-action").getByRole("link", { name: "Trade for player" });
   await targetAction.waitFor();
   await targetAction.click();
-  await page.waitForURL(/\\/gm\\/trade\\?target=/);
+  await page.waitForURL(url => url.pathname === "/gm/trade" && url.searchParams.has("target"));
   await page.getByTestId("trade-partner-players").getByRole("checkbox", { checked: true }).first().waitFor();
   await page.getByText("Player file", { exact: true }).waitFor();
   assert.ok(await page.getByText("All ratings · expand / collapse").count(),
