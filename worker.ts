@@ -11,6 +11,7 @@ import {
   type PageHtmlCachePolicy,
 } from "./src/lib/page-html-cache-policy";
 import { decodePageHtmlKv, encodePageHtmlKv } from "./src/lib/page-html-kv-codec";
+import { botGuardMode, botGuardResponse, classifyEdgeRequest } from "./src/lib/edge-bot-guard";
 
 type RateLimitBinding = {
   limit(options: { key: string }): Promise<{ success: boolean }>;
@@ -31,6 +32,7 @@ type OriginFetcher = {
 
 type WorkerEnv = Record<string, unknown> & {
   API_RATE_LIMITER?: RateLimitBinding;
+  WRITE_API_RATE_LIMITER?: RateLimitBinding;
   PAGE_CACHE?: PageCacheBinding;
   CF_VERSION_METADATA?: { id?: string };
   /** Fat OpenNext Worker — only used on MISS / uncached paths. */
@@ -42,6 +44,8 @@ type WorkerEnv = Record<string, unknown> & {
    * Unset/true = on; "0" / "false" / "off" = KV-only with private no-store.
    */
   DRBL_EDGE_HTML_CACHE?: string;
+  /** "block" (default), "log" to only count, "off" to disable. See edge-bot-guard.ts. */
+  DRBL_BOT_GUARD?: string;
 };
 
 type WorkerContext = { waitUntil(promise: Promise<unknown>): void };
@@ -534,15 +538,27 @@ async function servePage(
 
 const RETRY_AFTER_SECONDS = 60;
 
-function tooManyRequests(): Response {
+function tooManyRequests(kind: string): Response {
+  // No IP or query in logs: the privacy page promises no request logging.
+  console.warn(JSON.stringify({ drbl_abuse: true, kind: "rate_limited", route: kind }));
   return new Response(JSON.stringify({ error: "Too many requests. Try again in a minute." }), {
     status: 429,
     headers: {
       "content-type": "application/json; charset=utf-8",
       "retry-after": String(RETRY_AFTER_SECONDS),
       "cache-control": "no-store",
+      "x-drbl-rate-limit": kind,
     },
   });
+}
+
+function isWriteApi(pathname: string, method: string): boolean {
+  if (method !== "POST" && method !== "PUT" && method !== "PATCH") return false;
+  return (
+    pathname === "/api/gm/league" ||
+    pathname === "/api/one-shot/leaderboard" ||
+    pathname === "/api/suggestions"
+  );
 }
 
 const CANONICAL_HOST = "drbl.io";
@@ -628,8 +644,24 @@ const worker = {
       return Response.redirect(url.toString(), 301);
     }
     const { pathname } = url;
+    const guardMode = botGuardMode(env.DRBL_BOT_GUARD);
+    if (guardMode !== "off") {
+      const verdict = classifyEdgeRequest(request.headers);
+      if (verdict.block) {
+        console.warn(
+          JSON.stringify({ drbl_abuse: true, kind: verdict.reason, mode: guardMode })
+        );
+        if (guardMode === "block") return botGuardResponse();
+      }
+    }
     // Internal subrequests (service binding, cache revalidation) carry no client IP.
     const ip = request.headers.get("cf-connecting-ip");
+    if (ip && isWriteApi(pathname, request.method) && env.WRITE_API_RATE_LIMITER) {
+      const { success } = await env.WRITE_API_RATE_LIMITER.limit({
+        key: `write:${pathname}:${ip}`,
+      });
+      if (!success) return tooManyRequests("write-api");
+    }
     if (ip && env.API_RATE_LIMITER) {
       // Ask deep-links (`?q=`) SSR the full query engine and were the top isolate
       // OOM source; rate them with /api so crawler storms cannot tip the homepage.
@@ -638,7 +670,7 @@ const worker = {
         const { success } = await env.API_RATE_LIMITER.limit({
           key: `${askQuery ? "ask" : "api"}:${ip}`,
         });
-        if (!success) return tooManyRequests();
+        if (!success) return tooManyRequests(askQuery ? "ask" : "api");
       }
     }
     const cacheEntry = pageCacheEntry(request, env);

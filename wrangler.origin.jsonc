@@ -9,7 +9,8 @@
 		"nodejs_compat",
 		"global_fetch_strictly_public"
 	],
-	"workers_dev": true,
+	// Off: a public workers.dev host would skip the edge's rate limits, bot guard and caches.
+	"workers_dev": false,
 	"preview_urls": false,
 	"observability": {
 		"enabled": true,

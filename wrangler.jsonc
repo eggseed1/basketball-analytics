@@ -42,6 +42,15 @@
 				"limit": 60,
 				"period": 60
 			}
+		},
+		{
+			// POST /api/gm/league, one-shot leaderboard, suggestions.
+			"name": "WRITE_API_RATE_LIMITER",
+			"namespace_id": "1003",
+			"simple": {
+				"limit": 12,
+				"period": 60
+			}
 		}
 	],
 	"triggers": {
