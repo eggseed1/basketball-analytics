@@ -1,1 +1,1 @@
-User-authorized deploy: merged PR #207, 500 fictional headshots and jersey masks, verified 2026-11-11. Trigger Cloudflare Deploy site via direct repository commit.
+User-authorized deploy: merged Franchise Lab PR #211 (e89783a9a99236d4197aa6ba8a40c2ae2eafd7b6), six feature-branch CI workflows green including five-year simulation, browser UX and photo pool validation. Trigger Cloudflare Deploy site 2026-11-12.
