@@ -11,15 +11,23 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { GmPhotoPoolPortrait } from "../src/gm/ui/gm-photo-pool-portrait";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise } from "../src/gm/engine/franchise";
+import { GENERATED_PHOTO_CASTING, generatedPhotoCastingScore, type PhotoCastingStyle } from "../src/gm/lib/generated-photo-appearance";
 
+const codeForCasting: Record<PhotoCastingStyle,string|null> = {
+  black:"NG",east_asian:"JP",latino:"MX",european:"DE",
+  south_asian:"IN",mena:"TR",mixed:null,
+};
 const fakePlayer=(i:number,real=false): GmPlayer => ({
   id:real?String(9000+i):"prospect-photo-"+String(i).padStart(4,"0"),
-  name:"Player "+i,teamId:i%2?"bos":"lal",
+  name:"Player "+i,teamId:i>=GENERATED_PHOTO_POOL_IDS.length?null:i%2?"bos":"lal",
   age:21+i%13, pipeline:"ncaa", personality:4,
   draftModel:real?undefined:2,
   ...(real?{nbaPlayerId:String(9000+i)}:{}),
   identity:real?undefined:{
     version:1,countryCode:"US",hometown:"Boston, MA",
+    ...(codeForCasting[GENERATED_PHOTO_CASTING[GENERATED_PHOTO_POOL_IDS[i%GENERATED_PHOTO_POOL_IDS.length]!]!] ? {
+      familyOriginCode:codeForCasting[GENERATED_PHOTO_CASTING[GENERATED_PHOTO_POOL_IDS[i%GENERATED_PHOTO_POOL_IDS.length]!]!]!,
+    }:{}),
     portraitSeed:123000+i,temperament:"Team-first",interest:"Film room regular",
   },
   ratings:{impact:0,offense:0,defense:0,shooting:50,finishing:50,playmaking:50,rebounding:50,durability:60,potential:0},
@@ -35,6 +43,11 @@ const ids=allocated.players.filter(p=>p.identity?.portraitPoolId).map(p=>p.ident
 assert.equal(poolCount,new Set(GENERATED_PHOTO_POOL_IDS).size,"catalog cannot contain duplicate IDs");
 assert.equal(ids.length,poolCount,"never assign more photographic identities than the local asset catalog");
 assert.equal(new Set(ids).size,ids.length,"no two active players may share an image");
+assert.ok(allocated.players.filter(p => p.identity?.portraitPoolId).every(p =>
+  generatedPhotoCastingScore(p,p.identity!.portraitPoolId!)>0),
+  "every assigned photo must match the fictional player's saved name and background");
+assert.equal(Object.keys(GENERATED_PHOTO_CASTING).length,poolCount,
+  "all 500 original art-directed photos need explicit casting metadata");
 assert.equal(allocated.portraitPoolReservations && Object.keys(allocated.portraitPoolReservations).length,poolCount);
 assert.equal(allocated.players.at(-1)?.identity,undefined,"real NBA player must never receive a generated face");
 assert.equal(assignGeneratedPhotoPool(allocated),allocated,"migrated league should be idempotent");
@@ -73,8 +86,33 @@ const dupes=assignGeneratedPhotoPool(partial([
 ]));
 const active=dupes.players.map(p=>p.identity?.portraitPoolId).filter(Boolean);
 assert.equal(new Set(active).size,active.length,"legacy slot collision must be repaired deterministically");
+// Old save migration changes only a mismatched photo. It never renames a
+// fictional veteran, changes citizenship, or modifies gameplay attributes.
+const oldName={...fakePlayer(200),id:"old-save-kim",name:"Kai Nguyen",
+  identity:{...fakePlayer(200).identity!,familyOriginCode:undefined,countryCode:"US",portraitPoolId:"v3-01"}};
+assert.equal(generatedPhotoCastingScore(oldName,"v3-01"),0,
+  "a Vietnamese family-name cue must not pick an unrelated Black American casting prompt");
+assert.ok(generatedPhotoCastingScore(oldName,"v3-02")>0,
+  "the curated East Asian source prompt is compatible with this fictional biography");
+const rematched=assignGeneratedPhotoPool(partial([oldName],{"old-save-kim":"v3-01"}));
+const repaired=rematched.players[0]!;
+assert.equal(repaired.name,oldName.name);
+assert.equal(repaired.identity?.countryCode,"US");
+assert.notEqual(repaired.identity?.portraitPoolId,"v3-01");
+assert.ok(generatedPhotoCastingScore(repaired,repaired.identity!.portraitPoolId!)>0);
+assert.equal(assignGeneratedPhotoPool(rematched),rematched,
+  "one-time photographic recasting must be stable on the next save load");
+const asianProspect={...fakePlayer(10),name:"Kim Seo-jun",identity:{...fakePlayer(10).identity!,familyOriginCode:"KR"}};
+assert.equal(generatedPhotoCastingScore(asianProspect,"v3-01"),0);
+assert.ok(generatedPhotoCastingScore(asianProspect,"v3-02")>0);
+assert.ok(generatedPhotoCastingScore({...fakePlayer(30),name:"Liam Singh"},"v3-12")>0,
+  "South Asian family names should prefer their intended casting group");
 const prepared = prepareFranchise(createGeneratedLeague({userTeamId:"bos",season:2029,seed:20261111}));
 const humanRoster=prepared.players.filter(p=>p.teamId==="bos" && p.identity);
+assert.ok(prepared.players.every(p => !p.identity?.portraitPoolId || generatedPhotoCastingScore(p,p.identity.portraitPoolId)>0),
+  "generated leagues must never assign an unrelated photo, including international prospects");
+assert.ok(prepared.players.filter(p=>p.identity?.portraitPoolId).length>200,
+  "coherent casting must still provide meaningful photographic coverage");
 assert.ok(humanRoster.length>10);
 assert.ok(humanRoster.every(p=>p.identity?.portraitPoolId),
   "all generated starters on the human user's team must get photos first");

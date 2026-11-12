@@ -1,12 +1,12 @@
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
 import { isFictionalGmPlayer } from "@/gm/lib/player-portrait-ids";
 import { GM_PHOTO_POOL_CATALOG } from "@/gm/lib/generated-photo-pool-catalog";
-import { generatedPhotoCastingScore } from "@/gm/lib/generated-photo-appearance";
+import { GENERATED_PHOTO_CASTING, generatedPhotoCastingScore, type PhotoCastingStyle } from "@/gm/lib/generated-photo-appearance";
 
 /**
  * Hand-reviewed starting cohort of FLUX.2 Dev fictional player photographs.
- * Paths are immutable across saves. The pool is intentionally small for this
- * first release: everyone without an available slot keeps the SVG portrait.
+ * Asset paths are immutable. Players keep a matching face once assigned; if
+ * there are no compatible available photos, they use the SVG portrait.
  */
 export const GENERATED_PHOTO_POOL_VERSION = 1;
 export const GENERATED_PHOTO_POOL_IDS: readonly string[] = GM_PHOTO_POOL_CATALOG;
@@ -49,6 +49,33 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
   const active = new Map(league.players
     .filter(p => isFictionalGmPlayer(p) && p.identity)
     .map(p => [p.id, p]));
+  // Cache the seven art-direction scores per player. Never repeat surname
+  // matching hundreds of times inside the roster sort on mobile devices.
+  const representative = new Map<PhotoCastingStyle, string>();
+  const styleCounts = new Map<PhotoCastingStyle, number>();
+  for (const photo of GENERATED_PHOTO_POOL_IDS) {
+    const style = GENERATED_PHOTO_CASTING[photo];
+    if (!style) continue;
+    if (!representative.has(style)) representative.set(style, photo);
+    styleCounts.set(style, (styleCounts.get(style) ?? 0) + 1);
+  }
+  const affinities = new Map([...active.values()].map(player => {
+    const scores = new Map<PhotoCastingStyle, number>();
+    for (const [style, sample] of representative) {
+      scores.set(style, generatedPhotoCastingScore(player, sample));
+    }
+    return [player.id, scores] as const;
+  }));
+  const scoreFor = (player: GmPlayer, photo: string): number => {
+    const style = GENERATED_PHOTO_CASTING[photo];
+    return style ? (affinities.get(player.id)?.get(style) ?? 0) : 0;
+  };
+  const matchCounts = new Map([...active.values()].map(player => [
+    player.id,
+    [...styleCounts].reduce((sum, [style, count]) =>
+      (affinities.get(player.id)?.get(style) ?? 0) > 0 ? sum + count : sum, 0),
+  ] as const));
+
 
   // Historical claims stay immutable. Active claims survive only when the
   // photographic casting is coherent with the player's saved identity.
@@ -56,7 +83,7 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
     const photo = oldReservations[playerId];
     if (!photo || !VALID_PHOTO_IDS.has(photo) || claimed.has(photo)) continue;
     const player = active.get(playerId);
-    if (player && generatedPhotoCastingScore(player, photo) <= 0) continue;
+    if (player && scoreFor(player, photo) <= 0) continue;
     reservations[playerId] = photo;
     claimed.add(photo);
   }
@@ -65,7 +92,7 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
     if (reservations[player.id]) continue;
     const photo = player.identity?.portraitPoolId;
     if (!photo || !VALID_PHOTO_IDS.has(photo) || claimed.has(photo)) continue;
-    if (generatedPhotoCastingScore(player, photo) <= 0) continue;
+    if (scoreFor(player, photo) <= 0) continue;
     reservations[player.id] = photo;
     claimed.add(photo);
   }
@@ -75,8 +102,7 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
   const priority = (player: GmPlayer): number =>
     player.teamId === league.userTeamId ? 0
       : player.teamId ? 1 : draftIds.has(player.id) ? 3 : 2;
-  const compatibleCount = (player: GmPlayer): number =>
-    GENERATED_PHOTO_POOL_IDS.reduce((n, id) => n + Number(generatedPhotoCastingScore(player,id)>0), 0);
+  const compatibleCount = (player: GmPlayer): number => matchCounts.get(player.id) ?? 0;
   // Within each roster priority, serve rarer cultural backgrounds before the
   // broad US/Canada pool. This reduces competition for small image groups.
   const awaiting = [...active.values()].filter(p => !reservations[p.id])
@@ -88,7 +114,7 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
     let bestIndex = -1, bestScore = 0, bestHash = 0xffffffff;
     for (let i=0; i<remaining.length; i++) {
       const photo = remaining[i]!;
-      const score = generatedPhotoCastingScore(player, photo);
+      const score = scoreFor(player, photo);
       if (score <= 0) continue;
       const tie = hashId(player.id + "|" + photo);
       if (score > bestScore || (score === bestScore && tie < bestHash)) {
