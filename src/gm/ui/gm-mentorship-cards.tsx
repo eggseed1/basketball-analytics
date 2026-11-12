@@ -6,6 +6,8 @@ import { BADGES, BADGE_LEVELS, badgeCap, badgeLevel, ensureBadges } from "@/gm/e
 import { activeMentor, mentorEligible, mentorProfile, mentorshipBonus, mentorshipSlots } from "@/gm/engine/development";
 import { useGmStore } from "@/gm/state/gm-store";
 import { developmentOutlook } from "@/gm/engine/development-profile";
+import { GmMentalityTag } from "@/gm/ui/gm-mentality-tag";
+import { MENTALITY_MENTOR_MIN_GAMES } from "@/gm/engine/development";
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
 
 const control = "min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
@@ -95,14 +97,15 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
               <GmPlayerPortrait player={mentee} size="sm" />
               <div className="min-w-0 text-xs">
                 <p className="font-semibold">{mentee.name} + {mentor.name}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-2"><GmMentalityTag player={mentee} compact /><span aria-hidden="true">→</span><GmMentalityTag player={mentor} compact /></div>
                 <p className="mt-1 text-muted-foreground">{mentorProfile(mentor).tier} mentor · {mentorProfile(mentor).service} years of service · age {mentor.age}</p>
                 <p className="mt-1 text-muted-foreground">
-                  +{Math.round(mentorshipBonus(mentee, league.players) * 100)}% training pace · {mentee.mentorship?.sharedGames ?? 0} games together
+                  +{Math.round(mentorshipBonus(mentee, league.players) * 100)}% training pace · {mentee.mentorship?.totalSharedGames ?? mentee.mentorship?.sharedGames ?? 0} career games together
                 </p>
               </div>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">{mentee.draftModel === 2
-              ? "After 20 games together: small chance of a lasting learning breakthrough, never a fixed OVR ceiling."
+              ? "After 20 games: occasional practice breakthroughs. After {MENTALITY_MENTOR_MIN_GAMES}+ actual games together (35+ this season), a strong veteran can rarely pass on a higher mentality and improve long-term learning. No instant OVR or guaranteed superstar."
               : "After 20 games together: small chance to improve the legacy potential ceiling. No instant OVR."}</p>
             {teachable.length > 0 ? <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Mentor badges">
               {teachable.slice(0, 3).map(badge => <span key={badge.id}

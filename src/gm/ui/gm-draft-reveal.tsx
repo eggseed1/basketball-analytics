@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { playerSheet } from "@/gm/engine/attributes";
-import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
+
 import { playerMentality } from "@/gm/engine/mentality";
-import type { GmDevTrait, GmPlayer } from "@/gm/types";
+import type { GmPlayer } from "@/gm/types";
 import { cn } from "@/lib/utils";
 
 export type DraftRevealPayload = {
@@ -26,34 +26,6 @@ export type DraftRevealPayload = {
 
 type Stage = "pick" | "name" | "ovr" | "trait" | "done";
 
-function scoutVsTruth(player: GmPlayer, trait: GmDevTrait): string | null {
-  const grades = player.scoutProfile?.grades;
-  if (!grades) return null;
-  const letters = [
-    grades.athleticism,
-    grades.shooting,
-    grades.creation,
-    grades.defense,
-    grades.feel,
-    grades.upside,
-  ].filter(Boolean) as string[];
-  if (!letters.length) return null;
-  const aCount = letters.filter((g) => g.startsWith("A")).length;
-  const dCount = letters.filter((g) => g.startsWith("D") || g.startsWith("F")).length;
-  if (trait === "xfactor" || trait === "superstar") {
-    if (aCount >= 2) return "The tape already had him this high.";
-    if (dCount >= 2) return "The room graded him soft. The trait disagrees.";
-    return "A quiet board. Loud trait.";
-  }
-  if (trait === "bust") {
-    if (aCount >= 3) return "Pretty grades. Cold path.";
-    return "The floor was always the worry.";
-  }
-  if (trait === "star" && aCount >= 3) return "The grades lined up.";
-  if (trait === "normal" && aCount >= 3) return "Big dossier. Average path.";
-  return null;
-}
-
 /**
  * Staged pick-night ceremony. Name, then OVR, then the Madden trait stamp.
  * Jackpots (X-Factor / Superstar) and your own picks get the longer beat.
@@ -65,17 +37,15 @@ export function GmDraftReveal({
   reveal: DraftRevealPayload;
   onClose: () => void;
 }) {
-  const openCareer = reveal.player.draftModel === 2;
-  const trait = playerDevTrait(reveal.player);
+
   const mentality = playerMentality(reveal.player);
   const ovr = playerSheet(reveal.player).overall;
   // A prospect with open-ended development has no revealed secret career
   // verdict on draft night. Celebrate the scout's pick, not hidden DNA.
-  const jackpot = openCareer ? mentality.rank === 5 : (trait === "xfactor" || trait === "superstar");
-  const bust = openCareer ? mentality.rank === 1 : trait === "bust";
+  const jackpot = mentality.rank === 5;
+  const bust = false;
   const longBeat = jackpot || reveal.userTeam;
   const [stage, setStage] = useState<Stage>("pick");
-  const hit = openCareer ? null : scoutVsTruth(reveal.player, trait);
 
   useEffect(() => {
     setStage("pick");
@@ -110,7 +80,7 @@ export function GmDraftReveal({
       >
         <p className="gm-draft-reveal__eyebrow">
           {reveal.userTeam ? "Your pick" : "The pick is in"}
-          {jackpot ? " · jackpot" : bust ? " · cold path" : ""}
+          {jackpot ? " · extraordinary work habits" : ""}
         </p>
         <p className="gm-draft-reveal__slot">
           #{reveal.pick} · <ClubMark teamId={reveal.teamId} label={reveal.teamAbbr} />
@@ -136,8 +106,8 @@ export function GmDraftReveal({
             <strong className="tabular-nums">{showOvr ? ovr : "—"}</strong>
           </div>
           <div className={cn("gm-draft-reveal__stat", showTrait && "is-on", jackpot && "is-hot")}>
-            <span>{openCareer ? "Mentality" : "Dev trait"}</span>
-            <strong className={openCareer && showTrait ? mentality.tone : undefined}>{showTrait ? openCareer ? mentality.label : traitLabel(trait) : "···"}</strong>
+            <span>Mentality</span>
+            <strong className={showTrait ? mentality.tone : undefined}>{showTrait ? mentality.label : "···"}</strong>
           </div>
         </div>
 
@@ -146,9 +116,7 @@ export function GmDraftReveal({
             Sleeper · fell {reveal.fall} from mock #{reveal.mockRank}
           </p>
         ) : null}
-        {showTrait && openCareer ? (
-          <p className="gm-draft-reveal__note">The tools are real. Coaching, opportunity and performance will shape what comes next.</p>
-        ) : showTrait && hit ? <p className="gm-draft-reveal__note">{hit}</p> : null}
+        {showTrait ? <p className="gm-draft-reveal__note">Mentality can evolve with coaching, opportunity and long-term mentors. It is not a fixed career ceiling.</p> : null}
 
         {stage === "done" ? (
           <Button className="mt-4 w-full" onClick={onClose}>

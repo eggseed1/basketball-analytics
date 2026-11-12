@@ -18,7 +18,7 @@ import { CAMP_FOCUSES, campSlots, campSkillChanges, campBadgePractice, campSoren
 import { isDraftComplete, draftSlotCount } from "@/gm/engine/draft-room";
 import { faStageLabel } from "@/gm/engine/free-agency";
 import { faStageOrder } from "@/gm/engine/fa-status";
-import { traitLabel } from "@/gm/engine/dev-traits";
+import { GmMentalityTag } from "@/gm/ui/gm-mentality-tag";
 import { userCap, userPlayers, userTeam } from "@/gm/lib/selectors";
 import { cn } from "@/lib/utils";
 import type { GmCampFocus, GmLeagueState } from "@/gm/types";
@@ -149,12 +149,12 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
             ["Improved", progression.filter(row => row.after > row.before).length],
             ["Declined", progression.filter(row => row.after < row.before).length],
             ["Stable", progression.filter(row => row.after === row.before).length],
-            ["Trait changes", progression.filter(row => row.traitBefore !== row.traitAfter).length],
+            ["Development reviews", progression.length],
           ] as const).map(([label,value]) => <div key={label} className="rounded-lg border border-border bg-secondary/30 p-3"><p className="text-xs text-muted-foreground">{label}</p><strong className="mt-1 block text-2xl tabular-nums">{value}</strong></div>)}
         </div>
         <details className="text-sm"><summary className="mb-3 cursor-pointer font-semibold">View all player changes ({progression.length})</summary><div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full min-w-[650px] text-left text-sm">
-            <thead><tr className="border-b border-border bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground"><th className="p-3">Player</th><th className="p-3">Age</th><th className="p-3">Previous</th><th className="p-3">New OVR</th><th className="p-3">Change</th><th className="p-3">Development trait</th></tr></thead>
+            <thead><tr className="border-b border-border bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground"><th className="p-3">Player</th><th className="p-3">Age</th><th className="p-3">Previous</th><th className="p-3">New OVR</th><th className="p-3">Change</th><th className="p-3">Mentality</th></tr></thead>
             <tbody>{[...progression].sort((a,b) => (b.after-b.before)-(a.after-a.before)).map(row => {
               const diff = Math.round(row.after-row.before);
               const changed = row.traitBefore && row.traitAfter && row.traitBefore !== row.traitAfter;
@@ -164,7 +164,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
                 <td className="p-3 tabular-nums text-muted-foreground">{Math.round(row.before)}</td>
                 <td className="p-3 font-bold tabular-nums">{Math.round(row.after)}</td>
                 <td className="p-3"><span className={cn("rounded-md px-2 py-1 font-bold tabular-nums",diff>0?"bg-emerald-500/10 text-emerald-700 dark:text-emerald-300":diff<0?"bg-rose-500/10 text-rose-700 dark:text-rose-300":"bg-secondary text-muted-foreground")}>{diff>0?"+":""}{diff}</span></td>
-                <td className="p-3"><span className={changed?"font-bold":"text-muted-foreground"}>{traitLabel(row.traitAfter)}{changed ? <span className="block text-xs font-normal text-muted-foreground">from {traitLabel(row.traitBefore)}</span> : null}</span></td>
+                <td className="p-3">{roster.find(p => p.id === row.playerId) ? <GmMentalityTag player={roster.find(p => p.id === row.playerId)!} compact /> : "—"}</td>
               </tr>;
             })}</tbody>
           </table>
