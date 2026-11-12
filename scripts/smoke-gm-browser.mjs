@@ -78,7 +78,7 @@ try {
   const image = largePhoto.locator("img");
   await image.evaluate(img => img.decode());
   assert.ok(await image.evaluate(img => img.complete && img.naturalWidth > 0), "photo must load");
-  const maskUrl = (await photoTint.getAttribute("style")).match(/url\\(['"]?([^'")]+)/)?.[1];
+  const maskUrl = (await image.getAttribute("src")).replace(".webp", "-jersey-mask.webp");
   assert.ok(maskUrl, "fabric mask must resolve to a URL");
   assert.equal((await page.request.get(new URL(maskUrl, page.url()).href)).status(), 200);
   await largePhoto.screenshot({ path: dir + "/photo-jersey-desktop.png" });
