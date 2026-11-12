@@ -2,6 +2,7 @@ import type { GmLeagueState, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { regularSeasonComplete } from "@/gm/engine/schedule";
 import { discoverDevelopment, developmentProfileOf } from "@/gm/engine/development-profile";
+import { playerMentality } from "@/gm/engine/mentality";
 
 export const CAREER_CEILING_LIMIT = 4;
 export const MAX_TEAM_MENTORSHIPS = 2;
@@ -113,8 +114,54 @@ export function assignMentor(league: GmLeagueState, playerId: string, mentorId: 
   if (mentorId && league.players.some(row => row.id !== playerId && row.mentorship?.mentorId === mentorId && activeMentor(row, league.players))) return fail("That veteran already mentors a teammate.");
   if (player.mentorship?.mentorId === mentorId && player.mentorship?.teamId === player.teamId) return { ok: true, state: league, reason: "This mentorship is already active." };
   if (mentorId && activeTeamMentorships(player.teamId!, league.players) >= MAX_TEAM_MENTORSHIPS && !activeMentor(player, league.players)) return fail("Only two mentorships can be active at once. End an existing pairing first.");
-  const mentorship = mentorId ? { mentorId, teamId: player.teamId!, season: league.season, sharedGames: 0 } : undefined;
+  const mentorship = mentorId ? { mentorId, teamId: player.teamId!, season: league.season, sharedGames: 0, totalSharedGames: 0 } : undefined;
   return { ok: true, reason: veteran ? `${veteran.name} will mentor ${player.name}.` : "Mentorship cleared.", state: { ...league, players: league.players.map(row => row.id === playerId ? { ...row, mentorship, developmentPlan: row.developmentPlan ?? "balanced" } : row) } };
+}
+
+export const MENTALITY_MENTOR_MIN_GAMES = 120;
+
+/** 
+ * At least two substantial seasons of *actual* shared appearances are needed.
+ * This is a separate, rare, permanently saved opportunity—not a free OVR jump
+ * or a certainty from assigning an elite mentor in the UI.
+ */
+export function reviewMentoredMentality(player: GmPlayer, veteran: GmPlayer, season: number): GmPlayer {
+  const bond = player.mentorship;
+  if (!bond || bond.mentorId !== veteran.id || bond.teamId !== player.teamId ||
+      bond.season !== season || bond.sharedGames < 35 ||
+      (bond.totalSharedGames ?? bond.sharedGames) < MENTALITY_MENTOR_MIN_GAMES ||
+      !mentorEligible(player, veteran) || mentorServiceYears(veteran) < 7) return player;
+  const quality = mentorshipQuality(veteran);
+  const mentorRank = playerMentality(veteran).rank;
+  const currentRank = playerMentality(player).rank;
+  if (quality < 0.55 || mentorRank < 3 || mentorRank <= currentRank) return player;
+  const games = bond.totalSharedGames ?? bond.sharedGames;
+  // Cohort-stable roll keyed to the same real pairing and season, with
+  // gradually better odds after still more time together. Cannot be rerolled
+  // by reopening the card or loading a save.
+  const rng = createRng(developmentSeed(player.id + ":mindset:" + veteran.id + ":" + season));
+  const chance = clamp(0.06 + (quality - 0.55) * 0.16 +
+    (mentorRank - 3) * 0.025 + Math.min(0.17, (games - 120) / 500), 0.06, 0.35);
+  if (rng() >= chance) return player;
+  const original = developmentProfileOf(player);
+  const learning = clamp(original.learning + 0.065, 0.72, 1.4);
+  const adaptability = clamp(original.adaptability + 0.045, 0.7, 1.3);
+  const discovery = clamp(original.discovery + 0.035, 0, 0.55);
+  return {
+    ...player,
+    // Learned mentality, and actual bounded learning improvement, persist even
+    // after a trade or mentor retirement. The OVR potential ceiling is untouched.
+    mentalityMentor: {
+      rank: mentorRank as 2 | 3 | 4 | 5, mentorId: veteran.id,
+      mentorName: veteran.name, sharedGames: games, season,
+    },
+    developmentProfile: {
+      ...original,
+      learning: Math.round(learning * 1000) / 1000,
+      adaptability: Math.round(adaptability * 1000) / 1000,
+      discovery: Math.round(discovery * 1000) / 1000,
+    },
+  };
 }
 
 /**
@@ -196,6 +243,19 @@ export function reviewPlayerDevelopment(league: GmLeagueState): GmLeagueState {
     const evidence = breakoutEvidence(player, league.season);
     if (evidence.eligible) player = recordDevelopmentMilestone(player, player.age <= 25 && evidence.performance - evidence.baseline >= 12 ? 2 : 1, league.season, "breakout", evidence.reason);
     const veteran = activeMentor(player, league.players);
+    if (veteran) {
+      const beforeRank = playerMentality(player).rank;
+      const mentored = reviewMentoredMentality(player, veteran, league.season);
+      if (mentored !== player) {
+        player = mentored;
+        notes.push({
+          id: `mentality-${league.season}-${player.id}`,
+          day: league.day, season: league.season, tone: "good",
+          headline: `${player.name} adopted ${playerMentality(player).label} mentality`,
+          body: `${veteran.name}'s influence took hold after ${player.mentorship?.totalSharedGames ?? 0} shared games. ${player.name} advanced from mentality rank ${beforeRank}, gaining better learning habits—not an instant OVR or guaranteed superstar future.`,
+        });
+      }
+    }
     // Keep the original player/season RNG key, preserving existing save
     // outcomes and preventing rerolls when users replace mentors.
     const rng = createRng(developmentSeed(player.id + ":ceiling:" + league.season));

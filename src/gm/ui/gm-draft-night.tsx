@@ -15,7 +15,7 @@ import {
 } from "@/gm/engine/draft-room";
 import { playerSheet } from "@/gm/engine/attributes";
 import { buildScoutDesk } from "@/gm/engine/scout-desk";
-import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
+import { playerMentality } from "@/gm/engine/mentality";
 import {
   formatHeight,
   gradeMeaning,
@@ -92,16 +92,13 @@ export function GmDraftNight() {
       // Generated prospects don't come with a knowable career verdict.
       // Do not pause CPU draft jumps based on a hidden growth seed.
       if (row.player.draftModel === 2) return false;
-      const trait = playerDevTrait(row.player);
-      return trait === "xfactor" || trait === "superstar";
+      return playerMentality(row.player).rank === 5;
     });
     const sleeper = added.find((row) => row.sleeper);
     // Bulk jumps (Jump to my pick) only stop for your pick or a jackpot.
     if (added.length > 2 && !yours && !jackpotRow) return;
     const focus = yours ?? jackpotRow ?? sleeper ?? added[added.length - 1]!;
-    const trait = playerDevTrait(focus.player);
-    const jackpot = focus.player.draftModel !== 2 &&
-      (trait === "xfactor" || trait === "superstar");
+    const jackpot = focus.player.draftModel !== 2 && playerMentality(focus.player).rank === 5;
     const isYours = focus.teamId === league.userTeamId;
     // Ceremony for your pick, jackpots, and sleepers. Ordinary CPU picks stay on the ticker.
     if (!isYours && !jackpot && !focus.sleeper) return;
@@ -363,7 +360,7 @@ export function GmDraftNight() {
                       </span>
                       <span className="block text-[11px] text-muted-foreground">
                         OVR {playerSheet(row.player).overall} ·{" "}
-                        {traitLabel(playerDevTrait(row.player))}
+                        {playerMentality(row.player).label} mentality
                         {row.sleeper ? ` · fell ${row.fall}` : ""}
                       </span>
                     </span>
@@ -489,9 +486,9 @@ function LastPickReveal({
   last: { pick: number; player: GmPlayer; mockRank: number; sleeper: boolean; fall: number };
   abbr?: string;
 }) {
-  const trait = playerDevTrait(last.player);
+  const mentality = playerMentality(last.player);
   const ovr = playerSheet(last.player).overall;
-  const jackpot = trait === "xfactor" || trait === "superstar";
+  const jackpot = mentality.rank === 5;
   return (
     <div
       className={cn(
@@ -502,12 +499,12 @@ function LastPickReveal({
       )}
     >
       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-        {jackpot ? `${traitLabel(trait)} unlocked` : "Last pick"}
+        {jackpot ? "Mamba mentality" : "Last pick"}
       </p>
       <p className="mt-1 text-[15px] font-semibold">
         #{last.pick} {abbr} · {displayPlayerName(last.player)}
         <span className="ml-2 text-[12px] font-medium text-muted-foreground">
-          OVR {ovr} · {traitLabel(trait)}
+          OVR {ovr} · {mentality.label} mentality
         </span>
         {last.sleeper ? (
           <span className="ml-2 text-[12px] font-semibold text-amber-600 dark:text-amber-300">

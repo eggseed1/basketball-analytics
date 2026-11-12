@@ -23,4 +23,10 @@ assert.match(tiers[4]!.tone,/emerald/);
 assert.deepEqual(playerMentality(high),playerMentality(high),"deterministic mentality");
 assert.deepEqual(playerMentality({...high,teamId:"bos",age:31}),playerMentality(high),"mentality persists across trade and age");
 assert.equal(Object.keys(high.developmentProfile!.aptitudes).length,5);
-console.log("GM mentality: learning profile tiers, ordering, team/age invariance passed");
+const inherited = { ...player(.76,.74,.77), mentalityMentor: {
+  rank: 5 as const, mentorId: "mentor-elite", mentorName: "Veteran", sharedGames: 150, season: 2030,
+}};
+assert.equal(playerMentality(inherited).label, "Mamba");
+assert.match(playerMentality(inherited).description, /150 games/);
+assert.equal(playerMentality({ ...inherited, mentalityMentor: undefined }).label, "Casual");
+console.log("GM mentality: innate and mentored ranks, team and age stability verified");

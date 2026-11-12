@@ -188,14 +188,9 @@ export function GmGeneratedPortrait({player,name,size="xs",className}:{
           <path d={`M${eyeL+9} ${irisY-2}Q80 ${irisY-5} ${eyeR-9} ${irisY-2}M${eyeL-10} ${irisY-3}l-8 -2M${eyeR+10} ${irisY-3}l8 -2`}/>
         </g>:null}
       </g>
-      {showLettering?<>
-        <text x="80" y="145" textAnchor="middle" fontFamily="system-ui,Arial,sans-serif"
-          fontWeight="850" fontSize="9.5" letterSpacing=".9" fill={uniform.lettering}
-          stroke={uniform.base} strokeWidth=".85" paintOrder="stroke">{uniform.abbreviation}</text>
-        {number?<text x="80" y="158" textAnchor="middle"
-          fontFamily="system-ui,Arial,sans-serif" fontWeight="900" fontSize="12.5"
-          fill={uniform.lettering} stroke={uniform.base} strokeWidth=".8" paintOrder="stroke">{number}</text>:null}
-      </>:null}
+      {showLettering && number ? <text x="80" y="149" textAnchor="middle"
+        fontFamily="system-ui,Arial,sans-serif" fontWeight="900" fontSize="12.5"
+        fill={uniform.lettering} stroke={uniform.base} strokeWidth=".8" paintOrder="stroke">{number}</text> : null}
     </svg>
   </span>;
 }

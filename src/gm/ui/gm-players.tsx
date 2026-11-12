@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { GmMentalityTag } from "@/gm/ui/gm-mentality-tag";
 import { playerSheet } from "@/gm/engine/attributes";
 import { scoutPotentialView } from "@/gm/engine/scouting";
 import { perGame } from "@/gm/lib/counting";
@@ -325,9 +326,9 @@ export function GmPlayersTable() {
                 <td className="px-3 py-2">
                   <span className="inline-flex items-center gap-2 font-medium">
                     <GmPlayerPortrait player={row.player} />
-                    <Link href={`/gm/player/${encodeURIComponent(row.player.id)}`}>
+                    <span className="min-w-0"><Link href={`/gm/player/${encodeURIComponent(row.player.id)}`} className="block">
                       {row.player.name}
-                    </Link>
+                    </Link><GmMentalityTag player={row.player} compact /></span>
                   </span>
                 </td>
                 <td className="px-3 py-2">{row.player.position}</td>

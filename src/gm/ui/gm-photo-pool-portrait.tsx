@@ -40,7 +40,7 @@ export function GmPhotoPoolPortrait({
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const team = generatedJerseyStyle(player.teamId);
   const px = DIMENSIONS[size];
-  const showJerseyLettering = size === "lg" || size === "xl";
+  const showJerseyNumber = size === "lg" || size === "xl";
   const jerseyNumber = player.jersey && /^[0-9]{1,2}$/.test(player.jersey)
     ? player.jersey : null;
   if (!src || failedSrc === src) {
@@ -96,23 +96,17 @@ export function GmPhotoPoolPortrait({
             opacity: 0.88,
           }}
         />
-        {/* Lettering sits on the uniform, not in a detached corner badge.
-            It is only shown on large cards where it is legible. */}
-        {showJerseyLettering ? <span
+        {/* No team-name abbreviations over the photograph. Keep optional uniform numbers. */}
+        {showJerseyNumber && jerseyNumber ? <span
           aria-hidden="true"
-          data-photo-jersey-lettering="true"
-          className="pointer-events-none absolute bottom-[7%] left-1/2 flex -translate-x-1/2 flex-col items-center justify-end leading-none"
+          data-photo-jersey-number="true"
+          className="pointer-events-none absolute bottom-[8%] left-1/2 -translate-x-1/2 font-black leading-none"
           style={{
             color: team.lettering,
-            fontSize: size === "xl" ? 11 : 8,
-            fontWeight: 900,
-            letterSpacing: "0.06em",
+            fontSize: size === "xl" ? 13 : 9,
             textShadow: "0 1px 2px rgba(0,0,0,.8), 0 -1px 1px rgba(0,0,0,.6)",
           }}
-        >
-          <span>{team.abbreviation}</span>
-          {jerseyNumber ? <span style={{ fontSize: size === "xl" ? 13 : 9 }}>{jerseyNumber}</span> : null}
-        </span> : null}
+        >{jerseyNumber}</span> : null}
       </> : null}
 
     </span>

@@ -38,7 +38,7 @@ assert.match(originalHtml, /M30 164L35 143/,
 assert.match(originalHtml, /data-generated-portrait="true"/);
 assert.match(originalHtml, /data-jersey-team="bos"/);
 assert.match(originalHtml, /data-jersey-color="#007A33"/);
-assert.match(originalHtml, />BOS<\/text>/);
+assert.ok(!originalHtml.includes(">BOS</text>"),"no abbreviation overlays illustrated uniforms");
 assert.match(originalHtml, />23<\/text>/);
 assert.match(originalHtml, /aria-label="Malik Adeyemi illustrated portrait in BOS jersey"/);
 
@@ -53,8 +53,8 @@ for (const team of FRANCHISES) {
   assert.equal(jersey.abbreviation, team.abbr);
   assert.ok(jersey.lettering && jersey.piping);
   assert.match(updatedHtml, new RegExp(`data-jersey-team="${brand.id}"`));
-  assert.ok(updatedHtml.includes(`>${team.abbr}</text>`),
-    "each team's abbreviation must appear on its jersey");
+  assert.ok(!updatedHtml.includes(`>${team.abbr}</text>`),
+    "team abbreviations must not obscure the illustrated uniform");
   assert.equal(faceRegion(originalHtml), faceRegion(updatedHtml),
     "aging and changing teams must never alter facial artwork");
   assert.deepEqual(generatedPortraitRecipe(original.identity!.portraitSeed),
@@ -63,7 +63,7 @@ for (const team of FRANCHISES) {
 const unsigned = html({ ...original, teamId: null });
 assert.match(unsigned, /data-jersey-team="free-agent"/);
 assert.match(unsigned, /data-jersey-color="#4b5563"/);
-assert.match(unsigned, />FA<\/text>/);
+assert.ok(!unsigned.includes(">FA</text>"),"free agents do not show an abbreviation");
 assert.equal(faceRegion(unsigned), faceRegion(originalHtml),
   "free agency must remove club colors without altering identity");
 const small = html(original, "xs");
@@ -77,7 +77,7 @@ const medium = html(original, "md");
 assert.ok(!medium.includes(">BOS</text>"), "medium avatars avoid illegible uniform lettering");
 const largeOther = html({ ...original, teamId: "lal" }, "xl");
 assert.match(largeOther, /data-jersey-color="#552583"/);
-assert.match(largeOther, />LAL<\/text>/);
+assert.ok(!largeOther.includes(">LAL</text>"),"trades keep abbreviations off portrait uniforms");
 assert.equal(faceRegion(largeOther), faceRegion(originalHtml));
 assert.notEqual(originalHtml, largeOther, "uniform must visibly change on trade");
 assert.ok(!html({ ...original, jersey: "suspicious<script>" }).includes("suspicious"),

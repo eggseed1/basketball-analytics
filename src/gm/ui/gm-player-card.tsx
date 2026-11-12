@@ -15,8 +15,7 @@ import {
   ATTRIBUTE_LABEL,
   playerSheet,
 } from "@/gm/engine/attributes";
-import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
-import { playerMentality } from "@/gm/engine/mentality";
+import { GmMentalityTag } from "@/gm/ui/gm-mentality-tag";
 import { developmentOutlook } from "@/gm/engine/development-profile";
 import { scoutPotentialView, trajectoryRead } from "@/gm/engine/scouting";
 import {
@@ -129,8 +128,6 @@ export function GmPlayerCard({
   const tradeHref = tradeEntryHref(player, league);
   const trading = tradeWindowStatus(league);
   const shownName = displayPlayerName(player);
-  const trait = inDraft ? null : playerDevTrait(player);
-  const mentality = playerMentality(player);
   const profile = player.scoutProfile;
   const [careerApi, setCareerApi] = useState<CareerRow[] | null>(null);
   const [careerNote, setCareerNote] = useState<string | null>(null);
@@ -268,20 +265,8 @@ export function GmPlayerCard({
         <div className="gm-player__impact">
           <p className="score-num">{inDraft ? "??" : sheet.overall}</p>
           <p>OVR</p>
-          {trait ? (
-            <p
-              className={cn(
-                trait === "xfactor" || trait === "superstar"
-                  ? "font-semibold text-amber-600 dark:text-amber-300"
-                  : undefined
-              )}
-            >
-              {traitLabel(trait)}
-            </p>
-          ) : inDraft ? (
-            <p>Trait sealed</p>
-          ) : null}
-          {!inDraft && player.draftModel === 2 ? <p className={cn("font-semibold", mentality.tone)} title={mentality.description}>Mentality: {mentality.label}</p> : null}
+          {!inDraft ? <GmMentalityTag player={player} /> : <p>Work habits unscouted</p>}
+          {player.mentalityMentor ? <p className="text-xs text-muted-foreground">Mentored by {player.mentalityMentor.mentorName} · {player.mentalityMentor.sharedGames} shared games</p> : null}
           {!inDraft ? (
             <>
               <p>
@@ -312,7 +297,7 @@ export function GmPlayerCard({
         {inDraft ? (
           <>
             <p className="mt-1 text-sm text-muted-foreground">
-              Overall and the development trait unlock when the pick is in.
+              Overall and visible mentality are revealed when the pick is in.
               Grades below can be wrong depending on your scout.
             </p>
             <div className="mt-3 rounded-lg bg-secondary/70 px-3 py-2">
@@ -359,7 +344,7 @@ export function GmPlayerCard({
         ) : (
           <>
             <p className="mt-1 text-sm text-muted-foreground">
-              {player.draftModel===2?"Growth depends on age, learning tendencies, work habits, health and a realistic practice or rotation plan. The visible development trait describes learning speed, not a guaranteed potential ceiling.":"Overall is the rating used across the league. Development trait drives how hard they grow."}
+              {player.draftModel===2?"Growth depends on age, learning tendencies, work habits, health and a realistic practice or rotation plan. Mentality describes work habits, not a guaranteed potential ceiling.":"Overall is the rating used across the league. Mentality describes their approach to learning and can improve through sustained mentorship."}
             </p>
             <p className="mt-2 text-sm" data-testid="development-outlook">
               {player.draftModel === 2

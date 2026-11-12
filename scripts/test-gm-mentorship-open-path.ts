@@ -9,6 +9,8 @@ import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/eng
 import { assignMentor, mentorEligible, mentorPositionsOverlap, mentorshipBonus, recordDevelopmentMilestone, reviewPlayerDevelopment, workEthicOf } from "../src/gm/engine/development";
 import { developmentProfileOf, softGrowthFactor } from "../src/gm/engine/development-profile";
 import { advanceDynamicProgression } from "../src/gm/engine/dynamic-progression";
+import { playerMentality } from "../src/gm/engine/mentality";
+import { reviewMentoredMentality, MENTALITY_MENTOR_MIN_GAMES } from "../src/gm/engine/development";
 import type { GmLeagueState, GmPlayer } from "../src/gm/types";
 
 const base = prepareFranchise(createGeneratedLeague({
@@ -111,4 +113,64 @@ for (let i = 0; i < 350; i++) {
 }
 assert.ok(breakthroughs >= 15 && breakthroughs <= 60,
   "one veteran across 350 seasons should create rare, not guaranteed, persistent discoveries");
+// A late second-round rookie can learn a truly exceptional mentality from a
+// veteran, but only after many real shared games and a rare, stable roll.
+const mambaMentor: GmPlayer = {
+  ...veteran, id: "experienced-mamba", age: 34, serviceYears: 14, workEthic: 99,
+  developmentProfile: {
+    ...developmentProfileOf(veteran), learning: 1.35, adaptability: 1.30,
+    learningSurge: 2.45, discovery: 0,
+    aptitudes: { shooting: 1.25, creation: 1.25, defense: 1.25,
+      rebounding: 1.25, finishing: 1.25 },
+  },
+};
+assert.equal(playerMentality(mambaMentor).label, "Mamba");
+const secondRounder: GmPlayer = {
+  ...starter, id: "second-round-mentee", name: "Second-round learner",
+  age: 21, draftPick: 48, draftModel: 2,
+  developmentProfile: {
+    ...developmentProfileOf(starter), learning: 0.76, adaptability: 0.75,
+    learningSurge: 1, discovery: 0,
+    aptitudes: { shooting: 0.78, creation: 0.78, defense: 0.78,
+      rebounding: 0.78, finishing: 0.78 },
+  },
+  mentorship: { mentorId: mambaMentor.id, teamId: "bos", season: 2027,
+    sharedGames: 65, totalSharedGames: MENTALITY_MENTOR_MIN_GAMES + 30 },
+};
+assert.equal(playerMentality(secondRounder).label, "Casual");
+assert.equal(reviewMentoredMentality({
+  ...secondRounder, mentorship: { ...secondRounder.mentorship!,
+    totalSharedGames: MENTALITY_MENTOR_MIN_GAMES - 1 },
+}, mambaMentor, 2027).mentalityMentor, undefined, "120 career co-appearances needed");
+assert.equal(reviewMentoredMentality({
+  ...secondRounder, mentorship: { ...secondRounder.mentorship!, sharedGames: 34 },
+}, mambaMentor, 2027).mentalityMentor, undefined, "35 current-season co-appearances needed");
+assert.equal(reviewMentoredMentality(secondRounder, { ...mambaMentor, age: 26 }, 2027),
+  secondRounder, "ineligible young mentor cannot transfer mentality");
+let inherited = 0;
+for (let i=0; i<200; i++) {
+  const candidate = { ...secondRounder, id: "second-round-player-" + i };
+  const changed = reviewMentoredMentality(candidate, mambaMentor, 2027);
+  if (changed === candidate) continue;
+  inherited++;
+  assert.equal(playerMentality(changed).label, "Mamba");
+  assert.equal(changed.mentalityMentor?.mentorId, mambaMentor.id);
+  assert.equal(changed.sheet?.overall, candidate.sheet?.overall, "no instant OVR jump");
+  assert.equal(changed.sheet?.potential.ceiling, candidate.sheet?.potential.ceiling, "no hidden fixed OVR outcome");
+  assert.ok(softGrowthFactor(changed, 86) > softGrowthFactor(candidate, 86),
+    "earned mindset must genuinely improve future skill learning");
+  assert.equal(playerMentality({ ...changed, teamId: "lal", mentorship: undefined }).label,
+    "Mamba", "mentality survives trade and mentor departure");
+  const restored = parseFranchise(exportFranchise({
+    ...paired.state, players: [changed, mambaMentor],
+  })).players[0]!;
+  assert.deepEqual(restored.mentalityMentor, changed.mentalityMentor,
+    "mentality inheritance persists through save/reload");
+  assert.equal(reviewMentoredMentality(changed, mambaMentor, 2027), changed,
+    "no duplicate upgrade by replaying same mentor in same season");
+}
+assert.ok(inherited >= 12 && inherited <= 95,
+  "rare veteran mindset transfer must be possible but never automatic");
+console.log("Mentor mentality inheritance verified", { inherited });
+
 console.log("Open-ended mentorship: practice speed, 20 shared-game threshold, learning discovery, replay prevention, no ceiling changes and save safety passed", { breakthroughs });

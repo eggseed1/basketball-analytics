@@ -360,7 +360,9 @@ export interface GmPlayer {
   badges?: { version: 1 | 2; xp: Partial<Record<GmBadgeId, number>>; season?: number; gameIds?: string[] };
   badgeFocus?: GmBadgeId;
   workEthic?: number;
-  mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; lastGameId?: string; slot?: 0 | 1 };
+  mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; totalSharedGames?: number; lastGameId?: string; slot?: 0 | 1 };
+  /** Permanent work-mentality learned from a veteran after sustained real co-appearances. */
+  mentalityMentor?: { rank: 2 | 3 | 4 | 5; mentorId: string; mentorName: string; sharedGames: number; season: number };
   developmentBaseline?: { season: number; overall: number };
   /** Historical save key: model-2 generated prospects store learning discoveries here, not raises to a fixed potential ceiling. */
   ceilingGrowth?: { total: number; reviewedSeason?: number; awards: Array<{ season: number; source: "mentorship" | "breakout"; gain: number; reason: string }> };
