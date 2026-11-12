@@ -20,7 +20,7 @@ const tiers=[
 assert.deepEqual(tiers.map(x=>x.label),["Casual","Steady","Driven","Relentless","Mamba"]);
 assert.deepEqual(tiers.map(x=>x.rank),[1,2,3,4,5]);
 assert.match(tiers[4]!.tone,/emerald/);
-assert.equal(playerMentality(high),playerMentality(high),"deterministic mentality");
+assert.deepEqual(playerMentality(high),playerMentality(high),"deterministic mentality");
 assert.deepEqual(playerMentality({...high,teamId:"bos",age:31}),playerMentality(high),"mentality persists across trade and age");
 assert.equal(Object.keys(high.developmentProfile!.aptitudes).length,5);
 console.log("GM mentality: learning profile tiers, ordering, team/age invariance passed");
