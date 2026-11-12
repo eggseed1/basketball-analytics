@@ -101,7 +101,7 @@ export function GmPhotoPoolPortrait({
         {showJerseyLettering ? <span
           aria-hidden="true"
           data-photo-jersey-lettering="true"
-          className="pointer-events-none absolute bottom-[1%] left-1/2 flex -translate-x-1/2 flex-col items-center justify-end leading-none"
+          className="pointer-events-none absolute bottom-[7%] left-1/2 flex -translate-x-1/2 flex-col items-center justify-end leading-none"
           style={{
             color: team.lettering,
             fontSize: size === "xl" ? 11 : 8,
