@@ -141,10 +141,7 @@ assert.equal(playerMentality(secondRounder).label, "Casual");
 assert.equal(reviewMentoredMentality({
   ...secondRounder, mentorship: { ...secondRounder.mentorship!,
     totalSharedGames: MENTALITY_MENTOR_MIN_GAMES - 1 },
-}, mambaMentor, 2027), reviewMentoredMentality({
-  ...secondRounder, mentorship: { ...secondRounder.mentorship!,
-    totalSharedGames: MENTALITY_MENTOR_MIN_GAMES - 1 },
-}, mambaMentor, 2027), "deterministic below minimum");
+}, mambaMentor, 2027).mentalityMentor, undefined, "120 career co-appearances needed");
 assert.equal(reviewMentoredMentality({
   ...secondRounder, mentorship: { ...secondRounder.mentorship!, sharedGames: 34 },
 }, mambaMentor, 2027).mentalityMentor, undefined, "35 current-season co-appearances needed");
