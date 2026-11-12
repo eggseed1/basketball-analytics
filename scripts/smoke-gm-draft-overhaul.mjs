@@ -53,7 +53,7 @@ try{
   await page.getByRole("button",{name:"Open report for "+manifest.targetName,exact:true}).click();await page.getByRole("button",{name:"Review this selection",exact:true}).click();await page.getByRole("dialog").getByRole("button",{name:"Submit draft pick",exact:true}).click();
   const rookieReveal=page.getByRole("dialog",{name:"Draft pick reveal"});
   await rookieReveal.getByText("Mentality",{exact:true}).waitFor();
-  assert.ok(await rookieReveal.getByText(/Casual|Steady|Driven|Relentless|Mamba/).count()>0,"rookie reveal announces mentality after signing");
+  await rookieReveal.getByText(/Casual|Steady|Driven|Relentless|Mamba/).waitFor();
   assert.equal(await rookieReveal.getByText("Dev trait",{exact:true}).count(),0,
     "generated rookies cannot reveal secret career traits on draft night");
   await rookieReveal.getByRole("button",{name:"Continue",exact:true}).click();
