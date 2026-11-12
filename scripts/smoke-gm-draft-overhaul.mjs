@@ -28,6 +28,11 @@ try{
   await page.getByRole("button",{name:/Polished & playable/}).click();
   await page.getByRole("button",{name:/Open scout recommendation for/}).first().click();
   await page.getByRole("region",{name:/Prospect file for/}).waitFor();
+  await page.getByRole("button",{name:"Grades & traits",exact:true}).click();
+  await page.getByRole("heading",{name:"Your scout's grades",exact:true}).waitFor();
+  await page.getByRole("button",{name:"Stats & combine",exact:true}).click();
+  await page.getByRole("heading",{name:"College / amateur season",exact:true}).waitFor();
+  await page.getByRole("button",{name:"Overview",exact:true}).click();
   await page.getByRole("button",{name:/Swing for the ceiling|International projects/}).click();
   await capture("mobile-draft-preparation");
   await page.getByLabel("Draft strategy",{exact:true}).selectOption("shooting");

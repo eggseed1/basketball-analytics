@@ -27,6 +27,7 @@ import {
   userTeam,
 } from "@/gm/lib/selectors";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { GmFreeAgentDossier } from "@/gm/ui/gm-free-agent-dossier";
 import { GmContractSigningCelebration } from "@/gm/ui/gm-contract-signing-celebration";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { useGmStore } from "@/gm/state/gm-store";
@@ -67,6 +68,7 @@ export function GmFreeAgencyHub() {
 
   const [tabChoice, setTabChoice] = useState<{ stage: GmFaStage | undefined; tab: HubTab } | null>(null);
   const [query, setQuery] = useState("");
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [pos, setPos] = useState<GmPosition | "ALL">("ALL");
   const [onlyMine, setOnlyMine] = useState(false);
   const [onlyWatch, setOnlyWatch] = useState(false);
@@ -120,6 +122,18 @@ export function GmFreeAgencyHub() {
     return true;
   });
 
+  const selectedAgent = filtered.find(p => p.id === selectedAgentId) ?? filtered[0] ?? null;
+  function openAgentFile(id: string) {
+    setSelectedAgentId(id);
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      window.requestAnimationFrame(() => {
+        const panel = document.getElementById("free-agent-selected-file");
+        panel?.focus({ preventScroll: true });
+        panel?.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    }
+  }
+
   const options = pendingOptions(league).filter((row) => row.teamId === league.userTeamId);
   const qos = qualifyingOfferCandidates(league).filter(
     (row) => row.rightsTeamId === league.userTeamId
@@ -157,7 +171,7 @@ export function GmFreeAgencyHub() {
             {open ? faStageLabel(market) : "Market closed"}
           </p>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight">Free agency</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Choose a player to review the agent pitch, competing teams, legal salary range and a live offer slider.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Browse the market, select a player for his profile, then negotiate when you are ready.</p>
           <p className="mt-1 text-xs text-muted-foreground">Cap room ${cap.capRoomM.toFixed(1)}M · Roster {cap.rosterSize}/{offseasonRosterLimit(league)}</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -439,7 +453,7 @@ export function GmFreeAgencyHub() {
                 id="fa-q"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-40"
+                className="w-48" placeholder="Player name"
               />
             </div>
             <div className="flex flex-wrap gap-1">
@@ -513,17 +527,22 @@ export function GmFreeAgencyHub() {
               })}
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-border">
+            <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(340px,.95fr)]" data-testid="fa-market-browser">
+              <div id="fa-market-list" className="min-w-0 overflow-x-auto rounded-xl border border-border bg-card">
+              <div className="flex items-center justify-between gap-2 border-b border-border bg-secondary/30 px-3 py-2">
+                <p className="text-xs font-semibold">{filtered.length} available players</p>
+                <p className="text-[11px] text-muted-foreground">Select a name to see details</p>
+              </div>
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-border bg-muted/40 text-xs text-muted-foreground">
                   <tr>
                     <th className="px-3 py-2">Player</th>
-                    <th className="px-3 py-2">Pos</th>
-                    <th className="px-3 py-2">Age</th>
+                    <th className="hidden px-3 py-2 xl:table-cell">Pos</th>
+                    <th className="hidden px-3 py-2 2xl:table-cell">Age</th>
                     <th className="px-3 py-2">OVR</th>
-                    <th className="px-3 py-2">Status</th>
+                    <th className="hidden px-3 py-2 2xl:table-cell">Status</th>
                     <th className="px-3 py-2">Ask</th>
-                    <th className="px-3 py-2">Interest</th>
+                    <th className="hidden px-3 py-2 sm:table-cell">Interest</th>
                     <th className="px-3 py-2"></th>
                   </tr>
                 </thead>
@@ -537,29 +556,32 @@ export function GmFreeAgencyHub() {
                     );
                     const ask = askingSalary(p, league);
                     const askY = askingYears(p, rules);
-                    const watched = (market?.watchlist ?? []).includes(p.id);
                     return (
                       <tr
                         key={p.id}
-                        className="hover:bg-secondary/20"
+                        className={cn("hover:bg-secondary/20", selectedAgent?.id === p.id && "bg-primary/5")}
                       >
                         <td className="px-3 py-2 font-medium">
-                          <div className="flex items-center gap-2"><GmPlayerPortrait player={p} />
-                          <Link aria-label={"Review terms for " + p.name}
-                            href={"/gm/free-agency/offer/" + encodeURIComponent(p.id)}
-                            className="min-h-11 text-left font-medium underline decoration-border underline-offset-4 hover:decoration-current">
-                            {displayPlayerName(p)}<span className="block text-xs text-muted-foreground sm:hidden">Review offer</span>
-                          </Link></div>
+                          <button type="button" aria-label={"View details for " + p.name}
+                            aria-pressed={selectedAgent?.id === p.id}
+                            onClick={() => openAgentFile(p.id)}
+                            className="flex min-h-12 items-center gap-2 text-left hover:text-primary">
+                            <GmPlayerPortrait player={p} size="sm" />
+                            <span className="min-w-0"><strong className="block text-sm">{displayPlayerName(p)}</strong>
+                              <span className="block text-[11px] font-normal text-muted-foreground">
+                                {p.position} · {p.age} yrs · {p.rightsKind === "restricted" ? "RFA" : "UFA"}
+                              </span></span>
+                          </button>
                           {p.rightsKind === "restricted" ? (
                             <span className="ml-1 text-xs text-muted-foreground">RFA</span>
                           ) : p.rightsTeamId === league.userTeamId ? (
                             <span className="ml-1 text-xs text-muted-foreground">Bird</span>
                           ) : null}
                         </td>
-                        <td className="px-3 py-2">{p.position}</td>
-                        <td className="px-3 py-2">{p.age}</td>
+                        <td className="hidden px-3 py-2 xl:table-cell">{p.position}</td>
+                        <td className="hidden px-3 py-2 2xl:table-cell">{p.age}</td>
                         <td className="px-3 py-2 tabular-nums">{displayOverall(p)}</td>
-                        <td className="px-3 py-2 text-xs text-muted-foreground">
+                        <td className="hidden px-3 py-2 text-xs text-muted-foreground 2xl:table-cell">
                           {agreed
                             ? "Verbal agreement"
                             : p.rightsKind === "restricted"
@@ -569,7 +591,7 @@ export function GmFreeAgencyHub() {
                         <td className="px-3 py-2 tabular-nums text-muted-foreground">
                           ${ask.toFixed(1)}M / {askY}
                         </td>
-                        <td className="px-3 py-2 text-xs text-muted-foreground">
+                        <td className="hidden px-3 py-2 text-xs text-muted-foreground sm:table-cell">
                           {agreed
                             ? `Agreed ${league.teams.find((t) => t.id === agreed.teamId)?.abbr}`
                             : interest.length
@@ -581,11 +603,12 @@ export function GmFreeAgencyHub() {
                             <Button
                               size="xs"
                               variant="outline"
-                              onClick={() => toggleWatch(p.id)}
+                              aria-label={"View details for " + p.name + " in quick view"}
+                              onClick={() => openAgentFile(p.id)}
                             >
-                              {watched ? "Watching" : "Watch"}
+                              Details
                             </Button>
-                            <Link aria-label={"Review offer for " + p.name}
+                            <Link aria-label={"Review terms for " + p.name}
                                href={"/gm/free-agency/offer/" + encodeURIComponent(p.id)}
                                className={cn(buttonVariants({ size: "sm", variant: "outline" }), !open && "pointer-events-none opacity-50")}>
                                Review offer
@@ -597,6 +620,18 @@ export function GmFreeAgencyHub() {
                   })}
                 </tbody>
               </table>
+              </div>
+              <div id="free-agent-selected-file" tabIndex={-1} className="min-w-0 scroll-mt-24 outline-none">
+                {selectedAgent ? <GmFreeAgentDossier
+                  key={selectedAgent.id}
+                  league={league}
+                  player={selectedAgent}
+                  canNegotiate={open && !market?.done && ["re_signing","moratorium","open","fill"].includes(market?.stage ?? "")}
+                  watched={(market?.watchlist ?? []).includes(selectedAgent.id)}
+                  onWatch={() => toggleWatch(selectedAgent.id)}
+                  onBack={() => document.getElementById("fa-market-list")?.scrollIntoView({ block: "start" })}
+                /> : <p className="rounded-xl border border-border p-4 text-sm text-muted-foreground">No free agents match these filters.</p>}
+              </div>
             </div>
           )}
         </>
