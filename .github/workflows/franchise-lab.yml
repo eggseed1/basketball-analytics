@@ -51,6 +51,9 @@ jobs:
       - run: npm run test:franchise-lottery-physical-balls
       - run: npm run test:franchise-social
       - run: npm run test:franchise-generated-identity
+      - run: npm run test:franchise-photo-pool
+      - run: npm run test:franchise-mentality
+      - run: npx tsx scripts/test-gm-dev-traits.ts
       - run: npm run test:franchise-generated-jersey
       - run: npm run test:franchise-media
       - run: npm run test:franchise-development
