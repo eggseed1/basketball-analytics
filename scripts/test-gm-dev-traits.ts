@@ -6,6 +6,8 @@ import assert from "node:assert/strict";
 
 import { playerSheet } from "../src/gm/engine/attributes";
 import {
+  abilityTraitFloor,
+  ensurePotentialTrait,
   playerDevTrait,
   rollDevTrait,
   traitGrowthMul,
@@ -133,6 +135,29 @@ assert.ok(
   cadeTrait === "superstar" || cadeTrait === "xfactor",
   `MVP-ballot producers should not be Normal (got ${cadeTrait})`
 );
+
+// Loading old saves must not preserve a Normal or Bust label on an elite player.
+assert.equal(abilityTraitFloor(89), null);
+assert.equal(abilityTraitFloor(90), "star");
+assert.equal(abilityTraitFloor(95), "superstar");
+assert.equal(abilityTraitFloor(98), "xfactor");
+const eliteBase = playerSheet(kid);
+for (const [overall, expected] of [[90, "star"], [95, "superstar"], [98, "xfactor"]] as const) {
+  const player: GmPlayer = {
+    ...kid,
+    draftYear: undefined,
+    teamId: "bos",
+    sheet: { ...eliteBase, overall, potential: { ...eliteBase.potential, trait: "normal", path: "average" } },
+    traitHistory: [{ season: 2029, before: "normal", after: "bust", reason: "legacy review" }],
+  };
+  assert.equal(playerDevTrait(player), expected, `old review must respect ${overall} OVR floor`);
+  assert.equal(ensurePotentialTrait(player.sheet!.potential, player).trait, expected);
+}
+const highCeilingOnly: GmPlayer = {
+  ...kid,
+  sheet: { ...eliteBase, overall: 70, potential: { ...eliteBase.potential, ceiling: 99, trait: "normal" } },
+};
+assert.equal(abilityTraitFloor(highCeilingOnly.sheet!.overall), null, "potential is not earned ability");
 
 console.log("dev traits ok", {
   rare,
