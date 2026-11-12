@@ -41,7 +41,7 @@ export function GmPhotoPoolPortrait({
   const team = generatedJerseyStyle(player.teamId);
   const px = DIMENSIONS[size];
   const showJerseyLettering = size === "lg" || size === "xl";
-  const jerseyNumber = player.jersey && /^\\d{1,2}$/.test(player.jersey)
+  const jerseyNumber = player.jersey && /^[0-9]{1,2}$/.test(player.jersey)
     ? player.jersey : null;
   if (!src || failedSrc === src) {
     return <GmGeneratedPortrait
