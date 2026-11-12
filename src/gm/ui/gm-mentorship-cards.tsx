@@ -105,7 +105,7 @@ export function GmMentorshipCards({ league, roster }: { league: GmLeagueState; r
               </div>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">{mentee.draftModel === 2
-              ? "After 20 games: occasional practice breakthroughs. After {MENTALITY_MENTOR_MIN_GAMES}+ actual games together (35+ this season), a strong veteran can rarely pass on a higher mentality and improve long-term learning. No instant OVR or guaranteed superstar."
+              ? `After 20 games: occasional skill discovery. After ${MENTALITY_MENTOR_MIN_GAMES}+ shared career games, a strong veteran can rarely pass on higher mentality and improve long-term learning. No instant OVR or guaranteed superstar.`
               : "After 20 games together: small chance to improve the legacy potential ceiling. No instant OVR."}</p>
             {teachable.length > 0 ? <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Mentor badges">
               {teachable.slice(0, 3).map(badge => <span key={badge.id}

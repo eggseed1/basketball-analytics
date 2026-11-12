@@ -13,7 +13,6 @@ import {
   playerSheet,
 } from "@/gm/engine/attributes";
 import { GmMentalityTag } from "@/gm/ui/gm-mentality-tag";
-import { playerMentality } from "@/gm/engine/mentality";
 import { developmentOutlook } from "@/gm/engine/development-profile";
 import { scoutPotentialView, trajectoryRead } from "@/gm/engine/scouting";
 import {
@@ -124,7 +123,6 @@ export function GmPlayerCard({
   const mine = userTeam(league);
   const onRoster = player.teamId === mine.id;
   const shownName = displayPlayerName(player);
-  const mentality = playerMentality(player);
   const profile = player.scoutProfile;
   const [careerApi, setCareerApi] = useState<CareerRow[] | null>(null);
   const [careerNote, setCareerNote] = useState<string | null>(null);
