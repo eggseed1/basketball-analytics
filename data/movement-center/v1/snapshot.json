@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-12",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-12T18:38:36.336Z",
+    "builtAt": "2026-11-12T22:19:31.077Z",
     "rosterPlayerCount": 503,
-    "headlinesScanned": 13477,
-    "latestHeadlineAt": "2026-11-12T18:37:50.000Z",
+    "headlinesScanned": 13558,
+    "latestHeadlineAt": "2026-11-12T22:13:48.000Z",
     "latestTransactionDate": "2026-11-11",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -1967,12 +1967,13 @@
         "mv-884c423318deb2f4",
         "mv-bb342e323d93ae79",
         "mv-2e10dd3c6f332c82",
-        "mv-2e5ec3549d2b8f49"
+        "mv-2e5ec3549d2b8f49",
+        "mv-96c25bd1f5797dac"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-01T13:58:47.000Z",
-      "lastMeaningfulAt": "2026-11-12T02:14:31.000Z",
+      "lastMeaningfulAt": "2026-11-12T21:26:20.000Z",
       "linkedPlayerIds": [
         "2595516",
         "4066336",
@@ -12135,6 +12136,27 @@
       "isOriginal": true
     },
     {
+      "id": "mv-96c25bd1f5797dac",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Warriors Have Former Top-10 Pick High on Trade Wish List Amid Porzingis Uncertainty: Insider",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-12T21:26:20.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/warriors-jalen-smith-trade-rumors-fischer-update/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -13495,7 +13517,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-12T18:38:36.336Z"
+      "resolvedAt": "2026-11-12T22:19:31.077Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
