@@ -13,6 +13,7 @@ import {
   playerSheet,
 } from "@/gm/engine/attributes";
 import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
+import { playerMentality } from "@/gm/engine/mentality";
 import { developmentOutlook } from "@/gm/engine/development-profile";
 import { scoutPotentialView, trajectoryRead } from "@/gm/engine/scouting";
 import {
@@ -124,6 +125,7 @@ export function GmPlayerCard({
   const onRoster = player.teamId === mine.id;
   const shownName = displayPlayerName(player);
   const trait = inDraft ? null : playerDevTrait(player);
+  const mentality = playerMentality(player);
   const profile = player.scoutProfile;
   const [careerApi, setCareerApi] = useState<CareerRow[] | null>(null);
   const [careerNote, setCareerNote] = useState<string | null>(null);
@@ -262,6 +264,7 @@ export function GmPlayerCard({
           ) : inDraft ? (
             <p>Trait sealed</p>
           ) : null}
+          {!inDraft && player.draftModel === 2 ? <p className={cn("font-semibold", mentality.tone)} title={mentality.description}>Mentality: {mentality.label}</p> : null}
           {!inDraft ? (
             <>
               <p>
