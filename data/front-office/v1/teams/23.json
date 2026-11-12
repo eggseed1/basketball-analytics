@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-11",
-    "retrievedAt": "2026-11-11T22:52:16.266Z",
+    "snapshotDate": "2026-11-12",
+    "retrievedAt": "2026-11-12T18:48:03.373Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "26f484de0dc429bccd75cee6da39c142f99b59793be9a62b333407ffe228b1b4",
+    "sourceHash": "392020e707d4c7556b71d8df7bb7225799914f7e38b33ea29b1c717172e90f8d",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -212,6 +212,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630173"
+        },
+        {
+          "playerId": "203486",
+          "playerName": "Mason Plumlee",
+          "age": null,
+          "contractId": "cy-203486-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-203486-2026",
+              "playerId": "203486",
+              "franchiseId": "23",
+              "season": "2026-27",
+              "salary": 3022108,
+              "capHit": 3022108,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/203486"
         },
         {
           "playerId": "1642284",
@@ -424,12 +447,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 191854198,
-          "playersUnderContract": 14
+          "totalSalaryDollars": 194876306,
+          "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 191854198,
-      "playersWithSalary": 14,
+      "playerSalaryCommitments": 194876306,
+      "playersWithSalary": 15,
       "playersWithoutSalary": 2
     },
     "draftAssets": {

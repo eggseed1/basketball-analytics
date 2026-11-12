@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-11",
+    "snapshotDate": "2026-11-12",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-11T22:46:43.156Z",
-    "rosterPlayerCount": 501,
-    "headlinesScanned": 13075,
-    "latestHeadlineAt": "2026-11-11T22:45:52.000Z",
-    "latestTransactionDate": "2026-11-10",
+    "builtAt": "2026-11-12T18:38:36.336Z",
+    "rosterPlayerCount": 503,
+    "headlinesScanned": 13477,
+    "latestHeadlineAt": "2026-11-12T18:37:50.000Z",
+    "latestTransactionDate": "2026-11-11",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -100,7 +100,7 @@
     },
     "outlet:talkbasket": {
       "label": "TalkBasket",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
@@ -1302,19 +1302,22 @@
     {
       "id": "mv-trade-4432816-20261013",
       "headline": "LaMelo Ball, Julius Randle and others: trade talk",
-      "primaryClaimId": "mv-ead2ce4e4bc0e1ee",
+      "primaryClaimId": "mv-7dcc34ff87e4fccc",
       "claimIds": [
         "mv-9d063012845160d0",
         "mv-bed5ef87d7e300f5",
         "mv-b6352aec0c6a4ad5",
         "mv-a73cea72acb9c5ff",
         "mv-ead2ce4e4bc0e1ee",
-        "mv-17fd846f0ba4af04"
+        "mv-17fd846f0ba4af04",
+        "mv-ae8ec2b9658f7cdb",
+        "mv-5a786935502c71e8",
+        "mv-7dcc34ff87e4fccc"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-11-09T17:41:08.000Z",
+      "lastMeaningfulAt": "2026-11-12T18:27:55.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
@@ -1323,8 +1326,8 @@
       "linkedTeamIds": [
         "16",
         "13",
-        "17",
-        "30"
+        "30",
+        "17"
       ]
     },
     {
@@ -1963,12 +1966,13 @@
         "mv-700748facb77782e",
         "mv-884c423318deb2f4",
         "mv-bb342e323d93ae79",
-        "mv-2e10dd3c6f332c82"
+        "mv-2e10dd3c6f332c82",
+        "mv-2e5ec3549d2b8f49"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-01T13:58:47.000Z",
-      "lastMeaningfulAt": "2026-11-09T16:50:55.000Z",
+      "lastMeaningfulAt": "2026-11-12T02:14:31.000Z",
       "linkedPlayerIds": [
         "2595516",
         "4066336",
@@ -2204,6 +2208,25 @@
       "linkedTeamIds": [
         "20",
         "2"
+      ]
+    },
+    {
+      "id": "mv-contract-2488653-20261111",
+      "headline": "Mason Plumlee: free agency",
+      "primaryClaimId": "mv-b778f7e531ade960",
+      "claimIds": [
+        "mv-b778f7e531ade960",
+        "mv-nba-tx-811e5514c56e9210"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-11-11T17:26:49.000Z",
+      "lastMeaningfulAt": "2026-11-11T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "2488653"
+      ],
+      "linkedTeamIds": [
+        "23"
       ]
     },
     {
@@ -11910,6 +11933,27 @@
       "isOriginal": false
     },
     {
+      "id": "mv-b778f7e531ade960",
+      "clusterId": "mv-contract-2488653-20261111",
+      "summary": "Kings sign veteran center Mason Plumlee to contract in NBA free agency",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-11T17:26:49.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "NBC Sports Bay Area, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/sacramento-kings/mason-plumlee-contract-free-agency/1979289/",
+      "playerIds": [
+        "2488653"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-af1ac21a3d60fd3f",
       "clusterId": "mv-contract-4683692-20261006",
       "summary": "Karl-Anthony Towns Embracing 'Sacrifice' After Knicks Table Extension Talks",
@@ -12008,6 +12052,85 @@
       ],
       "teamIds": [
         "23"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-2e5ec3549d2b8f49",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "Lauri Markkanen Suffers Major Injury Blow Amid Warriors Trade Rumor",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-12T02:14:31.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-lauri-markkanen-suffers-major-injury-blow-amid-golden-state-warriors-trade-rumor/",
+      "playerIds": [
+        "4066336"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ae8ec2b9658f7cdb",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Naz Reid trade chances are “very high”",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-12T14:03:59.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/227696-naz-reid-trade-chances-are-very-high",
+      "playerIds": [
+        "4396971"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-5a786935502c71e8",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "NBA rumors: Timberwolves insider teases ‘very high’ Naz Reid trade possibility for Hornets",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-12T17:39:22.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-timberwolves-insider-teases-very-high-naz-reid-trade-possibility-hornets",
+      "playerIds": [
+        "4396971"
+      ],
+      "teamIds": [
+        "16",
+        "30"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-7dcc34ff87e4fccc",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Hornets Naz Reid Trade Rumors Take Major Turn, ‘Very High’ Possibility Of Move",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-12T18:27:55.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/charlotte-hornets/naz-reid-trade-rumors-major-turn/",
+      "playerIds": [
+        "4396971"
+      ],
+      "teamIds": [
+        "30"
       ],
       "isOriginal": true
     },
@@ -12417,6 +12540,26 @@
       ],
       "teamIds": [
         "25"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-811e5514c56e9210",
+      "clusterId": "mv-contract-2488653-20261111",
+      "summary": "Signed forward Mason Plumlee to a Rest-of-Season Contract.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-11-11T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "Player movement log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "2488653"
+      ],
+      "teamIds": [
+        "23"
       ],
       "isOriginal": true
     },
@@ -13352,7 +13495,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-11T22:46:43.156Z"
+      "resolvedAt": "2026-11-12T18:38:36.336Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
@@ -13499,6 +13642,16 @@
       "resolvedAt": "2026-11-08T12:00:00.000Z",
       "transactionRef": "nba-tx-5c64a960de248a10",
       "suppressTradeSpeculation": true
+    },
+    {
+      "clusterId": "mv-contract-2488653-20261111",
+      "playerIds": [
+        "2488653"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-11-11T12:00:00.000Z",
+      "transactionRef": "nba-tx-811e5514c56e9210",
+      "suppressTradeSpeculation": false
     },
     {
       "clusterId": "mv-tx-nba-tx-f528b60b36bb502b",

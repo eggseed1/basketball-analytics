@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-11T22:45:23.429Z",
-  "apiCount": 436,
+  "fetchedAt": "2026-11-12T18:36:57.493Z",
+  "apiCount": 437,
   "rows": [
+    {
+      "date": "2026-11-11T08:00Z",
+      "description": "Signed F Carson Cooper to a two-way contract. Waived C Lawson Lovering.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
     {
       "date": "2026-11-10T08:00Z",
       "description": "Waived C Lawson Lovering.",
