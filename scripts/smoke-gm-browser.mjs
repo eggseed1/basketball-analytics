@@ -58,6 +58,38 @@ try {
   assert.deepEqual(initialColors, ["#007A33", "#BA9653"],
     "Boston's two real team colors must drive GM's existing site orbs");
 
+  // Verify the actual photograph and alpha-masked jersey render in Chromium,
+  // not just React static markup. This catches mobile Safari/Chromium CSS
+  // regressions and broken production-style static assets.
+  await page.goto("http://127.0.0.1:3107/gm/roster", { waitUntil: "domcontentloaded" });
+  const largePhoto = page.locator('[data-generated-photo="true"][data-avatar="xl"]').first();
+  await largePhoto.waitFor({ state: "visible" });
+  assert.equal(await largePhoto.getAttribute("data-jersey-team"), "bos");
+  const photoTint = largePhoto.locator('[data-photo-jersey-tint="true"]');
+  const tintState = await photoTint.evaluate(el => {
+    const style = getComputedStyle(el);
+    return { color: style.backgroundColor, opacity: style.opacity,
+      mask: style.maskImage || style.webkitMaskImage, blend: style.mixBlendMode };
+  });
+  assert.equal(tintState.color, "rgb(0, 122, 51)");
+  assert.equal(tintState.opacity, "0.88");
+  assert.ok(tintState.mask.includes("-jersey-mask.webp"), "jersey must be clipped to fabric alpha mask");
+  assert.equal(tintState.blend, "normal", "uniform color must not inherit navy luminance");
+  const image = largePhoto.locator("img");
+  await image.evaluate(img => img.decode());
+  assert.ok(await image.evaluate(img => img.complete && img.naturalWidth > 0), "photo must load");
+  const maskUrl = (await image.getAttribute("src")).replace(".webp", "-jersey-mask.webp");
+  assert.ok(maskUrl, "fabric mask must resolve to a URL");
+  assert.equal((await page.request.get(new URL(maskUrl, page.url()).href)).status(), 200);
+  await largePhoto.screenshot({ path: dir + "/photo-jersey-desktop.png" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await largePhoto.waitFor({ state: "visible" });
+  assert.equal(await largePhoto.getAttribute("data-jersey-team"), "bos");
+  await largePhoto.screenshot({ path: dir + "/photo-jersey-mobile.png" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("http://127.0.0.1:3107/gm", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Fullscreen", exact: true }).waitFor();
+
   // Unlike the old implementation, native fullscreen belongs to the stable
   // document root. A Next page's <main> unmount during route loading MUST NOT
   // cause a fullscreenchange exit/re-entry or expose the ordinary site header.

@@ -82,15 +82,28 @@ const photograph=humanRoster[0]!;
 const html=(p:GmPlayer)=>renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{
   player:p,name:p.name,size:"xl",
 }));
-const originalMarkup=html(photograph);
+const uniformPlayer = { ...photograph, jersey: "23" };
+const originalMarkup=html(uniformPlayer);
 assert.match(originalMarkup,/data-generated-photo="true"/);
 assert.match(originalMarkup,/data-generated-portrait="true"/);
 assert.match(originalMarkup,/data-portrait-version="photo-v1"/);
 assert.match(originalMarkup,/data-jersey-team="bos"/);
 assert.match(originalMarkup,/data-photo-jersey-tint="true"/);
+assert.match(originalMarkup,/data-photo-jersey-lettering="true"/);
+assert.ok(originalMarkup.includes(">BOS</span>"),"the team name must be printed on the photo uniform");
+assert.ok(originalMarkup.includes(">23</span>"),"valid jersey numbers must appear on large portraits");
+assert.match(originalMarkup,/mask-mode:alpha/,"transparent jersey WebP masks must use alpha");
+assert.ok(originalMarkup.includes("opacity:0.88"),"the recolor must visibly cover the original navy shirt");
+assert.ok(!originalMarkup.includes("mix-blend-mode:color"),"dark original shirts must not weaken the team color");
 assert.ok(originalMarkup.includes(".webp"),"photo must use a static local WebP asset");
-const tradedMarkup=html({...photograph,teamId:"lal",age:38});
+const tradedMarkup=html({...uniformPlayer,teamId:"lal",age:38});
 assert.match(tradedMarkup,/data-jersey-team="lal"/);
+assert.ok(tradedMarkup.includes(">LAL</span>"),"the wordmark must update on trade");
+assert.match(tradedMarkup,/background-color:#552583/i,"a traded Lakers player must wear purple rather than the saved Celtics green");
+assert.equal(html({...uniformPlayer,teamId:null}).includes('>FA</span>'),true,"free agents must have a neutral jersey");
+const xsMarkup=renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{player:uniformPlayer,name:uniformPlayer.name,size:"xs"}));
+assert.ok(!xsMarkup.includes('data-photo-jersey-lettering="true"'),"tiny mobile avatars should avoid illegible text");
+assert.ok(!html({...uniformPlayer,jersey:"<script>"}).includes('&lt;script&gt;'),"jersey lettering must reject invalid numbers");
 assert.notEqual(tradedMarkup,originalMarkup,"current team should change uniform accent");
 assert.ok(tradedMarkup.includes(generatedPhotoUrl(photograph.identity!.portraitPoolId)!),
   "photo URL must remain unchanged through trade");

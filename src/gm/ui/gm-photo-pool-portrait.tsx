@@ -40,6 +40,9 @@ export function GmPhotoPoolPortrait({
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const team = generatedJerseyStyle(player.teamId);
   const px = DIMENSIONS[size];
+  const showJerseyLettering = size === "lg" || size === "xl";
+  const jerseyNumber = player.jersey && /^[0-9]{1,2}$/.test(player.jersey)
+    ? player.jersey : null;
   if (!src || failedSrc === src) {
     return <GmGeneratedPortrait
       player={player} name={name} size={size} className={className}
@@ -72,29 +75,46 @@ export function GmPhotoPoolPortrait({
         className="absolute inset-0 h-full w-full object-cover object-top"
         onError={() => setFailedSrc(src)}
       />
-      {mask ? <span
-        aria-hidden="true"
-        data-photo-jersey-tint="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundColor: team.base,
-          maskImage: "url('" + mask + "')",
-          WebkitMaskImage: "url('" + mask + "')",
-          maskSize: "100% 100%",
-          WebkitMaskSize: "100% 100%",
-          maskRepeat: "no-repeat",
-          WebkitMaskRepeat: "no-repeat",
-          mixBlendMode: "color",
-          opacity: 0.95,
-        }}
-      /> : null}
-      {size === "lg" || size === "xl" ? (
-        <span aria-hidden="true"
-          className="pointer-events-none absolute bottom-0.5 right-0.5 rounded-sm px-1 text-[9px] font-bold text-white shadow-sm"
-          style={{ backgroundColor: team.base, color: team.lettering }}>
-          {team.abbreviation}
-        </span>
-      ) : null}
+      {mask ? <>
+        {/* Generated masks contain an alpha cutout for the jersey fabric.
+            A normal-opacity overlay gives a true team color even on the
+            originally near-black navy shirt. CSS color blend mode preserved
+            that navy luminance and made most jerseys look unchanged. */}
+        <span
+          aria-hidden="true"
+          data-photo-jersey-tint="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundColor: team.base,
+            maskImage: "url('" + mask + "')",
+            WebkitMaskImage: "url('" + mask + "')",
+            maskMode: "alpha",
+            maskSize: "100% 100%",
+            WebkitMaskSize: "100% 100%",
+            maskRepeat: "no-repeat",
+            WebkitMaskRepeat: "no-repeat",
+            opacity: 0.88,
+          }}
+        />
+        {/* Lettering sits on the uniform, not in a detached corner badge.
+            It is only shown on large cards where it is legible. */}
+        {showJerseyLettering ? <span
+          aria-hidden="true"
+          data-photo-jersey-lettering="true"
+          className="pointer-events-none absolute bottom-[7%] left-1/2 flex -translate-x-1/2 flex-col items-center justify-end leading-none"
+          style={{
+            color: team.lettering,
+            fontSize: size === "xl" ? 11 : 8,
+            fontWeight: 900,
+            letterSpacing: "0.06em",
+            textShadow: "0 1px 2px rgba(0,0,0,.8), 0 -1px 1px rgba(0,0,0,.6)",
+          }}
+        >
+          <span>{team.abbreviation}</span>
+          {jerseyNumber ? <span style={{ fontSize: size === "xl" ? 13 : 9 }}>{jerseyNumber}</span> : null}
+        </span> : null}
+      </> : null}
+
     </span>
   );
 }
