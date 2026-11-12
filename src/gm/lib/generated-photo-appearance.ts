@@ -513,6 +513,7 @@ export const GENERATED_PHOTO_CASTING: Readonly<Record<string, PhotoCastingStyle>
 const EAST_ASIA = new Set(["JP", "KR", "CN"]);
 const AFRICA = new Set(["NG", "SN", "CM", "BS"]);
 const EUROPE = new Set(["RS", "LT", "HR", "SI", "GR", "DE", "LV", "IT", "ES"]);
+const SOUTH_ASIA = new Set(["IN", "PK", "BD", "NP", "LK"]);
 const LATIN_AMERICA = new Set(["MX", "BR", "DO"]);
 const MENA = new Set(["TR", "GE"]);
 
@@ -523,10 +524,10 @@ const MENA = new Set(["TR", "GE"]);
  * about a real individual's identity.
  */
 function nameCue(name: string): PhotoCastingStyle | null {
-  if (/\\b(?:Kim|Park|Choi|Nguyen|Tran|Yamamoto|Tanaka|Watanabe|Suzuki|Nakamura|Li|Zhang|Chen|Wang)\\b/i.test(name)) return "east_asian";
-  if (/\\b(?:Singh|Patel|Sharma|Kumar|Reddy|Gupta)\\b/i.test(name)) return "south_asian";
-  if (/\\b(?:Ramirez|Ramírez|Reyes|García|Garcia|Hernández|Hernandez|Rodríguez|Rodriguez|Santos|Martinez|Martínez|De la Cruz)\\b/i.test(name)) return "latino";
-  if (/\\b(?:Diallo|Okoye|Okonkwo|Adeyemi|Nwosu|Mbaye|Ndiaye|Traoré|Traore)\\b/i.test(name)) return "black";
+  if (/\b(?:Kim|Park|Choi|Nguyen|Tran|Yamamoto|Tanaka|Watanabe|Suzuki|Nakamura|Li|Zhang|Chen|Wang)\b/i.test(name)) return "east_asian";
+  if (/\b(?:Singh|Patel|Sharma|Kumar|Reddy|Gupta)\b/i.test(name)) return "south_asian";
+  if (/\b(?:Ramirez|Ramírez|Reyes|García|Garcia|Hernández|Hernandez|Rodríguez|Rodriguez|Santos|Martinez|Martínez|De la Cruz)\b/i.test(name)) return "latino";
+  if (/\b(?:Diallo|Okoye|Okonkwo|Adeyemi|Nwosu|Mbaye|Ndiaye|Traoré|Traore)\b/i.test(name)) return "black";
   return null;
 }
 
@@ -542,12 +543,14 @@ export function generatedPhotoCastingScore(
   if (!style || !player.identity) return 0;
   const country = player.identity.countryCode;
   const family = player.identity.familyOriginCode;
-  const cue = nameCue(player.name);
+  const cue = ["US", "CA", "FR", "AU", "GB", "NZ"].includes(country)
+    ? nameCue(player.name) : null;
   // On older saves the visible surname may be more useful than a separately
   // randomized family-origin field. On new saves both should agree.
   if (cue) return style === cue ? 5 : style === "mixed" && (country === "US" || country === "CA") ? 1 : 0;
   const origin = family ?? country;
   if (EAST_ASIA.has(origin)) return style === "east_asian" ? 5 : 0;
+  if (SOUTH_ASIA.has(origin)) return style === "south_asian" ? 5 : style === "mixed" ? 1 : 0;
   if (origin === "PH") return style === "east_asian" ? 4 : style === "latino" || style === "mixed" ? 2 : 0;
   if (AFRICA.has(origin)) return style === "black" ? 5 : style === "mixed" ? 2 : 0;
   if (origin === "DO" || origin === "BR") return style === "latino" ? 4 : style === "black" || style === "mixed" || style === "european" ? 2 : 0;
