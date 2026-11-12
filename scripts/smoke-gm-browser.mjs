@@ -299,6 +299,10 @@ try {
   await targetAction.click();
   await page.waitForURL(url => url.pathname === "/gm/trade" && url.searchParams.has("target"));
   await page.getByTestId("trade-partner-players").getByRole("checkbox", { checked: true }).first().waitFor();
+  if (await page.getByTestId("trade-finder-matches").count()) {
+    assert.equal(await page.getByRole("button", { name: "Propose trade", exact: true }).isDisabled(), false,
+      "a found offer should already be loaded for a deliberate two-click proposal");
+  }
   await page.getByText("Player file", { exact: true }).waitFor();
   assert.ok(await page.getByText("All ratings · expand / collapse").count(),
     "comparison stats should be immediately available for the targeted player");
