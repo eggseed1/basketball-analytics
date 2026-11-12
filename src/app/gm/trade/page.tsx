@@ -649,9 +649,20 @@ function TradeBody() {
       const suggestions = findSelectedTradePackages(
         league, league.userTeamId, outgoing, incoming, entry.partnerId ?? undefined
       );
+      // Load the highest-ranked legal, CPU-acceptable package immediately.
+      // A player can open a profile, select Trade, then explicitly Propose:
+      // two clicks in favorable markets, without skipping review or approval.
+      const best = suggestions[0];
+      if (best) {
+        setPartnerChoice(best.partnerId);
+        setGive(best.youSend.filter(asset => asset.type !== "cash"));
+        setGet(best.youReceive.filter(asset => asset.type !== "cash"));
+        setCashSend(best.youSend.filter(asset => asset.type === "cash").reduce((sum, asset) => sum + (asset.cashM ?? 0), 0));
+        setCashReceive(best.youReceive.filter(asset => asset.type === "cash").reduce((sum, asset) => sum + (asset.cashM ?? 0), 0));
+      }
       setPackages(suggestions);
       setMessage(suggestions.length
-        ? `${entry.player.name} selected. Compare ${suggestions.length} legal offer options below, or customize a proposal.`
+        ? `${entry.player.name} selected. Compare ${suggestions.length} legal offers below. The top package is loaded for your review; nothing has been proposed yet.`
         : `${entry.player.name} selected. No ready-made acceptable deal; compare the stats and build your own offer.`);
     });
     return () => window.cancelAnimationFrame(frame);
