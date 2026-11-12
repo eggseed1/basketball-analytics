@@ -18,7 +18,7 @@ import {
   simpleCategoryMeans,
   type LetterGrade,
 } from "@/gm/engine/attributes";
-import { traitLabel } from "@/gm/engine/dev-traits";
+import { GmMentalityTag } from "@/gm/ui/gm-mentality-tag";
 import { developmentOutlook } from "@/gm/engine/development-profile";
 import { formatHeight, scoutPotentialView } from "@/gm/engine/scouting";
 import { perGame, rateLabel, shotLabel } from "@/gm/lib/counting";
@@ -340,14 +340,7 @@ function SelectedHero({
             </span>
           ) : null}
         </div>
-        {sheet.potential.trait && player.draftModel!==2 ? (
-          <span
-            className="gm-roster__trait"
-            data-trait={sheet.potential.trait}
-          >
-            {traitLabel(sheet.potential.trait)}
-          </span>
-        ) : null}
+        <GmMentalityTag player={player} />
       </div>
 
       <div className="gm-roster__hero-main">
@@ -462,7 +455,7 @@ function SimpleTable({
               <td>
                 <button type="button" className="gm-roster__name-btn" onClick={() => onSelect(player.id)}>
                   <GmPlayerPortrait player={player} size="xs" />
-                  <span>{shortName(displayPlayerName(player))}</span>
+                  <span className="min-w-0"><span className="block truncate">{shortName(displayPlayerName(player))}</span><GmMentalityTag player={player} compact /></span>
                 </button>
               </td>
               <td>{player.position}</td>
@@ -519,7 +512,7 @@ function DetailedTable({
               <td>
                 <button type="button" className="gm-roster__name-btn" onClick={() => onSelect(player.id)}>
                   <GmPlayerPortrait player={player} size="xs" />
-                  <span>{shortName(displayPlayerName(player))}</span>
+                  <span className="min-w-0"><span className="block truncate">{shortName(displayPlayerName(player))}</span><GmMentalityTag player={player} compact /></span>
                 </button>
               </td>
               <td>{player.position}</td>
@@ -580,7 +573,7 @@ function TendencyTable({
               <td>
                 <button type="button" className="gm-roster__name-btn" onClick={() => onSelect(player.id)}>
                   <GmPlayerPortrait player={player} size="xs" />
-                  <span>{shortName(displayPlayerName(player))}</span>
+                  <span className="min-w-0"><span className="block truncate">{shortName(displayPlayerName(player))}</span><GmMentalityTag player={player} compact /></span>
                 </button>
               </td>
               <td>{player.position}</td>
@@ -667,7 +660,7 @@ function StatsTable({
                   onClick={() => onSelect(player.id)}
                 >
                   <GmPlayerPortrait player={player} size="xs" />
-                  <span>{shortName(displayPlayerName(player))}</span>
+                  <span className="min-w-0"><span className="block truncate">{shortName(displayPlayerName(player))}</span><GmMentalityTag player={player} compact /></span>
                 </button>
               </td>
               <td>{player.position}</td>

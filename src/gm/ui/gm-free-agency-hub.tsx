@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 
 import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
+import { GmMentalityTag } from "@/gm/ui/gm-mentality-tag";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -499,7 +500,7 @@ export function GmFreeAgencyHub() {
                             className="text-left font-semibold underline decoration-border underline-offset-4 hover:decoration-current">
                             {displayPlayerName(p)}
                           </Link>
-                          <span className="ml-2 text-muted-foreground">
+                          <GmMentalityTag player={p} compact /><span className="ml-2 text-muted-foreground">
                             {displayOverall(p)} · ${askingSalary(p, league).toFixed(1)}M
                           </span>
                         </li>
@@ -549,7 +550,7 @@ export function GmFreeAgencyHub() {
                             href={"/gm/free-agency/offer/" + encodeURIComponent(p.id)}
                             className="min-h-11 text-left font-medium underline decoration-border underline-offset-4 hover:decoration-current">
                             {displayPlayerName(p)}<span className="block text-xs text-muted-foreground sm:hidden">Review offer</span>
-                          </Link></div>
+                          </Link><GmMentalityTag player={p} compact /></div>
                           {p.rightsKind === "restricted" ? (
                             <span className="ml-1 text-xs text-muted-foreground">RFA</span>
                           ) : p.rightsTeamId === league.userTeamId ? (

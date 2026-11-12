@@ -127,8 +127,8 @@ assert.match(originalMarkup,/data-generated-portrait="true"/);
 assert.match(originalMarkup,/data-portrait-version="photo-v1"/);
 assert.match(originalMarkup,/data-jersey-team="bos"/);
 assert.match(originalMarkup,/data-photo-jersey-tint="true"/);
-assert.match(originalMarkup,/data-photo-jersey-lettering="true"/);
-assert.ok(originalMarkup.includes(">BOS</span>"),"the team name must be printed on the photo uniform");
+assert.match(originalMarkup,/data-photo-jersey-number="true"/);
+assert.ok(!originalMarkup.includes(">BOS</span>"),"team abbreviations do not appear on photographic uniforms");
 assert.ok(originalMarkup.includes(">23</span>"),"valid jersey numbers must appear on large portraits");
 assert.match(originalMarkup,/mask-mode:alpha/,"transparent jersey WebP masks must use alpha");
 assert.ok(originalMarkup.includes("opacity:0.88"),"the recolor must visibly cover the original navy shirt");
@@ -136,11 +136,11 @@ assert.ok(!originalMarkup.includes("mix-blend-mode:color"),"dark original shirts
 assert.ok(originalMarkup.includes(".webp"),"photo must use a static local WebP asset");
 const tradedMarkup=html({...uniformPlayer,teamId:"lal",age:38});
 assert.match(tradedMarkup,/data-jersey-team="lal"/);
-assert.ok(tradedMarkup.includes(">LAL</span>"),"the wordmark must update on trade");
+assert.ok(!tradedMarkup.includes(">LAL</span>"),"team abbreviations stay hidden after trades");
 assert.match(tradedMarkup,/background-color:#552583/i,"a traded Lakers player must wear purple rather than the saved Celtics green");
-assert.equal(html({...uniformPlayer,teamId:null}).includes('>FA</span>'),true,"free agents must have a neutral jersey");
+assert.match(html({...uniformPlayer,teamId:null}),/data-jersey-team="free-agent"/,"free agents must have a neutral jersey");
 const xsMarkup=renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{player:uniformPlayer,name:uniformPlayer.name,size:"xs"}));
-assert.ok(!xsMarkup.includes('data-photo-jersey-lettering="true"'),"tiny mobile avatars should avoid illegible text");
+assert.ok(!xsMarkup.includes('data-photo-jersey-number="true"'),"tiny mobile avatars should avoid illegible jersey text");
 assert.ok(!html({...uniformPlayer,jersey:"<script>"}).includes('&lt;script&gt;'),"jersey lettering must reject invalid numbers");
 assert.notEqual(tradedMarkup,originalMarkup,"current team should change uniform accent");
 assert.ok(tradedMarkup.includes(generatedPhotoUrl(photograph.identity!.portraitPoolId)!),
