@@ -1,1 +1,1 @@
-User-authorized deploy: merged Franchise Lab PR #211 (e89783a9a99236d4197aa6ba8a40c2ae2eafd7b6), six feature-branch CI workflows green including five-year simulation, browser UX and photo pool validation. Trigger Cloudflare Deploy site 2026-11-12.
+User-authorized deploy: merged PR #212 (e9c38f0a48e925354d6984d1c82157e84f7f7011), photographic generated-player jersey colors and visible team lettering. CI, Franchise Lab browser/simulation/balance/fidelity and runtime parity all green. Preserve nightly NBA runtime data. Trigger Cloudflare Deploy site 2026-11-12.
