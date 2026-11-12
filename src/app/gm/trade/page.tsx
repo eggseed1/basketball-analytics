@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { GmShell } from "@/gm/ui/gm-shell";
@@ -15,6 +15,7 @@ import {
 } from "@/gm/engine/trades";
 import { legalNew321PickProtection } from "@/gm/engine/lottery-balls";
 import { findSelectedTradePackages } from "@/gm/engine/trade-finder";
+import { resolveTradeEntry } from "@/gm/lib/trade-entry";
 import { Button } from "@/components/ui/button";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
@@ -621,6 +622,37 @@ function TradeBody() {
   const [packages, setPackages] = useState<PlayerPackage[] | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [machineInspectId, setMachineInspectId] = useState<string | null>(null);
+  const [loadedEntrySearch, setLoadedEntrySearch] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!league) return;
+    const query = new URLSearchParams(window.location.search);
+    if (!query.has("shop") && !query.has("target")) return;
+    const key = query.toString();
+    if (loadedEntrySearch === key) return;
+    setLoadedEntrySearch(key);
+    const entry = resolveTradeEntry(league, query);
+    if (!entry) {
+      setMessage("This trade link is no longer valid for the current franchise. Choose an available player below.");
+      return;
+    }
+    const selected: GmTradeAsset = { type: "player", id: entry.player.id };
+    const outgoing = entry.mode === "shop" ? [selected] : [];
+    const incoming = entry.mode === "target" ? [selected] : [];
+    setGive(outgoing);
+    setGet(incoming);
+    setCashSend(0);
+    setCashReceive(0);
+    setPartnerChoice(entry.partnerId);
+    setMachineInspectId(entry.player.id);
+    const suggestions = findSelectedTradePackages(
+      league, league.userTeamId, outgoing, incoming, entry.partnerId ?? undefined
+    );
+    setPackages(suggestions);
+    setMessage(suggestions.length
+      ? `${entry.player.name} selected. Compare ${suggestions.length} legal offer options below, or customize a proposal.`
+      : `${entry.player.name} selected. No ready-made acceptable deal; compare the stats and build your own offer.`);
+  }, [league, loadedEntrySearch]);
 
   const myPlayers = useMemo(
     () => (league ? userPlayers(league) : []),

@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { tradeEntryHref } from "@/gm/lib/trade-entry";
+import { tradeWindowStatus } from "@/gm/engine/trade-window";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { GmBadgeSummary } from "@/gm/ui/gm-badges";
 
@@ -123,6 +126,8 @@ export function GmPlayerCard({
   const inDraft = league.draftPool.includes(player.id);
   const mine = userTeam(league);
   const onRoster = player.teamId === mine.id;
+  const tradeHref = tradeEntryHref(player, league);
+  const trading = tradeWindowStatus(league);
   const shownName = displayPlayerName(player);
   const trait = inDraft ? null : playerDevTrait(player);
   const mentality = playerMentality(player);
@@ -231,6 +236,18 @@ export function GmPlayerCard({
             {player.draftLabel || (player.draftYear!=null&&player.draftPick!=null?`${player.draftYear} draft · Pick #${player.draftPick}`:"Draft info blank")}
             {player.college ? ` · ${player.college}` : ""}
           </p>
+          {tradeHref ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2" data-testid="gm-player-trade-action">
+              <Link href={tradeHref} className={cn(buttonVariants({ size: "sm" }), "min-h-10")}>
+                {onRoster ? "Find trades for player" : "Trade for player"}
+              </Link>
+              <span className="text-xs text-muted-foreground">
+                {trading.open
+                  ? onRoster ? "Compare offers from around the league" : "Compare stats and build an offer"
+                  : "Explore options — " + trading.reason}
+              </span>
+            </div>
+          ) : null}
           {player.identity ? (
             <div className="mt-2 text-sm text-muted-foreground">
               <p>{player.identity.hometown}, {originLabel(player.identity.countryCode)}</p>
