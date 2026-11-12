@@ -123,7 +123,7 @@ export function GmPlayerCard({
   const mine = userTeam(league);
   const onRoster = player.teamId === mine.id;
   const shownName = displayPlayerName(player);
-  const trait = inDraft || player.draftModel===2 ? null : playerDevTrait(player);
+  const trait = inDraft ? null : playerDevTrait(player);
   const profile = player.scoutProfile;
   const [careerApi, setCareerApi] = useState<CareerRow[] | null>(null);
   const [careerNote, setCareerNote] = useState<string | null>(null);
@@ -339,7 +339,7 @@ export function GmPlayerCard({
         ) : (
           <>
             <p className="mt-1 text-sm text-muted-foreground">
-              {player.draftModel===2?"Growth depends on age, work habits, health and a realistic practice or rotation plan.":"Overall is the rating used across the league. Development trait drives how hard they grow."}
+              {player.draftModel===2?"Growth depends on age, learning tendencies, work habits, health and a realistic practice or rotation plan. The visible development trait describes learning speed, not a guaranteed potential ceiling.":"Overall is the rating used across the league. Development trait drives how hard they grow."}
             </p>
             <p className="mt-2 text-sm" data-testid="development-outlook">
               {player.draftModel === 2
