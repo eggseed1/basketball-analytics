@@ -111,8 +111,9 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
   // retain the existing population-calibrated drag, so the league does not
   // fill with 95 OVR players after ten seasons. This is a learning trait,
   // not a hidden fixed potential or an automatic generational jump.
+  const mentoredRank = player.mentalityMentor?.rank ?? 0;
   const rareLearner = player.draftModel === 2 &&
-    ((profile.learningSurge ?? 1) > 1 ||
+    (mentoredRank >= 5 || (profile.learningSurge ?? 1) > 1 ||
       (profile.learning >= 1.20 && (profile.aptitudes[focus] ?? 1) >= 1.16));
   const ovrDrag = overall < 77 ? 1 : overall < 82 ? 0.89
     : overall < 86 ? (rareLearner ? 0.88 : 0.72)
@@ -132,8 +133,10 @@ export function softGrowthFactor(player: GmPlayer, overall: number): number {
   const physicalBonus = player.age <= 26 && physicalFocus && athlete.score >= 84
     ? 1 + Math.min(0.08, (athlete.score - 82) * 0.008) : 1;
   return clamp(
-    disposition * physicalBonus * (profile.learningSurge ?? 1) * (1 + profile.discovery) * ovrDrag * skillDrag * newSkillTax,
-    0.035, profile.learningSurge && profile.learningSurge > 1 ? 3.3 : 1.65
+    disposition * physicalBonus * (profile.learningSurge ?? 1) * (1 + profile.discovery) *
+      (mentoredRank >= 5 ? 1.16 : mentoredRank >= 4 ? 1.09 : mentoredRank >= 3 ? 1.04 : 1) *
+      ovrDrag * skillDrag * newSkillTax,
+    0.035, profile.learningSurge && profile.learningSurge > 1 ? 3.3 : mentoredRank >= 5 ? 1.9 : 1.65
   );
 }
 

@@ -156,7 +156,11 @@ export function recordSimGame(
       row.playerId === mentor.id && row.teamId === player.teamId && row.minutes > 0
     ) && player.mentorship.lastGameId !== box.gameId) {
       const previous = player.mentorship.season === box.season ? player.mentorship.sharedGames : 0;
-      player = { ...player, mentorship: { ...player.mentorship, season: box.season, sharedGames: previous + 1, lastGameId: box.gameId } };
+      const total = Math.max(player.mentorship.totalSharedGames ?? 0, player.mentorship.sharedGames);
+      player = { ...player, mentorship: {
+        ...player.mentorship, season: box.season, sharedGames: previous + 1,
+        totalSharedGames: total + 1, lastGameId: box.gameId,
+      } };
     }
     let line = player.seasonLine;
     let possessions = player.seasonPossessions ?? 0;
