@@ -23,6 +23,14 @@ const TRAIT_RANK: Record<GmDevTrait, number> = {
   xfactor: 4,
 };
 
+/** Current observed OVR is a minimum visible tier, never a projected ceiling. */
+export function abilityTraitFloor(overall: number): GmDevTrait | null {
+  if (overall >= 98) return "xfactor";
+  if (overall >= 95) return "superstar";
+  if (overall >= 90) return "star";
+  return null;
+}
+
 export function traitLabel(trait: GmDevTrait | undefined): string {
   return DEV_TRAIT_LABEL[trait ?? "normal"];
 }
@@ -388,53 +396,51 @@ export function rollDevTrait(
 }
 
 export function ensurePotentialTrait(potential: GmPotential, player: GmPlayer): GmPotential {
-  const reviewed = player.traitHistory?.at(-1);
-  if (reviewed) return potential.trait === reviewed.after && potential.path === pathFromTrait(reviewed.after) ? potential : { ...potential, trait: reviewed.after, path: pathFromTrait(reviewed.after) };
-  // Current overall only — never potential.ceiling. A 95 ceiling is upside,
-  // not a reason to stamp X-Factor on every high-upside kid.
+  // Only observed ability gets an unconditional tier floor: do not use the
+  // projected potential ceiling or reveal a prospect's hidden learning DNA.
   const overall = Math.max(player.sheet?.overall ?? 0, overallOf(player));
+  const abilityFloor = abilityTraitFloor(overall);
+  const reviewed = player.traitHistory?.at(-1);
+  if (reviewed) {
+    const trait = maxTrait(reviewed.after, abilityFloor)!;
+    return potential.trait === trait && potential.path === pathFromTrait(trait)
+      ? potential : { ...potential, trait, path: pathFromTrait(trait) };
+  }
   if (!isDraftProspect(player)) {
     const floor = maxTrait(
       discourseTraitHint(player, overall),
-      leagueProductionFloor(player, overall)
+      leagueProductionFloor(player, overall),
+      abilityFloor
     );
     if (floor) {
-      if (floor === potential.trait && potential.path === pathFromTrait(floor)) {
-        return potential;
-      }
-      return {
-        ...potential,
-        trait: floor,
-        path: pathFromTrait(floor),
-      };
+      return potential.trait === floor && potential.path === pathFromTrait(floor)
+        ? potential : { ...potential, trait: floor, path: pathFromTrait(floor) };
     }
-    // Strip unearned jackpots left over from older sheets / RNG.
+    // Preserve the existing protection against unearned legacy jackpots.
     if (potential.trait === "xfactor" || potential.trait === "superstar") {
-      return {
-        ...potential,
-        trait: "normal",
-        path: pathFromTrait("normal"),
-      };
+      return { ...potential, trait: "normal", path: pathFromTrait("normal") };
     }
   }
-  if (potential.trait) return potential;
+  if (potential.trait) {
+    const trait = maxTrait(potential.trait, abilityFloor)!;
+    return potential.trait === trait && potential.path === pathFromTrait(trait)
+      ? potential : { ...potential, trait, path: pathFromTrait(trait) };
+  }
   const rng = createRng(hashId(player.id) ^ Math.round(potential.ceiling * 97));
-  const trait = rollDevTrait(player, overall, player.ratings.potential, rng);
-  return {
-    ...potential,
-    trait,
-    path: pathFromTrait(trait),
-  };
+  const trait = maxTrait(rollDevTrait(player, overall, player.ratings.potential, rng), abilityFloor)!;
+  return { ...potential, trait, path: pathFromTrait(trait) };
 }
 
 export function playerDevTrait(player: GmPlayer): GmDevTrait {
+  const overall = Math.max(player.sheet?.overall ?? 0, overallOf(player));
+  const abilityFloor = abilityTraitFloor(overall);
   const reviewed = player.traitHistory?.at(-1);
-  if (reviewed) return reviewed.after;
-  const overall = overallOf(player);
+  if (reviewed) return maxTrait(reviewed.after, abilityFloor)!;
   if (!isDraftProspect(player)) {
     const floor = maxTrait(
       discourseTraitHint(player, overall),
-      leagueProductionFloor(player, overall)
+      leagueProductionFloor(player, overall),
+      abilityFloor
     );
     if (floor) return floor;
     const stamped = player.sheet?.potential?.trait;
@@ -443,8 +449,8 @@ export function playerDevTrait(player: GmPlayer): GmDevTrait {
     return rollDevTrait(player, overall, player.ratings.potential);
   }
   const stamped = player.sheet?.potential?.trait;
-  if (stamped) return stamped;
-  return rollDevTrait(player, overall, player.ratings.potential);
+  if (stamped) return maxTrait(stamped, abilityFloor)!;
+  return maxTrait(rollDevTrait(player, overall, player.ratings.potential), abilityFloor)!;
 }
 
 /** True while the prospect is still on the board (pre-pick fog). */
