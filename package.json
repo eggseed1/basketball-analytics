@@ -31,6 +31,7 @@
     "test:franchise-lottery-physical-balls": "tsx scripts/test-gm-lottery-physical-balls.ts",
     "test:franchise-development": "tsx scripts/test-gm-development.ts",
     "test:franchise-mentality": "tsx scripts/test-gm-mentality.ts",
+    "test:franchise-g-league": "tsx scripts/test-gm-g-league.ts",
     "test:franchise-skill-bundles-camp": "tsx scripts/test-gm-skill-bundles-camp.ts",
     "test:franchise-front-office-polish": "tsx scripts/test-gm-front-office-polish.ts",
     "test:franchise-mentorship-open-path": "tsx scripts/test-gm-mentorship-open-path.ts",
