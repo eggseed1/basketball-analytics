@@ -44,8 +44,9 @@ assert.ok(["star", "superstar", "normal"].includes(assessment.after));
 assert.deepEqual(annualTraitDecision(badgeLeague, rising), assessment, "trait review must be deterministic");
 const evolved = applySeasonProgression({ ...badgeLeague, seasonFlow: { version: 1, season: 2027, stage: "progression", completed: [] } });
 const traitRow = evolved.players[0]!;
-assert.equal(traitRow.traitHistory?.length, 1);
-assert.equal(playerDevTrait(traitRow), traitRow.traitHistory?.[0]?.after, "earned reviewed trait is authoritative");
+assert.equal(traitRow.traitHistory?.length ?? 0, 0);
+assert.equal(traitRow.traitHistory?.length ?? 0, 0, "legacy trait categories are no longer reviewed");
+assert.equal(traitRow.mentalityGrowth?.reviewedSeason, 2027, "earned mentality is reviewed instead");
 assert.equal(applySeasonProgression(evolved), evolved, "trait changes cannot reroll");
 
 let progressing: GmLeagueState = { ...full, players: tuned, draftPool: [], phase: "regular",
@@ -64,4 +65,4 @@ assert.equal(progressing.devMarks?.quarter3, true);
 const noSeason = advanceDynamicProgression({ ...young, teamId: null }, { league, checkpoint: "summer" });
 assert.equal(noSeason.teamId, null, "unsigned players cannot acquire a club through progression");
 assert.equal(noSeason.sheet?.overall, young.sheet?.overall, "unsigned players are excluded from team training");
-console.log("GM dynamic progression: quarterly ticks, annual cohort changes, traits, awards, save and idempotence passed");
+console.log("GM dynamic progression: quarterly ticks, mentality review, awards, save and idempotence passed");
