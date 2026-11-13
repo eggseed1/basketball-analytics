@@ -7,6 +7,7 @@ import type {
   ProspectArchetypeId,
 } from "@/gm/types";
 import { pick, randInt, clamp } from "@/gm/engine/rng";
+import { calibrateProspectAthleticism } from "@/gm/engine/prospect-athleticism";
 import { withGeneratedPlayerIdentity, developmentLeagueForOrigin } from "@/gm/lib/generated-player-identity";
 
 export type CodenameDef = {
@@ -713,7 +714,10 @@ export function createDraftClass(options: {
     // skills must not erase the tiny elite tail over ten seasons; give only
     // true top-tier prospects one additional entry point, never every shooter.
     const target=clamp(sheet.overall + (tier === "superstar" ? 1 : 0),54,tier==="superstar"?83:tier==="allstar"?79:tier==="starter"?76:73);
-    raw={...raw,sheet:{...sheet,attributes:bundled,overall:target,overallOffset:target-overallFromAttributes(raw.position,attributes,{impact:raw.ratings.impact}),potential}};
+    raw={...raw,sheet:{...sheet,attributes:bundled,overall:target,overallOffset:target-overallFromAttributes(raw.position,bundled,{impact:raw.ratings.impact}),potential}};
+    // Athletic tools are independently seeded from the player ID, not draft
+    // talent tier or scouting RNG. Exceptional second-round athletes exist.
+    raw=calibrateProspectAthleticism(raw);
     raw={...raw,amateur:amateurSeason(raw)};
     out.push(seal(raw, scoutLevel, board, rng));
   }

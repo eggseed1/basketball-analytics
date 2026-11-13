@@ -558,9 +558,12 @@ export function applyCombine(player: GmPlayer): GmPlayer {
       medicalNote,
       combine: {
         wingspanIn: wingspan,
-        verticalIn: clamp(Math.round(25 + (vertical - 40) * 0.3), 22, 46),
-        sprint: Math.round(clamp(3.4 - (speed - 70) * 0.0105, 2.95, 3.75) * 100) / 100,
-        laneAgility: Math.round(clamp(11.7 - (agility - 70) * 0.028, 10.2, 13.2) * 100) / 100,
+        // NBA combine reports maximum (running) vertical, not no-step jump.
+        // Calibrated 40-46+ inch outliers and sub-3.05 three-quarter sprints
+        // map directly to the same physical attributes used for badge gates.
+        verticalIn: Math.round(clamp(35.5 + (vertical - 75) * 0.52, 23, 48) * 2) / 2,
+        sprint: Math.round(clamp(3.31 - (speed - 74) * 0.017, 2.86, 3.75) * 100) / 100,
+        laneAgility: Math.round(clamp(11.45 - (agility - 74) * 0.026, 10.1, 13.2) * 100) / 100,
         standingReachIn: clamp(Math.round(player.heightIn + 24 + (wingspan - player.heightIn) * .45), player.heightIn + 18, player.heightIn + 35),
       },
     },

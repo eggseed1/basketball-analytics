@@ -32,7 +32,7 @@ export function GmCombineHighlights({league, compact=false}:{league:GmLeagueStat
   };
   return <section aria-label="Draft combine measurements" data-testid="gm-combine-results" className="rounded-xl border border-border bg-background p-4 sm:p-5">
     <div className="flex flex-wrap items-baseline justify-between gap-2">
-      <div><h3 className="text-lg font-bold">Combine results</h3><p className="mt-1 text-xs text-muted-foreground">Measured athletic tools — real testing numbers, not a hidden superstar guarantee.</p></div>
+      <div><h3 className="text-lg font-bold">Combine results</h3><p className="mt-1 text-xs text-muted-foreground">Max running vertical and ¾-court sprint. A rare athletic outlier is a physical advantage, not a guaranteed star.</p></div>
       <span className="rounded-lg bg-secondary px-3 py-1 text-sm font-bold">{measured.length} prospects tested</span>
     </div>
     <div className="mt-4 grid gap-2 sm:grid-cols-3">
@@ -58,6 +58,6 @@ export function GmCombineHighlights({league, compact=false}:{league:GmLeagueStat
         })}</tbody>
       </table>
     </div>
-    <p className="mt-3 text-xs text-muted-foreground">Physical outliers get a small, focus-specific growth advantage while young. Badges still require matching skills and real game reps. {compact ? "Open the draft board for full measurements." : "Combine results do not reveal hidden learning profiles or career ceilings."}</p>
+    <p className="mt-3 text-xs text-muted-foreground">Physical outliers get a focus-specific development advantage while young. An eligible badge is not an earned badge: matching basketball skills and game reps are still required. {compact ? "Open the draft board for full measurements." : "Combine results do not reveal hidden learning profiles or career ceilings."}</p>
   </section>;
 }

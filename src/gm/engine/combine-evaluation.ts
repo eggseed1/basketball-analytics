@@ -8,9 +8,12 @@ export function athleticTools(player: GmPlayer) {
   const a = player.sheet?.attributes;
   const speed = a?.speed ?? 60, vertical = a?.vertical ?? 60, agility = a?.agility ?? 60;
   const score = Math.round(speed * .36 + vertical * .42 + agility * .22);
-  const leaping = vertical >= 87 && score >= 85;
-  const chaser = speed >= 86 && vertical >= 84 && (a?.block ?? 0) >= 62;
-  const burst = speed >= 89 && agility >= 86 && (a?.speedWithBall ?? 0) >= 75;
+  // Rare physical gifts unlock training/badge pathways, but a player must
+  // also have the basketball skill required to put those tools to work.
+  const leaping = vertical >= 84 &&
+    ((a?.drivingDunk ?? 0) >= 67 || (a?.standingDunk ?? 0) >= 75);
+  const chaser = speed >= 84 && vertical >= 82 && (a?.block ?? 0) >= 62;
+  const burst = speed >= 89 && agility >= 84 && (a?.speedWithBall ?? 0) >= 74;
   const label = score >= 89 && vertical >= 88 ? "Elite athletic outlier" :
     score >= 84 ? "Explosive athlete" : score >= 76 ? "Above-average athlete" :
     score >= 65 ? "Solid athlete" : "Limited athletic tools";

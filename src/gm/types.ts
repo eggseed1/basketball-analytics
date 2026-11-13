@@ -381,6 +381,8 @@ export interface GmPlayer {
   developmentPlan?: "balanced" | "practice" | "rotation";
   /** Calibrated generated class; existing NBA player sheets remain authoritative. */
   draftModel?: 2;
+  /** Once-per-player athletic distribution calibration; saved after generation/import. */
+  athleticProfileVersion?: 1;
   consensusRank?: number;
   amateur?: GmAmateurSeason;
   rolePromise?: { teamId: string; minutes: number; madeDay: number; games?: number; totalMinutes?: number; lastGameId?: string; status: "pending" | "met" | "unmet" };
