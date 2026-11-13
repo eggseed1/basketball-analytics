@@ -2,7 +2,7 @@
  * Long-horizon balance test. Models ten repeated seasons of NBA-like usage and
  * availability for 450 rostered players, with annual incoming rookie classes.
  *
- * This tests actual Franchise Lab checkpoint / offseason development and trait
+ * This tests actual Franchise Lab checkpoint / offseason development and mentality
  * evolution, but uses seeded stat-line scenarios instead of simulating 12,300
  * individual games or free-agent decisions. Never present this as a full GM sim.
  */
@@ -12,12 +12,13 @@ import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
 import { ensurePlayerSheet } from "../src/gm/engine/attributes";
 import { advanceDynamicProgression } from "../src/gm/engine/dynamic-progression";
+import { playerMentality } from "../src/gm/engine/mentality";
 import { applySeasonProgression } from "../src/gm/engine/season-development";
 import { createRng, clamp } from "../src/gm/engine/rng";
 import type { GmLeagueState, GmPlayer, GmAwardRace } from "../src/gm/types";
 
 const START=2027, YEARS=10, SEEDS=[37, 133, 907], ROSTER=450, NEWCOMERS=45;
-type Report = { season: number; seed: number; count: number; mean: number; high80: number; elite90: number; elite95: number; youngMean: number; seniorMean: number; movingPct: number; ups: number; downs: number; flat: number; maxUp: number; maxDown: number; traits: Record<string,number>; promotions: number; demotions: number; departed: number };
+type Report = { season: number; seed: number; count: number; mean: number; high80: number; elite90: number; elite95: number; youngMean: number; seniorMean: number; movingPct: number; ups: number; downs: number; flat: number; maxUp: number; maxDown: number; mentalities: Record<string,number>; promotions: number; demotions: number; departed: number };
 const rows:Report[]=[];
 const hash=(id:string)=>Array.from(id).reduce((n,c)=>Math.imul(n^c.charCodeAt(0),16777619)>>>0,2166136261)>>>0;
 const mean=(a:number[])=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
@@ -69,7 +70,7 @@ for(const seed of SEEDS) {
         return {...loaded,developmentBaseline:{season,overall:loaded.sheet!.overall},seasonLine:lineFor({...loaded,developmentBaseline:{season,overall:loaded.sheet!.overall}},season)};
       })};
     const before=new Map(league.players.map(p=>[p.id,p.sheet!.overall]));
-    const beforeTraits=new Map(league.players.map(p=>[p.id,p.sheet!.potential.trait??"normal"]));
+    const beforeMentalities=new Map(league.players.map(p=>[p.id,playerMentality(p).rank]));
     for(const checkpoint of ["quarter1","january","quarter3","finale"] as const){
       league={...league,players:league.players.map(p=>advanceDynamicProgression(p,{league,checkpoint,coach:0.6,staff:1.02}))};
     }
@@ -80,31 +81,30 @@ for(const seed of SEEDS) {
     league=advanced;
     if(offset===2) {
       const loaded=parseFranchise(exportFranchise(league));
-      assert.deepEqual(loaded.players[0]?.traitHistory,league.players[0]?.traitHistory,"trait history survives import");
+      assert.deepEqual(loaded.players[0]?.mentalityGrowth,league.players[0]?.mentalityGrowth,"earned mentality survives import");
       assert.equal(loaded.players[0]?.sheet?.overall,league.players[0]?.sheet?.overall);
     }
     const deltas=league.players.map(p=>p.sheet!.overall-before.get(p.id)!);
     const youngDeltas=league.players.filter(p=>p.age<=24).map(p=>p.sheet!.overall-before.get(p.id)!);
     const seniorDeltas=league.players.filter(p=>p.age>=34).map(p=>p.sheet!.overall-before.get(p.id)!);
-    const traits:Record<string,number>={};
+    const mentalities:Record<string,number>={};
     let promotions=0,demotions=0;
-    const ordered=["bust","normal","star","superstar","xfactor"];
     for(const p of league.players){
       assert.ok(p.sheet!.overall>=25&&p.sheet!.overall<=99);
-      const trait=p.sheet!.potential.trait??"normal";
-      traits[trait]=(traits[trait]??0)+1;
-      const from=ordered.indexOf(beforeTraits.get(p.id)!);
-      const to=ordered.indexOf(trait);
+      const mentality=playerMentality(p);
+      mentalities[mentality.label]=(mentalities[mentality.label]??0)+1;
+      const from=beforeMentalities.get(p.id)!;
+      const to=mentality.rank;
       if(to>from) promotions++;
       if(to<from) demotions++;
-      assert.ok(Math.abs(to-from)<=1,"single-year trait change at most one tier");
+      assert.ok(Math.abs(to-from)<=1,"earned mentality changes at most one tier per year");
     }
     const ratings=league.players.map(p=>p.sheet!.overall);
     const report:Report={seed,season,count:ratings.length,mean:mean(ratings),
       high80:ratings.filter(x=>x>=85).length,elite90:ratings.filter(x=>x>=90).length,elite95:ratings.filter(x=>x>=95).length,
       youngMean:mean(youngDeltas),seniorMean:mean(seniorDeltas),movingPct:pct(deltas.filter(x=>x!==0).length,deltas.length),
       ups:deltas.filter(x=>x>0).length,downs:deltas.filter(x=>x<0).length,flat:deltas.filter(x=>x===0).length,
-      maxUp:Math.max(...deltas),maxDown:Math.min(...deltas),traits,promotions,demotions,departed:0};
+      maxUp:Math.max(...deltas),maxDown:Math.min(...deltas),mentalities,promotions,demotions,departed:0};
     rows.push(report);
     // Retire aging players first, but allow contract/role churn and randomness.
     // Cutting only the worst 45 OVR each summer gives the simulation a false
@@ -141,7 +141,7 @@ for(let yr=0;yr<YEARS;yr++){
     "move%",avg(batch,"movingPct").toFixed(1),"U24",avg(batch,"youngMean").toFixed(2),
     "34+",avg(batch,"seniorMean").toFixed(2),"up",avg(batch,"ups").toFixed(1),
     "down",avg(batch,"downs").toFixed(1),"promotions",avg(batch,"promotions").toFixed(1),
-    "demotions",avg(batch,"demotions").toFixed(1),"XFactor",mean(batch.map(x=>x.traits.xfactor??0)).toFixed(1)].join(" "));
+    "demotions",avg(batch,"demotions").toFixed(1),"Mamba",mean(batch.map(x=>x.mentalities.Mamba??0)).toFixed(1)].join(" "));
 }
 assert.equal(rows.length,YEARS*SEEDS.length);
 const first=rows.filter(x=>x.season===START);
@@ -149,26 +149,27 @@ const last=rows.filter(x=>x.season===START+YEARS-1);
 const total=(key:"promotions"|"demotions")=>rows.reduce((n,x)=>n+x[key],0);
 // Loose guardrails, not a forced target: the source season is a generated
 // fictional DRBL cohort, not the exact 2K launch roster. Reject substantial
-// long-run talent inflation, implausible aging and inert development traits.
+// long-run talent inflation, implausible aging and inert mentality development.
 assert.ok(Math.abs(avg(last,"mean")-avg(first,"mean"))<1.5,"league average OVR must not inflate over a decade");
 assert.ok(avg(last,"high80")-avg(first,"high80")<20,"85+ talent tier should not swell significantly");
 assert.ok(Math.abs(avg(last,"elite90")-avg(first,"elite90"))<12,"the 90+ elite tier should stay scarce and stable");
-assert.ok(total("promotions")>=25&&total("demotions")>=20,"awards, performance and aging should evolve trait tiers");
+assert.ok(total("promotions")>=25,"sustained playing time and skill development should improve player mentalities");
+assert.ok(total("demotions")<=total("promotions"),"working NBA players should not lose mentality more often than they improve");
 for(const row of rows){
   assert.equal(row.count,ROSTER);
   assert.ok(row.elite90<=40&&row.elite95<=9,"elite OVR inflation");
   assert.ok(row.movingPct>=52,"most players should change OVR each season");
   assert.ok(row.youngMean>=0.5&&row.youngMean<=4,"young players should improve but not leap unrealistically");
   assert.ok(row.seniorMean<=-0.8&&row.seniorMean>=-4,"older veterans should regress at a measured pace");
-  assert.ok((row.traits.xfactor??0)<=23,"top development trait cannot exceed ~5% even in a high-elite random cohort");
+  assert.ok((row.mentalities.Mamba??0)<=Math.ceil(ROSTER*0.25),
+    "earned Mamba mentality must remain exceptional even with long careers");
 }
-// Guard against sustained or increasing X-Factor inflation across independent
-// generated leagues without failing because one seed has 21 rather than 20.
-const xFactorMean = (batch: Report[]) => mean(batch.map(row=>row.traits.xfactor??0));
+// Work mentality is learnable but should not become universally Mamba.
+const mambaMean = (batch: Report[]) => mean(batch.map(row=>row.mentalities.Mamba??0));
 for(let season=START;season<START+YEARS;season++) {
-  assert.ok(xFactorMean(rows.filter(row=>row.season===season))<=18,
-    "top development trait should remain below 4% of the league on average");
+  assert.ok(mambaMean(rows.filter(row=>row.season===season))<=ROSTER*0.25,
+    "Mamba mentality should not become a default outcome");
 }
-assert.ok(xFactorMean(last)<=xFactorMean(first)+4,
-  "top development trait cannot inflate materially over ten seasons");
+assert.ok(mambaMean(last)<=mambaMean(first)+45,
+  "earned top mentality must not inflate unchecked over ten seasons");
 console.log("10-year progression calibration complete: "+rows.length+" league-seasons, "+(rows.length*ROSTER)+" player-season observations. All long-horizon guardrails passed.");
