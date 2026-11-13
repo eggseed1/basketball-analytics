@@ -22,6 +22,47 @@ export function generatedPhotoJerseyMaskUrl(portraitId: string | null | undefine
   return "/gm/portraits/" + portraitId + "-jersey-mask.webp";
 }
 
+/** Vetted photo alternatives, used when an older save has not been migrated
+ * yet or a static image request fails. No illustration is ever a fallback. */
+export function generatedPhotoCandidates(player: GmPlayer, max = 10): string[] {
+  const limit = Math.max(1, Math.min(24, max));
+  const preferred = player.identity?.portraitPoolId;
+  const result: string[] = [];
+  if (preferred && VALID_PHOTO_IDS.has(preferred) &&
+      (!player.identity || generatedPhotoCastingScore(player, preferred) > 0)) {
+    result.push(preferred);
+  }
+  const groups = new Map<PhotoCastingStyle, string[]>();
+  for (const id of GENERATED_PHOTO_POOL_IDS) {
+    const style = GENERATED_PHOTO_CASTING[id];
+    if (!style) continue;
+    const group = groups.get(style) ?? [];
+    group.push(id);
+    groups.set(style, group);
+  }
+  const scored = [...groups].map(([style, photos]) => ({
+    style, photos, score: player.identity ? generatedPhotoCastingScore(player, photos[0]!) : 1,
+  })).filter(row => row.score > 0)
+    .sort((a,b) => b.score - a.score ||
+      hashId(player.id + a.style) - hashId(player.id + b.style));
+  if (!scored.length) {
+    const mixed = groups.get("mixed");
+    if (mixed?.length) scored.push({ style: "mixed", photos: mixed, score: 1 });
+  }
+  // First candidates stay in the closest available casting group. Each
+  // requested alternate remains deterministic across rerenders and saves.
+  for (const row of scored) {
+    const start = hashId(player.id + ":" + row.style) % row.photos.length;
+    for (let i = 0; i < Math.min(row.photos.length, 5) && result.length < limit; i++) {
+      const id = row.photos[(start + i * 7) % row.photos.length]!;
+      if (!result.includes(id)) result.push(id);
+    }
+    if (result.length >= limit) break;
+  }
+  if (!result.length) result.push(GENERATED_PHOTO_POOL_IDS[hashId(player.id) % GENERATED_PHOTO_POOL_IDS.length]!);
+  return result.slice(0, limit);
+}
+
 /** Cosmetic hash only; this function must never consume gameplay RNG. */
 function hashId(value: string): number {
   let h = 2166136261 >>> 0;
