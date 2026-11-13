@@ -97,7 +97,7 @@ for(const seed of SEEDS) {
       const to=mentality.rank;
       if(to>from) promotions++;
       if(to<from) demotions++;
-      assert.ok(Math.abs(to-from)<=1,"earned mentality changes at most one tier per year");
+      assert.ok(Math.abs(to-from)<=1, `earned mentality changes at most one tier per year (${p.id}, season ${season}, before ${from}, after ${to}, earned=${JSON.stringify(p.mentalityGrowth)}, profile=${JSON.stringify(p.developmentProfile)})`);
     }
     const ratings=league.players.map(p=>p.sheet!.overall);
     const report:Report={seed,season,count:ratings.length,mean:mean(ratings),
