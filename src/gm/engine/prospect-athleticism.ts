@@ -68,10 +68,11 @@ export function calibrateProspectAthleticism(player: GmPlayer): GmPlayer {
   // Keep exactly the same entry OVR and all basketball talent/mentality,
   // even when a late-round athlete has elite speed and 44-inch bounce.
   const ovr = player.sheet.overall;
+  // Progression computes its rating spine from impact alone. Match that
+  // same basis here; using the separate offense/defense priors would turn a
+  // physical-only migration into unintended long-run OVR inflation.
   const base = overallFromAttributes(player.position, next, {
     impact: player.ratings.impact,
-    offense: player.ratings.offense,
-    defense: player.ratings.defense,
   });
   return {
     ...player,
