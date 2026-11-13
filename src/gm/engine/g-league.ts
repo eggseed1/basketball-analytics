@@ -10,7 +10,6 @@ export function gLeagueEligibility(league: GmLeagueState, player: GmPlayer): { o
   if (league.phase !== "regular") return { ok: false, reason: "G League assignments open during the regular season." };
   if (player.teamId !== league.userTeamId || !player.contract || league.draftPool.includes(player.id))
     return { ok: false, reason: "Choose a contracted player on your team." };
-  if (player.age > 26) return { ok: false, reason: "The developmental slot is for players aged 26 or younger." };
   if (player.injury && player.injury.gamesRemaining > 0) return { ok: false, reason: "Injured players must recover first." };
   if (player.gLeague?.assigned && player.gLeague.season === league.season && player.gLeague.teamId === player.teamId)
     return { ok: true, reason: "Already in the G League." };

@@ -18,6 +18,8 @@ const league: GmLeagueState = { ...full, phase: "regular", day: 0, teams: full.t
     minutes, rotationDepth: 9 } } : t) };
 const eligible = gLeagueEligibility(league, prospect);
 assert.equal(eligible.ok, true, eligible.reason);
+assert.equal(gLeagueEligibility(league, { ...prospect, age: 31 }).ok, true,
+  "older zero-minute players may also use the one G League development slot");
 const placed = assignGLeague(league, prospect.id);
 assert.equal(placed.ok, true, placed.reason);
 const assigned = placed.state.players.find(p => p.id === prospect.id)!;

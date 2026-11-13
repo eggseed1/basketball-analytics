@@ -51,13 +51,13 @@ export function GmDevelopment() {
     <section className="rounded-xl border border-border bg-secondary/20 p-4" data-testid="g-league-desk">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-bold">G League development</h2>
-        <span className="text-xs font-semibold text-muted-foreground">1 assignment slot · ages 26 and under</span>
+        <span className="text-xs font-semibold text-muted-foreground">1 assignment slot · non-rotation players</span>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">Send a prospect outside your NBA rotation for roughly 32 G League minutes per game. Reps build skills and protect their mentality, but count less than NBA competition. G League appearances never inflate NBA statistics or count as shared mentor games.</p>
       <label htmlFor="g-league-assignment" className="mt-3 block text-sm font-semibold">Assigned prospect</label>
       <select id="g-league-assignment" aria-label="G League assignment" className={control + " mt-1"} value={assigned?.id ?? ""} onChange={event => assignGLeague(event.target.value || null)}>
         <option value="">No assignment · keep on NBA roster</option>
-        {roster.filter(p => p.age <= 26).map(p => <option key={p.id} value={p.id} disabled={!gLeagueEligibility(league, p).ok}>{p.name} · {playerMentality(p).label} · OVR {Math.round(p.sheet?.overall ?? 70)}{!gLeagueEligibility(league, p).ok ? " (rotation or unavailable)" : ""}</option>)}
+        {roster.map(p => <option key={p.id} value={p.id} disabled={!gLeagueEligibility(league, p).ok}>{p.name} · {playerMentality(p).label} · OVR {Math.round(p.sheet?.overall ?? 70)}{!gLeagueEligibility(league, p).ok ? " (rotation or unavailable)" : ""}</option>)}
       </select>
       {assigned ? <p className="mt-3 text-sm"><strong>{assigned.name}</strong> · {assigned.gLeague?.games ?? 0} G League games, {assigned.gLeague?.minutes ?? 0} minutes this season. Development uses a reduced competition adjustment, not imaginary NBA box scores. Recall any time before the playoffs.</p> :
         <p className="mt-3 text-xs text-muted-foreground">{gLeagueEligible.length ? "Eligible: " + gLeagueEligible.map(p => p.name).join(", ") : "Remove a young prospect from the NBA rotation first; five healthy NBA players must remain."}</p>}
