@@ -15,7 +15,6 @@ import {
   discourseTraitHint,
   playerDevTrait,
   rollDevTrait,
-  traitGrowthMul,
 } from "../src/gm/engine/dev-traits";
 import { createRng } from "../src/gm/engine/rng";
 import {
@@ -78,7 +77,7 @@ assert.ok(
   `elite scout should be no worse than foggy (${crispErr} vs ${fogErr})`
 );
 
-// --- Dev traits: discourse floor + multi-season divergence ---
+// --- Legacy trait parity and earned mentality-driven development ---
 const jokicLike: GmPlayer = {
   ...klass[0]!,
   id: "jokic-test",
@@ -94,12 +93,13 @@ assert.ok(
   "discourse star should not roll Bust"
 );
 
-function growYears(base: GmPlayer, trait: "xfactor" | "bust", years: number): number {
+function growYears(base: GmPlayer, trait: "xfactor" | "bust", years: number, mentalityRank?: 1 | 5): number {
   let p: GmPlayer = {
     ...base,
     // Hold the rookie and random sample constant: only growth disposition changes.
     id: `${base.id}-trait-paired`, 
     age: 20,
+    ...(mentalityRank ? { mentalityGrowth: { rank: mentalityRank, reviewedSeason: 2026, idleSeasons: 0 } } : {}),
     sheet: {
       ...playerSheet(base),
       potential: {
@@ -125,11 +125,11 @@ function growYears(base: GmPlayer, trait: "xfactor" | "bust", years: number): nu
 const baseKid = klass[1]!;
 const xOvr = growYears(baseKid, "xfactor", 5);
 const bustOvr = growYears(baseKid, "bust", 5);
-assert.ok(
-  xOvr > bustOvr + 2,
-  `X-Factor should outgrow Bust over 5 summers (${xOvr} vs ${bustOvr})`
-);
-assert.ok(traitGrowthMul("xfactor") > traitGrowthMul("bust"));
+assert.equal(xOvr, bustOvr, "legacy X-Factor/Bust flags no longer control five-year growth");
+const drivenOvr = growYears(baseKid, "bust", 5, 5);
+const casualOvr = growYears(baseKid, "xfactor", 5, 1);
+assert.ok(drivenOvr >= casualOvr,
+  `earned Mamba mentality should never grow worse than Casual under equal conditions (${drivenOvr} vs ${casualOvr})`);
 
 // --- Rotation quality → sim offense bump ---
 function fakeTeam(id: string, minutes: Record<string, number>): GmTeam {
