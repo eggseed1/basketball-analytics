@@ -157,7 +157,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
             <thead><tr className="border-b border-border bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground"><th className="p-3">Player</th><th className="p-3">Age</th><th className="p-3">Previous</th><th className="p-3">New OVR</th><th className="p-3">Change</th><th className="p-3">Mentality</th></tr></thead>
             <tbody>{[...progression].sort((a,b) => (b.after-b.before)-(a.after-a.before)).map(row => {
               const diff = Math.round(row.after-row.before);
-              const changed = row.traitBefore && row.traitAfter && row.traitBefore !== row.traitAfter;
+              const changed = row.mentalityBefore && row.mentalityAfter && row.mentalityBefore !== row.mentalityAfter;
               return <tr key={row.playerId} className="border-b border-border last:border-0">
                 <td className="p-3"><div className="flex min-w-0 items-center gap-2">{roster.find(p => p.id === row.playerId) ? <GmPlayerPortrait player={roster.find(p => p.id === row.playerId)!} /> : null}<div className="font-semibold">{row.name}{changed ? <p className="text-xs font-normal text-muted-foreground">{row.reason}</p> : null}</div></div></td>
                 <td className="p-3 tabular-nums">{row.age}</td>
