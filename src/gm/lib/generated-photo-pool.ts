@@ -4,9 +4,9 @@ import { GM_PHOTO_POOL_CATALOG } from "@/gm/lib/generated-photo-pool-catalog";
 import { GENERATED_PHOTO_CASTING, generatedPhotoCastingScore, type PhotoCastingStyle } from "@/gm/lib/generated-photo-appearance";
 
 /**
- * Hand-reviewed starting cohort of FLUX.2 Dev fictional player photographs.
- * Asset paths are immutable. Players keep a matching face once assigned; if
- * there are no compatible available photos, they use the SVG portrait.
+ * Hand-reviewed FLUX.2 Dev fictional player photographs. Asset paths are
+ * immutable. Matching photo reuse is allowed only after the unique identities
+ * are depleted: a real photograph always wins over obsolete illustrated art.
  */
 export const GENERATED_PHOTO_POOL_VERSION = 1;
 export const GENERATED_PHOTO_POOL_IDS: readonly string[] = GM_PHOTO_POOL_CATALOG;
@@ -37,10 +37,10 @@ function hashId(value: string): number {
  * Country is citizenship/birthplace, not ancestry: multicultural countries
  * intentionally have multiple compatible visual styles.
  *
- * Old saves keep names, countries, skills, and all existing compatible faces.
- * A visibly mismatched old face is replaced once with a compatible unclaimed
- * image, or the illustrated fallback when no compatible photo is available.
- * Historical retired-player reservations always remain taken.
+ * Old saves keep names, countries, skills, and compatible photos. Retired
+ * mappings remain in history but no longer permanently consume a current
+ * player's slot. When all suitable unique photos are claimed, reuse the least
+ * frequently used compatible photograph; do not revert to illustrated faces.
  */
 export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
   const oldReservations = league.portraitPoolReservations ?? {};
@@ -77,13 +77,19 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
   ] as const));
 
 
-  // Historical claims stay immutable. Active claims survive only when the
-  // photographic casting is coherent with the player's saved identity.
+  // Keep retired mappings in the ledger for historic identity, but only
+  // active player claims occupy unique photographic slots.
   for (const playerId of Object.keys(oldReservations).sort()) {
     const photo = oldReservations[playerId];
-    if (!photo || !VALID_PHOTO_IDS.has(photo) || claimed.has(photo)) continue;
+    if (!photo || !VALID_PHOTO_IDS.has(photo)) continue;
     const player = active.get(playerId);
-    if (player && scoreFor(player, photo) <= 0) continue;
+    if (!player) {
+      reservations[playerId] = photo;
+      continue;
+    }
+    if (scoreFor(player, photo) <= 0) continue;
+    if (claimed.has(photo) && GENERATED_PHOTO_POOL_IDS.some(candidate =>
+      !claimed.has(candidate) && scoreFor(player, candidate) > 0)) continue;
     reservations[playerId] = photo;
     claimed.add(photo);
   }
@@ -91,8 +97,10 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
   for (const player of [...active.values()].sort((a,b) => a.id.localeCompare(b.id))) {
     if (reservations[player.id]) continue;
     const photo = player.identity?.portraitPoolId;
-    if (!photo || !VALID_PHOTO_IDS.has(photo) || claimed.has(photo)) continue;
+    if (!photo || !VALID_PHOTO_IDS.has(photo)) continue;
     if (scoreFor(player, photo) <= 0) continue;
+    if (claimed.has(photo) && GENERATED_PHOTO_POOL_IDS.some(candidate =>
+      !claimed.has(candidate) && scoreFor(player, candidate) > 0)) continue;
     reservations[player.id] = photo;
     claimed.add(photo);
   }
@@ -110,6 +118,11 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
       compatibleCount(a)-compatibleCount(b) ||
       hashId(a.id)-hashId(b.id) || a.id.localeCompare(b.id));
 
+  const usage = new Map<string, number>();
+  for (const player of active.values()) {
+    const photo = reservations[player.id];
+    if (photo) usage.set(photo, (usage.get(photo) ?? 0) + 1);
+  }
   for (const player of awaiting) {
     let bestIndex = -1, bestScore = 0, bestHash = 0xffffffff;
     for (let i=0; i<remaining.length; i++) {
@@ -121,9 +134,34 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
         bestIndex=i; bestScore=score; bestHash=tie;
       }
     }
-    if (bestIndex < 0) continue;
-    const photo = remaining.splice(bestIndex,1)[0]!;
-    reservations[player.id]=photo;
+    if (bestIndex >= 0) {
+      const photo = remaining.splice(bestIndex,1)[0]!;
+      reservations[player.id] = photo;
+      usage.set(photo, 1);
+      continue;
+    }
+    // Capacity or a rare casting group can run out long before season 10.
+    // Reuse the *least-used* compatible photo rather than showing old SVG art.
+    let bestPhoto: string | undefined;
+    let fewest = Infinity;
+    bestScore = -1;
+    bestHash = 0xffffffff;
+    for (const photo of GENERATED_PHOTO_POOL_IDS) {
+      const score = scoreFor(player, photo);
+      if (score <= 0) continue;
+      const count = usage.get(photo) ?? 0;
+      const tie = hashId(player.id + "|" + photo);
+      if (count < fewest || (count === fewest && (score > bestScore ||
+          (score === bestScore && tie < bestHash)))) {
+        bestPhoto = photo; fewest = count; bestScore = score; bestHash = tie;
+      }
+    }
+    // A malformed legacy international identity may not match any prompt.
+    // Use a neutral/mixed photographic source rather than an illustration.
+    const photo = bestPhoto ?? GENERATED_PHOTO_POOL_IDS.find(id =>
+      GENERATED_PHOTO_CASTING[id] === "mixed") ?? GENERATED_PHOTO_POOL_IDS[0]!;
+    reservations[player.id] = photo;
+    usage.set(photo, (usage.get(photo) ?? 0) + 1);
   }
 
   const sameLedger = Boolean(league.portraitPoolReservations) &&
