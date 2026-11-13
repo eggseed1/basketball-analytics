@@ -87,6 +87,23 @@ try {
   assert.equal(await largePhoto.getAttribute("data-jersey-team"), "bos");
   await largePhoto.screenshot({ path: dir + "/photo-jersey-mobile.png" });
   await page.setViewportSize({ width: 1440, height: 1000 });
+  // Force a single missing photo to exercise the live error-retry path.
+  // The old procedural avatar must never appear, even for a missing asset.
+  const originalPhotoSrc = await image.getAttribute("src");
+  const blockedPhoto = "**" + originalPhotoSrc;
+  await page.route(blockedPhoto, route => route.abort("failed"));
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.waitForFunction(original => {
+    const img = document.querySelector('[data-generated-photo="true"][data-avatar="xl"] img');
+    return img && img.getAttribute("src") !== original && img.complete && img.naturalWidth > 0;
+  }, originalPhotoSrc, { timeout: 30000 });
+  const rerouted = page.locator('[data-generated-photo="true"][data-avatar="xl"]').first();
+  assert.notEqual(await rerouted.locator("img").getAttribute("src"), originalPhotoSrc,
+    "broken photo must retry a different vetted AI photograph");
+  assert.equal(await rerouted.getAttribute("data-portrait-version"), "photo-v1");
+  assert.equal(await page.locator('[data-portrait-version="2"]').count(), 0,
+    "a transient missing photo cannot bring back old illustrated portraits");
+  await page.unroute(blockedPhoto);
   await page.goto("http://127.0.0.1:3107/gm", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Fullscreen", exact: true }).waitFor();
 

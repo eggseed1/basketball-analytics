@@ -76,6 +76,9 @@ for(const seed of SEEDS) {
     }
     league={...league,awards:annualAwards(league.players,season),phase:"offseason",
       seasonFlow:{version:1,season,stage:"progression",completed:[]}};
+    // Season-long profile learning can move an innate mentality tier.
+    // The separate offseason review must still change at most one tier.
+    const beforeReview = new Map(league.players.map(p=>[p.id,playerMentality(p).rank]));
     const advanced=applySeasonProgression(league);
     assert.equal(applySeasonProgression(advanced),advanced,"summer must be idempotent");
     league=advanced;
@@ -97,7 +100,10 @@ for(const seed of SEEDS) {
       const to=mentality.rank;
       if(to>from) promotions++;
       if(to<from) demotions++;
-      assert.ok(Math.abs(to-from)<=1, `earned mentality changes at most one tier per year (${p.id}, season ${season}, before ${from}, after ${to}, earned=${JSON.stringify(p.mentalityGrowth)}, profile=${JSON.stringify(p.developmentProfile)})`);
+      assert.ok(Math.abs(to-beforeReview.get(p.id)!)<=1,
+        `offseason mentality review changes at most one tier (${p.id}, season ${season}, before review ${beforeReview.get(p.id)}, after ${to})`);
+      assert.ok(Math.abs(to-from)<=2,
+        "combined in-season profile learning and offseason review remain bounded");
     }
     const ratings=league.players.map(p=>p.sheet!.overall);
     const report:Report={seed,season,count:ratings.length,mean:mean(ratings),
