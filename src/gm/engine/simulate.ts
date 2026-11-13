@@ -14,7 +14,7 @@ import { frameActionTimes, playerNightForm, teamMatchForm } from "@/gm/engine/ga
 
 export function lineupPlayers(team: GmTeam, players: GmPlayer[], max = 10): GmPlayer[] {
   const starters = new Set(Object.values(team.starters));
-  return players.filter(p => p.teamId === team.id && (!p.injury || p.injury.gamesRemaining <= 0))
+  return players.filter(p => p.teamId === team.id && (!p.injury || p.injury.gamesRemaining <= 0) && !(p.gLeague?.assigned && p.gLeague.teamId === p.teamId))
     .sort((a, b) => Number(starters.has(b.id)) - Number(starters.has(a.id)) ||
       (team.coaching?.minutes?.[b.id] ?? b.minutesPreference) - (team.coaching?.minutes?.[a.id] ?? a.minutesPreference) || a.id.localeCompare(b.id)).slice(0, max);
 }
@@ -42,7 +42,7 @@ function emptyLine(p: GmPlayer): GmBoxPlayerLine {
 }
 
 function book(team: GmTeam, players: GmPlayer[], playoff: boolean) {
-  const roster = players.filter(p => p.teamId === team.id && (!p.injury || p.injury.gamesRemaining <= 0));
+  const roster = players.filter(p => p.teamId === team.id && (!p.injury || p.injury.gamesRemaining <= 0) && !(p.gLeague?.assigned && p.gLeague.teamId === p.teamId));
   if (roster.length < 5) throw new Error(`${team.abbr} needs five healthy players to simulate.`);
   const coaching = coachingOf(team);
   const compiled = rotationForTeam(team,players,playoff);

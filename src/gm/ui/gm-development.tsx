@@ -11,6 +11,8 @@ import { CAMP_FOCUSES, campSkillChanges, campSlots } from "@/gm/engine/season-de
 import { ATTRIBUTE_LABEL } from "@/gm/engine/attributes";
 import { flowOf } from "@/gm/engine/season-flow-state";
 import { developmentOutlook } from "@/gm/engine/development-profile";
+import { gLeagueEligibility } from "@/gm/engine/g-league";
+import { playerMentality } from "@/gm/engine/mentality";
 import type { GmCampFocus } from "@/gm/types";
 
 const control = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
@@ -19,9 +21,12 @@ export function GmDevelopment() {
   const assignCamp = useGmStore(s => s.setCampAssignment);
   const runCamp = useGmStore(s => s.runTrainingCamp);
   const note = useGmStore(s => s.lastDevelopmentNote);
+  const assignGLeague = useGmStore(s => s.setGLeagueAssignment);
   if (!league) return null;
   const roster = league.players.filter(p => p.teamId === league.userTeamId && p.contract).sort((a,b) => a.age - b.age || a.name.localeCompare(b.name));
   const flow = flowOf(league);
+  const assigned = roster.find(p => p.gLeague?.assigned && p.gLeague.teamId === league.userTeamId && p.gLeague.season === league.season);
+  const gLeagueEligible = roster.filter(p => gLeagueEligibility(league, p).ok);
   const currentChecks = league.devMarks?.season === league.season ? league.devMarks : undefined;
   const checkpoints = [
     { id: "quarter1" as const, label: "Opening stretch" },
@@ -43,6 +48,21 @@ export function GmDevelopment() {
       <GmIndividualTraining roster={roster} season={league.season} />
     </div>
     <GmMentorshipCards key={league.userTeamId + ":" + league.season} league={league} roster={roster} />
+    <section className="rounded-xl border border-border bg-secondary/20 p-4" data-testid="g-league-desk">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-lg font-bold">G League development</h2>
+        <span className="text-xs font-semibold text-muted-foreground">1 assignment slot · ages 26 and under</span>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">Send a prospect outside your NBA rotation for roughly 32 G League minutes per game. Reps build skills and protect their mentality, but count less than NBA competition. G League appearances never inflate NBA statistics or count as shared mentor games.</p>
+      <label htmlFor="g-league-assignment" className="mt-3 block text-sm font-semibold">Assigned prospect</label>
+      <select id="g-league-assignment" aria-label="G League assignment" className={control + " mt-1"} value={assigned?.id ?? ""} onChange={event => assignGLeague(event.target.value || null)}>
+        <option value="">No assignment · keep on NBA roster</option>
+        {roster.filter(p => p.age <= 26).map(p => <option key={p.id} value={p.id} disabled={!gLeagueEligibility(league, p).ok}>{p.name} · {playerMentality(p).label} · OVR {Math.round(p.sheet?.overall ?? 70)}{!gLeagueEligibility(league, p).ok ? " (rotation or unavailable)" : ""}</option>)}
+      </select>
+      {assigned ? <p className="mt-3 text-sm"><strong>{assigned.name}</strong> · {assigned.gLeague?.games ?? 0} G League games, {assigned.gLeague?.minutes ?? 0} minutes this season. Development uses a reduced competition adjustment, not imaginary NBA box scores. Recall any time before the playoffs.</p> :
+        <p className="mt-3 text-xs text-muted-foreground">{gLeagueEligible.length ? "Eligible: " + gLeagueEligible.map(p => p.name).join(", ") : "Remove a young prospect from the NBA rotation first; five healthy NBA players must remain."}</p>}
+      {league.phase !== "regular" ? <p className="mt-2 text-xs text-muted-foreground">New assignments open during the regular season.</p> : null}
+    </section>
     <details className="rounded-xl border border-border p-3 text-sm"><summary className="cursor-pointer font-semibold">Season progress</summary><div id="development-progress" className="mt-3 scroll-mt-32">
       <SectionFrame title="Season growth" description="Skills change in-season; the biggest reviews happen after the season.">
         <ol className="grid gap-2 sm:grid-cols-4" aria-label="Season development checkpoints">{checkpoints.map((row,index) => {

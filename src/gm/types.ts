@@ -361,6 +361,10 @@ export interface GmPlayer {
   badgeFocus?: GmBadgeId;
   workEthic?: number;
   mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; totalSharedGames?: number; lastGameId?: string; slot?: 0 | 1 };
+  /** Saved G League assignment; always separate from NBA box scores, rotation and mentor games. */
+  gLeague?: { season: number; teamId: string; assigned: boolean; games: number; minutes: number; lastDay?: number };
+  /** Earned work-mentality changes, with one annual review and idle-season protection. */
+  mentalityGrowth?: { rank: 1 | 2 | 3 | 4 | 5; reviewedSeason: number; idleSeasons: number; reason?: string };
   /** Permanent work-mentality learned from a veteran after sustained real co-appearances. */
   mentalityMentor?: { rank: 2 | 3 | 4 | 5; mentorId: string; mentorName: string; sharedGames: number; season: number };
   developmentBaseline?: { season: number; overall: number };
@@ -1072,7 +1076,7 @@ export interface GmSeasonFlow {
   staffAged?: boolean;
   readyForTip?: boolean;
   returnFromMarket?: "roster_check";
-  progression?: Array<{ playerId: string; name: string; teamId: string | null; age: number; before: number; after: number; traitBefore?: GmDevTrait; traitAfter?: GmDevTrait; reason?: string }>;
+  progression?: Array<{ playerId: string; name: string; teamId: string | null; age: number; before: number; after: number; mentalityBefore?: string; mentalityAfter?: string; reason?: string }>;
   campAssignments?: Record<string, GmCampFocus>;
   campResults?: Array<{ playerId: string; name: string; before: number; after: number; focus: GmCampFocus; gains: string[]; badgeGains?: string[]; tradeoff?: string }>;
   retiredPlayers?: Array<{ id: string; name: string; age: number; overall: number }>;

@@ -24,6 +24,7 @@ import { recordSimGame } from "@/gm/lib/season-line";
 import { rebalanceForInjuryChanges, schemeHeadline } from "@/gm/engine/coaching";
 import { injuryReturnDate } from "@/gm/engine/injury-schedule";
 import { syncSocialTimeline } from "@/gm/engine/social-timeline";
+import { tickGLeagueDay } from "@/gm/engine/g-league";
 
 export function stepDay(league: GmLeagueState): {
   league: GmLeagueState;
@@ -40,7 +41,7 @@ export function stepDay(league: GmLeagueState): {
       return { league: maybeGrowInSeason(league), seasonOver: true };
     }
     return {
-      league: maybeGrowInSeason(noteTradeDeadline({ ...league, day: nextDay })),
+      league: maybeGrowInSeason(noteTradeDeadline({ ...tickGLeagueDay(league, day), day: nextDay })),
       seasonOver: false,
     };
   }
@@ -121,7 +122,7 @@ export function stepDay(league: GmLeagueState): {
   return {
     // Capture each completed day before the bounded box-score archive rolls
     // past it. Simulating a month in one click must not erase earlier events.
-    league: syncSocialTimeline(maybeGrowInSeason(next)),
+    league: syncSocialTimeline(maybeGrowInSeason(tickGLeagueDay(next, day))),
     seasonOver: regularSeasonComplete(schedule),
   };
 }

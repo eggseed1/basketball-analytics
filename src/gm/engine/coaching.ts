@@ -217,12 +217,12 @@ export function suggestedMinutePlan(
   players: GmPlayer[]
 ): { minutes: Record<string, number>; coverSlot: Record<string, GmPosition> } {
   const roster = players.filter((player) => player.teamId === team.id);
-  const healthy = roster.filter((player) => !injured(player));
+  const healthy = roster.filter((player) => !injured(player) && !(player.gLeague?.assigned && player.gLeague.teamId === player.teamId));
   const depth = clampRotationDepth(coachingOf(team).rotationDepth);
   const plan = positionalMinutePlan(healthy, { starters: team.starters, depth });
   const minutes: Record<string, number> = {};
   for (const player of roster) {
-    minutes[player.id] = injured(player) ? 0 : (plan.minutes[player.id] ?? 0);
+    minutes[player.id] = injured(player) || (player.gLeague?.assigned && player.gLeague.teamId === player.teamId) ? 0 : (plan.minutes[player.id] ?? 0);
   }
   return { minutes, coverSlot: plan.coverSlot };
 }
@@ -466,7 +466,7 @@ export function validShiftPlan(shifts: GmCoaching["shifts"], available: string[]
 
 /** Shared by the coaching preview, box-score rotation snapshot and simulation. */
 export function rotationForTeam(team:GmTeam,players:GmPlayer[],playoff=false){
-  const roster=players.filter(p=>p.teamId===team.id&&!injured(p));
+  const roster=players.filter(p=>p.teamId===team.id&&!injured(p)&&!(p.gLeague?.assigned&&p.gLeague.teamId===p.teamId));
   const coaching=coachingOf(team);
   const tighten=playoff&&coaching.rotationMode==="auto"&&coaching.rotationDepth!>8;
   const suggested=positionalMinutePlan(roster,{starters:team.starters,depth:tighten?8:coaching.rotationDepth});

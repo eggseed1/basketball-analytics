@@ -7,6 +7,7 @@ import { POSITIONS } from "@/gm/engine/lineup";
 import { BADGES, recordBadgeBox } from "@/gm/engine/badges";
 
 import { assignMentor, assignMentorshipSlot } from "@/gm/engine/development";
+import { assignGLeague } from "@/gm/engine/g-league";
 
 import { DRAFT_ROLES, draftScoutingOf, studyProspect, toggleDraftWatch } from "@/gm/engine/draft-intel";
 import { executeDraftTrade, type DraftTradeProposal } from "@/gm/engine/draft-trades";
@@ -235,6 +236,7 @@ type CreationOptions = { replace?: boolean; settings?: Partial<GmLeagueSettings>
 interface GmStore {
   assignPlayerMentor: (playerId: string, mentorId: string | null) => void;
   assignMentorshipSlot: (slot: 0 | 1, menteeId: string | null, mentorId: string | null) => void;
+  setGLeagueAssignment: (playerId: string | null) => void;
   runTrainingCamp: () => void;
   lastDevelopmentNote: string | null;
   league: GmLeagueState | null;
@@ -490,6 +492,11 @@ export const useGmStore = create<GmStore>()(
         const league = get().league; if (!league) return;
         const result = assignMentorshipSlot(league, slot, menteeId, mentorId);
         set({ league: withUpdate(result.state), lastDevelopmentNote: result.reason });
+      },
+      setGLeagueAssignment: (playerId) => {
+        const league = get().league; if (!league) return;
+        const result = assignGLeague(league, playerId);
+        set({ ...(result.ok ? { league: withUpdate(result.state) } : {}), lastDevelopmentNote: result.reason });
       },
       runTrainingCamp: () => {
         const league = get().league; if (!league) return;
