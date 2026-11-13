@@ -3,6 +3,7 @@ import type { GmAttributes, GmCampFocus, GmLeagueState, GmSeasonFlow, GmPlayer }
 import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { developPlayers, playoffGamesByPlayer } from "@/gm/engine/progression";
+import { playerMentality } from "@/gm/engine/mentality";
 import { coachEffect } from "@/gm/engine/staff";
 import { simulateGame } from "@/gm/engine/simulate";
 import { createRng, clamp } from "@/gm/engine/rng";
@@ -27,16 +28,21 @@ export function applySeasonProgression(league: GmLeagueState): GmLeagueState {
   const developers = Object.fromEntries(league.teams.map(team => [team.id, team.staff.developer ? { knack: team.staff.developer.knack, touch: team.staff.developer.touch } : null]));
   const players = developPlayers(league.players, false, coaches, playoffGamesByPlayer(league), developers, league.settings.developmentSpeed ?? 1, false, league);
   const previous = new Map(league.players.map(player => [player.id, player]));
-  return { ...league, players, seasonFlow: { ...flow, progressionApplied: true, progression: players.filter(player => player.teamId != null).map(player => {
+  const progress = players.filter(player => player.teamId != null).map(player => {
     const original = previous.get(player.id)!;
-    const trait = player.traitHistory?.find(entry => entry.season === league.season);
+    const before = playerMentality(original).label;
+    const after = playerMentality(player).label;
     return { playerId: player.id, name: player.name, teamId: player.teamId, age: player.age,
       before: overallOf(original), after: overallOf(player),
-      traitBefore: trait?.before ?? original.sheet?.potential.trait,
-      traitAfter: trait?.after ?? player.sheet?.potential.trait,
-      reason: trait?.before !== trait?.after ? trait?.reason : undefined,
+      mentalityBefore: before, mentalityAfter: after,
+      reason: before !== after ? player.mentalityGrowth?.reason ?? "Mentality improved through sustained work." : undefined,
     };
-  }) } };
+  });
+  // The affiliation is season-specific; clear it before next year's NBA roster
+  // setup, preserving the prior season's developmental totals for the report.
+  const recalled = players.map(player => player.gLeague?.assigned
+    ? { ...player, gLeague: { ...player.gLeague, assigned: false } } : player);
+  return { ...league, players: recalled, seasonFlow: { ...flow, progressionApplied: true, progression: progress } };
 }
 
 export function campSorenessRisk(league: GmLeagueState, focus?: GmCampFocus): number {
