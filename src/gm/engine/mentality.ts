@@ -29,9 +29,10 @@ export function playerMentality(player: GmPlayer): GmMentality {
   // Saved mentorship can permanently improve work habits. A player may still
   // develop their own mentality further, but never loses an earned one on trade.
   const learned = player.mentalityMentor?.rank;
-  const rank = learned && learned > innate ? learned : innate;
+  const earned = player.mentalityGrowth?.rank ?? 1;
+  const rank = Math.max(innate, learned ?? 1, earned) as MentalityRank;
   const mentality = MENTALITIES[rank];
-  return learned && learned > innate
+  return learned && learned >= rank && learned > innate
     ? { ...mentality, description: `Learned from ${player.mentalityMentor!.mentorName} after ${player.mentalityMentor!.sharedGames} games together. Continued work and playing time still matter.` }
     : mentality;
 }
