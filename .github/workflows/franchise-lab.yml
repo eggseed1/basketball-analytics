@@ -53,6 +53,7 @@ jobs:
       - run: npm run test:franchise-generated-identity
       - run: npm run test:franchise-photo-pool
       - run: npm run test:franchise-mentality
+      - run: npm run test:franchise-g-league
       - run: npx tsx scripts/test-gm-dev-traits.ts
       - run: npm run test:franchise-generated-jersey
       - run: npm run test:franchise-media
