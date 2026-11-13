@@ -1,5 +1,5 @@
 import type { GmAttributes, GmPlayer } from "@/gm/types";
-import { overallFromAttributes } from "@/gm/engine/attributes";
+import { bundleGeneratedAttributes, overallFromAttributes } from "@/gm/engine/attributes";
 import { clamp, createRng, randInt } from "@/gm/engine/rng";
 
 /**
@@ -50,7 +50,7 @@ export function calibrateProspectAthleticism(player: GmPlayer): GmPlayer {
 
   // Physical gifts have useful *on-court* correlates, but never automatically
   // confer handle, shooting touch, rim timing, or superstar potential.
-  const next: GmAttributes = {
+  const next: GmAttributes = bundleGeneratedAttributes({
     ...old,
     speed,
     vertical,
@@ -63,7 +63,7 @@ export function calibrateProspectAthleticism(player: GmPlayer): GmPlayer {
     standingDunk: big && vertical >= 84
       ? Math.max(old.standingDunk, vertical - randInt(rng, 10, 18))
       : old.standingDunk,
-  };
+  });
 
   // Keep exactly the same entry OVR and all basketball talent/mentality,
   // even when a late-round athlete has elite speed and 44-inch bounce.
