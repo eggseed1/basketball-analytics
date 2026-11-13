@@ -7,7 +7,6 @@ import type { GmDevTrait, GmLeagueState, GmPlayer } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { developmentSeed, workEthicOf } from "@/gm/engine/development";
 import { ATTRIBUTE_LABEL, ensurePlayerSheet, overallFromAttributes, simpleCategoryMeans } from "@/gm/engine/attributes";
-import { pathFromTrait } from "@/gm/engine/dev-traits";
 import { playerMentality } from "@/gm/engine/mentality";
 import { gLeagueGames } from "@/gm/engine/g-league";
 import { evolveTendencies } from "@/gm/engine/tendency-development";
