@@ -4,11 +4,14 @@ import {
   GENERATED_PHOTO_POOL_IDS,
   generatedPhotoUrl,
   generatedPhotoJerseyMaskUrl,
+  generatedPhotoCandidates,
 } from "../src/gm/lib/generated-photo-pool";
 import type { GmLeagueState, GmPlayer } from "../src/gm/types";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { GmPhotoPoolPortrait } from "../src/gm/ui/gm-photo-pool-portrait";
+import { GmPlayerPortrait } from "../src/gm/ui/gm-player-portrait";
+import { isFictionalGmPlayer } from "../src/gm/lib/player-portrait-ids";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise } from "../src/gm/engine/franchise";
 import { GENERATED_PHOTO_CASTING, generatedPhotoCastingScore, type PhotoCastingStyle } from "../src/gm/lib/generated-photo-appearance";
@@ -41,14 +44,15 @@ const base=partial(Array.from({length:poolCount+15},(_,i)=>fakePlayer(i)).concat
 const allocated=assignGeneratedPhotoPool(base);
 const ids=allocated.players.filter(p=>p.identity?.portraitPoolId).map(p=>p.identity!.portraitPoolId!);
 assert.equal(poolCount,new Set(GENERATED_PHOTO_POOL_IDS).size,"catalog cannot contain duplicate IDs");
-assert.equal(ids.length,poolCount,"never assign more photographic identities than the local asset catalog");
-assert.equal(new Set(ids).size,ids.length,"no two active players may share an image");
+assert.equal(ids.length,poolCount+15,"every fictional player receives an AI photo, including pool overflow");
+assert.ok(new Set(ids).size<=poolCount,"use only the vetted AI photograph catalog");
+assert.ok(new Set(ids).size>=poolCount-12,"use nearly all unique photos before recycling");
 assert.ok(allocated.players.filter(p => p.identity?.portraitPoolId).every(p =>
   generatedPhotoCastingScore(p,p.identity!.portraitPoolId!)>0),
   "every assigned photo must match the fictional player's saved name and background");
 assert.equal(Object.keys(GENERATED_PHOTO_CASTING).length,poolCount,
   "all 500 original art-directed photos need explicit casting metadata");
-assert.equal(allocated.portraitPoolReservations && Object.keys(allocated.portraitPoolReservations).length,poolCount);
+assert.equal(allocated.portraitPoolReservations && Object.keys(allocated.portraitPoolReservations).length,poolCount+15);
 assert.equal(allocated.players.at(-1)?.identity,undefined,"real NBA player must never receive a generated face");
 assert.equal(assignGeneratedPhotoPool(allocated),allocated,"migrated league should be idempotent");
 for(const id of GENERATED_PHOTO_POOL_IDS){
@@ -70,8 +74,12 @@ const retired=allocated.players.filter(p=>!["prospect-photo-0001","prospect-phot
 const late=assignGeneratedPhotoPool({
  ...allocated,players:retired.concat([fakePlayer(1000),fakePlayer(1001)]),
 });
-assert.equal(Object.keys(late.portraitPoolReservations??{}).length,poolCount,"retirement keeps portrait slots permanently reserved within save");
-assert.equal(late.players.find(p=>p.id==="prospect-photo-1000")?.identity?.portraitPoolId,undefined,"new fictional players fall back to illustration when photo slots are exhausted");
+assert.equal(Object.keys(late.portraitPoolReservations??{}).length,poolCount+17,
+  "historical player mappings are saved even while retired photo slots may be reused");
+assert.ok(late.players.find(p=>p.id==="prospect-photo-1000")?.identity?.portraitPoolId,
+  "new fictional players keep AI photographs after old pool capacity is exhausted");
+assert.ok(late.players.find(p=>p.id==="prospect-photo-1001")?.identity?.portraitPoolId,
+  "subsequent draft classes never return to illustrated art");
 for(const [playerId,id] of Object.entries(originalMappings)){
  assert.equal(late.portraitPoolReservations?.[playerId],id,"retired players must keep historical mapping");
 }
@@ -145,9 +153,25 @@ assert.ok(!html({...uniformPlayer,jersey:"<script>"}).includes('&lt;script&gt;')
 assert.notEqual(tradedMarkup,originalMarkup,"current team should change uniform accent");
 assert.ok(tradedMarkup.includes(generatedPhotoUrl(photograph.identity!.portraitPoolId)!),
   "photo URL must remain unchanged through trade");
-const notAllocated=allocated.players.find(p=>p.identity && !p.identity.portraitPoolId)!;
-assert.ok(notAllocated,"the limited local pool must leave some characters on the SVG fallback");
-const fallback=renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{player:notAllocated,name:notAllocated.name,size:"sm"}));
-assert.match(fallback,/data-portrait-version="2"/,"unassigned players retain procedural fallback");
-console.log("GM photo pool: unique assignments, team priority, migration, retirement, trades, jersey recolor and fallback passed.");
+const unassigned = fakePlayer(2000);
+const fallbackIds = generatedPhotoCandidates(unassigned);
+assert.ok(fallbackIds.length > 1, "unallocated legacy players get several photo alternatives");
+assert.ok(fallbackIds.every(id => generatedPhotoUrl(id)), "every alternative resolves to a vetted AI photo");
+assert.deepEqual(generatedPhotoCandidates(unassigned), fallbackIds,
+  "portrait alternatives must stay deterministic across rerenders");
+const fallback = renderToStaticMarkup(createElement(GmPhotoPoolPortrait,{
+  player: unassigned,name: unassigned.name,size: "sm",
+}));
+assert.match(fallback,/data-portrait-version="photo-v1"/,
+  "an unallocated generated player must render a photo immediately");
+assert.doesNotMatch(fallback,/data-portrait-version="2"/,
+  "old illustrated art must never reappear");
+assert.match(fallback,/data-generated-photo="true"/);
+const mismatched = { ...unassigned, draftModel: 2 as const, nbaPlayerId: "2544", nbaSeason: photograph.nbaSeason };
+assert.equal(isFictionalGmPlayer(mismatched),true,"synthetic IDs must bypass accidental NBA lookup fields");
+const routed = renderToStaticMarkup(createElement(GmPlayerPortrait,{
+  player: mismatched, size: "sm",
+}));
+assert.match(routed,/data-generated-photo="true"/,"all generated player UI routes use AI photography");
+console.log("GM photo pool: compatibility, overflow reuse, old saves, trades, jersey colors and photo-only fallbacks passed.");
 
