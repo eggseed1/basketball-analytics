@@ -18,7 +18,10 @@ export function gmPlayerPortraitIds(player: GmPlayer): {
  * legacy generated saves with no portrait metadata yet.
  */
 export function isFictionalGmPlayer(player: GmPlayer): boolean {
+  // Generated-player identifiers win over stale NBA crosswalk fields found
+  // in old/imported saves. Never look up a synthetic ID on ESPN.
+  if (player.draftModel === 2 ||
+      player.id.startsWith("prospect-") || player.id.startsWith("p_")) return true;
   if (player.nbaPlayerId || player.nbaSeason) return false;
-  return Boolean(player.identity || player.draftModel === 2 ||
-    player.id.startsWith("prospect-") || player.id.startsWith("p_"));
+  return Boolean(player.identity);
 }
