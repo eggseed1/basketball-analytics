@@ -57,7 +57,7 @@ export function GmPhotoPoolPortrait({
       data-portrait-unavailable="true" title={name}
       aria-label={name + " portrait temporarily unavailable"}
       className={cn("inline-flex shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold text-muted-foreground ring-1 ring-border", CLASSES[size], className)}>
-      {name.split(/\\s+/).slice(0,2).map(word => word.slice(0,1)).join("").toUpperCase()}
+      {name.split(/\s+/).slice(0,2).map(word => word.slice(0,1)).join("").toUpperCase()}
     </span>;
   }
   return (
