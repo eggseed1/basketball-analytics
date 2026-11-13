@@ -1,5 +1,6 @@
 import { mentorshipBonus, reviewPlayerDevelopment } from "@/gm/engine/development";
 import { developmentProfileOf } from "@/gm/engine/development-profile";
+import { playerMentality } from "@/gm/engine/mentality";
 import { draftScoutingOf } from "@/gm/engine/draft-intel";
 import { maybeCpuDraftTrade } from "@/gm/engine/draft-trades";
 import { rookieContractForPick } from "@/gm/engine/draft-order";
@@ -119,7 +120,7 @@ export function developPlayers(
       devStaff: knackMul,
       mentorBonus: mentorshipBonus(p, players),
     });
-    const reviewed = league ? reviewMentality(league, grown) : grown;
+    const reviewed = league ? reviewMentality(league, grown, playerMentality(aged).rank) : grown;
     return {
       ...reviewed,
       age,

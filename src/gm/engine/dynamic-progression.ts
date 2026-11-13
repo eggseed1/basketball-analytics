@@ -256,10 +256,14 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
 
 /** Annual mentality review: repeated reps and sustained growth can improve the
  * underlying learning habits. The old trait ledger remains read-only for saves. */
-export function reviewMentality(league: GmLeagueState, player: GmPlayer): GmPlayer {
+export function reviewMentality(league: GmLeagueState, player: GmPlayer, beforeSummerRank?: number): GmPlayer {
   if (!player.teamId || league.draftPool.includes(player.id) ||
       player.mentalityGrowth?.reviewedSeason === league.season) return player;
   const before = playerMentality(player).rank;
+  // Training itself may have raised innate mentality during the summer.
+  // Do not award a second step in the same offseason review.
+  const startRank = beforeSummerRank ?? before;
+  const alreadyImproved = before > startRank;
   const nba = regularSample(player, league.season);
   const nbaGames = nba?.gp ?? 0;
   const gGames = gLeagueGames(player, league.season);
@@ -274,7 +278,7 @@ export function reviewMentality(league: GmLeagueState, player: GmPlayer): GmPlay
   // matters more than draft position or raw overall. Rare high-workload
   // prospects can also learn stronger habits without a visible OVR spike.
   const meaningful = reps >= 35 && (growth >= 1 || reps >= 65);
-  const chance = ageEligible && meaningful && before < 5
+  const chance = ageEligible && meaningful && before < 5 && !alreadyImproved
     ? clamp(0.035 + Math.max(0, growth) * 0.032 +
       Math.min(0.10, (reps - 35) / 450), 0, 0.24) : 0;
   const promoted = chance > 0 && rng() < chance;
@@ -283,7 +287,8 @@ export function reviewMentality(league: GmLeagueState, player: GmPlayer): GmPlay
   const eroded = !promoted && idle >= 2 && before > 1 &&
     player.age <= 29 && rng() < 0.13;
   const currentEarned = previous?.rank ?? before;
-  const rank = promoted ? Math.min(5, before + 1) : eroded ? Math.max(1, currentEarned - 1) : currentEarned;
+  const rank = promoted ? Math.min(5, before + 1, startRank + 1)
+    : eroded ? Math.max(1, currentEarned - 1) : currentEarned;
   const profile = developmentProfileOf(player);
   const boosted = promoted ? { ...profile,
     learning: clamp(profile.learning + 0.028, 0.72, 1.4),
