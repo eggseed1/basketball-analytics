@@ -813,14 +813,12 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   const rng=createRng(hashId(player.id+":"+(opts.pace??"summer"))+age*997);
   const reasons:string[]=[];
   const ageFactor=age<=21?1.08:age<=23?0.95:age<=25?0.86:age<=27?0.58:0.25;
-  let path=openPath
-    ? potential.path==="boom"?1.06:potential.path==="bust"?0.92:1
-    : potential.path==="boom"?1.45:potential.path==="bust"?0.2:1;
-  if(!openPath&&potential.path==="bust"&&age>=22&&age<=25&&rng()<0.08) {path=0.85;reasons.push("A better development stretch after a slow start");}
-  else if(!openPath&&potential.path==="average"&&age<=25&&player.personality>=10&&rng()<0.1) {path=1.45;reasons.push("A productive development stretch");}
-  const trait=openPath
-    ? potential.trait==="xfactor"?1.2:potential.trait==="superstar"?1.14:potential.trait==="star"?1.08:potential.trait==="bust"?0.88:1
-    : potential.trait==="xfactor"?1.25:potential.trait==="superstar"?1.18:potential.trait==="star"?1.08:potential.trait==="bust"?0.65:1;
+  // Prior saved Boom/Bust outcomes and trait labels must not affect development.
+  const path=1;
+  const profileMentality=developmentProfileOf(player);
+  const mentalityRank=player.mentalityGrowth?.rank ?? player.mentalityMentor?.rank ??
+    (profileMentality.learning>=1.25?5:profileMentality.learning>=1.12?4:profileMentality.learning>=1?3:profileMentality.learning>=0.88?2:1);
+  const trait=[0,0.79,0.9,1,1.12,1.26][mentalityRank]??1;
   let opportunity=0.72+Math.min(minutes,24)/24*0.4;
   if(player.developmentPlan==="practice") {opportunity=minutes<18?0.94+coach*0.05:0.91;reasons.push("Skills work preserves a path while rotation minutes are limited");}
   else if(player.developmentPlan==="rotation") {opportunity=0.5+Math.min(minutes,26)/26*0.7;reasons.push(minutes>=16?"Regular game reps support the role plan":"The rotation plan needs more game reps");}
