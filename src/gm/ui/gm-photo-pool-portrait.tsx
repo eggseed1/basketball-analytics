@@ -5,10 +5,10 @@ import { useState } from "react";
 import type { GmPlayer } from "@/gm/types";
 import { generatedJerseyStyle } from "@/gm/lib/generated-player-jersey";
 import {
+  generatedPhotoCandidates,
   generatedPhotoJerseyMaskUrl,
   generatedPhotoUrl,
 } from "@/gm/lib/generated-photo-pool";
-import { GmGeneratedPortrait } from "@/gm/ui/gm-generated-portrait";
 import { cn } from "@/lib/utils";
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
@@ -26,27 +26,39 @@ const DIMENSIONS: Record<Size, number> = {
  * generated jersey-only mask tints the uniform to the current team's primary
  * color while preserving highlights, skin, and the original jersey texture.
  *
- * If an asset is unavailable (older release/partial import), we fall back to
- * the existing procedural illustration instead of showing a broken image.
+ * If an asset is unavailable (older release/partial import), retry vetted
+ * photographs instead of ever rendering the obsolete illustrated portrait.
  */
 export function GmPhotoPoolPortrait({
   player, name, size = "xs", priority = false, className,
 }: {
   player: GmPlayer; name: string; size?: Size; priority?: boolean; className?: string;
 }) {
-  const portraitId = player.identity?.portraitPoolId;
-  const src = generatedPhotoUrl(portraitId);
-  const mask = generatedPhotoJerseyMaskUrl(portraitId);
-  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const candidates = generatedPhotoCandidates(player);
+  const [failed, setFailed] = useState<{ playerId: string; urls: string[] }>(
+    { playerId: player.id, urls: [] }
+  );
+  const failedUrls = failed.playerId === player.id ? failed.urls : [];
+  const photoId = candidates.find(id => {
+    const candidateSrc = generatedPhotoUrl(id);
+    return candidateSrc && !failedUrls.includes(candidateSrc);
+  });
+  const src = generatedPhotoUrl(photoId);
+  const mask = generatedPhotoJerseyMaskUrl(photoId);
   const team = generatedJerseyStyle(player.teamId);
   const px = DIMENSIONS[size];
   const showJerseyNumber = size === "lg" || size === "xl";
   const jerseyNumber = player.jersey && /^[0-9]{1,2}$/.test(player.jersey)
     ? player.jersey : null;
-  if (!src || failedSrc === src) {
-    return <GmGeneratedPortrait
-      player={player} name={name} size={size} className={className}
-    />;
+  if (!src) {
+    // A complete CDN/image outage is not fixable from a client component.
+    // Use a neutral, identifiable placeholder rather than flashing old art.
+    return <span data-avatar={size} data-generated-portrait="true"
+      data-portrait-unavailable="true" title={name}
+      aria-label={name + " portrait temporarily unavailable"}
+      className={cn("inline-flex shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold text-muted-foreground ring-1 ring-border", CLASSES[size], className)}>
+      {name.split(/\\s+/).slice(0,2).map(word => word.slice(0,1)).join("").toUpperCase()}
+    </span>;
   }
   return (
     <span
@@ -54,7 +66,7 @@ export function GmPhotoPoolPortrait({
       data-generated-portrait="true"
       data-portrait-version="photo-v1"
       data-generated-photo="true"
-      data-photo-pool-id={portraitId}
+      data-photo-pool-id={photoId}
       data-jersey-team={team.teamId ?? "free-agent"}
       data-jersey-color={team.base}
       title={name}
@@ -73,7 +85,10 @@ export function GmPhotoPoolPortrait({
         unoptimized
         loading={priority ? undefined : "eager"}
         className="absolute inset-0 h-full w-full object-cover object-top"
-        onError={() => setFailedSrc(src)}
+        onError={() => setFailed(current => ({
+          playerId: player.id,
+          urls: [...new Set([...(current.playerId === player.id ? current.urls : []), src])],
+        }))}
       />
       {mask ? <>
         {/* Generated masks contain an alpha cutout for the jersey fabric.
