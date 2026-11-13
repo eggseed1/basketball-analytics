@@ -278,15 +278,22 @@ export function reviewMentality(league: GmLeagueState, player: GmPlayer, beforeS
   // matters more than draft position or raw overall. Rare high-workload
   // prospects can also learn stronger habits without a visible OVR spike.
   const meaningful = reps >= 35 && (growth >= 1 || reps >= 65);
+  // Tier changes grow rarer at the top: exceptional work habits must
+  // remain exceptional across decades, not become a default for veterans.
+  // Usage and development help a prospect learn, but never guarantee Mamba.
+  const difficulty = before >= 4 ? 0.24 : before === 3 ? 0.70 : 1;
   const chance = ageEligible && meaningful && before < 5 && !alreadyImproved
-    ? clamp(0.035 + Math.max(0, growth) * 0.032 +
-      Math.min(0.10, (reps - 35) / 450), 0, 0.24) : 0;
+    ? clamp(0.025 + Math.max(0, growth) * 0.020 +
+      Math.min(0.075, (reps - 35) / 700), 0, 0.16) * difficulty : 0;
   const promoted = chance > 0 && rng() < chance;
   // Missing minutes for two full seasons can erode self-developed habits,
   // but G League reps protect them. Inherited veteran mentality persists.
   const eroded = !promoted && idle >= 2 && before > 1 &&
     player.age <= 29 && rng() < 0.13;
-  const currentEarned = previous?.rank ?? before;
+  // Do not silently copy someone's innate rank into the permanent
+  // earned-rank ledger on every review. That made upgrades irreversible and
+  // inflated the Mamba population even when practice was not exceptional.
+  const currentEarned = previous?.rank ?? 1;
   const rank = promoted ? Math.min(5, before + 1, startRank + 1)
     : eroded ? Math.max(1, currentEarned - 1) : currentEarned;
   const profile = developmentProfileOf(player);
