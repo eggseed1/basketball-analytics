@@ -13,7 +13,6 @@ import {
   ensurePotentialTrait,
   pathFromTrait,
   rollDevTrait,
-  traitGrowthMul,
 } from "@/gm/engine/dev-traits";
 import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
 import { ensureSimProfile } from "@/gm/engine/player-profile";
@@ -886,51 +885,39 @@ export function progressSheet(
   const devStaff = opts?.devStaff ?? 1;
   const rng = createRng(hashId(player.id) + age * 997);
   let delta = agingBase(big ? age - 1 : age);
-  const traitMul = traitGrowthMul(potential.trait);
+  const trainingProfile = developmentProfileOf(player);
+  const mentalityRank = player.mentalityGrowth?.rank ?? player.mentalityMentor?.rank ??
+    (trainingProfile.learning >= 1.25 ? 5 : trainingProfile.learning >= 1.12 ? 4 :
+      trainingProfile.learning >= 1 ? 3 : trainingProfile.learning >= 0.88 ? 2 : 1);
+  const mentalityGrowth = [0, 0.79, 0.9, 1, 1.12, 1.26][mentalityRank] ?? 1;
   if (delta > 0) {
-    const pathMul = openPath ? (potential.path === "boom" ? 1.06 : potential.path === "bust" ? 0.92 : 1) : potential.path === "boom" ? 1.85 : potential.path === "bust" ? 0.25 : 1;
+    const pathMul = 1;
     const minuteMul = clamp(minutes / 26, 0.55, 1.15);
     const coachMul = 1 + clamp(coach, 0, 1.5) * 0.08;
     const work = player.personality > 15 ? 1.08 : player.personality < -15 ? 0.92 : 1;
-    delta *= pathMul * traitMul * minuteMul * coachMul * work * clamp(devStaff, 0.85, 1.25) * (1 + clamp(opts?.mentorBonus ?? 0, 0, 0.18));
-    if (!openPath && potential.path === "bust") delta *= 0.5;
+    delta *= pathMul * mentalityGrowth * minuteMul * coachMul * work * clamp(devStaff, 0.85, 1.25) * (1 + clamp(opts?.mentorBonus ?? 0, 0, 0.18));
     // Slow down once a player has already grabbed most of their realistic peak.
     // Stops mid-tier books from all drifting into the 80s over a long save.
     const span = Math.max(6, (openPath ? 99 : potential.ceiling) - potential.floor);
     const progress = (sheet.overall - potential.floor) / span;
     if (progress > 0.55) delta *= clamp(1.15 - progress, 0.25, 1);
-    if (
-      sheet.overall >= 78 &&
-      (potential.trait === "normal" || potential.trait === "bust")
-    ) {
-      delta *= 0.4;
-    }
+    if (sheet.overall >= 78 && mentalityRank <= 2) delta *= 0.8;
   } else {
-    const pathMul = potential.path === "boom" ? 0.7 : potential.path === "bust" ? 1.3 : 1;
+    const pathMul = 1;
     const durable =
       player.ratings.durability >= 80 ? 0.8 : player.ratings.durability < 55 ? 1.25 : 1;
-    // Elite traits hang onto their prime longer.
-    const declineMul =
-      potential.trait === "xfactor" || potential.trait === "superstar" ? 0.78 : 1;
-    // Ordinary players fall a bit faster so the league mean does not creep up.
-    const roleDecline =
-      potential.trait === "normal" || potential.trait === "bust" ? 1.12 : 1;
+    // Long-term training habits can modestly preserve technical skills,
+    // but aging still affects every player, regardless of reputation.
+    const declineMul = mentalityRank >= 4 ? 0.92 : 1;
+    const roleDecline = 1;
     // PD knack < 1 softens decline (vet whisperer); > 1 is unused on the way down.
     delta *= pathMul * durable * declineMul * roleDecline * clamp(devStaff, 0.8, 1.05);
   }
-  if (
-    (potential.path === "boom" ||
-      potential.trait === "star" ||
-      potential.trait === "superstar" ||
-      potential.trait === "xfactor") &&
-    age >= 25 &&
-    age <= 28
-  ) {
-    delta += potential.trait === "xfactor" ? 0.08 : potential.trait === "superstar" ? 0.06 : 0.04;
+  if (mentalityRank >= 4 && age >= 25 && age <= 28) {
+    delta += mentalityRank === 5 ? 0.06 : 0.04;
   }
   delta += (rng() - 0.5) * 0.08;
   if (!openPath && delta > 0 && sheet.overall >= potential.ceiling) delta = 0;
-  if (!openPath && delta > 0 && potential.path === "bust" && sheet.overall <= potential.floor + 1) delta = 0;
   delta = clamp(delta * clamp(opts?.speed ?? 1, 0.5, 2), -0.7, 0.65);
   if (opts?.pace === "season") {
     delta = delta > 0 ? delta * 0.32 : delta * 0.12;
