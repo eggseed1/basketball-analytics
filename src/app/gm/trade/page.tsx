@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { GmShell } from "@/gm/ui/gm-shell";
@@ -15,6 +15,7 @@ import {
 } from "@/gm/engine/trades";
 import { legalNew321PickProtection } from "@/gm/engine/lottery-balls";
 import { findSelectedTradePackages } from "@/gm/engine/trade-finder";
+import { resolveTradeEntry } from "@/gm/lib/trade-entry";
 import { Button } from "@/components/ui/button";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
@@ -621,6 +622,51 @@ function TradeBody() {
   const [packages, setPackages] = useState<PlayerPackage[] | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [machineInspectId, setMachineInspectId] = useState<string | null>(null);
+  const [loadedEntrySearch, setLoadedEntrySearch] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!league) return;
+    const query = new URLSearchParams(window.location.search);
+    if (!query.has("shop") && !query.has("target")) return;
+    const key = query.toString();
+    if (loadedEntrySearch === key) return;
+    const frame = window.requestAnimationFrame(() => {
+      setLoadedEntrySearch(key);
+      const entry = resolveTradeEntry(league, query);
+      if (!entry) {
+        setMessage("This trade link is no longer valid for the current franchise. Choose an available player below.");
+        return;
+      }
+      const selected: GmTradeAsset = { type: "player", id: entry.player.id };
+      const outgoing = entry.mode === "shop" ? [selected] : [];
+      const incoming = entry.mode === "target" ? [selected] : [];
+      setGive(outgoing);
+      setGet(incoming);
+      setCashSend(0);
+      setCashReceive(0);
+      setPartnerChoice(entry.partnerId);
+      setMachineInspectId(entry.player.id);
+      const suggestions = findSelectedTradePackages(
+        league, league.userTeamId, outgoing, incoming, entry.partnerId ?? undefined
+      );
+      // Load the highest-ranked legal, CPU-acceptable package immediately.
+      // A player can open a profile, select Trade, then explicitly Propose:
+      // two clicks in favorable markets, without skipping review or approval.
+      const best = suggestions[0];
+      if (best) {
+        setPartnerChoice(best.partnerId);
+        setGive(best.youSend.filter(asset => asset.type !== "cash"));
+        setGet(best.youReceive.filter(asset => asset.type !== "cash"));
+        setCashSend(best.youSend.filter(asset => asset.type === "cash").reduce((sum, asset) => sum + (asset.cashM ?? 0), 0));
+        setCashReceive(best.youReceive.filter(asset => asset.type === "cash").reduce((sum, asset) => sum + (asset.cashM ?? 0), 0));
+      }
+      setPackages(suggestions);
+      setMessage(suggestions.length
+        ? `${entry.player.name} selected. Compare ${suggestions.length} legal offers below. The top package is loaded for your review; nothing has been proposed yet.`
+        : `${entry.player.name} selected. No ready-made acceptable deal; compare the stats and build your own offer.`);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [league, loadedEntrySearch]);
 
   const myPlayers = useMemo(
     () => (league ? userPlayers(league) : []),
