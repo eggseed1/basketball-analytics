@@ -53,7 +53,8 @@ export function GmCombineHighlights({league, compact=false}:{league:GmLeagueStat
             <td className="p-2 tabular-nums">{m.wingspanIn}″</td><td className="p-2 tabular-nums">{m.standingReachIn??"—"}{m.standingReachIn?"″":""}</td>
             <td className="p-2 font-semibold tabular-nums">{m.verticalIn}″</td><td className="p-2 tabular-nums">{m.sprint.toFixed(2)}s</td>
             <td className="p-2 tabular-nums">{m.laneAgility?.toFixed(2)??"—"}{m.laneAgility?"s":""}</td>
-            <td className="p-2">{perks.length ? <span className="font-medium text-emerald-700 dark:text-emerald-300">{perks.join(", ")} eligible</span> : <span className="text-muted-foreground">No rare athletic badge lane</span>}</td>
+            <td className="p-2"><span className="block font-semibold">{athleticTools(p).label}</span>
+              {perks.length ? <span className="font-medium text-emerald-700 dark:text-emerald-300">{perks.join(", ")} eligible</span> : <span className="text-muted-foreground">No rare athletic badge lane</span>}</td>
           </tr>;
         })}</tbody>
       </table>

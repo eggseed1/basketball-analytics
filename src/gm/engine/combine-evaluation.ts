@@ -14,7 +14,12 @@ export function athleticTools(player: GmPlayer) {
     ((a?.drivingDunk ?? 0) >= 67 || (a?.standingDunk ?? 0) >= 75);
   const chaser = speed >= 84 && vertical >= 82 && (a?.block ?? 0) >= 62;
   const burst = speed >= 89 && agility >= 84 && (a?.speedWithBall ?? 0) >= 74;
-  const label = score >= 89 && vertical >= 88 ? "Elite athletic outlier" :
+  const label = vertical >= 94 && speed >= 93 ? "Generational athletic freak" :
+    vertical >= 85 && speed >= 89 ? "Elite athletic freak" :
+    vertical >= 94 ? "Rare 45-inch leaper" :
+    vertical >= 84 ? "Elite vertical leaper" :
+    speed >= 95 ? "Exceptional track speed" :
+    speed >= 89 ? "Elite sprint athlete" :
     score >= 84 ? "Explosive athlete" : score >= 76 ? "Above-average athlete" :
     score >= 65 ? "Solid athlete" : "Limited athletic tools";
   return {score, label, leaping, chaser, burst};
