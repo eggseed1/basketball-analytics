@@ -562,7 +562,7 @@ export function applyCombine(player: GmPlayer): GmPlayer {
         // Calibrated 40-46+ inch outliers and sub-3.05 three-quarter sprints
         // map directly to the same physical attributes used for badge gates.
         verticalIn: Math.round(clamp(35.5 + (vertical - 75) * 0.52, 23, 48) * 2) / 2,
-        sprint: Math.round(clamp(3.31 - (speed - 74) * 0.017, 2.86, 3.75) * 100) / 100,
+        sprint: Math.round(clamp(3.31 - (speed - 74) * 0.0175, 2.86, 3.75) * 100) / 100,
         laneAgility: Math.round(clamp(11.45 - (agility - 74) * 0.026, 10.1, 13.2) * 100) / 100,
         standingReachIn: clamp(Math.round(player.heightIn + 24 + (wingspan - player.heightIn) * .45), player.heightIn + 18, player.heightIn + 35),
       },

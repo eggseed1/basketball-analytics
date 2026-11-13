@@ -28,6 +28,7 @@
     "audit:franchise-five-year": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/audit-gm-continuous-five-year.ts",
     "test:franchise-badges": "tsx scripts/test-gm-badges.ts",
     "test:franchise-offseason-market-lottery": "tsx scripts/test-gm-offseason-market-lottery.ts",
+    "test:franchise-combine-athleticism": "tsx scripts/test-gm-combine-athleticism.ts",
     "test:franchise-lottery-physical-balls": "tsx scripts/test-gm-lottery-physical-balls.ts",
     "test:franchise-development": "tsx scripts/test-gm-development.ts",
     "test:franchise-mentality": "tsx scripts/test-gm-mentality.ts",
