@@ -129,8 +129,9 @@ export function assignGeneratedPhotoPool(league: GmLeagueState): GmLeagueState {
       continue;
     }
     if (scoreFor(player, photo) <= 0) continue;
-    if (claimed.has(photo) && GENERATED_PHOTO_POOL_IDS.some(candidate =>
-      !claimed.has(candidate) && scoreFor(player, candidate) > 0)) continue;
+    // A previous save may already have a deliberately reused image. Preserve
+    // that established face instead of recasting someone each time the pool
+    // grows, a player retires, or the save is reopened.
     reservations[playerId] = photo;
     claimed.add(photo);
   }
