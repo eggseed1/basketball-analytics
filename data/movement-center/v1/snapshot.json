@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-12",
+    "snapshotDate": "2026-11-13",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-12T22:19:31.077Z",
-    "rosterPlayerCount": 503,
-    "headlinesScanned": 13558,
-    "latestHeadlineAt": "2026-11-12T22:13:48.000Z",
-    "latestTransactionDate": "2026-11-11",
+    "builtAt": "2026-11-13T18:04:23.912Z",
+    "rosterPlayerCount": 504,
+    "headlinesScanned": 13860,
+    "latestHeadlineAt": "2026-11-13T18:00:26.000Z",
+    "latestTransactionDate": "2026-11-12",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -699,12 +699,13 @@
         "mv-5a471c460ab22b90",
         "mv-f5dbf9ed7312b343",
         "mv-ba88fd746573e7da",
-        "mv-647b51d52054fd78"
+        "mv-647b51d52054fd78",
+        "mv-072545dbf50e6c07"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-11T20:40:37.000Z",
+      "lastMeaningfulAt": "2026-11-13T15:14:36.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -718,7 +719,8 @@
         "14",
         "9",
         "27",
-        "13"
+        "13",
+        "29"
       ]
     },
     {
@@ -1312,21 +1314,26 @@
         "mv-17fd846f0ba4af04",
         "mv-ae8ec2b9658f7cdb",
         "mv-5a786935502c71e8",
-        "mv-7dcc34ff87e4fccc"
+        "mv-7dcc34ff87e4fccc",
+        "mv-86dc8f96d6522bdd",
+        "mv-b72f80f84ad79989"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-11-12T18:27:55.000Z",
+      "lastMeaningfulAt": "2026-11-12T23:41:33.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
-        "4396971"
+        "4396971",
+        "3975"
       ],
       "linkedTeamIds": [
         "16",
         "13",
         "30",
+        "9",
+        "5",
         "17"
       ]
     },
@@ -1824,19 +1831,22 @@
         "mv-ab02efca26017067",
         "mv-39dd2ee1443c0b32",
         "mv-99e5bdd4fa79bcbb",
-        "mv-8584315a43104765"
+        "mv-8584315a43104765",
+        "mv-83e13f9732e1e2cb",
+        "mv-7feccabafebb591c"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-28T15:58:25.000Z",
-      "lastMeaningfulAt": "2026-11-10T16:26:42.000Z",
+      "lastMeaningfulAt": "2026-11-13T17:37:11.000Z",
       "linkedPlayerIds": [
         "3112335",
         "3936299",
         "3136193",
         "4066261",
         "6589",
-        "5142620"
+        "5142620",
+        "4437244"
       ],
       "linkedTeamIds": [
         "7",
@@ -12157,6 +12167,112 @@
       "isOriginal": false
     },
     {
+      "id": "mv-86dc8f96d6522bdd",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Warriors rumors: Golden State linked to trade for Hornets’ Naz Reid after Stephen Curry injury",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-12T22:08:38.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/golden-state-warriors/warriors-rumors-golden-state-linked-trade-hornets-naz-reid-stephen-curry-injury",
+      "playerIds": [
+        "3975",
+        "4396971"
+      ],
+      "teamIds": [
+        "9",
+        "30"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b72f80f84ad79989",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Naz Reid Trade Rumors Involve Cleveland Cavaliers",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-12T23:41:33.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/cleveland-cavaliers/naz-reid-trade-rumors-cleveland-cavaliers/",
+      "playerIds": [
+        "4396971"
+      ],
+      "teamIds": [
+        "5"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-83e13f9732e1e2cb",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Suns rumors: Devin Booker going nowhere, but Jalen Green trade buzz is getting louder and louder",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-13T15:09:47.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/phoenix-suns/suns-rumors-devin-booker-going-nowhere-jalen-green-trade-buzz-louder-and-louder",
+      "playerIds": [
+        "3136193",
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-072545dbf50e6c07",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA rumors: ClutchPoints insider eyes surprise Grizzlies star as Heat’s Kyrie Irving trade backup plan",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-13T15:14:36.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-clutchpoints-insider-eyes-surprise-grizzlies-star-heat-kyrie-irving",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "14",
+        "29"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-7feccabafebb591c",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Jalen Green Trade Rumors Heat Up As Suns Reportedly Seek Proven Point Guard",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-13T17:37:11.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/phoenix-suns/jalen-green-trade-rumors-heat-up-as-suns-reportedly-seek-proven-point-guard",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [
+        "14",
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -13517,7 +13633,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-12T22:19:31.077Z"
+      "resolvedAt": "2026-11-13T18:04:23.912Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
