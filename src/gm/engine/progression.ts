@@ -18,7 +18,7 @@ import { coachEffect } from "@/gm/engine/staff";
 import { regularSeasonComplete } from "@/gm/engine/schedule";
 import { advanceContractYear } from "@/gm/seed/real-books";
 import { devKnackGrowthMul } from "@/gm/seed/staff-knacks";
-import { advanceDynamicProgression, reviewDevelopmentTrait, type DevelopmentCheckpoint } from "@/gm/engine/dynamic-progression";
+import { advanceDynamicProgression, reviewMentality, type DevelopmentCheckpoint } from "@/gm/engine/dynamic-progression";
 
 export { aiSelectProspect, ensureDraftOrder, pickOwnerAt, draftSlotCount };
 
@@ -119,7 +119,7 @@ export function developPlayers(
       devStaff: knackMul,
       mentorBonus: mentorshipBonus(p, players),
     });
-    const reviewed = league ? reviewDevelopmentTrait(league, grown) : grown;
+    const reviewed = league ? reviewMentality(league, grown) : grown;
     return {
       ...reviewed,
       age,
