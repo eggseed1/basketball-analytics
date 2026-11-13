@@ -4,7 +4,6 @@ import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/eng
 import { applySeasonProgression } from "../src/gm/engine/season-development";
 import { advanceDynamicProgression, annualTraitDecision, performanceSignal } from "../src/gm/engine/dynamic-progression";
 import { maybeGrowInSeason } from "../src/gm/engine/progression";
-import { playerDevTrait } from "../src/gm/engine/dev-traits";
 import type { GmLeagueState, GmPlayer } from "../src/gm/types";
 
 const full = prepareFranchise(createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 133 }));
