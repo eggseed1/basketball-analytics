@@ -32,8 +32,13 @@ assert.deepEqual(changedPotential.badges,rookie.badges, "badges do not reveal or
 for (const b of BADGES) for (let rank = 1; rank <= 5; rank++) {
   const attrs = Object.fromEntries(Object.keys(attributes).map(k => [k,BADGE_REQUIREMENTS[rank]!])) as typeof attributes;
   const at = { ...player, sheet: { ...player.sheet!, attributes:attrs }, badges: { version: 1 as const, xp: { [b.id]: BADGE_XP[rank]! } } };
-  if (["aerial_assault","chase_down","explosive_first_step"].includes(b.id) && rank < 4) {
-    assert.equal(badgeCap(at,b.id),0, "unique athletic badges must require extraordinary physical traits");
+  // A measured ~40-inch vertical is ~84 athletic rating, sufficient to
+  // unlock Aerial assault / Chase-down when the basketball skill also exists.
+  // Explosive first step still needs exceptionally high sprint/creation tools.
+  const rareLocked = b.id === "explosive_first_step" ? rank < 4
+    : (b.id === "aerial_assault" || b.id === "chase_down") && rank < 3;
+  if (rareLocked) {
+    assert.equal(badgeCap(at,b.id),0, "rare athletic badges require NBA-combine-class physical tools");
     continue;
   }
   assert.equal(badgeCap(at,b.id),rank);
