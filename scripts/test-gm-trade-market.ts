@@ -13,6 +13,7 @@ import {
 } from "../src/gm/engine/trade-market";
 import type { GmLeagueState, GmPlayer, GmTradeAsset } from "../src/gm/types";
 import { findSelectedTradePackages } from "../src/gm/engine/trade-finder";
+import { resolveTradeEntry, tradeEntryHref } from "../src/gm/lib/trade-entry";
 
 const seeded = createGeneratedLeague({
   userTeamId: "bos", season: 2026, seed: 19,
@@ -25,6 +26,33 @@ const league: GmLeagueState = {
   ...seeded, phase: "regular", day: 55, tradeDeadlinePassed: false,
   teams: userBlocks, tradeMarket: undefined,
 };
+// Player-profile trade buttons route into the very same salary/pick-safe desk.
+assert.equal(tradeEntryHref(mine, league),
+  "/gm/trade?shop=" + encodeURIComponent(mine.id));
+assert.equal(tradeEntryHref(partner, league),
+  "/gm/trade?target=" + encodeURIComponent(partner.id));
+const shopEntry = resolveTradeEntry(league, new URLSearchParams("shop=" + encodeURIComponent(mine.id)));
+assert.equal(shopEntry?.mode, "shop");
+assert.equal(shopEntry?.player.id, mine.id);
+assert.equal(shopEntry?.partnerId, null);
+const targetEntry = resolveTradeEntry(league, new URLSearchParams("target=" + encodeURIComponent(partner.id)));
+assert.equal(targetEntry?.mode, "target");
+assert.equal(targetEntry?.player.id, partner.id);
+assert.equal(targetEntry?.partnerId, partner.teamId);
+assert.equal(resolveTradeEntry(league, new URLSearchParams("shop=" + encodeURIComponent(partner.id))), null,
+  "opponent IDs cannot be represented as outgoing assets");
+assert.equal(resolveTradeEntry(league, new URLSearchParams("target=" + encodeURIComponent(mine.id))), null,
+  "our own roster cannot be represented as incoming assets");
+assert.equal(resolveTradeEntry(league, new URLSearchParams("shop=missing-player")), null);
+assert.equal(resolveTradeEntry(league, new URLSearchParams("shop=" + mine.id + "&target=" + partner.id)), null);
+const changedOwner = { ...league, players: league.players.map(p =>
+  p.id === partner.id ? { ...p, teamId: "bos" } : p) };
+assert.equal(resolveTradeEntry(changedOwner, new URLSearchParams("target=" + partner.id)), null,
+  "old links must not target a player after a trade or save change");
+assert.equal(tradeEntryHref({ ...partner, teamId: null }, league), null,
+  "free agents must not appear on the trade market");
+assert.equal(tradeEntryHref({ ...mine, contract: null }, league), null,
+  "unsigned players cannot be included in trade packages");
 const pulse = buildTradeMarket(league);
 assert.equal(pulse.season, league.season);
 assert.ok(pulse.rumors.some(row => row.playerId === mine.id && row.signal === "listed"),

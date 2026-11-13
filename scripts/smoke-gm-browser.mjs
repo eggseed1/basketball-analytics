@@ -280,6 +280,37 @@ try {
   await page.screenshot({ path: `${dir}/development-open-mobile.png`, fullPage: true, animations: "disabled" });
   await page.setViewportSize({ width: 1440, height: 1000 });
 
+  // Player profiles are one click from a prefilled trade market. The
+  // current save supplies ownership; URLs never get to assert a team.
+  await page.goto("http://127.0.0.1:3107/gm/trade", { waitUntil: "domcontentloaded" });
+  await page.getByTestId("trade-my-players").getByRole("button", { name: "Info" }).first().click();
+  await page.getByRole("link", { name: "Open full player page" }).click();
+  const shopAction = page.getByTestId("gm-player-trade-action").getByRole("link", { name: "Find trades for player" });
+  await shopAction.waitFor();
+  await shopAction.click();
+  await page.waitForURL(url => url.pathname === "/gm/trade" && url.searchParams.has("shop"));
+  await page.getByTestId("trade-my-players").getByRole("checkbox", { checked: true }).first().waitFor();
+  assert.ok(await page.getByText(/selected[.] Compare|selected[.] No ready-made/).first().count(),
+    "a player profile should open a preselected market search, not an empty trade machine");
+  await page.getByTestId("trade-partner-players").getByRole("button", { name: "Info" }).first().click();
+  await page.getByRole("link", { name: "Open full player page" }).click();
+  const targetAction = page.getByTestId("gm-player-trade-action").getByRole("link", { name: "Trade for player" });
+  await targetAction.waitFor();
+  await targetAction.click();
+  await page.waitForURL(url => url.pathname === "/gm/trade" && url.searchParams.has("target"));
+  await page.getByTestId("trade-partner-players").getByRole("checkbox", { checked: true }).first().waitFor();
+  if (await page.getByTestId("trade-finder-matches").count()) {
+    assert.equal(await page.getByRole("button", { name: "Propose trade", exact: true }).isDisabled(), false,
+      "a found offer should already be loaded for a deliberate two-click proposal");
+  }
+  await page.getByText("Player file", { exact: true }).waitFor();
+  assert.ok(await page.getByText("All ratings · expand / collapse").count(),
+    "comparison stats should be immediately available for the targeted player");
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2),
+    "targeted trade comparison overflows mobile");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
   // The regular trade desk should work like a two-sided trade machine,
   // with a clear live response and optional details on a narrow viewport.
   await page.goto("http://127.0.0.1:3107/gm/trade", { waitUntil: "domcontentloaded" });
