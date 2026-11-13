@@ -8,6 +8,8 @@ import { clamp, createRng } from "@/gm/engine/rng";
 import { developmentSeed, workEthicOf } from "@/gm/engine/development";
 import { ATTRIBUTE_LABEL, ensurePlayerSheet, overallFromAttributes, simpleCategoryMeans } from "@/gm/engine/attributes";
 import { pathFromTrait } from "@/gm/engine/dev-traits";
+import { playerMentality } from "@/gm/engine/mentality";
+import { gLeagueGames } from "@/gm/engine/g-league";
 import { evolveTendencies } from "@/gm/engine/tendency-development";
 import {
   developmentProfileOf, developmentFocusSkill, developmentSkillKeys,
@@ -177,7 +179,8 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const sheet = withSheet.sheet!;
   const isSummer = context.checkpoint === "summer";
   const baseline = sheet.overall;
-  const trait = sheet.potential.trait ?? "normal";
+  const mentality = playerMentality(withSheet).rank;
+  const gGames = gLeagueGames(withSheet, context.league.season);
   const signal = performanceSignal(withSheet, context.league.season);
   const accolade = isSummer ? accoladeScore(context.league, player.id).score : 0;
   // Generated players have no preordained final OVR. Each skill has a
@@ -193,15 +196,21 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   const ageDelta = age <= 21 ? 2.4 : age <= 23 ? 2.05 : age <= 25 ? 1.5
     : age <= 27 ? 0.95 : age <= peak + 1 ? 0.3
     : age <= 31 ? -0.30 : age <= 33 ? -0.82 : age <= 35 ? -1.36 : -1.90;
-  const bonus = trait === "xfactor" ? 1.24 : trait === "superstar" ? 1.18 : trait === "star" ? 1.1 : trait === "bust" ? 0.55 : 1;
-  // Draft-day boom/bust labels become modest tendencies, not destinies.
-  const path = sheet.potential.path === "boom" ? (openPath ? 1.06 : 1.13)
-    : sheet.potential.path === "bust" ? (openPath ? 0.92 : 0.72) : 1;
+  // Mentality—not a hidden Star/X-Factor/Bust designation—determines how
+  // consistently training converts to real skill. NBA performance still matters.
+  const bonus = [0, 0.79, 0.9, 1, 1.12, 1.26][mentality]!;
+  const path = 1;
   const play = withSheet.seasonLine;
-  const availability = play && play.gp >= 12 ? clamp(play.gp / 65, 0.35, 1) : 0.86;
-  let activity = play && play.gp >= 12 ? clamp(play.min / play.gp / 25, 0.65, 1.12) : 0.85;
-  if (withSheet.developmentPlan === "practice") activity = Math.max(activity, 0.93);
-  if (withSheet.developmentPlan === "rotation" && play && play.gp >= 12) activity *= play.min / play.gp >= 18 ? 1.07 : 0.75;
+  const nbaGames = play?.gp ?? 0;
+  // G League is a genuine reps pathway but competition discounts the benefit.
+  // G League games do not enter the seasonLine used for NBA production or awards.
+  const gLeagueShare = clamp(gGames / 45, 0, 1);
+  const availability = nbaGames >= 12 ? clamp(nbaGames / 65, 0.35, 1)
+    : gGames >= 8 ? 0.68 + 0.24 * gLeagueShare : 0.73;
+  let activity = nbaGames >= 12 ? clamp(play!.min / play!.gp / 25, 0.65, 1.12) : 0.68;
+  if (withSheet.developmentPlan === "practice") activity = Math.max(activity, 0.82);
+  if (withSheet.developmentPlan === "rotation" && nbaGames >= 12) activity *= play!.min / play!.gp >= 18 ? 1.07 : 0.75;
+  if (gGames >= 8) activity = Math.max(activity, (0.76 + 0.20 * gLeagueShare) * 0.87);
   if (withSheet.injury) activity *= 0.78;
   const professionalism = 0.9 + workEthicOf(withSheet) / 1000;
   const staff = clamp(1 + (context.coach ?? 0) * 0.07 + ((context.staff ?? 1) - 1) * 0.12 + (context.mentor ?? 0), 0.85, 1.4);
@@ -246,13 +255,49 @@ export function advanceDynamicProgression(player: GmPlayer, context: ProgressCon
   };
 }
 
-export function reviewDevelopmentTrait(league: GmLeagueState, player: GmPlayer): GmPlayer {
-  if (!player.teamId || league.draftPool.includes(player.id) || player.traitHistory?.some(row => row.season === league.season)) return player;
-  const assessed = annualTraitDecision(league, player);
-  const sheet = ensurePlayerSheet(player).sheet!;
-  const changed = assessed.before !== assessed.after;
-  return { ...player,
-    sheet: { ...sheet, potential: changed ? { ...sheet.potential, trait: assessed.after, path: pathFromTrait(assessed.after) } : sheet.potential },
-    traitHistory: [...(player.traitHistory ?? []), { season: league.season, ...assessed }].slice(-12),
+/** Annual mentality review: repeated reps and sustained growth can improve the
+ * underlying learning habits. The old trait ledger remains read-only for saves. */
+export function reviewMentality(league: GmLeagueState, player: GmPlayer): GmPlayer {
+  if (!player.teamId || league.draftPool.includes(player.id) ||
+      player.mentalityGrowth?.reviewedSeason === league.season) return player;
+  const before = playerMentality(player).rank;
+  const nba = regularSample(player, league.season);
+  const nbaGames = nba?.gp ?? 0;
+  const gGames = gLeagueGames(player, league.season);
+  const reps = nbaGames + Math.round(gGames * 0.78);
+  const growth = player.developmentBaseline?.season === league.season
+    ? (player.sheet?.overall ?? 0) - player.developmentBaseline.overall : 0;
+  const previous = player.mentalityGrowth;
+  const idle = reps < 10 ? (previous?.idleSeasons ?? 0) + 1 : 0;
+  const rng = createRng(developmentSeed(player.id + ":mentality:" + league.season));
+  const ageEligible = player.age <= 29;
+  // One tier at most per year. A credible workload plus tangible improvement
+  // matters more than draft position or raw overall. Rare high-workload
+  // prospects can also learn stronger habits without a visible OVR spike.
+  const meaningful = reps >= 35 && (growth >= 1 || reps >= 65);
+  const chance = ageEligible && meaningful && before < 5
+    ? clamp(0.035 + Math.max(0, growth) * 0.032 +
+      Math.min(0.10, (reps - 35) / 450), 0, 0.24) : 0;
+  const promoted = chance > 0 && rng() < chance;
+  // Missing minutes for two full seasons can erode self-developed habits,
+  // but G League reps protect them. Inherited veteran mentality persists.
+  const eroded = !promoted && idle >= 2 && before > 1 &&
+    player.age <= 29 && rng() < 0.13;
+  const currentEarned = previous?.rank ?? before;
+  const rank = promoted ? Math.min(5, before + 1) : eroded ? Math.max(1, currentEarned - 1) : currentEarned;
+  const profile = developmentProfileOf(player);
+  const boosted = promoted ? { ...profile,
+    learning: clamp(profile.learning + 0.028, 0.72, 1.4),
+    adaptability: clamp(profile.adaptability + 0.012, 0.7, 1.3) } : profile;
+  return { ...player, developmentProfile: boosted,
+    mentalityGrowth: { rank: rank as 1 | 2 | 3 | 4 | 5,
+      reviewedSeason: league.season, idleSeasons: idle,
+      ...(promoted ? { reason: "Earned a stronger mentality through sustained competitive reps and practice." } :
+        eroded ? { reason: "Long inactivity weakened his self-developed training habits." } : {}) },
   };
+}
+
+/** Compatibility wrapper: no longer changes superstar/bust/X-factor traits. */
+export function reviewDevelopmentTrait(league: GmLeagueState, player: GmPlayer): GmPlayer {
+  return reviewMentality(league, player);
 }
