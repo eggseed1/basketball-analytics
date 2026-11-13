@@ -5,11 +5,11 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-13",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-13T18:04:23.912Z",
-    "rosterPlayerCount": 504,
-    "headlinesScanned": 13860,
-    "latestHeadlineAt": "2026-11-13T18:00:26.000Z",
-    "latestTransactionDate": "2026-11-12",
+    "builtAt": "2026-11-13T22:04:18.362Z",
+    "rosterPlayerCount": 505,
+    "headlinesScanned": 13970,
+    "latestHeadlineAt": "2026-11-13T22:02:30.000Z",
+    "latestTransactionDate": "2026-11-13",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -44,7 +44,7 @@
     },
     "outlet:cbs-sports": {
       "label": "CBS Sports",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:larry-brown-sports": {
       "label": "Larry Brown Sports",
@@ -68,7 +68,7 @@
     },
     "outlet:the-athletic": {
       "label": "The Athletic",
-      "credibility": 24
+      "credibility": 12
     },
     "outlet:sportsnaut": {
       "label": "Sportsnaut",
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 16
+      "credibility": 8
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -84,7 +84,7 @@
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:espn": {
       "label": "ESPN",
@@ -228,6 +228,10 @@
     },
     "reporter:scott-kaplan": {
       "label": "Scott Kaplan (ESPN)",
+      "credibility": 18
+    },
+    "reporter:shams-charania-murray": {
+      "label": "Shams Charania. Murray (ESPN)",
       "credibility": 18
     },
     "ledger:nba-player-movement": {
@@ -700,12 +704,13 @@
         "mv-f5dbf9ed7312b343",
         "mv-ba88fd746573e7da",
         "mv-647b51d52054fd78",
-        "mv-072545dbf50e6c07"
+        "mv-072545dbf50e6c07",
+        "mv-e4fe401c4c674741"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-13T15:14:36.000Z",
+      "lastMeaningfulAt": "2026-11-13T19:32:03.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -1833,12 +1838,14 @@
         "mv-99e5bdd4fa79bcbb",
         "mv-8584315a43104765",
         "mv-83e13f9732e1e2cb",
-        "mv-7feccabafebb591c"
+        "mv-7feccabafebb591c",
+        "mv-11b6456e6f204280",
+        "mv-5bb890f550e9944a"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-28T15:58:25.000Z",
-      "lastMeaningfulAt": "2026-11-13T17:37:11.000Z",
+      "lastMeaningfulAt": "2026-11-13T20:26:40.000Z",
       "linkedPlayerIds": [
         "3112335",
         "3936299",
@@ -2238,6 +2245,30 @@
       ],
       "linkedTeamIds": [
         "23"
+      ]
+    },
+    {
+      "id": "mv-trade-3907497-20261113",
+      "headline": "Dejounte Murray: trade request",
+      "primaryClaimId": "mv-26b1af8ce0ca9f21",
+      "claimIds": [
+        "mv-465caecedfd1e76e",
+        "mv-86bdca03ebff5bd2",
+        "mv-636fb4997b61bb79",
+        "mv-0d3723637893fd3d",
+        "mv-53ba3d5085bd55f1",
+        "mv-26b1af8ce0ca9f21"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-13T19:54:42.000Z",
+      "lastMeaningfulAt": "2026-11-13T20:48:41.000Z",
+      "linkedPlayerIds": [
+        "3907497"
+      ],
+      "linkedTeamIds": [
+        "3",
+        "21"
       ]
     },
     {
@@ -3243,6 +3274,51 @@
         "1",
         "6",
         "25"
+      ]
+    },
+    {
+      "deal": {
+        "date": "2026-07-28",
+        "sides": [
+          {
+            "teamId": "12",
+            "teamName": "Clippers",
+            "receives": [
+              {
+                "label": "Johni Broome",
+                "playerId": "4433569",
+                "fromTeamId": "20"
+              },
+              {
+                "label": "draft consideration",
+                "nonPlayer": true,
+                "fromTeamId": "20"
+              }
+            ]
+          },
+          {
+            "teamId": "20",
+            "teamName": "76ers",
+            "receives": []
+          }
+        ]
+      },
+      "id": "mv-tx-nba-tx-82e392fc5b98a1d2",
+      "headline": "Clippers–76ers trade: Johni Broome",
+      "primaryClaimId": "mv-nba-tx-82e392fc5b98a1d2",
+      "claimIds": [
+        "mv-nba-tx-82e392fc5b98a1d2"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-07-28T12:00:00.000Z",
+      "lastMeaningfulAt": "2026-07-28T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "4433569"
+      ],
+      "linkedTeamIds": [
+        "12",
+        "20"
       ]
     },
     {
@@ -12273,6 +12349,191 @@
       "isOriginal": false
     },
     {
+      "id": "mv-11b6456e6f204280",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Suns Believed To Be Open To Trading Jalen Green For Point Guard",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-13T19:07:42.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288126/Suns-Believed-To-Be-Open-To-Trading-Jalen-Green-For-Point-Guard",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e4fe401c4c674741",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving Tops Rival Teams' Trade Lists As Mavericks Signal No Interest",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-13T19:32:03.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288127/Kyrie-Irving-Tops-Rival-Teams-Trade-Lists-As-Mavericks-Signal-No-Interest",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-465caecedfd1e76e",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Dejounte Murray, Pelicans Working On Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-13T19:54:42.000Z",
+      "sourceId": "reporter:shams-charania-murray",
+      "sourceLabel": "RealGM, citing Shams Charania. Murray (ESPN)",
+      "reporterLabel": "Shams Charania. Murray, Shams Charania, Chris Haynes",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288129/Dejounte-Murray-Pelicans-Working-On-Trade",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-86bdca03ebff5bd2",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Pelicans reportedly working on trading disgruntled Dejounte Murray, who recently rebutted criticism on social media",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-13T20:01:03.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/nba/breaking-news/article/pelicans-reportedly-working-on-trading-disgruntled-dejounte-murray-who-recently-rebutted-criticism-on-social-media-212022821.html",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-636fb4997b61bb79",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Pelicans' Dejounte Murray reportedly wants trade after venting about franchise in deleted social media posts",
+      "claimType": "trade_request",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-13T20:02:56.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/pelicans-dejounte-murraysocial-media-now-deleted-posts-trade/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-0d3723637893fd3d",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA Trade Rumors: Phoenix Suns Linked To Disgruntled Dejounte Murray",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-13T20:04:39.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/phoenix-suns/nba-rumors-phoenix-suns-linked-dejounte-murray/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-53ba3d5085bd55f1",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Pelicans’ Dejounte Murray Requests Trade; Suns Interested?",
+      "claimType": "trade_request",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-13T20:05:30.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "Hoops Rumors, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/11/pelicans-dejounte-murray-requests-trade-suns-interested.html",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3",
+        "21"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-5bb890f550e9944a",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Kings Open To Trades, Want To Accelerate Rebuild Around Darius Acuff",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-13T20:26:40.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288130/Kings-Open-To-Trades-Want-To-Accelerate-Rebuild-Around-Darius-Acuff",
+      "playerIds": [
+        "5142620"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-26b1af8ce0ca9f21",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Dejounte Murray requests trade from Pelicans: Sources",
+      "claimType": "trade_request",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-13T20:48:41.000Z",
+      "sourceId": "outlet:the-athletic",
+      "sourceLabel": "The Athletic",
+      "sourceUrl": "https://www.nytimes.com/athletic/7779741/2026/11/13/dejounte-murray-trade-request-new-orleans-pelicans-suns/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -13390,6 +13651,26 @@
       "isOriginal": true
     },
     {
+      "id": "mv-nba-tx-82e392fc5b98a1d2",
+      "clusterId": "mv-tx-nba-tx-82e392fc5b98a1d2",
+      "summary": "Acquired forward Johni Broome and draft consideration from Philadelphia 76ers.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-07-28T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "Player movement log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4433569"
+      ],
+      "teamIds": [
+        "12"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-espn-tx-2c1517e2465f0dc5",
       "clusterId": "mv-tx-espn-tx-2c1517e2465f0dc5",
       "summary": "Acquired G Dennis Schroder from Cleveland.",
@@ -13633,7 +13914,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-13T18:04:23.912Z"
+      "resolvedAt": "2026-11-13T22:04:18.362Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
@@ -13980,6 +14261,16 @@
       "outcome": "materialized",
       "resolvedAt": "2026-07-19T12:00:00.000Z",
       "transactionRef": "espn-tx-74257094b37a0d17",
+      "suppressTradeSpeculation": true
+    },
+    {
+      "clusterId": "mv-tx-nba-tx-82e392fc5b98a1d2",
+      "playerIds": [
+        "4433569"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-07-28T12:00:00.000Z",
+      "transactionRef": "nba-tx-82e392fc5b98a1d2",
       "suppressTradeSpeculation": true
     },
     {

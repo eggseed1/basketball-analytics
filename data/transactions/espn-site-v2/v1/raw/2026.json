@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-13T18:03:10.122Z",
-  "apiCount": 437,
+  "fetchedAt": "2026-11-13T22:02:58.079Z",
+  "apiCount": 438,
   "rows": [
+    {
+      "date": "2026-11-13T08:00Z",
+      "description": "Signed C Johni Broome to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
     {
       "date": "2026-11-11T08:00Z",
       "description": "Signed F Carson Cooper to a two-way contract. Waived C Lawson Lovering.",
@@ -1092,17 +1103,6 @@
         "displayName": "Detroit Pistons",
         "location": "Detroit",
         "name": "Pistons"
-      }
-    },
-    {
-      "date": "2026-09-24T07:00Z",
-      "description": "Signed F Julian Reese to a two-way contract.",
-      "team": {
-        "id": "3",
-        "abbreviation": "NO",
-        "displayName": "New Orleans Pelicans",
-        "location": "New Orleans",
-        "name": "Pelicans"
       }
     },
     {
