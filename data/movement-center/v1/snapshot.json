@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-13",
+    "snapshotDate": "2026-11-14",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-13T22:04:18.362Z",
-    "rosterPlayerCount": 505,
-    "headlinesScanned": 13970,
-    "latestHeadlineAt": "2026-11-13T22:02:30.000Z",
+    "builtAt": "2026-11-14T16:46:45.746Z",
+    "rosterPlayerCount": 508,
+    "headlinesScanned": 14225,
+    "latestHeadlineAt": "2026-11-14T16:41:59.000Z",
     "latestTransactionDate": "2026-11-13",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -2249,7 +2249,7 @@
     },
     {
       "id": "mv-trade-3907497-20261113",
-      "headline": "Dejounte Murray: trade request",
+      "headline": "Dejounte Murray and Jalen Green: trade talk",
       "primaryClaimId": "mv-26b1af8ce0ca9f21",
       "claimIds": [
         "mv-465caecedfd1e76e",
@@ -2257,18 +2257,39 @@
         "mv-636fb4997b61bb79",
         "mv-0d3723637893fd3d",
         "mv-53ba3d5085bd55f1",
-        "mv-26b1af8ce0ca9f21"
+        "mv-26b1af8ce0ca9f21",
+        "mv-634e3205bef2146f",
+        "mv-2c2dd610921f1279"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-13T20:48:41.000Z",
+      "lastMeaningfulAt": "2026-11-14T14:46:44.000Z",
       "linkedPlayerIds": [
-        "3907497"
+        "3907497",
+        "4437244"
       ],
       "linkedTeamIds": [
         "3",
         "21"
+      ]
+    },
+    {
+      "id": "mv-trade-4251-20261114",
+      "headline": "Paul George: trade talk",
+      "primaryClaimId": "mv-fb1d8c2cc6c316c2",
+      "claimIds": [
+        "mv-fb1d8c2cc6c316c2"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-14T13:29:35.000Z",
+      "lastMeaningfulAt": "2026-11-14T13:29:35.000Z",
+      "linkedPlayerIds": [
+        "4251"
+      ],
+      "linkedTeamIds": [
+        "2"
       ]
     },
     {
@@ -12534,6 +12555,68 @@
       "isOriginal": false
     },
     {
+      "id": "mv-fb1d8c2cc6c316c2",
+      "clusterId": "mv-trade-4251-20261114",
+      "summary": "Celtics’ Paul George Taking Trade Chatter ‘Personal’",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-14T13:29:35.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/boston-celtics/paul-george-taking-trade-chatter-personal/",
+      "playerIds": [
+        "4251"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-634e3205bef2146f",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA rumors: Dejounte Murray trying to will Pelicans-Suns trade for Jalen Green into existence",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-14T14:26:56.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-dejounte-murray-pelicans-suns-trade-jalen-green",
+      "playerIds": [
+        "3907497",
+        "4437244"
+      ],
+      "teamIds": [
+        "3",
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-2c2dd610921f1279",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Trade Rumor: Phoenix Insider Reveals Where Suns Stand on Dejounte Murray",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-14T14:46:44.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-trade-rumor-phoenix-suns-insider-reveals-where-phoenix-suns-stand-on-dejounte-murray/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -13914,7 +13997,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-13T22:04:18.362Z"
+      "resolvedAt": "2026-11-14T16:46:45.746Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",

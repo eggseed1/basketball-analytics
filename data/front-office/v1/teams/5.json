@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-13",
-    "retrievedAt": "2026-11-13T22:09:04.534Z",
+    "snapshotDate": "2026-11-14",
+    "retrievedAt": "2026-11-14T16:55:25.156Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "44284536434ebda57223ca1ebec59337cb4ebec1a9b16280d8762c763e510d0d",
+    "sourceHash": "a773fbd350375d2d9fb4ddda2d68391ffea74069c93da2e7ce82c407130de9a9",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -260,6 +260,29 @@
           "href": "/players/1626209"
         },
         {
+          "playerId": "1641772",
+          "playerName": "Nae'Qwan Tomlin",
+          "age": null,
+          "contractId": "cy-1641772-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1641772-2026",
+              "playerId": "1641772",
+              "franchiseId": "5",
+              "season": "2026-27",
+              "salary": 2411090,
+              "capHit": 2411090,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1641772"
+        },
+        {
           "playerId": "1641854",
           "playerName": "Craig Porter Jr.",
           "age": null,
@@ -327,6 +350,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1642434"
+        },
+        {
+          "playerId": "1631215",
+          "playerName": "Khalifa Diop",
+          "age": null,
+          "contractId": "cy-1631215-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631215-2026",
+              "playerId": "1631215",
+              "franchiseId": "5",
+              "season": "2026-27",
+              "salary": 1357763,
+              "capHit": 1357763,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631215"
         },
         {
           "playerId": "1643509",
@@ -401,12 +447,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 204323307,
-          "playersUnderContract": 13
+          "totalSalaryDollars": 208092160,
+          "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 204323307,
-      "playersWithSalary": 13,
+      "playerSalaryCommitments": 208092160,
+      "playersWithSalary": 15,
       "playersWithoutSalary": 2
     },
     "draftAssets": {

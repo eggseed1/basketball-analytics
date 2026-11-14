@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-13",
-    "retrievedAt": "2026-11-13T22:09:04.534Z",
+    "snapshotDate": "2026-11-14",
+    "retrievedAt": "2026-11-14T16:55:25.156Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "44284536434ebda57223ca1ebec59337cb4ebec1a9b16280d8762c763e510d0d",
+    "sourceHash": "a773fbd350375d2d9fb4ddda2d68391ffea74069c93da2e7ce82c407130de9a9",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -214,29 +214,6 @@
           "href": "/players/1630173"
         },
         {
-          "playerId": "203486",
-          "playerName": "Mason Plumlee",
-          "age": null,
-          "contractId": "cy-203486-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-203486-2026",
-              "playerId": "203486",
-              "franchiseId": "23",
-              "season": "2026-27",
-              "salary": 3022108,
-              "capHit": 3022108,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/203486"
-        },
-        {
           "playerId": "1642284",
           "playerName": "Alex Karaban",
           "age": null,
@@ -327,6 +304,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1642875"
+        },
+        {
+          "playerId": "203486",
+          "playerName": "Mason Plumlee",
+          "age": null,
+          "contractId": "cy-203486-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-203486-2026",
+              "playerId": "203486",
+              "franchiseId": "23",
+              "season": "2026-27",
+              "salary": 2139724,
+              "capHit": 2139724,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/203486"
         },
         {
           "playerId": "1642367",
@@ -447,11 +447,11 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 194876306,
+          "totalSalaryDollars": 193993922,
           "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 194876306,
+      "playerSalaryCommitments": 193993922,
       "playersWithSalary": 15,
       "playersWithoutSalary": 2
     },

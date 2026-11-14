@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-13",
-    "retrievedAt": "2026-11-13T22:09:04.534Z",
+    "snapshotDate": "2026-11-14",
+    "retrievedAt": "2026-11-14T16:55:25.156Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "44284536434ebda57223ca1ebec59337cb4ebec1a9b16280d8762c763e510d0d",
+    "sourceHash": "a773fbd350375d2d9fb4ddda2d68391ffea74069c93da2e7ce82c407130de9a9",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -398,6 +398,29 @@
           "href": "/players/1631159"
         },
         {
+          "playerId": "1631115",
+          "playerName": "Orlando Robinson",
+          "age": null,
+          "contractId": "cy-1631115-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631115-2026",
+              "playerId": "1631115",
+              "franchiseId": "4",
+              "season": "2026-27",
+              "salary": 1366314,
+              "capHit": 1366314,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631115"
+        },
+        {
           "playerId": "1643591",
           "playerName": "Tobe Awaka",
           "age": null,
@@ -447,12 +470,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 171336191,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 172702505,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 171336191,
-      "playersWithSalary": 15,
+      "playerSalaryCommitments": 172702505,
+      "playersWithSalary": 16,
       "playersWithoutSalary": 2
     },
     "draftAssets": {

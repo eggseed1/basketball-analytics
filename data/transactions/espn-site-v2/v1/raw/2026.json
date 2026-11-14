@@ -2,8 +2,8 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-13T22:02:58.079Z",
-  "apiCount": 438,
+  "fetchedAt": "2026-11-14T16:45:40.754Z",
+  "apiCount": 439,
   "rows": [
     {
       "date": "2026-11-13T08:00Z",
@@ -14,6 +14,17 @@
         "displayName": "Minnesota Timberwolves",
         "location": "Minnesota",
         "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-11-13T08:00Z",
+      "description": "Signed C Orlando Robinson to a rest-of-season contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
       }
     },
     {
@@ -1103,6 +1114,17 @@
         "displayName": "Detroit Pistons",
         "location": "Detroit",
         "name": "Pistons"
+      }
+    },
+    {
+      "date": "2026-09-24T07:00Z",
+      "description": "Signed F Julian Reese to a two-way contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
       }
     },
     {
