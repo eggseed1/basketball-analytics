@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-15",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-15T17:27:22.518Z",
+    "builtAt": "2026-11-15T21:07:01.548Z",
     "rosterPlayerCount": 509,
-    "headlinesScanned": 14496,
-    "latestHeadlineAt": "2026-11-15T17:26:13.000Z",
+    "headlinesScanned": 14545,
+    "latestHeadlineAt": "2026-11-15T21:04:45.000Z",
     "latestTransactionDate": "2026-11-13",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -1321,12 +1321,13 @@
         "mv-5a786935502c71e8",
         "mv-7dcc34ff87e4fccc",
         "mv-86dc8f96d6522bdd",
-        "mv-b72f80f84ad79989"
+        "mv-b72f80f84ad79989",
+        "mv-4db4211c11532c8b"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-11-12T23:41:33.000Z",
+      "lastMeaningfulAt": "2026-11-15T18:18:47.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
@@ -12657,6 +12658,26 @@
       "isOriginal": true
     },
     {
+      "id": "mv-4db4211c11532c8b",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "New Lakers Naz Reid Trade Rumors Come With Positive Development",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-15T18:18:47.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/naz-reid-trade-rumors-positive-development/",
+      "playerIds": [
+        "4396971"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -14037,7 +14058,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-15T17:27:22.518Z"
+      "resolvedAt": "2026-11-15T21:07:01.548Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
