@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-14",
+    "snapshotDate": "2026-11-15",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-14T20:47:25.974Z",
-    "rosterPlayerCount": 508,
-    "headlinesScanned": 14279,
-    "latestHeadlineAt": "2026-11-14T20:37:57.000Z",
+    "builtAt": "2026-11-15T17:27:22.518Z",
+    "rosterPlayerCount": 509,
+    "headlinesScanned": 14496,
+    "latestHeadlineAt": "2026-11-15T17:26:13.000Z",
     "latestTransactionDate": "2026-11-13",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -172,7 +172,7 @@
     },
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:brian-windhorst": {
       "label": "Brian Windhorst (ESPN)",
@@ -2250,7 +2250,7 @@
     {
       "id": "mv-trade-3907497-20261113",
       "headline": "Dejounte Murray and Jalen Green: trade talk",
-      "primaryClaimId": "mv-26b1af8ce0ca9f21",
+      "primaryClaimId": "mv-c82e6423a3f4f150",
       "claimIds": [
         "mv-465caecedfd1e76e",
         "mv-86bdca03ebff5bd2",
@@ -2259,12 +2259,14 @@
         "mv-53ba3d5085bd55f1",
         "mv-26b1af8ce0ca9f21",
         "mv-634e3205bef2146f",
-        "mv-2c2dd610921f1279"
+        "mv-2c2dd610921f1279",
+        "mv-4e85acc11ca018bc",
+        "mv-c82e6423a3f4f150"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-14T14:46:44.000Z",
+      "lastMeaningfulAt": "2026-11-15T17:24:30.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244"
@@ -12617,6 +12619,44 @@
       "isOriginal": false
     },
     {
+      "id": "mv-4e85acc11ca018bc",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Suns Make Jalen Green Available In Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-14T21:48:17.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288135/Suns-Make-Jalen-Green-Available-In-Trade",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c82e6423a3f4f150",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "$105M NBA Star Becomes “Available” for Trade as Rich Paul Seeks Solution for Dejounte Murray",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-15T17:24:30.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-105m-nba-star-jalen-green-becomes-available-for-trade-as-rich-paul-seeks-solution-for-dejounte-murray/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -13997,7 +14037,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-14T20:47:25.974Z"
+      "resolvedAt": "2026-11-15T17:27:22.518Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
