@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-15",
-    "retrievedAt": "2026-11-15T21:11:33.339Z",
+    "snapshotDate": "2026-11-16",
+    "retrievedAt": "2026-11-16T20:52:55.478Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -444,15 +444,15 @@
           "href": "/players/1643539"
         },
         {
-          "playerId": "1642933",
-          "playerName": "Keshon Gilbert",
+          "playerId": "1643572",
+          "playerName": "Rafael Castro",
           "age": null,
-          "contractId": "cy-1642933-2026",
+          "contractId": "cy-1643572-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-1642933-2026",
-              "playerId": "1642933",
+              "contractId": "cy-1643572-2026",
+              "playerId": "1643572",
               "franchiseId": "1",
               "season": "2026-27",
               "salary": null,
@@ -464,7 +464,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/1642933"
+          "href": "/players/1643572"
         }
       ],
       "futureCommitments": [

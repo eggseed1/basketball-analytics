@@ -2,7 +2,7 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "methodologyNote": "ESPN free-text transaction blurbs only. No structured player/pick assets or ownership edges.",
-  "builtAt": "2026-11-15T21:05:48.941Z",
+  "builtAt": "2026-11-16T20:43:12.250Z",
   "espnCalendarYears": [
     2000,
     2001,
@@ -32,11 +32,11 @@
     2025,
     2026
   ],
-  "transactionCount": 11256,
+  "transactionCount": 11257,
   "ownershipEdgeCount": 0,
   "earliestDate": "2000-11-02",
-  "latestDate": "2026-11-13",
-  "contentHash": "fc0c5fffff8a3a6af102c0551f0b023647c9a1b6",
+  "latestDate": "2026-11-15",
+  "contentHash": "ff64e2f52f82b89f7be317f5ccadfbc493aaa978",
   "limitations": [
     "Source rows are team-centric free-text descriptions (date + team + description).",
     "No athlete ids — player identity remains unresolved; no player assets emitted.",

@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-15",
+    "snapshotDate": "2026-11-16",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-15T21:07:01.548Z",
-    "rosterPlayerCount": 509,
-    "headlinesScanned": 14545,
-    "latestHeadlineAt": "2026-11-15T21:04:45.000Z",
-    "latestTransactionDate": "2026-11-13",
+    "builtAt": "2026-11-16T20:44:30.275Z",
+    "rosterPlayerCount": 508,
+    "headlinesScanned": 14874,
+    "latestHeadlineAt": "2026-11-16T20:37:48.000Z",
+    "latestTransactionDate": "2026-11-15",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -2250,7 +2250,7 @@
     },
     {
       "id": "mv-trade-3907497-20261113",
-      "headline": "Dejounte Murray and Jalen Green: trade talk",
+      "headline": "Dejounte Murray, Jalen Green and others: trade talk",
       "primaryClaimId": "mv-c82e6423a3f4f150",
       "claimIds": [
         "mv-465caecedfd1e76e",
@@ -2262,15 +2262,18 @@
         "mv-634e3205bef2146f",
         "mv-2c2dd610921f1279",
         "mv-4e85acc11ca018bc",
-        "mv-c82e6423a3f4f150"
+        "mv-c82e6423a3f4f150",
+        "mv-2d2a2f3719d30376",
+        "mv-ac54dde0d1833b92"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-15T17:24:30.000Z",
+      "lastMeaningfulAt": "2026-11-16T19:15:17.000Z",
       "linkedPlayerIds": [
         "3907497",
-        "4437244"
+        "4437244",
+        "4395628"
       ],
       "linkedTeamIds": [
         "3",
@@ -2293,6 +2296,25 @@
       ],
       "linkedTeamIds": [
         "2"
+      ]
+    },
+    {
+      "id": "mv-contract-2995706-20261116",
+      "headline": "Mario Hezonja: contract future with the Cavaliers",
+      "primaryClaimId": "mv-0c9603f6adc93eb4",
+      "claimIds": [
+        "mv-0c9603f6adc93eb4",
+        "mv-espn-tx-d719e183bfe07da6"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-11-16T13:39:18.000Z",
+      "lastMeaningfulAt": "2026-11-15T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "2995706"
+      ],
+      "linkedTeamIds": [
+        "5"
       ]
     },
     {
@@ -12678,6 +12700,68 @@
       "isOriginal": false
     },
     {
+      "id": "mv-0c9603f6adc93eb4",
+      "clusterId": "mv-contract-2995706-20261116",
+      "summary": "Mario Hezonja's Contract With Cavaliers Now Fully Guaranteed For Season",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-16T13:39:18.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288147/Mario-Hezonjas-Contract-With-Cavaliers-Now-Fully-Guaranteed-For-Season",
+      "playerIds": [
+        "2995706"
+      ],
+      "teamIds": [
+        "5"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-2d2a2f3719d30376",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "ESPN Insider Reveals Multiple NBA Teams’ Stance on Dejounte Murray Amid Suns Trade Rumor",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-16T19:13:32.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "Basketball News, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-espn-insider-reveals-multiple-nba-teams-stance-on-dejounte-murray-amid-phoenix-suns-trade-rumor/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ac54dde0d1833b92",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA rumors: Dejounte Murray, Zion Williamson trade revelations aren’t good for Pelicans",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-16T19:15:17.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-dejounte-murray-zion-williamson-trade-revelations-arent-good-pelicans",
+      "playerIds": [
+        "3907497",
+        "4395628"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -13103,6 +13187,26 @@
       ],
       "teamIds": [
         "23"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-espn-tx-d719e183bfe07da6",
+      "clusterId": "mv-contract-2995706-20261116",
+      "summary": "Guaranteed SG Mario Hezonja's full contract salary.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-11-15T12:00:00.000Z",
+      "sourceId": "ledger:espn-transactions",
+      "sourceLabel": "Transaction log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "2995706"
+      ],
+      "teamIds": [
+        "5"
       ],
       "isOriginal": true
     },
@@ -14058,7 +14162,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-15T21:07:01.548Z"
+      "resolvedAt": "2026-11-16T20:44:30.275Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
@@ -14214,6 +14318,16 @@
       "outcome": "materialized",
       "resolvedAt": "2026-11-11T12:00:00.000Z",
       "transactionRef": "nba-tx-811e5514c56e9210",
+      "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-contract-2995706-20261116",
+      "playerIds": [
+        "2995706"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-11-15T12:00:00.000Z",
+      "transactionRef": "espn-tx-d719e183bfe07da6",
       "suppressTradeSpeculation": false
     },
     {
