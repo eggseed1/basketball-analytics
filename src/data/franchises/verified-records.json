@@ -1,6 +1,6 @@
 {
  "source": "NBA Stats teamyearbyyearstats and franchiseplayers; ABA seasons from Wikipedia season lists. Career leaders count NBA games only.",
- "generatedAt": "2026-11-09",
+ "generatedAt": "2026-11-16",
  "franchises": {
   "atl": {
    "teamId": 1610612737,
@@ -480,11 +480,11 @@
     },
     "rebounds": {
      "player": "Nikola Jokić",
-     "value": 9058
+     "value": 9093
     },
     "assists": {
      "player": "Nikola Jokić",
-     "value": 6153
+     "value": 6180
     },
     "steals": {
      "player": "Lafayette Lever",
@@ -496,7 +496,7 @@
     },
     "threes": {
      "player": "Jamal Murray",
-     "value": 1422
+     "value": 1431
     }
    }
   },
@@ -606,7 +606,7 @@
    "leaders": {
     "points": {
      "player": "Stephen Curry",
-     "value": 26778
+     "value": 26806
     },
     "rebounds": {
      "player": "Nate Thurmond",
@@ -614,7 +614,7 @@
     },
     "assists": {
      "player": "Stephen Curry",
-     "value": 6780
+     "value": 6782
     },
     "steals": {
      "player": "Stephen Curry",
@@ -626,7 +626,7 @@
     },
     "threes": {
      "player": "Stephen Curry",
-     "value": 4286
+     "value": 4291
     }
    }
   },
@@ -986,7 +986,7 @@
     },
     "rebounds": {
      "player": "Bam Adebayo",
-     "value": 5840
+     "value": 5867
     },
     "assists": {
      "player": "Dwyane Wade",
@@ -1401,7 +1401,7 @@
     },
     "threes": {
      "player": "Tyrese Maxey",
-     "value": 944
+     "value": 953
     }
    }
   },
@@ -1434,7 +1434,7 @@
    "leaders": {
     "points": {
      "player": "Devin Booker",
-     "value": 18322
+     "value": 18418
     },
     "rebounds": {
      "player": "Alvan Adams",
@@ -1454,7 +1454,7 @@
     },
     "threes": {
      "player": "Devin Booker",
-     "value": 1561
+     "value": 1570
     }
    }
   },
@@ -1491,7 +1491,7 @@
    "leaders": {
     "points": {
      "player": "Damian Lillard",
-     "value": 19551
+     "value": 19623
     },
     "rebounds": {
      "player": "LaMarcus Aldridge",
@@ -1511,7 +1511,7 @@
     },
     "threes": {
      "player": "Damian Lillard",
-     "value": 2412
+     "value": 2424
     }
    }
   },
