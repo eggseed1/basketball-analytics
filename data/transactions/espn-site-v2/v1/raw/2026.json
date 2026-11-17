@@ -2,9 +2,31 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-16T20:43:14.823Z",
-  "apiCount": 440,
+  "fetchedAt": "2026-11-17T00:18:39.189Z",
+  "apiCount": 442,
   "rows": [
+    {
+      "date": "2026-11-16T08:00Z",
+      "description": "Waived G Trey Alexander.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-11-16T08:00Z",
+      "description": "Waived G Keshon Gilbert.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
     {
       "date": "2026-11-15T08:00Z",
       "description": "Guaranteed SG Mario Hezonja's full contract salary.",
@@ -1081,28 +1103,6 @@
         "displayName": "Utah Jazz",
         "location": "Utah",
         "name": "Jazz"
-      }
-    },
-    {
-      "date": "2026-09-24T07:00Z",
-      "description": "Waived G Miles Barnstable.",
-      "team": {
-        "id": "24",
-        "abbreviation": "SA",
-        "displayName": "San Antonio Spurs",
-        "location": "San Antonio",
-        "name": "Spurs"
-      }
-    },
-    {
-      "date": "2026-09-24T07:00Z",
-      "description": "Waived F Keylan Boone and Gs Barry Dunning and Mark Sears.",
-      "team": {
-        "id": "22",
-        "abbreviation": "POR",
-        "displayName": "Portland Trail Blazers",
-        "location": "Portland",
-        "name": "Trail Blazers"
       }
     },
     {

@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-16",
+    "snapshotDate": "2026-11-17",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-16T20:44:30.275Z",
+    "builtAt": "2026-11-17T00:19:39.383Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 14874,
-    "latestHeadlineAt": "2026-11-16T20:37:48.000Z",
-    "latestTransactionDate": "2026-11-15",
+    "headlinesScanned": 14945,
+    "latestHeadlineAt": "2026-11-17T00:09:11.000Z",
+    "latestTransactionDate": "2026-11-16",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -2264,12 +2264,15 @@
         "mv-4e85acc11ca018bc",
         "mv-c82e6423a3f4f150",
         "mv-2d2a2f3719d30376",
-        "mv-ac54dde0d1833b92"
+        "mv-ac54dde0d1833b92",
+        "mv-bdec7d9d5613c3db",
+        "mv-b71827de05d30d36",
+        "mv-23f505d0bd92cc01"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-16T19:15:17.000Z",
+      "lastMeaningfulAt": "2026-11-16T22:54:40.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -12762,6 +12765,68 @@
       "isOriginal": false
     },
     {
+      "id": "mv-bdec7d9d5613c3db",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "ESPN Insiders Weigh in on Potential Dejounte Murray Trades",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-16T22:08:27.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "Heavy, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://heavy.com/sports/nba/new-orleans-pelicans/espn-insiders-weigh-in-on-potential-dejounte-murray-trades/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b71827de05d30d36",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Suns Get Jalen Green-Dejounte Murray Trade Update That Changes the Picture",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-16T22:42:41.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "Heavy, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://heavy.com/sports/nba/phoenix-suns/jalen-green-dejounte-murray-suns-trade-update/",
+      "playerIds": [
+        "3907497",
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-23f505d0bd92cc01",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Pelicans Get Fresh Update on Dejounte Murray’s Potential Trade Destination",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-16T22:54:40.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "Heavy, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://heavy.com/sports/nba/new-orleans-pelicans/dejounte-murray-trade-rumors-pelicans-phoenix-suns/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -14162,7 +14227,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-16T20:44:30.275Z"
+      "resolvedAt": "2026-11-17T00:19:39.383Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
