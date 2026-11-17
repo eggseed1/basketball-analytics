@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-17",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-17T00:19:39.383Z",
-    "rosterPlayerCount": 508,
-    "headlinesScanned": 14945,
-    "latestHeadlineAt": "2026-11-17T00:09:11.000Z",
+    "builtAt": "2026-11-17T19:26:06.989Z",
+    "rosterPlayerCount": 507,
+    "headlinesScanned": 15271,
+    "latestHeadlineAt": "2026-11-17T19:25:03.000Z",
     "latestTransactionDate": "2026-11-16",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -1322,17 +1322,19 @@
         "mv-7dcc34ff87e4fccc",
         "mv-86dc8f96d6522bdd",
         "mv-b72f80f84ad79989",
-        "mv-4db4211c11532c8b"
+        "mv-4db4211c11532c8b",
+        "mv-1802a7f586a0242b"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-11-15T18:18:47.000Z",
+      "lastMeaningfulAt": "2026-11-17T18:11:02.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
         "4396971",
-        "3975"
+        "3975",
+        "4277847"
       ],
       "linkedTeamIds": [
         "16",
@@ -1340,7 +1342,8 @@
         "30",
         "9",
         "5",
-        "17"
+        "17",
+        "19"
       ]
     },
     {
@@ -2151,6 +2154,7 @@
         "mv-7179085e2f8b28fa",
         "mv-64b8a394485a669c",
         "mv-1566704c06fe02de",
+        "mv-5682008ce56e4b15",
         "mv-espn-tx-a5a81ef7213dce23",
         "mv-nba-tx-5c64a960de248a10"
       ],
@@ -2267,12 +2271,16 @@
         "mv-ac54dde0d1833b92",
         "mv-bdec7d9d5613c3db",
         "mv-b71827de05d30d36",
-        "mv-23f505d0bd92cc01"
+        "mv-23f505d0bd92cc01",
+        "mv-2e79832676d6e573",
+        "mv-2b0bd32f50b7d7e5",
+        "mv-78844d074a1f20b8",
+        "mv-0c6503024235066a"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-16T22:54:40.000Z",
+      "lastMeaningfulAt": "2026-11-17T18:41:53.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -2318,6 +2326,24 @@
       ],
       "linkedTeamIds": [
         "5"
+      ]
+    },
+    {
+      "id": "mv-trade-4396993-20261117",
+      "headline": "Tyrese Haliburton: trade talk",
+      "primaryClaimId": "mv-6007c17813efce3f",
+      "claimIds": [
+        "mv-6007c17813efce3f"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-17T14:18:45.000Z",
+      "lastMeaningfulAt": "2026-11-17T14:18:45.000Z",
+      "linkedPlayerIds": [
+        "4396993"
+      ],
+      "linkedTeamIds": [
+        "11"
       ]
     },
     {
@@ -12827,6 +12853,145 @@
       "isOriginal": false
     },
     {
+      "id": "mv-2e79832676d6e573",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Dejounte Murray is being linked to 1 team in trade rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-17T01:23:01.000Z",
+      "sourceId": "outlet:larry-brown-sports",
+      "sourceLabel": "Larry Brown Sports",
+      "sourceUrl": "https://larrybrownsports.com/basketball/dejounte-murray-linked-team-trade-rumors-suns/778701",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5682008ce56e4b15",
+      "clusterId": "mv-trade-4702384-20261108",
+      "summary": "Thunder rumors: Don’t expect another trade anytime soon after Nique Clifford deal",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-17T14:18:07.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/thunder-rumors-oklahoma-city-clifford-trade",
+      "playerIds": [
+        "4702384"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-6007c17813efce3f",
+      "clusterId": "mv-trade-4396993-20261117",
+      "summary": "Pacers rumors: Indiana on trade watch as Tyrese Haliburton injury, other woes ruin start to season",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-17T14:18:45.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/indiana-pacers/pacers-rumors-indianon-trade-watch-tyrese-haliburton-injuries-season",
+      "playerIds": [
+        "4396993"
+      ],
+      "teamIds": [
+        "11"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-2b0bd32f50b7d7e5",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA rumors: Pelicans are going to have trouble finding a Dejounte Murray trade, so things could get awkward",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-17T15:55:00.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "ClutchPoints, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://clutchpoints.com/nba/new-orleans-pelicans/nba-rumors-pelicans-are-going-to-have-trouble-finding-a-dejounte-murray-trade",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-1802a7f586a0242b",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Bay Area Insiders Give Concerning Warriors Trade Update Amid Wendell Carter Jr. And Naz Reid Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-17T18:11:02.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-bay-area-insiders-tim-kawakami-marcus-thompson-give-concerning-golden-state-warriors-trade-update-amid-wendell-carter-jr-and-naz-reid-rumors/",
+      "playerIds": [
+        "4277847",
+        "4396971"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-78844d074a1f20b8",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Pelicans rumors: Dejounte Murray slow-played Achilles injury return in failed trade gambit",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-17T18:18:35.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/new-orleans-pelicans/pelicans-rumors-dejounte-murray-achilles-injury-return-failed-trade-gambit",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-0c6503024235066a",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "ESPN insiders assess Zion Williamson’s trade market",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-17T18:41:53.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "TalkBasket, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://www.talkbasket.net/228809-zion-williamsons-trade-value-debated-amid-struggles",
+      "playerIds": [
+        "4395628"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -14227,7 +14392,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-17T00:19:39.383Z"
+      "resolvedAt": "2026-11-17T19:26:06.989Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",

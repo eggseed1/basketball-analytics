@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-11-17",
-    "retrievedAt": "2026-11-17T00:25:12.226Z",
+    "retrievedAt": "2026-11-17T19:35:56.829Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "a773fbd350375d2d9fb4ddda2d68391ffea74069c93da2e7ce82c407130de9a9",
+    "sourceHash": "f3b69695536f2b112652b4e13bfa2c7cd411224f23e5deb2e68d02f2220b59b7",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -122,29 +122,6 @@
           "href": "/players/203952"
         },
         {
-          "playerId": "202691",
-          "playerName": "Klay Thompson",
-          "age": null,
-          "contractId": "cy-202691-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-202691-2026",
-              "playerId": "202691",
-              "franchiseId": "14",
-              "season": "2026-27",
-              "salary": 17460317,
-              "capHit": 17460317,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/202691"
-        },
-        {
           "playerId": "1631107",
           "playerName": "Nikola Jovic",
           "age": null,
@@ -212,6 +189,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630558"
+        },
+        {
+          "playerId": "202691",
+          "playerName": "Klay Thompson",
+          "age": null,
+          "contractId": "cy-202691-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-202691-2026",
+              "playerId": "202691",
+              "franchiseId": "14",
+              "season": "2026-27",
+              "salary": 7660317,
+              "capHit": 7660317,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/202691"
         },
         {
           "playerId": "203501",
@@ -447,11 +447,11 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 222117964,
+          "totalSalaryDollars": 212317964,
           "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 222117964,
+      "playerSalaryCommitments": 212317964,
       "playersWithSalary": 16,
       "playersWithoutSalary": 1
     },

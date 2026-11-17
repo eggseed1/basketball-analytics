@@ -2,7 +2,7 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-17T00:18:39.189Z",
+  "fetchedAt": "2026-11-17T19:24:42.766Z",
   "apiCount": 442,
   "rows": [
     {
@@ -1103,6 +1103,28 @@
         "displayName": "Utah Jazz",
         "location": "Utah",
         "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-09-24T07:00Z",
+      "description": "Waived G Miles Barnstable.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-09-24T07:00Z",
+      "description": "Waived F Keylan Boone and Gs Barry Dunning and Mark Sears.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
       }
     },
     {
