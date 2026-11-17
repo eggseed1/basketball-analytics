@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-17T19:24:42.766Z",
-  "apiCount": 442,
+  "fetchedAt": "2026-11-17T23:37:42.806Z",
+  "apiCount": 443,
   "rows": [
+    {
+      "date": "2026-11-17T08:00Z",
+      "description": "Signed C Jonas Aidoo to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
     {
       "date": "2026-11-16T08:00Z",
       "description": "Waived G Trey Alexander.",

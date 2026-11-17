@@ -5,11 +5,11 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-17",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-17T19:26:06.989Z",
+    "builtAt": "2026-11-17T23:39:01.366Z",
     "rosterPlayerCount": 507,
-    "headlinesScanned": 15271,
-    "latestHeadlineAt": "2026-11-17T19:25:03.000Z",
-    "latestTransactionDate": "2026-11-16",
+    "headlinesScanned": 15382,
+    "latestHeadlineAt": "2026-11-17T23:27:24.000Z",
+    "latestTransactionDate": "2026-11-17",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -172,7 +172,7 @@
     },
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:brian-windhorst": {
       "label": "Brian Windhorst (ESPN)",
@@ -233,6 +233,10 @@
     "reporter:shams-charania-murray": {
       "label": "Shams Charania. Murray (ESPN)",
       "credibility": 18
+    },
+    "reporter:ira-winderman": {
+      "label": "Ira Winderman (South Florida Sun Sentinel)",
+      "credibility": 22
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -1323,12 +1327,13 @@
         "mv-86dc8f96d6522bdd",
         "mv-b72f80f84ad79989",
         "mv-4db4211c11532c8b",
-        "mv-1802a7f586a0242b"
+        "mv-1802a7f586a0242b",
+        "mv-1f5ec9b412e7c63d"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-11-17T18:11:02.000Z",
+      "lastMeaningfulAt": "2026-11-17T21:39:18.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
@@ -1949,18 +1954,21 @@
       "claimIds": [
         "mv-a8db5e230a6eb5a1",
         "mv-180e9ad564a42c01",
-        "mv-4c05d38662d67287"
+        "mv-4c05d38662d67287",
+        "mv-fbd7d0f07f2a0aa7"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-30T18:05:58.000Z",
-      "lastMeaningfulAt": "2026-10-31T17:06:11.000Z",
+      "lastMeaningfulAt": "2026-11-17T21:14:00.000Z",
       "linkedPlayerIds": [
         "4397688"
       ],
       "linkedTeamIds": [
         "25",
         "23",
+        "8",
+        "21",
         "3"
       ]
     },
@@ -2275,12 +2283,13 @@
         "mv-2e79832676d6e573",
         "mv-2b0bd32f50b7d7e5",
         "mv-78844d074a1f20b8",
-        "mv-0c6503024235066a"
+        "mv-0c6503024235066a",
+        "mv-e9e05e82c4950c6a"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-17T18:41:53.000Z",
+      "lastMeaningfulAt": "2026-11-17T20:04:16.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -2331,19 +2340,39 @@
     {
       "id": "mv-trade-4396993-20261117",
       "headline": "Tyrese Haliburton: trade talk",
-      "primaryClaimId": "mv-6007c17813efce3f",
+      "primaryClaimId": "mv-cebab99b13d29c81",
       "claimIds": [
-        "mv-6007c17813efce3f"
+        "mv-6007c17813efce3f",
+        "mv-cebab99b13d29c81"
       ],
       "evidenceClass": "rumored",
       "state": "unresolved",
       "firstSeenAt": "2026-11-17T14:18:45.000Z",
-      "lastMeaningfulAt": "2026-11-17T14:18:45.000Z",
+      "lastMeaningfulAt": "2026-11-17T19:26:01.000Z",
       "linkedPlayerIds": [
         "4396993"
       ],
       "linkedTeamIds": [
         "11"
+      ]
+    },
+    {
+      "id": "mv-trade-3064440-20261117",
+      "headline": "Zach LaVine: trade talk",
+      "primaryClaimId": "mv-faf73139bad11fa7",
+      "claimIds": [
+        "mv-faf73139bad11fa7"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-17T19:18:04.000Z",
+      "lastMeaningfulAt": "2026-11-17T19:18:04.000Z",
+      "linkedPlayerIds": [
+        "3064440"
+      ],
+      "linkedTeamIds": [
+        "14",
+        "23"
       ]
     },
     {
@@ -12992,6 +13021,111 @@
       "isOriginal": false
     },
     {
+      "id": "mv-faf73139bad11fa7",
+      "clusterId": "mv-trade-3064440-20261117",
+      "summary": "Heat rumors: Zach LaVine is a Miami target to ‘keep an eye on’",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-17T19:18:04.000Z",
+      "sourceId": "reporter:ira-winderman",
+      "sourceLabel": "ClutchPoints, citing Ira Winderman (South Florida Sun Sentinel)",
+      "reporterLabel": "Ira Winderman",
+      "sourceUrl": "https://clutchpoints.com/nba/miami-heat/heat-rumors-zach-lavine-miami-target-keep-an-eye-on",
+      "playerIds": [
+        "3064440"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-cebab99b13d29c81",
+      "clusterId": "mv-trade-4396993-20261117",
+      "summary": "Pacers HC Gives Tyrese Haliburton Injury Update as Team Explores Trade Market For Reinforcement",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-17T19:26:01.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-pacers-hc-gives-tyrese-haliburton-injury-update-as-team-explores-trade-market-for-reinforcement/",
+      "playerIds": [
+        "4396993"
+      ],
+      "teamIds": [
+        "11"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e9e05e82c4950c6a",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Dejounte Murray Has Limited Trade Value As Pelicans Explore Market",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-17T20:04:16.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "RealGM, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288166/Dejounte-Murray-Has-Limited-Trade-Value-As-Pelicans-Explore-Market",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-fbd7d0f07f2a0aa7",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "NBA Trade Rumors: Trey Murphy Time, Pistons’ Plans, Suns Star & More",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-17T21:14:00.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/portland-trail-blazers/nba-trade-rumors-trey-murphy-market-pistons/",
+      "playerIds": [
+        "4397688"
+      ],
+      "teamIds": [
+        "8",
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-1f5ec9b412e7c63d",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Warriors Eyeing Massive Trade To Pair Star With Steph Curry: Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-17T21:39:18.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/massive-trade-pair-star-steph-curry-report/",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -14392,7 +14526,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-17T19:26:06.989Z"
+      "resolvedAt": "2026-11-17T23:39:01.366Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
