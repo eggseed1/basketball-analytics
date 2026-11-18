@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-18T19:12:44.776Z",
-  "apiCount": 443,
+  "fetchedAt": "2026-11-18T23:08:50.928Z",
+  "apiCount": 444,
   "rows": [
+    {
+      "date": "2026-11-18T08:00Z",
+      "description": "Signed G Zack Austin to a two-way contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
     {
       "date": "2026-11-17T08:00Z",
       "description": "Signed C Jonas Aidoo to a two-way contract.",

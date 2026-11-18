@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-18",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-18T19:14:03.677Z",
+    "builtAt": "2026-11-18T23:10:10.476Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 15735,
-    "latestHeadlineAt": "2026-11-18T19:07:05.000Z",
+    "headlinesScanned": 15813,
+    "latestHeadlineAt": "2026-11-18T23:09:08.000Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -168,7 +168,7 @@
     },
     "outlet:hoops-rumors": {
       "label": "Hoops Rumors",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
@@ -715,12 +715,13 @@
         "mv-072545dbf50e6c07",
         "mv-e4fe401c4c674741",
         "mv-1ab59ef984e71ec6",
-        "mv-fe7fdadb6836237b"
+        "mv-fe7fdadb6836237b",
+        "mv-5f185aaa9d260232"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-18T15:51:04.000Z",
+      "lastMeaningfulAt": "2026-11-18T20:15:53.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -2297,12 +2298,14 @@
         "mv-78844d074a1f20b8",
         "mv-0c6503024235066a",
         "mv-e9e05e82c4950c6a",
-        "mv-466f1b5402ba93f9"
+        "mv-466f1b5402ba93f9",
+        "mv-29c71c8ed3a7437f",
+        "mv-cff838934d5bc41f"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-18T14:14:32.000Z",
+      "lastMeaningfulAt": "2026-11-18T22:51:55.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -13340,6 +13343,65 @@
       "isOriginal": false
     },
     {
+      "id": "mv-5f185aaa9d260232",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Anthony Davis Trade Rumors: ESPN Insider Reveals How Much Teams Are Willing to Pay in Next Contract",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-18T20:15:53.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "Basketball News, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-anthony-davis-trade-rumors-espn-insider-reveals-how-much-teams-are-willing-to-pay-in-next-contract/",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-29c71c8ed3a7437f",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Suns Get Telling Jalen Green Trade Update Amid Dejounte Murray Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-18T20:49:06.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/phoenix-suns/suns-get-telling-jalen-green-trade-update-amid-dejounte-murray-rumors/",
+      "playerIds": [
+        "3907497",
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-cff838934d5bc41f",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Jalen Green On Trade Rumors: ‘I Don’t Care’",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-18T22:51:55.000Z",
+      "sourceId": "outlet:hoops-rumors",
+      "sourceLabel": "Hoops Rumors",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/11/jalen-green-on-trade-rumors-i-dont-care.html",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -14740,7 +14802,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-18T19:14:03.677Z"
+      "resolvedAt": "2026-11-18T23:10:10.476Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
