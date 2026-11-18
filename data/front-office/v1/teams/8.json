@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-17",
-    "retrievedAt": "2026-11-17T23:44:37.624Z",
+    "snapshotDate": "2026-11-18",
+    "retrievedAt": "2026-11-18T19:22:59.889Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "f3b69695536f2b112652b4e13bfa2c7cd411224f23e5deb2e68d02f2220b59b7",
+    "sourceHash": "bb69ad25e8f42a69255cc618b7c2b8bb7dfd5fe675e3b7e1c17220b422f751df",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -375,6 +375,29 @@
           "href": "/players/1642449"
         },
         {
+          "playerId": "1642404",
+          "playerName": "Chaz Lanier",
+          "age": null,
+          "contractId": "cy-1642404-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642404-2026",
+              "playerId": "1642404",
+              "franchiseId": "8",
+              "season": "2026-27",
+              "salary": 2150917,
+              "capHit": 2150917,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642404"
+        },
+        {
           "playerId": "1642403",
           "playerName": "Isaac Jones",
           "age": null,
@@ -447,12 +470,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 190267062,
-          "playersUnderContract": 16
+          "totalSalaryDollars": 192417979,
+          "playersUnderContract": 17
         }
       ],
-      "playerSalaryCommitments": 190267062,
-      "playersWithSalary": 16,
+      "playerSalaryCommitments": 192417979,
+      "playersWithSalary": 17,
       "playersWithoutSalary": 1
     },
     "draftAssets": {

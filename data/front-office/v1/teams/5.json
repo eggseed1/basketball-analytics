@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-17",
-    "retrievedAt": "2026-11-17T23:44:37.624Z",
+    "snapshotDate": "2026-11-18",
+    "retrievedAt": "2026-11-18T19:22:59.889Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "f3b69695536f2b112652b4e13bfa2c7cd411224f23e5deb2e68d02f2220b59b7",
+    "sourceHash": "bb69ad25e8f42a69255cc618b7c2b8bb7dfd5fe675e3b7e1c17220b422f751df",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -398,6 +398,29 @@
           "href": "/players/1643509"
         },
         {
+          "playerId": "1643113",
+          "playerName": "Zack Austin",
+          "age": null,
+          "contractId": "cy-1643113-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1643113-2026",
+              "playerId": "1643113",
+              "franchiseId": "5",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1643113"
+        },
+        {
           "playerId": "1641807",
           "playerName": "Norchad Omier",
           "age": null,
@@ -453,7 +476,7 @@
       ],
       "playerSalaryCommitments": 208092160,
       "playersWithSalary": 15,
-      "playersWithoutSalary": 2
+      "playersWithoutSalary": 3
     },
     "draftAssets": {
       "franchiseId": "5",

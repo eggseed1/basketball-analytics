@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-17",
+    "snapshotDate": "2026-11-18",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-17T23:39:01.366Z",
-    "rosterPlayerCount": 507,
-    "headlinesScanned": 15382,
-    "latestHeadlineAt": "2026-11-17T23:27:24.000Z",
-    "latestTransactionDate": "2026-11-17",
+    "builtAt": "2026-11-18T19:14:03.677Z",
+    "rosterPlayerCount": 508,
+    "headlinesScanned": 15735,
+    "latestHeadlineAt": "2026-11-18T19:07:05.000Z",
+    "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -68,7 +68,7 @@
     },
     "outlet:the-athletic": {
       "label": "The Athletic",
-      "credibility": 12
+      "credibility": 24
     },
     "outlet:sportsnaut": {
       "label": "Sportsnaut",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -172,7 +172,7 @@
     },
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:brian-windhorst": {
       "label": "Brian Windhorst (ESPN)",
@@ -237,6 +237,10 @@
     "reporter:ira-winderman": {
       "label": "Ira Winderman (South Florida Sun Sentinel)",
       "credibility": 22
+    },
+    "reporter:anthony-davis": {
+      "label": "Anthony Davis (ESPN)",
+      "credibility": 18
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -709,17 +713,21 @@
         "mv-ba88fd746573e7da",
         "mv-647b51d52054fd78",
         "mv-072545dbf50e6c07",
-        "mv-e4fe401c4c674741"
+        "mv-e4fe401c4c674741",
+        "mv-1ab59ef984e71ec6",
+        "mv-fe7fdadb6836237b"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-13T19:32:03.000Z",
+      "lastMeaningfulAt": "2026-11-18T15:51:04.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
         "5041939",
-        "5105817"
+        "5105817",
+        "6430",
+        "6589"
       ],
       "linkedTeamIds": [
         "6",
@@ -1541,14 +1549,15 @@
     {
       "id": "mv-trade-6430-20261018",
       "headline": "Jimmy Butler III: trade talk",
-      "primaryClaimId": "mv-5106155f4be246a0",
+      "primaryClaimId": "mv-79d897a1d117b90c",
       "claimIds": [
-        "mv-5106155f4be246a0"
+        "mv-5106155f4be246a0",
+        "mv-79d897a1d117b90c"
       ],
-      "evidenceClass": "rumored",
+      "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-18T18:59:00.000Z",
-      "lastMeaningfulAt": "2026-10-18T18:59:00.000Z",
+      "lastMeaningfulAt": "2026-11-18T00:39:05.000Z",
       "linkedPlayerIds": [
         "6430"
       ],
@@ -1949,26 +1958,29 @@
     },
     {
       "id": "mv-trade-4397688-20261030",
-      "headline": "Trey Murphy III: trade talk",
+      "headline": "Trey Murphy III and Derrick White: trade talk",
       "primaryClaimId": "mv-a8db5e230a6eb5a1",
       "claimIds": [
         "mv-a8db5e230a6eb5a1",
         "mv-180e9ad564a42c01",
         "mv-4c05d38662d67287",
-        "mv-fbd7d0f07f2a0aa7"
+        "mv-fbd7d0f07f2a0aa7",
+        "mv-551baae6ac0ead80"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-30T18:05:58.000Z",
-      "lastMeaningfulAt": "2026-11-17T21:14:00.000Z",
+      "lastMeaningfulAt": "2026-11-18T14:39:03.000Z",
       "linkedPlayerIds": [
-        "4397688"
+        "4397688",
+        "3078576"
       ],
       "linkedTeamIds": [
         "25",
         "23",
         "8",
         "21",
+        "2",
         "3"
       ]
     },
@@ -2263,7 +2275,7 @@
     {
       "id": "mv-trade-3907497-20261113",
       "headline": "Dejounte Murray, Jalen Green and others: trade talk",
-      "primaryClaimId": "mv-c82e6423a3f4f150",
+      "primaryClaimId": "mv-466f1b5402ba93f9",
       "claimIds": [
         "mv-465caecedfd1e76e",
         "mv-86bdca03ebff5bd2",
@@ -2284,12 +2296,13 @@
         "mv-2b0bd32f50b7d7e5",
         "mv-78844d074a1f20b8",
         "mv-0c6503024235066a",
-        "mv-e9e05e82c4950c6a"
+        "mv-e9e05e82c4950c6a",
+        "mv-466f1b5402ba93f9"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-17T20:04:16.000Z",
+      "lastMeaningfulAt": "2026-11-18T14:14:32.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -2340,15 +2353,16 @@
     {
       "id": "mv-trade-4396993-20261117",
       "headline": "Tyrese Haliburton: trade talk",
-      "primaryClaimId": "mv-cebab99b13d29c81",
+      "primaryClaimId": "mv-a4ab395f6679d7ce",
       "claimIds": [
         "mv-6007c17813efce3f",
-        "mv-cebab99b13d29c81"
+        "mv-cebab99b13d29c81",
+        "mv-a4ab395f6679d7ce"
       ],
-      "evidenceClass": "rumored",
+      "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-17T14:18:45.000Z",
-      "lastMeaningfulAt": "2026-11-17T19:26:01.000Z",
+      "lastMeaningfulAt": "2026-11-18T08:34:27.000Z",
       "linkedPlayerIds": [
         "4396993"
       ],
@@ -2373,6 +2387,43 @@
       "linkedTeamIds": [
         "14",
         "23"
+      ]
+    },
+    {
+      "id": "mv-trade-3992-20261118",
+      "headline": "James Harden: trade talk",
+      "primaryClaimId": "mv-c4e51c7df50083f4",
+      "claimIds": [
+        "mv-c4e51c7df50083f4"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-18T12:24:45.000Z",
+      "lastMeaningfulAt": "2026-11-18T12:24:45.000Z",
+      "linkedPlayerIds": [
+        "3992"
+      ],
+      "linkedTeamIds": [
+        "25",
+        "5"
+      ]
+    },
+    {
+      "id": "mv-trade-4432166-20261118",
+      "headline": "Cade Cunningham: trade talk",
+      "primaryClaimId": "mv-c2647ce29e21a11c",
+      "claimIds": [
+        "mv-c2647ce29e21a11c"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-18T18:32:32.000Z",
+      "lastMeaningfulAt": "2026-11-18T18:32:32.000Z",
+      "linkedPlayerIds": [
+        "4432166"
+      ],
+      "linkedTeamIds": [
+        "8"
       ]
     },
     {
@@ -13126,6 +13177,169 @@
       "negotiationSpecificity": "contact"
     },
     {
+      "id": "mv-79d897a1d117b90c",
+      "clusterId": "mv-trade-6430-20261018",
+      "summary": "NBA Insider Reveals Warriors’ Jimmy Butler Trade Stance Ahead of Deadline",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-18T00:39:05.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/warriors-jimmy-butler-trade-jake-fischer/",
+      "playerIds": [
+        "6430"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a4ab395f6679d7ce",
+      "clusterId": "mv-trade-4396993-20261117",
+      "summary": "Tyrese Haliburton Says NBA Teams Are Using ChatGPT For Trades",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-18T08:34:27.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/indiana-pacers/tyrese-haliburton-says-teams-use-chatgpt/",
+      "playerIds": [
+        "4396993"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-c4e51c7df50083f4",
+      "clusterId": "mv-trade-3992-20261118",
+      "summary": "'Losing a brother': How a seismic James Harden trade shook the Thunder and the NBA",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-18T12:24:45.000Z",
+      "sourceId": "outlet:the-athletic",
+      "sourceLabel": "The Athletic",
+      "sourceUrl": "https://www.nytimes.com/athletic/7771339/2026/11/18/thunder-james-harden-trade-jonathan-abrams-book/",
+      "playerIds": [
+        "3992"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-466f1b5402ba93f9",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Agent Rich Paul Makes Trade Pitch for Dejounte Murray After Pelicans Star Calls Out Lies About Him",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-18T14:14:32.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-agent-rich-paul-makes-trade-pitch-for-dejounte-murray-after-pelicans-star-calls-out-lies-about-him/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-551baae6ac0ead80",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "NBA rumors: Bill Simmons ponders Celtics trading Derrick White, but he really wants this Trey Murphy III scenario",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-18T14:39:03.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/boston-celtics/nba-rumors-bill-simmons-celtics-trading-derrick-white-he-really-trey-murphy-iii-scenario",
+      "playerIds": [
+        "3078576",
+        "4397688"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-1ab59ef984e71ec6",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Wizards rumors: ESPN NBA insider shines light on $60 million Anthony Davis trade complication as buzz gets louder",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-18T15:26:00.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/washington-wizards/wizards-rumors-espn-nba-insider-shines-light-60-million-anthony-davis-trade-complication-buzz-louder",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "27"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-fe7fdadb6836237b",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Warriors rumors: ESPN’s Anthony Davis trade debate brings out Draymond Green, Jimmy Butler tease",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-18T15:51:04.000Z",
+      "sourceId": "reporter:anthony-davis",
+      "sourceLabel": "ClutchPoints, citing Anthony Davis (ESPN)",
+      "reporterLabel": "Anthony Davis",
+      "sourceUrl": "https://clutchpoints.com/nba/warriors-rumors-espns-anthony-davis-trade-debate-brings-out-draymond-green-jimmy-butler-tease",
+      "playerIds": [
+        "6430",
+        "6583",
+        "6589"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c2647ce29e21a11c",
+      "clusterId": "mv-trade-4432166-20261118",
+      "summary": "New Detroit Pistons Report Reveals REALISTIC Trade Targets To Get Cade Cunningham Scoring Help",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-18T18:32:32.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/detroit-pistons-tyler-herro-rj-barrett-trade-speculation",
+      "playerIds": [
+        "4432166"
+      ],
+      "teamIds": [
+        "8"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -14526,7 +14740,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-17T23:39:01.366Z"
+      "resolvedAt": "2026-11-18T19:14:03.677Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
