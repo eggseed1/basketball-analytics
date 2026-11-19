@@ -1154,7 +1154,7 @@ export interface GmLeagueState {
   lotteryDraws?: Array<{ teamId: string; balls: number[]; startingRank: number; oddsPct: number;
     attempts?: Array<{ ballId: number; teamId: string; accepted: boolean;
       /** A seeded fixed-timestep chamber replay, absent for historical saves. */
-      physicsSeed?: number; exitFrame?: number;
+      physicsSeed?: number; physicsVersion?: 1 | 2; exitFrame?: number;
       reason?: "consecutive-number-one" | "third-top-five" | "relegation-floor" }> }>;
   /** 37 individually numbered balls for 2027+ 3-2-1 drafts. */
   lotteryBallPool?: Array<{ id: number; teamId: string }>;

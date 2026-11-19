@@ -1,4 +1,4 @@
-import { simulateLotteryHoleExit } from "./lottery-hole-physics";
+import { simulateLotteryGravityExit } from "./lottery-gravity-physics";
 
 /**
  * 2027–29 NBA "3-2-1" lottery urn. Each of 37 distinct physical balls has
@@ -23,6 +23,8 @@ export interface LotteryAttempt {
   accepted: boolean;
   /** Reproducible independent physics run; absent for older saved lotteries. */
   physicsSeed?: number;
+  /** 1 = archived upward/top-outlet scene; 2 = gravity/bottom outlet. */
+  physicsVersion?: 1 | 2;
   exitFrame?: number;
   reason?: "consecutive-number-one" | "third-top-five" | "relegation-floor";
 }
@@ -86,12 +88,12 @@ export function draw321PhysicalUrn(args: {
     // the extracted ball by collision/airflow and the narrow physical outlet.
     // Rejected balls go back into the next run with all surviving team balls.
     for (let tryNumber = 0; tryNumber < 2048; tryNumber++) {
-      let pulled: ReturnType<typeof simulateLotteryHoleExit> | undefined;
+      let pulled: ReturnType<typeof simulateLotteryGravityExit> | undefined;
       let physicsSeed = 0;
       // Rare stalled chamber scenes are retried without assigning a winner.
       for (let chamberTry = 0; chamberTry < 6 && !pulled; chamberTry++) {
         physicsSeed = Math.floor(random() * 4294967296) >>> 0;
-        try { pulled = simulateLotteryHoleExit(urn, physicsSeed); }
+        try { pulled = simulateLotteryGravityExit(urn, physicsSeed); }
         catch (error) {
           if (!(error instanceof Error) || !error.message.includes("failed to eject")) throw error;
         }
@@ -101,7 +103,7 @@ export function draw321PhysicalUrn(args: {
       if (!ball) throw new Error("A lottery ball exited that was not in the chamber");
       const reason = reasonFor(ball.teamId);
       attempts.push({ ballId: ball.id, teamId: ball.teamId,
-        accepted: !reason, physicsSeed, exitFrame: pulled.frame,
+        accepted: !reason, physicsSeed, physicsVersion: 2, exitFrame: pulled.frame,
         ...(reason ? { reason } : {}) });
       if (!reason) { winner = ball; break; }
     }
