@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-18",
+    "snapshotDate": "2026-11-19",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-18T23:10:10.476Z",
+    "builtAt": "2026-11-19T19:14:37.191Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 15813,
-    "latestHeadlineAt": "2026-11-18T23:09:08.000Z",
+    "headlinesScanned": 16174,
+    "latestHeadlineAt": "2026-11-19T19:10:21.000Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -104,7 +104,7 @@
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:fred-katz": {
       "label": "Fred Katz (The Athletic)",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -716,12 +716,16 @@
         "mv-e4fe401c4c674741",
         "mv-1ab59ef984e71ec6",
         "mv-fe7fdadb6836237b",
-        "mv-5f185aaa9d260232"
+        "mv-5f185aaa9d260232",
+        "mv-d8718ce685f2a5c5",
+        "mv-7e76c7d091061166",
+        "mv-b7f036286e7b8df9",
+        "mv-e7edce5afae4d235"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-18T20:15:53.000Z",
+      "lastMeaningfulAt": "2026-11-19T16:15:35.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -738,7 +742,8 @@
         "9",
         "27",
         "13",
-        "29"
+        "29",
+        "26"
       ]
     },
     {
@@ -1959,22 +1964,26 @@
     },
     {
       "id": "mv-trade-4397688-20261030",
-      "headline": "Trey Murphy III and Derrick White: trade talk",
-      "primaryClaimId": "mv-a8db5e230a6eb5a1",
+      "headline": "Trey Murphy III, Derrick White and others: trade talk",
+      "primaryClaimId": "mv-29749a5bd57ed7cb",
       "claimIds": [
         "mv-a8db5e230a6eb5a1",
         "mv-180e9ad564a42c01",
         "mv-4c05d38662d67287",
         "mv-fbd7d0f07f2a0aa7",
-        "mv-551baae6ac0ead80"
+        "mv-551baae6ac0ead80",
+        "mv-2d2bdbfde21527d8",
+        "mv-42dfa949e524d423",
+        "mv-29749a5bd57ed7cb"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-30T18:05:58.000Z",
-      "lastMeaningfulAt": "2026-11-18T14:39:03.000Z",
+      "lastMeaningfulAt": "2026-11-19T18:02:01.000Z",
       "linkedPlayerIds": [
         "4397688",
-        "3078576"
+        "3078576",
+        "4431823"
       ],
       "linkedTeamIds": [
         "25",
@@ -1982,7 +1991,10 @@
         "8",
         "21",
         "2",
-        "3"
+        "3",
+        "9",
+        "14",
+        "18"
       ]
     },
     {
@@ -2276,7 +2288,7 @@
     {
       "id": "mv-trade-3907497-20261113",
       "headline": "Dejounte Murray, Jalen Green and others: trade talk",
-      "primaryClaimId": "mv-466f1b5402ba93f9",
+      "primaryClaimId": "mv-9b95bee46d5b6dac",
       "claimIds": [
         "mv-465caecedfd1e76e",
         "mv-86bdca03ebff5bd2",
@@ -2300,20 +2312,29 @@
         "mv-e9e05e82c4950c6a",
         "mv-466f1b5402ba93f9",
         "mv-29c71c8ed3a7437f",
-        "mv-cff838934d5bc41f"
+        "mv-cff838934d5bc41f",
+        "mv-8096cc74f7dd852f",
+        "mv-9b95bee46d5b6dac",
+        "mv-a083dfb0e99571da",
+        "mv-f908b555297168d7",
+        "mv-1c4bbd9a105dd860",
+        "mv-d50bc911d7be8569",
+        "mv-62dc0ed62972f232"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-18T22:51:55.000Z",
+      "lastMeaningfulAt": "2026-11-19T18:42:18.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
-        "4395628"
+        "4395628",
+        "4397688"
       ],
       "linkedTeamIds": [
         "3",
-        "21"
+        "21",
+        "14"
       ]
     },
     {
@@ -2427,6 +2448,24 @@
       ],
       "linkedTeamIds": [
         "8"
+      ]
+    },
+    {
+      "id": "mv-contract-4277905-20261119",
+      "headline": "Trae Young: contract future with the Wizards",
+      "primaryClaimId": "mv-4526b98862aacee4",
+      "claimIds": [
+        "mv-4526b98862aacee4"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-19T15:31:46.000Z",
+      "lastMeaningfulAt": "2026-11-19T15:31:46.000Z",
+      "linkedPlayerIds": [
+        "4277905"
+      ],
+      "linkedTeamIds": [
+        "27"
       ]
     },
     {
@@ -13402,6 +13441,318 @@
       "isOriginal": false
     },
     {
+      "id": "mv-8096cc74f7dd852f",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Suns’ Dejounte Murray Trade Price Revealed by NBA Insider",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-18T23:29:33.000Z",
+      "sourceId": "reporter:michael-scotto",
+      "sourceLabel": "Heavy, citing Michael Scotto (HoopsHype)",
+      "reporterLabel": "Michael Scotto",
+      "sourceUrl": "https://heavy.com/sports/nba/phoenix-suns/suns-dejounte-murray-trade-pick-demand/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-d8718ce685f2a5c5",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving Attracts Trade Interest From 2nd-Worst West Team",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-19T13:49:35.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/dallas-mavericks/kyrie-irving-attracts-trade-interest/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-2d2bdbfde21527d8",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "Pelicans rumors: The trade price of the Trey Murphy III brick has come down, but it’s still absurd",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-19T14:35:22.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/new-orleans-pelicans/pelicans-rumors-the-trade-price-of-the-trey-murphy-iii-brick-has-come-down-but-its-still-absurd",
+      "playerIds": [
+        "4397688"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-7e76c7d091061166",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Jazz eye Kyrie Irving as trade target",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T15:01:13.000Z",
+      "sourceId": "reporter:ian-begley",
+      "sourceLabel": "TalkBasket, citing Ian Begley (SNY)",
+      "reporterLabel": "Ian Begley",
+      "sourceUrl": "https://www.talkbasket.net/229157-jazz-eye-kyrie-irving-as-trade-target",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "26"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-b7f036286e7b8df9",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA rumors: Jazz pop up as surprise Kyrie Irving trade suitor amid brutal start to season",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-19T15:09:06.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/utah-jazz/nba-rumors-jazz-pop-up-as-surprise-kyrie-irving-trade-suitor-amid-brutal-start-to-season",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "26"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-4526b98862aacee4",
+      "clusterId": "mv-contract-4277905-20261119",
+      "summary": "Trae Young Huge Wizards Contract Already Raising Red Flags, NBA Insider Reveals",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T15:31:46.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "Heavy, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://heavy.com/sports/nba/washington-wizards/trae-young-huge-contract-red-flags/",
+      "playerIds": [
+        "4277905"
+      ],
+      "teamIds": [
+        "27"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e7edce5afae4d235",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Unexpected NBA Team Targets Kyrie Irving in Stunning Trade Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T16:15:35.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-unexpected-nba-team-utah-jazz-targets-kyrie-irving-in-stunning-trade-report/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-9b95bee46d5b6dac",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Suns’ Jalen Green calls out ‘people doing something with internet’ pushing trade rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-19T16:22:55.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/phoenix-suns/suns-news-jalen-green-calls-out-people-pushing-trade-rumors",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-a083dfb0e99571da",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA rumors: Dejounte Murray trade to Heat? Don’t count on it",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T17:09:28.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "ClutchPoints, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-dejounte-murray-trade-to-heat-dont-count-on-it",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-42dfa949e524d423",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "Warriors Get Major Trey Murphy III Trade Update Amid Growing Buzz",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T17:13:39.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/warriors-trey-murphy-trade-jake-fischer-update/",
+      "playerIds": [
+        "4397688"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-f908b555297168d7",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA rumors: More evidence that Suns want no part of Jalen Green-Dejounte Murray trade unless paid handsomely",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T17:25:20.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "ClutchPoints, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-more-evidence-that-suns-want-no-part-of-jalen-green-dejounte-murray-trade-unless-paid-handsomely",
+      "playerIds": [
+        "3907497",
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-1c4bbd9a105dd860",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Suns Appeal To Dejounte Murray, But Phoenix Wants Draft Compensation In Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T17:30:40.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "RealGM, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288184/Suns-Appeal-To-Dejounte-Murray-But-Phoenix-Wants-Draft-Compensation-In-Trade",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-29749a5bd57ed7cb",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "Trade Rumors: Murray, Suns, Heat, Murphy, McBride",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T18:02:01.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Hoops Rumors, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/11/trade-rumors-murray-suns-heat-murphy-mcbride.html",
+      "playerIds": [
+        "4397688",
+        "4431823"
+      ],
+      "teamIds": [
+        "14",
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-d50bc911d7be8569",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Heat Get Telling Dejounte Murray Trade Update Amid 6-Game Winning Streak",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T18:27:23.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/miami-heat/heat-dejounte-murray-trade-jake-fischer-update/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-62dc0ed62972f232",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Pelicans Get Telling Trey Murphy III News Amid Dejounte Murray Trade Drama",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T18:42:18.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/new-orleans-pelicans/pelicans-get-telling-trey-murphy-iii-news-amid-dejounte-murray-trade-drama/",
+      "playerIds": [
+        "3907497",
+        "4397688"
+      ],
+      "teamIds": [
+        "3"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -14802,7 +15153,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-18T23:10:10.476Z"
+      "resolvedAt": "2026-11-19T19:14:37.191Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",

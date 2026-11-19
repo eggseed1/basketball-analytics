@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T18:29:39.486Z",
+  "generatedAt": "2026-11-19T19:25:11.263Z",
   "source": "https://en.wikipedia.org/wiki/List_of_NBA_retired_numbers",
   "idSource": "nba_api static player list (stats.nba.com PERSON_ID)",
   "policy": "Player banners only; future retirements, owners, coaches, broadcasters and fan banners are excluded from jerseys. bannerCounts counts every numbered banner except future ones. Names match NFD-stripped, lowercased, without . ' \" and with hyphens as spaces.",
@@ -19,7 +19,7 @@
     "lac": 0,
     "lal": 14,
     "mem": 3,
-    "mia": 8,
+    "mia": 6,
     "mil": 9,
     "min": 1,
     "nop": 1,
@@ -782,14 +782,6 @@
       "number": "10",
       "playerName": "Tim Hardaway",
       "years": "1996–2001"
-    },
-    {
-      "nbaPlayerId": "893",
-      "teamKey": "mia",
-      "number": "23",
-      "playerName": "Michael Jordan",
-      "years": "—",
-      "honorary": true
     },
     {
       "nbaPlayerId": "406",

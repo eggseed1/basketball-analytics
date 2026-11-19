@@ -2,12 +2,12 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-18T23:08:50.928Z",
+  "fetchedAt": "2026-11-19T19:12:45.127Z",
   "apiCount": 444,
   "rows": [
     {
       "date": "2026-11-18T08:00Z",
-      "description": "Signed G Zack Austin to a two-way contract.",
+      "description": "Signed G Zack Austin to a two-way contract. Waived F Riley Minix.",
       "team": {
         "id": "5",
         "abbreviation": "CLE",
