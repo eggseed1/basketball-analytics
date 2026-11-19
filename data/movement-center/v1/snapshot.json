@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-19",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-19T19:14:37.191Z",
+    "builtAt": "2026-11-19T23:09:56.077Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 16174,
-    "latestHeadlineAt": "2026-11-19T19:10:21.000Z",
+    "headlinesScanned": 16259,
+    "latestHeadlineAt": "2026-11-19T23:09:44.825Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -720,12 +720,13 @@
         "mv-d8718ce685f2a5c5",
         "mv-7e76c7d091061166",
         "mv-b7f036286e7b8df9",
-        "mv-e7edce5afae4d235"
+        "mv-e7edce5afae4d235",
+        "mv-d91d781bbf5d0cbc"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-19T16:15:35.000Z",
+      "lastMeaningfulAt": "2026-11-19T21:44:27.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -13753,6 +13754,28 @@
       "isOriginal": false
     },
     {
+      "id": "mv-d91d781bbf5d0cbc",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving to the Jazz? Why Utah's reported interest in the star Mavericks guard makes no sense",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T21:44:27.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/nba-trade-rumors-kyrie-irving-utah-jazz-dallas-mavericks/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6",
+        "26"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -15153,7 +15176,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-19T19:14:37.191Z"
+      "resolvedAt": "2026-11-19T23:09:56.077Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
