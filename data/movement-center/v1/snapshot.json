@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-20",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-20T18:51:40.815Z",
+    "builtAt": "2026-11-20T22:46:38.743Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 16568,
-    "latestHeadlineAt": "2026-11-20T18:45:01.000Z",
+    "headlinesScanned": 16639,
+    "latestHeadlineAt": "2026-11-20T22:32:20.000Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -2328,12 +2328,13 @@
         "mv-93e2a4f851c1fe14",
         "mv-b6f7566f36206c03",
         "mv-6935f64b74a51e48",
-        "mv-eb32472ca3f0b0ee"
+        "mv-eb32472ca3f0b0ee",
+        "mv-3a025d5bf73f369d"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-20T18:36:12.000Z",
+      "lastMeaningfulAt": "2026-11-20T21:09:12.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -14081,6 +14082,29 @@
       "isOriginal": false
     },
     {
+      "id": "mv-3a025d5bf73f369d",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Jalen Green Blocking Out Trade Noise As Suns-Pelicans Talks Go Nowhere",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-20T21:09:12.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "RealGM, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288202/Jalen-Green-Blocking-Out-Trade-Noise-As-Suns-Pelicans-Talks-Go-Nowhere",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [
+        "3",
+        "21"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -15481,7 +15505,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-20T18:51:40.815Z"
+      "resolvedAt": "2026-11-20T22:46:38.743Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
