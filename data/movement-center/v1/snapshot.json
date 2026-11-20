@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-19",
+    "snapshotDate": "2026-11-20",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-19T23:09:56.077Z",
+    "builtAt": "2026-11-20T18:51:40.815Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 16259,
-    "latestHeadlineAt": "2026-11-19T23:09:44.825Z",
+    "headlinesScanned": 16568,
+    "latestHeadlineAt": "2026-11-20T18:45:01.000Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -100,7 +100,7 @@
     },
     "outlet:talkbasket": {
       "label": "TalkBasket",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
@@ -180,7 +180,7 @@
     },
     "outlet:basketball-news": {
       "label": "Basketball News",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:marca": {
       "label": "Marca",
@@ -890,12 +890,13 @@
         "mv-6b07b0efa7290757",
         "mv-0fb6483174f3f84d",
         "mv-c846671c3c960ad4",
-        "mv-edf288a73d1a9f54"
+        "mv-edf288a73d1a9f54",
+        "mv-64462314d1dc5c99"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-11T21:35:44.000Z",
+      "lastMeaningfulAt": "2026-11-20T17:25:33.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -1002,7 +1003,7 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Knicks",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks",
       "primaryClaimId": "mv-abb18f46843d904e",
       "claimIds": [
         "mv-d46db2f4a349df07",
@@ -1048,6 +1049,7 @@
         "mv-15bb50651c28783e",
         "mv-f42db6e154a2193d",
         "mv-af1ac21a3d60fd3f",
+        "mv-e083f1181cb605df",
         "mv-espn-tx-34855363e48984d2"
       ],
       "evidenceClass": "reported",
@@ -2320,22 +2322,31 @@
         "mv-f908b555297168d7",
         "mv-1c4bbd9a105dd860",
         "mv-d50bc911d7be8569",
-        "mv-62dc0ed62972f232"
+        "mv-62dc0ed62972f232",
+        "mv-782e1c88783fdfd8",
+        "mv-c7a8e195e0069c53",
+        "mv-93e2a4f851c1fe14",
+        "mv-b6f7566f36206c03",
+        "mv-6935f64b74a51e48",
+        "mv-eb32472ca3f0b0ee"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-19T18:42:18.000Z",
+      "lastMeaningfulAt": "2026-11-20T18:36:12.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
         "4395628",
-        "4397688"
+        "4397688",
+        "6442"
       ],
       "linkedTeamIds": [
         "3",
         "21",
-        "14"
+        "14",
+        "9",
+        "6"
       ]
     },
     {
@@ -2467,6 +2478,62 @@
       ],
       "linkedTeamIds": [
         "27"
+      ]
+    },
+    {
+      "id": "mv-contract-4594268-20261120",
+      "headline": "Anthony Edwards: contract future with the Timberwolves",
+      "primaryClaimId": "mv-f613ff60ead31560",
+      "claimIds": [
+        "mv-f613ff60ead31560"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-20T12:45:00.000Z",
+      "lastMeaningfulAt": "2026-11-20T12:45:00.000Z",
+      "linkedPlayerIds": [
+        "4594268"
+      ],
+      "linkedTeamIds": [
+        "16"
+      ]
+    },
+    {
+      "id": "mv-trade-4432582-20261120",
+      "headline": "Max Christie: trade talk",
+      "primaryClaimId": "mv-03dd18a78fe25357",
+      "claimIds": [
+        "mv-03dd18a78fe25357"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-20T13:27:46.000Z",
+      "lastMeaningfulAt": "2026-11-20T13:27:46.000Z",
+      "linkedPlayerIds": [
+        "4432582"
+      ],
+      "linkedTeamIds": [
+        "13",
+        "6"
+      ]
+    },
+    {
+      "id": "mv-trade-4395626-20261120",
+      "headline": "Tre Jones: trade talk",
+      "primaryClaimId": "mv-3fd06a2c0f4c0735",
+      "claimIds": [
+        "mv-b9f98196d31313c5",
+        "mv-3fd06a2c0f4c0735"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-20T13:43:22.000Z",
+      "lastMeaningfulAt": "2026-11-20T14:15:43.000Z",
+      "linkedPlayerIds": [
+        "4395626"
+      ],
+      "linkedTeamIds": [
+        "4"
       ]
     },
     {
@@ -13776,6 +13843,244 @@
       "negotiationSpecificity": "contact"
     },
     {
+      "id": "mv-782e1c88783fdfd8",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Suns’ Dejounte Murray Trade Buzz Takes Turn as Insider Reveals Bigger Concern",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-19T23:02:33.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/phoenix-suns/suns-dejounte-murray-trade-center-priority-revealed/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e083f1181cb605df",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Karl-Anthony Towns extends double-double streak in 'bittersweet' return to Minnesota",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-20T05:01:51.000Z",
+      "sourceId": "outlet:the-athletic",
+      "sourceLabel": "The Athletic",
+      "sourceUrl": "https://www.nytimes.com/athletic/7796867/2026/11/20/karl-anthony-towns-minnesota-timberwolves-knicks-nba-return/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-c7a8e195e0069c53",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Warriors Get Massive Trey Murphy Trade Price From Pelicans",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-20T12:15:50.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/trey-murphy-trade-price-pelicans-warriors/",
+      "playerIds": [
+        "4397688"
+      ],
+      "teamIds": [
+        "3",
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-f613ff60ead31560",
+      "clusterId": "mv-contract-4594268-20261120",
+      "summary": "“No One Came to Watch You!”: Chris Finch Gets T’d Up as Timberwolves Fight to Extend Win Streak Without Anthony Edwards",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-20T12:45:00.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-no-one-came-to-watch-you-chris-finch-gets-td-up-as-timberwolves-fight-to-extend-win-streak-without-anthony-edwards/",
+      "playerIds": [
+        "4594268"
+      ],
+      "teamIds": [
+        "16"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-03dd18a78fe25357",
+      "clusterId": "mv-trade-4432582-20261120",
+      "summary": "Lakers Proposed to Land Max Christie & 6’11” Center in Major 4-Player NBA Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-20T13:27:46.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-max-christie-center-trade/",
+      "playerIds": [
+        "4432582"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-b9f98196d31313c5",
+      "clusterId": "mv-trade-4395626-20261120",
+      "summary": "Tre Jones Drawing Trade Interest",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-20T13:43:22.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288197/Tre-Jones-Drawing-Trade-Interest",
+      "playerIds": [
+        "4395626"
+      ],
+      "teamIds": [],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-3fd06a2c0f4c0735",
+      "clusterId": "mv-trade-4395626-20261120",
+      "summary": "Tre Jones drawing trade interest from multiple NBA teams",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-20T14:15:43.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/229317-tre-jones-drawing-trade-interest-from-multiple-nba-teams",
+      "playerIds": [
+        "4395626"
+      ],
+      "teamIds": [],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-93e2a4f851c1fe14",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Suns’ Jalen Green Breaks Silence on Trade Rumors Amid Uncertain Future",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-20T16:54:23.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/phoenix-suns/jalen-green-trade-rumors-suns-response/",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b6f7566f36206c03",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Conflicting Updates on Phoenix Suns Dejounte Murray Trade Rumors Emerge",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-20T17:23:38.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/conflicting-phoenix-suns-dejounte-murray-trade-rumors",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-64462314d1dc5c99",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Insider Suggests Jaden Hardy Trade That Could Shake Up Frontcourt",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-20T17:25:33.000Z",
+      "sourceId": "reporter:jovan-buha",
+      "sourceLabel": "Heavy, citing Jovan Buha (The Athletic)",
+      "reporterLabel": "Jovan Buha",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-jaden-hardy-trade-shakes-up-frontcourt/",
+      "playerIds": [
+        "4868423"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-6935f64b74a51e48",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Jalen Green Gets Real On Finding His Name In Trade Rumors Again",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-20T17:26:32.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/phoenix-suns/jalen-green-gets-real-finding-name-trade-rumors-again",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-eb32472ca3f0b0ee",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA trade rumors 2026-27: Dejounte Murray update (or, non-update), Kyrie Irving, Trey Murphy, more",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-20T18:36:12.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/nba-trade-rumors-2026-27-183612093.html",
+      "playerIds": [
+        "6442",
+        "3907497",
+        "4397688"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -15176,7 +15481,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-19T23:09:56.077Z"
+      "resolvedAt": "2026-11-20T18:51:40.815Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
