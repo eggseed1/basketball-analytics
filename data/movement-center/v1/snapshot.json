@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-20",
+    "snapshotDate": "2026-11-21",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-20T22:46:38.743Z",
+    "builtAt": "2026-11-21T17:50:12.969Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 16639,
-    "latestHeadlineAt": "2026-11-20T22:32:20.000Z",
+    "headlinesScanned": 16906,
+    "latestHeadlineAt": "2026-11-21T17:47:59.000Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -240,6 +240,10 @@
     },
     "reporter:anthony-davis": {
       "label": "Anthony Davis (ESPN)",
+      "credibility": 18
+    },
+    "reporter:eric-pincus": {
+      "label": "Eric Pincus (Bleacher Report)",
       "credibility": 18
     },
     "ledger:nba-player-movement": {
@@ -721,12 +725,13 @@
         "mv-7e76c7d091061166",
         "mv-b7f036286e7b8df9",
         "mv-e7edce5afae4d235",
-        "mv-d91d781bbf5d0cbc"
+        "mv-d91d781bbf5d0cbc",
+        "mv-6264ab7c21d4eb9d"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-19T21:44:27.000Z",
+      "lastMeaningfulAt": "2026-11-21T01:43:28.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -2087,12 +2092,13 @@
       "headline": "Mikal Bridges: trade talk",
       "primaryClaimId": "mv-d6c2a1e6b18e4fe9",
       "claimIds": [
-        "mv-d6c2a1e6b18e4fe9"
+        "mv-d6c2a1e6b18e4fe9",
+        "mv-eb7916f69cc8fbb9"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-05T00:09:21.000Z",
-      "lastMeaningfulAt": "2026-11-05T00:09:21.000Z",
+      "lastMeaningfulAt": "2026-11-20T23:35:26.000Z",
       "linkedPlayerIds": [
         "3147657"
       ],
@@ -2394,12 +2400,13 @@
       "claimIds": [
         "mv-6007c17813efce3f",
         "mv-cebab99b13d29c81",
-        "mv-a4ab395f6679d7ce"
+        "mv-a4ab395f6679d7ce",
+        "mv-9a97e9b99dd95878"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-17T14:18:45.000Z",
-      "lastMeaningfulAt": "2026-11-18T08:34:27.000Z",
+      "lastMeaningfulAt": "2026-11-21T06:59:14.000Z",
       "linkedPlayerIds": [
         "4396993"
       ],
@@ -2535,6 +2542,24 @@
       ],
       "linkedTeamIds": [
         "4"
+      ]
+    },
+    {
+      "id": "mv-trade-4278104-20261121",
+      "headline": "Michael Porter Jr.: trade talk",
+      "primaryClaimId": "mv-e673382818cd5bbd",
+      "claimIds": [
+        "mv-e673382818cd5bbd"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-21T02:02:14.000Z",
+      "lastMeaningfulAt": "2026-11-21T02:02:14.000Z",
+      "linkedPlayerIds": [
+        "4278104"
+      ],
+      "linkedTeamIds": [
+        "17"
       ]
     },
     {
@@ -14105,6 +14130,86 @@
       "negotiationSpecificity": "active_talks"
     },
     {
+      "id": "mv-eb7916f69cc8fbb9",
+      "clusterId": "mv-trade-3147657-20261105",
+      "summary": "Knicks’ Mikal Bridges Gets Good News Amid Growing NBA Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-20T23:35:26.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/knicks-mikal-bridges-growing-trade-rumors/",
+      "playerIds": [
+        "3147657"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-6264ab7c21d4eb9d",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA Insider Sends Clear Message on Anthony Davis Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-21T01:43:28.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/washington-wizards/nba-insider-clear-message-anthony-davis-trade-rumors/",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e673382818cd5bbd",
+      "clusterId": "mv-trade-4278104-20261121",
+      "summary": "Nets Proposed to Trade Michael Porter Jr. for $125 Million Guard in Blockbuster Deal",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-21T02:02:14.000Z",
+      "sourceId": "reporter:eric-pincus",
+      "sourceLabel": "Heavy, citing Eric Pincus (Bleacher Report)",
+      "reporterLabel": "Eric Pincus",
+      "sourceUrl": "https://heavy.com/sports/nba/brooklyn-nets/nets-michael-porter-jr-christian-braun-trade-proposal/",
+      "playerIds": [
+        "4278104"
+      ],
+      "teamIds": [
+        "17"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-9a97e9b99dd95878",
+      "clusterId": "mv-trade-4396993-20261117",
+      "summary": "Pacers Trade News: Indiana Could Add Star Alongside Tyrese Haliburton",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-21T06:59:14.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/indiana-pacers/trade-news-could-add-star-power/",
+      "playerIds": [
+        "4396993"
+      ],
+      "teamIds": [
+        "11"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -15505,7 +15610,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-20T22:46:38.743Z"
+      "resolvedAt": "2026-11-21T17:50:12.969Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
