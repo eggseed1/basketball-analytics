@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-21",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-21T17:50:12.969Z",
+    "builtAt": "2026-11-21T21:45:11.723Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 16906,
-    "latestHeadlineAt": "2026-11-21T17:47:59.000Z",
+    "headlinesScanned": 16974,
+    "latestHeadlineAt": "2026-11-21T21:32:47.000Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -726,12 +726,13 @@
         "mv-b7f036286e7b8df9",
         "mv-e7edce5afae4d235",
         "mv-d91d781bbf5d0cbc",
-        "mv-6264ab7c21d4eb9d"
+        "mv-6264ab7c21d4eb9d",
+        "mv-55e2618a29af8fd9"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-21T01:43:28.000Z",
+      "lastMeaningfulAt": "2026-11-21T19:37:42.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -872,7 +873,7 @@
     {
       "id": "mv-trade-3155942-20261005",
       "headline": "Domantas Sabonis, Bronny James and others: trade talk",
-      "primaryClaimId": "mv-edf288a73d1a9f54",
+      "primaryClaimId": "mv-1ced56ddd384b730",
       "claimIds": [
         "mv-981e58a85cc89efe",
         "mv-bf030a939aada1a7",
@@ -896,12 +897,13 @@
         "mv-0fb6483174f3f84d",
         "mv-c846671c3c960ad4",
         "mv-edf288a73d1a9f54",
-        "mv-64462314d1dc5c99"
+        "mv-64462314d1dc5c99",
+        "mv-1ced56ddd384b730"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-20T17:25:33.000Z",
+      "lastMeaningfulAt": "2026-11-21T18:32:14.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -2560,6 +2562,24 @@
       ],
       "linkedTeamIds": [
         "17"
+      ]
+    },
+    {
+      "id": "mv-trade-5104157-20261121",
+      "headline": "Victor Wembanyama: trade talk",
+      "primaryClaimId": "mv-1fea46641fa8d3e2",
+      "claimIds": [
+        "mv-1fea46641fa8d3e2"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-21T21:21:23.000Z",
+      "lastMeaningfulAt": "2026-11-21T21:21:23.000Z",
+      "linkedPlayerIds": [
+        "5104157"
+      ],
+      "linkedTeamIds": [
+        "24"
       ]
     },
     {
@@ -14210,6 +14230,68 @@
       "isOriginal": false
     },
     {
+      "id": "mv-1ced56ddd384b730",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Proposed to Trade Bronny James for Center Who ‘Checks All Boxes’",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-21T18:32:14.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-trade-bronny-james-sharpe/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-55e2618a29af8fd9",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA Rumors: Jazz’s Kyrie Irving Trade Interest Could Lead To Another Realistic Target",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-21T19:37:42.000Z",
+      "sourceId": "reporter:ian-begley",
+      "sourceLabel": "Heavy, citing Ian Begley (SNY)",
+      "reporterLabel": "Ian Begley",
+      "sourceUrl": "https://heavy.com/sports/nba/utah-jazz/jazz-kyrie-irving-trade-interest-lead-another-realistic-target/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "26"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-1fea46641fa8d3e2",
+      "clusterId": "mv-trade-5104157-20261121",
+      "summary": "Spurs Trade Pitch Lands 6’10” Elite 3-PT Center to Pair With Victor Wembanyama",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-21T21:21:23.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/san-antonio-spurs/spurs-elite-three-point-center-trade/",
+      "playerIds": [
+        "5104157"
+      ],
+      "teamIds": [
+        "24"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -15610,7 +15692,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-21T17:50:12.969Z"
+      "resolvedAt": "2026-11-21T21:45:11.723Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
