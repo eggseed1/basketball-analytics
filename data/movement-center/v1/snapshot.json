@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-22",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-22T18:05:55.325Z",
+    "builtAt": "2026-11-22T21:51:02.162Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 17195,
-    "latestHeadlineAt": "2026-11-22T17:42:50.000Z",
+    "headlinesScanned": 17247,
+    "latestHeadlineAt": "2026-11-22T21:48:30.000Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -15790,7 +15790,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-22T18:05:55.325Z"
+      "resolvedAt": "2026-11-22T21:51:02.162Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
