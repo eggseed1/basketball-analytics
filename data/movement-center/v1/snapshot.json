@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-21",
+    "snapshotDate": "2026-11-22",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-21T21:45:11.723Z",
+    "builtAt": "2026-11-22T18:05:55.325Z",
     "rosterPlayerCount": 508,
-    "headlinesScanned": 16974,
-    "latestHeadlineAt": "2026-11-21T21:32:47.000Z",
+    "headlinesScanned": 17195,
+    "latestHeadlineAt": "2026-11-22T17:42:50.000Z",
     "latestTransactionDate": "2026-11-18",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -244,6 +244,10 @@
     },
     "reporter:eric-pincus": {
       "label": "Eric Pincus (Bleacher Report)",
+      "credibility": 18
+    },
+    "reporter:tim-macmahon-the": {
+      "label": "Tim MacMahon. The (ESPN)",
       "credibility": 18
     },
     "ledger:nba-player-movement": {
@@ -727,12 +731,13 @@
         "mv-e7edce5afae4d235",
         "mv-d91d781bbf5d0cbc",
         "mv-6264ab7c21d4eb9d",
-        "mv-55e2618a29af8fd9"
+        "mv-55e2618a29af8fd9",
+        "mv-79d10729dc087e67"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-21T19:37:42.000Z",
+      "lastMeaningfulAt": "2026-11-22T11:40:00.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -2565,6 +2570,24 @@
       ]
     },
     {
+      "id": "mv-trade-5175737-20261121",
+      "headline": "Yaxel Lendeborg: trade talk",
+      "primaryClaimId": "mv-fd2e2dc3acf55295",
+      "claimIds": [
+        "mv-fd2e2dc3acf55295"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-21T17:47:27.000Z",
+      "lastMeaningfulAt": "2026-11-21T17:47:27.000Z",
+      "linkedPlayerIds": [
+        "5175737"
+      ],
+      "linkedTeamIds": [
+        "9"
+      ]
+    },
+    {
       "id": "mv-trade-5104157-20261121",
       "headline": "Victor Wembanyama: trade talk",
       "primaryClaimId": "mv-1fea46641fa8d3e2",
@@ -2580,6 +2603,24 @@
       ],
       "linkedTeamIds": [
         "24"
+      ]
+    },
+    {
+      "id": "mv-contract-4066383-20261121",
+      "headline": "Miles Bridges: contract future with the Suns",
+      "primaryClaimId": "mv-b4e6ef256fada1d4",
+      "claimIds": [
+        "mv-b4e6ef256fada1d4"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-21T22:43:05.000Z",
+      "lastMeaningfulAt": "2026-11-21T22:43:05.000Z",
+      "linkedPlayerIds": [
+        "4066383"
+      ],
+      "linkedTeamIds": [
+        "21"
       ]
     },
     {
@@ -14230,6 +14271,25 @@
       "isOriginal": false
     },
     {
+      "id": "mv-fd2e2dc3acf55295",
+      "clusterId": "mv-trade-5175737-20261121",
+      "summary": "Why one NBA GM reportedly shied away from trading up to draft Yaxel Lendeborg",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-21T17:47:27.000Z",
+      "sourceId": "reporter:tim-macmahon-the",
+      "sourceLabel": "NBC Sports Bay Area, citing Tim MacMahon. The (ESPN)",
+      "reporterLabel": "Tim MacMahon. The",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/yaxel-lendeborg-western-conference-gm-draft/1981918/",
+      "playerIds": [
+        "5175737"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
       "id": "mv-1ced56ddd384b730",
       "clusterId": "mv-trade-3155942-20261005",
       "summary": "Lakers Proposed to Trade Bronny James for Center Who ‘Checks All Boxes’",
@@ -14289,6 +14349,44 @@
       "teamIds": [
         "24"
       ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-b4e6ef256fada1d4",
+      "clusterId": "mv-contract-4066383-20261121",
+      "summary": "Miles Bridges Focused On Helping Suns Win, Not Contract Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-21T22:43:05.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288209/Miles-Bridges-Focused-On-Helping-Suns-Win-Not-Contract-Extension",
+      "playerIds": [
+        "4066383"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-79d10729dc087e67",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "AJ Dybansta Faces “Tough Environment” as Call Mounts For Anthony Davis to Get Traded",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-22T11:40:00.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-aj-dybansta-faces-tough-environment-as-call-mounts-for-anthony-davis-to-get-traded/",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [],
       "isOriginal": true
     },
     {
@@ -15692,7 +15790,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-21T21:45:11.723Z"
+      "resolvedAt": "2026-11-22T18:05:55.325Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
