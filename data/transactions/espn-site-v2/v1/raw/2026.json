@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-22T21:49:54.005Z",
-  "apiCount": 444,
+  "fetchedAt": "2026-11-23T22:25:35.740Z",
+  "apiCount": 445,
   "rows": [
+    {
+      "date": "2026-11-23T08:00Z",
+      "description": "Signed G Gabe Vincent to a rest-of-season contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
     {
       "date": "2026-11-18T08:00Z",
       "description": "Signed G Zack Austin to a two-way contract. Waived F Riley Minix.",

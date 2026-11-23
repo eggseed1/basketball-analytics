@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-11-22",
-    "retrievedAt": "2026-11-22T21:55:09.500Z",
+    "snapshotDate": "2026-11-23",
+    "retrievedAt": "2026-11-23T22:35:29.416Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "bb69ad25e8f42a69255cc618b7c2b8bb7dfd5fe675e3b7e1c17220b422f751df",
+    "sourceHash": "c04c7e5b83ae8ae8317ad54f7339eb11b44a8c46052fa116e89151c09b137dca",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -166,6 +166,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1628370"
+        },
+        {
+          "playerId": "1629216",
+          "playerName": "Gabe Vincent",
+          "age": null,
+          "contractId": "cy-1629216-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1629216-2026",
+              "playerId": "1629216",
+              "franchiseId": "23",
+              "season": "2026-27",
+              "salary": 11500000,
+              "capHit": 11500000,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1629216"
         },
         {
           "playerId": "1643411",
@@ -447,12 +470,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 193993922,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 205493922,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 193993922,
-      "playersWithSalary": 15,
+      "playerSalaryCommitments": 205493922,
+      "playersWithSalary": 16,
       "playersWithoutSalary": 2
     },
     "draftAssets": {
