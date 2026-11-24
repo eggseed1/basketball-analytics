@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-23",
+    "snapshotDate": "2026-11-24",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-23T22:26:33.856Z",
+    "builtAt": "2026-11-24T03:04:45.277Z",
     "rosterPlayerCount": 509,
-    "headlinesScanned": 17570,
-    "latestHeadlineAt": "2026-11-23T22:13:01.000Z",
+    "headlinesScanned": 17654,
+    "latestHeadlineAt": "2026-11-24T02:59:35.000Z",
     "latestTransactionDate": "2026-11-23",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -44,7 +44,7 @@
     },
     "outlet:cbs-sports": {
       "label": "CBS Sports",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:larry-brown-sports": {
       "label": "Larry Brown Sports",
@@ -2375,12 +2375,13 @@
         "mv-eb32472ca3f0b0ee",
         "mv-3a025d5bf73f369d",
         "mv-68ead3354abb849f",
-        "mv-f1484733e423e13b"
+        "mv-f1484733e423e13b",
+        "mv-15567ee609caf351"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-23T15:58:37.000Z",
+      "lastMeaningfulAt": "2026-11-23T23:16:57.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -2393,6 +2394,8 @@
         "21",
         "14",
         "9",
+        "13",
+        "26",
         "6"
       ]
     },
@@ -14770,6 +14773,27 @@
       "isOriginal": false
     },
     {
+      "id": "mv-15567ee609caf351",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA trade rumors: Lakers planning to be active, Jazz looking elsewhere after Kyrie Irving buzz",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-23T23:16:57.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/nba-trade-rumors-lakers-jazz-kyrie-irving-nov-23/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "13",
+        "26"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -16190,7 +16214,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-23T22:26:33.856Z"
+      "resolvedAt": "2026-11-24T03:04:45.277Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
