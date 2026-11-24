@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-24",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-24T03:04:45.277Z",
-    "rosterPlayerCount": 509,
-    "headlinesScanned": 17654,
-    "latestHeadlineAt": "2026-11-24T02:59:35.000Z",
+    "builtAt": "2026-11-24T20:56:49.228Z",
+    "rosterPlayerCount": 510,
+    "headlinesScanned": 17950,
+    "latestHeadlineAt": "2026-11-24T20:46:02.000Z",
     "latestTransactionDate": "2026-11-23",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -172,7 +172,7 @@
     },
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:brian-windhorst": {
       "label": "Brian Windhorst (ESPN)",
@@ -732,19 +732,22 @@
         "mv-d91d781bbf5d0cbc",
         "mv-6264ab7c21d4eb9d",
         "mv-55e2618a29af8fd9",
-        "mv-79d10729dc087e67"
+        "mv-79d10729dc087e67",
+        "mv-21b9b3013b2a2894",
+        "mv-2c9bc0168f13d6aa"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-22T11:40:00.000Z",
+      "lastMeaningfulAt": "2026-11-24T19:17:50.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
         "5041939",
         "5105817",
         "6430",
-        "6589"
+        "6589",
+        "4277905"
       ],
       "linkedTeamIds": [
         "6",
@@ -1361,12 +1364,13 @@
         "mv-4db4211c11532c8b",
         "mv-1802a7f586a0242b",
         "mv-1f5ec9b412e7c63d",
-        "mv-343d67c872f59777"
+        "mv-343d67c872f59777",
+        "mv-ced8dafb21f99fef"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-11-22T21:49:33.000Z",
+      "lastMeaningfulAt": "2026-11-24T20:17:39.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
@@ -2693,6 +2697,24 @@
       ],
       "linkedTeamIds": [
         "26"
+      ]
+    },
+    {
+      "id": "mv-trade-5211983-20261124",
+      "headline": "Pacôme Dadiet: trade talk",
+      "primaryClaimId": "mv-866338fd55006562",
+      "claimIds": [
+        "mv-866338fd55006562"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-24T15:31:55.000Z",
+      "lastMeaningfulAt": "2026-11-24T15:31:55.000Z",
+      "linkedPlayerIds": [
+        "5211983"
+      ],
+      "linkedTeamIds": [
+        "18"
       ]
     },
     {
@@ -14794,6 +14816,86 @@
       "isOriginal": false
     },
     {
+      "id": "mv-866338fd55006562",
+      "clusterId": "mv-trade-5211983-20261124",
+      "summary": "Knicks Trade Pitch Flips Pacôme Dadiet for Impressive 6’10” 3-Point Shooter",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-24T15:31:55.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/knicks-trade-pacome-dadiet-shooter/",
+      "playerIds": [
+        "5211983"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-21b9b3013b2a2894",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA Trade Rumor: $269 Million Star Linked to Anthony Davis Trade in Blockbuster Move",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-24T17:56:19.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "Basketball News, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-nba-trade-rumor-two-hundred-and-sixty-nine-million-star-linked-to-anthony-davis-trade-in-blockbuster-move/",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-2c9bc0168f13d6aa",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Wizards Make Official Decision for Trae Young Amid Anthony Davis Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-24T19:17:50.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-wizards-make-official-decision-for-trae-young-amid-anthony-davis-trade-rumors/",
+      "playerIds": [
+        "6583",
+        "4277905"
+      ],
+      "teamIds": [
+        "27"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ced8dafb21f99fef",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Warriors Rumor: 21 PPG Scorer Linked to Major Trade to Help Stephen Curry",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-24T20:17:39.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-golden-state-warriors-rumor-twenty-one-ppg-scorer-linked-to-major-trade-to-help-stephen-curry/",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -16214,7 +16316,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-24T03:04:45.277Z"
+      "resolvedAt": "2026-11-24T20:56:49.228Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
