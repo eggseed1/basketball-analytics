@@ -37,10 +37,12 @@ import {
 } from "@/components/compare/compare-peer-scatter";
 import { CompareShareControls } from "@/components/compare/compare-share-controls";
 import {
+  compareEdge,
   compareGap,
   compareScore,
   isEdgeMetric,
   pickRadarAxes,
+  type CompareEdge,
 } from "@/components/compare/compare-scale";
 import {
   BAR_TRACK,
@@ -69,18 +71,21 @@ import { cn } from "@/lib/utils";
 import { MatchupOrbs } from "@/components/brand/matchup-orbs";
 import { LinkCue } from "@/components/ui/link-cue";
 
-type Edge = "a" | "b" | "even";
+type Edge = CompareEdge;
 
-/** Mirror share graphic: value+bar | metric | value+bar */
+/** Mirror share graphic: value+bar | metric | value+bar. Narrow center on phones. */
 const MATCHUP_ROW_GRID =
-  "grid grid-cols-[minmax(0,1fr)_4.75rem_minmax(0,1fr)] items-center gap-x-2 sm:gap-x-3";
+  "grid grid-cols-[minmax(0,1fr)_3.25rem_minmax(0,1fr)] items-center gap-x-1.5 min-[400px]:grid-cols-[minmax(0,1fr)_4.75rem_minmax(0,1fr)] min-[400px]:gap-x-2 sm:gap-x-3";
 
-const KEY_NUMBER_IDS = ["pts", "trb", "ast", "atr", "ts", "drbl100"] as const;
-
-/** Percentile points inside which two players read as even. */
-const EVEN_PCT_POINTS = 3;
-/** Relative raw gap inside which two players read as even (no percentiles). */
-const EVEN_RAW_SHARE = 0.02;
+/** Snapshot key tiles — impact first; counting still present. */
+const KEY_NUMBER_IDS = [
+  "drbl100",
+  "war1",
+  "darko",
+  "bpm",
+  "ts",
+  "pts",
+] as const;
 
 const BASIS_PHRASE: Record<CompareBasis, string> = {
   perGame: "per game",
@@ -99,13 +104,27 @@ type TabId =
 
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: "overview", label: "Overview" },
+  { id: "impact", label: "Impact" },
   { id: "scoring", label: "Scoring" },
   { id: "playmaking", label: "Playmaking" },
   { id: "defense", label: "Defense & boards" },
-  { id: "impact", label: "Impact" },
   { id: "career", label: "Career arc" },
   { id: "all", label: "All stats" },
 ];
+
+/** Impact rows pinned under Overview so the first view leads with advanced. */
+const OVERVIEW_IMPACT_IDS = [
+  "drbl100",
+  "drblO",
+  "drblD",
+  "war1",
+  "darko",
+  "darkoOff",
+  "darkoDef",
+  "raptor",
+  "bpm",
+  "vorp",
+] as const;
 
 /** Rows each topic tab lists under its charts, in this order. */
 const TAB_ROW_IDS: Partial<Record<TabId, string[]>> = {
@@ -178,15 +197,7 @@ function formatPctile(n: number | undefined): string {
 }
 
 function edgeOf(d: ComparisonDimension): Edge {
-  if (d.delta == null || !Number.isFinite(d.delta)) return "even";
-  if (d.aPercentile != null && d.bPercentile != null) {
-    if (Math.abs(d.delta) < EVEN_PCT_POINTS) return "even";
-    return d.delta > 0 ? "a" : "b";
-  }
-  const peak = Math.max(Math.abs(d.aValue ?? 0), Math.abs(d.bValue ?? 0));
-  if (peak > 0 && Math.abs(d.delta) / peak < EVEN_RAW_SHARE) return "even";
-  if (d.delta === 0) return "even";
-  return d.delta > 0 ? "a" : "b";
+  return compareEdge(d);
 }
 
 function tallyEdges(rows: ComparisonDimension[]) {
@@ -265,6 +276,15 @@ function MatchupBarRow({
 }) {
   const aTrack = compareScore(dimension, "a");
   const bTrack = compareScore(dimension, "b");
+  // Keep a visible stub when a side has a real value but the scale bottoms out.
+  const aWidth =
+    aTrack != null
+      ? Math.max(aTrack, dimension.aValue != null ? 6 : 0)
+      : 0;
+  const bWidth =
+    bTrack != null
+      ? Math.max(bTrack, dimension.bValue != null ? 6 : 0)
+      : 0;
 
   const edge = edgeOf(dimension);
   const style = !isEdgeMetric(dimension);
@@ -287,10 +307,10 @@ function MatchupBarRow({
               <PctileTag value={dimension.aPercentile} />
               {dimension.aDisplay}
             </span>
-            <div className={cn(BAR_TRACK, "h-2 w-full")}>
+            <div className={cn(BAR_TRACK, "h-2.5 w-full min-[400px]:h-2")}>
               <div
                 className="ml-auto h-full rounded-full"
-                style={{ width: `${aTrack ?? 0}%`, background: aFill }}
+                style={{ width: `${aWidth}%`, background: aFill }}
               />
             </div>
           </div>
@@ -322,10 +342,10 @@ function MatchupBarRow({
               {dimension.bDisplay}
               <PctileTag value={dimension.bPercentile} />
             </span>
-            <div className={cn(BAR_TRACK, "h-2 w-full")}>
+            <div className={cn(BAR_TRACK, "h-2.5 w-full min-[400px]:h-2")}>
               <div
                 className="h-full rounded-full"
-                style={{ width: `${bTrack ?? 0}%`, background: bFill }}
+                style={{ width: `${bWidth}%`, background: bFill }}
               />
             </div>
           </div>
@@ -495,6 +515,8 @@ function KeyNumbers({
         const edge = edgeOf(d);
         const aTrack = compareScore(d, "a") ?? 0;
         const bTrack = compareScore(d, "b") ?? 0;
+        const aWidth = aTrack > 0 ? Math.max(aTrack, 6) : 0;
+        const bWidth = bTrack > 0 ? Math.max(bTrack, 6) : 0;
         return (
           <div key={d.id} className={cn(FROST_TILE, "px-3 py-3")}>
             <p className={cn(SECTION_LABEL, "text-center")}>
@@ -504,7 +526,7 @@ function KeyNumbers({
               <span
                 className={cn(
                   "text-lg font-black tracking-tight",
-                  edge === "b" && "text-muted-foreground"
+                  (edge === "b" || edge === "even") && "text-muted-foreground"
                 )}
                 style={edge === "a" ? { color: aColor } : undefined}
               >
@@ -513,7 +535,7 @@ function KeyNumbers({
               <span
                 className={cn(
                   "text-lg font-black tracking-tight",
-                  edge === "a" && "text-muted-foreground"
+                  (edge === "a" || edge === "even") && "text-muted-foreground"
                 )}
                 style={edge === "b" ? { color: bColor } : undefined}
               >
@@ -524,13 +546,21 @@ function KeyNumbers({
               <div className={cn(BAR_TRACK, "flex h-1.5 flex-1 justify-end")}>
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${aTrack}%`, background: aColor }}
+                  style={{
+                    width: `${aWidth}%`,
+                    background: aColor,
+                    opacity: edge === "b" ? 0.55 : 1,
+                  }}
                 />
               </div>
               <div className={cn(BAR_TRACK, "flex h-1.5 flex-1")}>
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${bTrack}%`, background: bColor }}
+                  style={{
+                    width: `${bWidth}%`,
+                    background: bColor,
+                    opacity: edge === "a" ? 0.55 : 1,
+                  }}
                 />
               </div>
             </div>
@@ -1462,6 +1492,33 @@ export function PlayerCompareView({
               aColor={aFill}
               bColor={bFill}
             />
+
+            {(() => {
+              const impactRows = OVERVIEW_IMPACT_IDS.map((id) =>
+                dimsById.get(id)
+              ).filter(
+                (d): d is ComparisonDimension =>
+                  d != null &&
+                  visibleSet.has(d.id) &&
+                  (d.aValue != null || d.bValue != null)
+              );
+              if (!impactRows.length) return null;
+              return (
+                <section className="border-b border-border/60 px-3 py-1 sm:px-5">
+                  <h2 className={cn(SECTION_LABEL, "pt-3")}>Impact</h2>
+                  {impactRows.map((d) => (
+                    <MatchupBarRow
+                      key={d.id}
+                      dimension={d}
+                      aName={aShort}
+                      bName={bShort}
+                      aFill={aFill}
+                      bFill={bFill}
+                    />
+                  ))}
+                </section>
+              );
+            })()}
 
             <div
               className={cn(
