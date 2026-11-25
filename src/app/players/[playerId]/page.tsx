@@ -622,7 +622,7 @@ export default async function PlayerPage({
             ) : (
               <Suspense
                 fallback={
-                  <div className="col-span-1 min-h-0 sm:min-h-[22rem] md:min-h-[28rem]">
+                  <div className="col-span-1 min-h-0">
                     <PlayerPercentileSkeleton />
                   </div>
                 }

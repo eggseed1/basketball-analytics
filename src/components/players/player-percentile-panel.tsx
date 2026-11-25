@@ -100,7 +100,7 @@ const CATEGORY_META: Array<{
 
 /** Fixed label + value columns so every Savant track shares the same start/end. */
 const RANK_GRID =
-  "grid grid-cols-[5.75rem_minmax(0,1fr)_3rem] items-center gap-x-2 sm:grid-cols-[6.75rem_minmax(0,1fr)_3.5rem]";
+  "grid grid-cols-[4.75rem_minmax(0,1fr)_2.75rem] items-center gap-x-1.5 sm:grid-cols-[6.75rem_minmax(0,1fr)_3.5rem] sm:gap-x-2";
 
 /** Track inset matches pip radius (12px) so 0 / 50 / 100 share one geometry. */
 const TRACK_INSET_PX = 12;
@@ -113,9 +113,9 @@ function savantMarkLeft(pct: number) {
 
 function ScaleLegend() {
   return (
-    <div className={cn(RANK_GRID, "px-4")} aria-hidden>
+    <div className={cn(RANK_GRID, "px-1.5 sm:px-4")} aria-hidden>
       <span />
-      <span className="@container relative h-[22px] w-full min-w-0 overflow-hidden">
+      <span className="@container relative h-[16px] w-full min-w-0 overflow-hidden sm:h-[22px]">
         {(
           [
             // Edge labels pin to track ends so Poor/Great never collide with Avg.
@@ -140,14 +140,20 @@ function ScaleLegend() {
           >
             <span
               className={cn(
-                type.caption,
-                "font-bold uppercase leading-none tracking-wide",
+                type.micro,
+                "font-bold uppercase leading-none tracking-wide sm:text-[12px] sm:leading-4",
                 pct === 50 && "@max-[7.75rem]:hidden"
               )}
             >
               {label}
             </span>
-            <svg width="8" height="6" viewBox="0 0 8 6" aria-hidden>
+            <svg
+              className="hidden sm:block"
+              width="8"
+              height="6"
+              viewBox="0 0 8 6"
+              aria-hidden
+            >
               <polygon points="4,6 0,0 8,0" fill="currentColor" />
             </svg>
           </span>
@@ -251,15 +257,15 @@ function MetricRow({
       }
       className={cn(
         RANK_GRID,
-        "w-full whitespace-nowrap px-4 py-1.5 text-left transition-colors",
+        "w-full whitespace-nowrap px-1.5 py-1 text-left transition-colors sm:px-4 sm:py-1.5",
         selected ? "bg-foreground/8" : "hover:bg-foreground/5",
         notQualified && "opacity-90"
       )}
     >
       <span
         className={cn(
-          type.bodySm,
-          "min-w-0 truncate text-left font-semibold",
+          type.caption,
+          "min-w-0 truncate text-left font-semibold sm:text-[13px] sm:leading-5",
           notQualified && "text-muted-foreground"
         )}
         onClick={(event) => event.stopPropagation()}
@@ -268,16 +274,16 @@ function MetricRow({
           {metric.label}
         </StatTooltip>
       </span>
-      <span className="relative flex h-7 w-full min-w-0 items-center overflow-hidden">
+      <span className="relative flex h-6 w-full min-w-0 items-center overflow-hidden sm:h-7">
         {notQualified ? (
           <>
             <span
-              className="absolute inset-y-[8px] rounded-full bg-foreground/[0.06]"
+              className="absolute inset-y-[7px] rounded-full bg-foreground/[0.06] sm:inset-y-[8px]"
               aria-hidden
               style={{ left: TRACK_INSET_PX, right: TRACK_INSET_PX }}
             />
             <span
-              className="absolute inset-y-[8px] rounded-full"
+              className="absolute inset-y-[7px] rounded-full sm:inset-y-[8px]"
               aria-hidden
               style={{
                 left: TRACK_INSET_PX,
@@ -287,12 +293,12 @@ function MetricRow({
             />
             <span
               className={cn(
-                type.caption,
-                "pointer-events-none absolute inset-0 z-[1] flex items-center justify-center font-bold uppercase tracking-[0.12em] text-muted-foreground"
+                type.micro,
+                "pointer-events-none absolute inset-0 z-[1] flex items-center justify-center font-bold uppercase tracking-[0.12em] text-muted-foreground sm:text-[12px]"
               )}
               aria-hidden
             >
-              Not qualified
+              NQ
             </span>
           </>
         ) : metric.showPercentile ? (
@@ -306,13 +312,13 @@ function MetricRow({
               />
             ))}
             <span
-              className="absolute inset-y-[8px] rounded-full bg-foreground/[0.08]"
+              className="absolute inset-y-[7px] rounded-full bg-foreground/[0.08] sm:inset-y-[8px]"
               aria-hidden
               style={{ left: TRACK_INSET_PX, right: TRACK_INSET_PX }}
             />
             <span
               data-motion-bar="x"
-              className="absolute inset-y-[8px] rounded-full"
+              className="absolute inset-y-[7px] rounded-full sm:inset-y-[8px]"
               aria-hidden
               style={{
                 left: TRACK_INSET_PX,
@@ -322,8 +328,8 @@ function MetricRow({
             />
             <span
               className={cn(
-                type.caption,
-                "absolute top-1/2 z-[1] flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background font-bold tabular-nums text-foreground"
+                type.micro,
+                "absolute top-1/2 z-[1] flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background font-bold tabular-nums text-foreground sm:size-6 sm:text-[12px] sm:leading-4"
               )}
               data-motion-mark
               style={{ left: savantMarkLeft(pct), "--mark-from": savantMarkLeft(0) } as CSSProperties}
@@ -340,8 +346,8 @@ function MetricRow({
       </span>
       <span
         className={cn(
-          type.bodySm,
-          "shrink-0 text-right font-semibold tabular-nums",
+          type.caption,
+          "shrink-0 text-right font-semibold tabular-nums sm:text-[13px] sm:leading-5",
           notQualified && "text-muted-foreground"
         )}
       >
@@ -1792,12 +1798,15 @@ export function PlayerPercentilePanel({
       effect="css"
       accentColor={wash?.colorA}
       accentColorB={wash?.colorB}
-      className="flex min-h-0 flex-col p-3 sm:min-h-[22rem] sm:p-4 md:min-h-[28rem]"
+      className="flex min-h-0 flex-col p-2.5 sm:p-4"
       honor={honor}
     >
-      <div className="flex items-start justify-between gap-2">
-        <h2 className={type.heading}>{viewSeason} percentile ranking</h2>
-        <div className="flex shrink-0 items-center gap-1.5">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className={cn(type.caption, "font-bold tracking-tight sm:text-[20px] sm:leading-7")}>
+          <span className="sm:hidden">{viewSeason}</span>
+          <span className="hidden sm:inline">{viewSeason} percentile ranking</span>
+        </h2>
+        <div className="flex shrink-0 items-center gap-1">
           <PercentileShareControls
             playerId={playerId}
             playerName={playerName}
@@ -1824,7 +1833,7 @@ export function PlayerPercentilePanel({
         </div>
       </div>
       {timeline.length > 0 ? (
-        <div className={cn("mt-3", busy && "opacity-80")}>
+        <div className={cn("mt-2 sm:mt-3", busy && "opacity-80")}>
           <SeasonBarSlider
             seasons={timeline}
             value={viewSeason}
@@ -1842,16 +1851,16 @@ export function PlayerPercentilePanel({
           playerName={playerName}
           failed={loadFailed}
           onRetry={() => loadSeason(viewSeason)}
-          className="py-8"
+          className="py-6 sm:py-8"
         />
       ) : (
-        <div className="flex min-h-0 flex-col gap-3 sm:gap-4">
+        <div className="mt-2 flex min-h-0 flex-col gap-2 sm:mt-0 sm:gap-4">
           {/* Always mount every category chip so season switches never flash a thin tablist. */}
           <div
             role="tablist"
             aria-label="Percentile categories"
             data-category-count={CATEGORY_META.length}
-            className="touch-scroll-x flex flex-nowrap items-center gap-x-2 overflow-x-auto border-b-2 border-foreground/70 px-1 py-1.5 sm:py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="touch-scroll-x flex flex-nowrap items-center gap-x-1 overflow-x-auto border-b border-foreground/70 px-0.5 py-1 sm:gap-x-2 sm:border-b-2 sm:px-1 sm:py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {CATEGORY_META.map((tab) => {
               const section =
@@ -1872,8 +1881,8 @@ export function PlayerPercentilePanel({
                   onClick={() => selectCategory(tab.id)}
                   disabled={busy && !viewMetrics.length}
                   className={cn(
-                    type.bodySm,
-                    "inline-flex shrink-0 items-center gap-1 px-2 py-1 font-bold tracking-tight",
+                    type.caption,
+                    "inline-flex shrink-0 items-center gap-1 px-1.5 py-0.5 font-bold tracking-tight sm:px-2 sm:py-1 sm:text-[13px] sm:leading-5",
                     selected
                       ? "text-foreground"
                       : empty
@@ -1883,7 +1892,7 @@ export function PlayerPercentilePanel({
                   )}
                 >
                   <Icon
-                    className="size-3.5 shrink-0"
+                    className="size-3 shrink-0 sm:size-3.5"
                     strokeWidth={2.25}
                     aria-hidden
                   />
@@ -1908,7 +1917,7 @@ export function PlayerPercentilePanel({
               <div
                 ref={setLayoutEl}
                 className={cn(
-                  "grid items-start gap-4",
+                  "grid items-start gap-2 sm:gap-4",
                   // Sized off the card, not the viewport: the panel sits in a
                   // narrow column on wide screens and the bars collapsed there.
                   "@min-[44rem]:grid-cols-[minmax(26rem,1fr)_minmax(16rem,20rem)]"
@@ -1929,7 +1938,7 @@ export function PlayerPercentilePanel({
                           <p
                             className={cn(
                               type.bodySm,
-                              "py-4 text-muted-foreground"
+                              "py-3 text-muted-foreground sm:py-4"
                             )}
                           >
                             {categoryEmptyCopy(section)}
@@ -1975,13 +1984,13 @@ export function PlayerPercentilePanel({
                     aria-label="Metric chart and comparisons"
                   >
                     <div
-                      className="min-w-0 overflow-hidden rounded-md border border-border/60 frost-surface-muted p-3"
+                      className="min-w-0 overflow-hidden rounded-md border border-border/60 frost-surface-muted p-2.5 sm:p-3"
                       style={{
                         borderLeftColor: accent,
                         borderLeftWidth: 2,
                       }}
                     >
-                      <div className="mb-2 flex flex-col gap-0.5 border-b border-border/50 pb-2">
+                      <div className="mb-1.5 flex items-baseline justify-between gap-2 border-b border-border/50 pb-1.5 sm:mb-2 sm:flex-col sm:gap-0.5 sm:pb-2">
                         <span
                           className={cn(
                             type.caption,
@@ -1991,10 +2000,9 @@ export function PlayerPercentilePanel({
                           {active.label}
                         </span>
                         <span
-                          className={cn(type.caption, "text-muted-foreground")}
+                          className={cn(type.micro, "text-muted-foreground sm:text-[12px] sm:leading-4")}
                         >
-                          Chart & similar players
-                          {compactLayout ? " · tap again to close" : ""}
+                          {compactLayout ? "Tap again to close" : "Chart & similar"}
                         </span>
                       </div>
                       <CompComparePanel
@@ -2013,11 +2021,7 @@ export function PlayerPercentilePanel({
                       />
                     </div>
                   </aside>
-                ) : compactLayout ? (
-                  <p className={cn(type.caption, "text-muted-foreground")}>
-                    Tap a ranking to open its chart.
-                  </p>
-                ) : (
+                ) : compactLayout ? null : (
                   <p className={cn(type.caption, "text-muted-foreground")}>
                     Select a ranking to compare.
                   </p>

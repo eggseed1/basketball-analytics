@@ -71,7 +71,7 @@ export async function PlayerPercentileIsland({
       <PlayerPanelUnavailable
         label="Percentile ranking unavailable"
         detail="The league comparison source did not respond. Career and player statistics remain available below."
-        className="min-h-0 sm:min-h-[22rem] md:min-h-[28rem]"
+        className="min-h-0"
       />
     );
   }
