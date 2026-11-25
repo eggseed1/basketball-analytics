@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-11-25",
-    "retrievedAt": "2026-11-25T00:54:40.346Z",
+    "retrievedAt": "2026-11-25T20:23:16.372Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -168,29 +168,6 @@
           "href": "/players/1628370"
         },
         {
-          "playerId": "1629216",
-          "playerName": "Gabe Vincent",
-          "age": null,
-          "contractId": "cy-1629216-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1629216-2026",
-              "playerId": "1629216",
-              "franchiseId": "23",
-              "season": "2026-27",
-              "salary": 11500000,
-              "capHit": 11500000,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1629216"
-        },
-        {
           "playerId": "1643411",
           "playerName": "Darius Acuff Jr.",
           "age": null,
@@ -352,6 +329,29 @@
           "href": "/players/203486"
         },
         {
+          "playerId": "1629216",
+          "playerName": "Gabe Vincent",
+          "age": null,
+          "contractId": "cy-1629216-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1629216-2026",
+              "playerId": "1629216",
+              "franchiseId": "23",
+              "season": "2026-27",
+              "salary": 1970799,
+              "capHit": 1970799,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1629216"
+        },
+        {
           "playerId": "1642367",
           "playerName": "Jonathan Mogbo",
           "age": null,
@@ -470,11 +470,11 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 205493922,
+          "totalSalaryDollars": 195964721,
           "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 205493922,
+      "playerSalaryCommitments": 195964721,
       "playersWithSalary": 16,
       "playersWithoutSalary": 2
     },

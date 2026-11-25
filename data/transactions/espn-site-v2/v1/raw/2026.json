@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-25T00:48:57.348Z",
-  "apiCount": 445,
+  "fetchedAt": "2026-11-25T20:12:36.045Z",
+  "apiCount": 446,
   "rows": [
+    {
+      "date": "2026-11-24T08:00Z",
+      "description": "Waived C Orlando Robinson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
     {
       "date": "2026-11-23T08:00Z",
       "description": "Signed G Gabe Vincent to a rest-of-season contract.",
