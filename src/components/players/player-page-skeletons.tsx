@@ -95,7 +95,7 @@ export function PlayerPercentileSkeleton({
     >
       {showBar ? <LoadingBarSignal /> : null}
       <SkeletonPhrase context={context} label={label} />
-      <Pulse className="min-h-[26rem] flex-1 rounded-md" />
+      <Pulse className="h-[18rem] rounded-md sm:min-h-[26rem] sm:h-auto sm:flex-1" />
     </div>
   );
 }

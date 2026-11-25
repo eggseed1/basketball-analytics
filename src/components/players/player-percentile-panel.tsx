@@ -2017,6 +2017,7 @@ export function PlayerPercentilePanel({
                         onSeasonSelect={commitSeason}
                         maxOtherComps={1}
                         visibleCompRows={2}
+                        chartHeight={compactLayout ? 96 : undefined}
                         compsPending={fullPending}
                       />
                     </div>
