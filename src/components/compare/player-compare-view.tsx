@@ -836,8 +836,8 @@ function FaceSide({
   return (
     <div
       className={cn(
-        "relative flex min-w-0 flex-1 flex-col items-center px-2 pb-5 pt-6",
-        align === "left" ? "pr-8" : "pl-8"
+        "relative flex min-w-0 flex-1 flex-col items-center px-1 pb-3 pt-3 sm:px-2 sm:pb-5 sm:pt-6",
+        align === "left" ? "pr-5 sm:pr-8" : "pl-5 sm:pl-8"
       )}
     >
       <PlayerIdentity
@@ -845,24 +845,31 @@ function FaceSide({
         name={name}
         season={linkSeason}
         className="flex min-w-0 max-w-full flex-col items-center"
-        nameClassName="flex max-w-full flex-col items-center gap-1.5 text-center no-underline hover:underline"
+        nameClassName="flex max-w-full flex-col items-center gap-1 text-center no-underline hover:underline sm:gap-1.5"
       >
         <span
-          className="flex shrink-0 rounded-full p-[3px] shadow-[0_8px_24px_rgb(0_0_0/0.12)]"
+          className="flex shrink-0 rounded-full p-[2px] shadow-[0_8px_24px_rgb(0_0_0/0.12)] sm:p-[3px]"
           style={{ background: color }}
         >
           <PlayerHeadshot
             playerId={playerId}
             name={name}
             portraitUrl={portraitUrl}
+            size="md"
+            className="ring-0 sm:hidden"
+          />
+          <PlayerHeadshot
+            playerId={playerId}
+            name={name}
+            portraitUrl={portraitUrl}
             size="lg"
-            className="ring-0"
+            className="hidden ring-0 sm:block"
           />
         </span>
         <span
           className={cn(
-            type.body,
-            "mt-1 max-w-full truncate font-bold tracking-tight"
+            type.bodySm,
+            "mt-1 max-w-full truncate font-bold tracking-tight sm:text-[15px] sm:leading-6"
           )}
         >
           {name}
@@ -877,13 +884,15 @@ function FaceSide({
             {season}
           </span>
         ) : null}
-        <TeamChipRow teamKeys={teamKeys} />
+        <div className="hidden sm:block">
+          <TeamChipRow teamKeys={teamKeys} />
+        </div>
       </PlayerIdentity>
       {line ? (
         <p
           className={cn(
             type.micro,
-            "mt-1.5 max-w-full text-center font-semibold tabular-nums text-muted-foreground"
+            "mt-1 hidden max-w-full text-center font-semibold tabular-nums text-muted-foreground sm:mt-1.5 sm:block"
           )}
         >
           {line}
@@ -1355,7 +1364,7 @@ export function PlayerCompareView({
             <span
               className={cn(
                 type.caption,
-                "glass-pill glass-pill-active flex size-12 items-center justify-center rounded-full font-black uppercase tracking-wide shadow-[0_6px_18px_rgb(0_0_0/0.14)]"
+                "glass-pill glass-pill-active flex size-9 items-center justify-center rounded-full font-black uppercase tracking-wide shadow-[0_6px_18px_rgb(0_0_0/0.14)] sm:size-12"
               )}
             >
               vs
@@ -1377,8 +1386,15 @@ export function PlayerCompareView({
         </header>
         </div>
 
+        {/* Phone: key impact numbers before basis/metrics chrome. */}
+        <KeyNumbers
+          dimensions={result.dimensions}
+          aColor={aFill}
+          bColor={bFill}
+        />
+
         <div
-          className="flex min-w-0 flex-wrap items-end justify-between gap-3 border-y border-border/60 px-3 py-3 sm:px-5"
+          className="flex min-w-0 flex-wrap items-end justify-between gap-3 border-y border-border/60 px-3 py-2.5 sm:px-5 sm:py-3"
           data-capture-exclude=""
         >
           <div className="flex min-w-0 flex-wrap items-end gap-3">
@@ -1432,12 +1448,6 @@ export function PlayerCompareView({
             ))}
           </div>
         ) : null}
-
-        <KeyNumbers
-          dimensions={result.dimensions}
-          aColor={aFill}
-          bColor={bFill}
-        />
 
         <div
           className="border-b border-border/60 px-3 py-3 sm:px-5"

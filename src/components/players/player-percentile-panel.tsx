@@ -1673,8 +1673,11 @@ export function PlayerPercentilePanel({
     "impact"
   );
   const [expanded, setExpanded] = useState(false);
-  /** Chart/comps panel; toggleable when the list+chart stack (phone / tablet). */
-  const [detailOpen, setDetailOpen] = useState(true);
+  /**
+   * Chart/comps panel. Closed by default on phone/tablet so the first
+   * viewport shows Impact bars, not a chart that pushes rankings below the fold.
+   */
+  const [detailOpen, setDetailOpen] = useState(false);
   const [layoutEl, setLayoutEl] = useState<HTMLDivElement | null>(null);
   const compactLayout = useCompactPercentileLayout(layoutEl);
   const accent = chartTheme.teamColor(viewTeamKey).color;

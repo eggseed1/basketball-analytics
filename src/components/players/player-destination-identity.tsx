@@ -208,14 +208,15 @@ export async function PlayerDestinationIdentity({
       <section
         id="overview"
         data-motion-eager
-        className="scroll-mt-16 flex flex-col gap-4"
+        className="scroll-mt-16 flex flex-col gap-3 sm:gap-4"
         aria-label={t("sectionOverview")}
       >
         <div
           className={cn(
-            "grid items-start gap-4",
+            // Phone: percentiles (hero) first — identity is secondary chrome.
+            "flex flex-col-reverse items-stretch gap-3",
             useTwoColumnLayout &&
-              "min-[800px]:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]"
+              "min-[800px]:grid min-[800px]:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)] min-[800px]:items-start min-[800px]:gap-4"
           )}
         >
           <div className="flex w-full min-w-0 flex-col gap-3">
