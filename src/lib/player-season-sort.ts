@@ -109,3 +109,18 @@ export function defaultPlayerSeasonSortDir(
   // DRBL/100 and WAR1 default to descending.
   return "desc";
 }
+
+/** Sorts where the 500-minute Explore floor hides published DRBL/WAR1 rows. */
+const DRBL_BOARD_SORT_KEYS = new Set<PlayerSeasonSortKey>([
+  "drbl100",
+  "drblO",
+  "drblD",
+  "r1Points",
+  "r1WinEquivalents",
+]);
+
+export function isDrblBoardSortKey(
+  key: PlayerSeasonSortKey | undefined
+): boolean {
+  return key != null && DRBL_BOARD_SORT_KEYS.has(key);
+}

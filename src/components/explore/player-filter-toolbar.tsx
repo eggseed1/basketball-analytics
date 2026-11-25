@@ -29,7 +29,12 @@ import {
 } from "@/lib/explore-players-display";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { listDraftClassYears, groupDraftClassYearsByDecade } from "@/lib/draft-class";
+import { isDrblSeason } from "@/data/drbl/season-registry";
 import { defaultExploreMinimumMinutesSync } from "@/lib/player-board-season-sync";
+import {
+  isDrblBoardSortKey,
+  parsePlayerSeasonSortKey,
+} from "@/lib/player-season-sort";
 import { cn } from "@/lib/utils";
 import { usePlayerBoardI18n } from "@/components/explore/use-player-board-i18n";
 
@@ -109,7 +114,16 @@ export function PlayerFilterToolbar({
   );
 
   const season = searchParams.get("season") ?? defaultSeason;
-  const defaultMinMinutes = String(defaultExploreMinimumMinutesSync(season));
+  const sortKey = parsePlayerSeasonSortKey(
+    searchParams.get("sort") ?? undefined
+  );
+  // Match Explore SSR / board API: DRBL·WAR1 boards skip the 500-min floor.
+  const preferDrblMinutes =
+    isDrblBoardSortKey(sortKey) ||
+    (sortKey == null && isDrblSeason(season));
+  const defaultMinMinutes = preferDrblMinutes
+    ? "0"
+    : String(defaultExploreMinimumMinutesSync(season));
   const team = searchParams.get("team") ?? "ALL";
   const conferenceParam = searchParams.get("conference")?.toLowerCase();
   const conference =
