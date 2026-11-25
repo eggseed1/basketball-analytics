@@ -142,7 +142,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const seasonParam = first(sp.season);
   const themeMode = parseThemeMode(themeParam);
 
-  if (!shell) return <main data-motion-page className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8"><MotionReveal /><RuntimeGameFallback gameId={gameId} /></main>;
+  if (!shell) return <main data-motion-page className="site-shell flex flex-1 flex-col gap-6 py-4 sm:py-6 md:py-8"><MotionReveal /><RuntimeGameFallback gameId={gameId} /></main>;
 
   const presentation = validateGamePresentation(shell.game);
   const applyEraTheme = fromHistory || themeParam === "historical" || themeParam === "modern";

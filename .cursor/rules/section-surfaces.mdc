@@ -64,7 +64,7 @@ Subtabs are full destinations, not overview clones.
 | Overview leftovers | Do not re-embed full Career + Stats + Historical + dual comps on Overview |
 | Cross-links | Open-canvas "Go deeper" with TextLinks / SectionLinks to other views |
 
-Spacing: `gap-8` (`space.section`) between major sections; `gap-3`–`gap-4` inside a section.
+Spacing: `gap-5 sm:gap-6 md:gap-8` (`space.section` / `pageSectionStackClassName`) between major sections; `gap-2.5`–`gap-4` inside a section (tighter on phones).
 
 ## Overview vs deep tabs (player page)
 

@@ -31,10 +31,10 @@ export function PageHeader({
   return (
     <header
       data-slot="page-header"
-      className={cn("flex flex-col gap-3 sm:gap-4", className)}
+      className={cn("flex flex-col gap-2 sm:gap-3", className)}
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+        <div className="min-w-0 flex flex-col gap-1">
           <h1 className={cn(type.title1, "min-w-0 wrap-break-word")}>
             {title}
           </h1>
@@ -77,11 +77,11 @@ export function SectionHeader({
     <div
       data-slot="section-header"
       className={cn(
-        "flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between",
+        "flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-2",
         className
       )}
     >
-      <div className="min-w-0 flex flex-col gap-1">
+      <div className="min-w-0 flex flex-col gap-0.5 sm:gap-1">
         <h2 className={type.heading}>{title}</h2>
         {description ? (
           <p className={cn(type.bodySm, "max-w-2xl text-muted-foreground")}>

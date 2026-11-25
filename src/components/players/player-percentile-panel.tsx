@@ -1789,7 +1789,7 @@ export function PlayerPercentilePanel({
       effect="css"
       accentColor={wash?.colorA}
       accentColorB={wash?.colorB}
-      className="flex min-h-[28rem] flex-col p-4"
+      className="flex min-h-0 flex-col p-3 sm:min-h-[22rem] sm:p-4 md:min-h-[28rem]"
       honor={honor}
     >
       <div className="flex items-start justify-between gap-2">
@@ -1842,13 +1842,13 @@ export function PlayerPercentilePanel({
           className="py-8"
         />
       ) : (
-        <div className="flex min-h-0 flex-col gap-4">
+        <div className="flex min-h-0 flex-col gap-3 sm:gap-4">
           {/* Always mount every category chip so season switches never flash a thin tablist. */}
           <div
             role="tablist"
             aria-label="Percentile categories"
             data-category-count={CATEGORY_META.length}
-            className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b-2 border-foreground/70 px-1 py-2"
+            className="touch-scroll-x flex flex-nowrap items-center gap-x-2 overflow-x-auto border-b-2 border-foreground/70 px-1 py-1.5 sm:py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {CATEGORY_META.map((tab) => {
               const section =
@@ -1870,7 +1870,7 @@ export function PlayerPercentilePanel({
                   disabled={busy && !viewMetrics.length}
                   className={cn(
                     type.bodySm,
-                    "inline-flex items-center gap-1 px-2 py-1 font-bold tracking-tight",
+                    "inline-flex shrink-0 items-center gap-1 px-2 py-1 font-bold tracking-tight",
                     selected
                       ? "text-foreground"
                       : empty

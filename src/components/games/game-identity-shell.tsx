@@ -144,7 +144,7 @@ function BigScore({ value, muted, winner, side }: { value: number; muted: boolea
   return (
     <span
       className={cn(
-        "relative text-[36px] font-bold leading-none tracking-tight tabular-nums sm:text-[60px]",
+        "relative text-[28px] font-bold leading-none tracking-tight tabular-nums sm:text-[48px] md:text-[60px]",
         muted && "text-muted-foreground/70"
       )}
     >
@@ -412,7 +412,7 @@ export function GameIdentityShell({
       awayTeamKey={gameSideBrandKey(shown, "away")}
       homeTeamKey={gameSideBrandKey(shown, "home")}
       intensity="hero"
-      className="flex flex-col gap-5 p-4 sm:gap-6 sm:p-6"
+      className="flex flex-col gap-3 p-3 sm:gap-5 sm:p-5 md:gap-6 md:p-6"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className={cn(type.caption, "font-semibold text-muted-foreground")}>

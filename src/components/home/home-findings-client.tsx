@@ -64,7 +64,7 @@ export function HomeFindingsClient({ initial }: { initial: Payload }) {
   const asOf = todayIsoDate();
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
+    <section className="sports-card flex flex-col gap-3 p-3 sm:p-4 sm:p-[21px]">
       <div className="flex items-center justify-between gap-3">
         <h2 className="type-heading">{t("recentInsights")}</h2>
         <SectionLink href="/findings">{tCommon("seeAll")}</SectionLink>

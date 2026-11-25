@@ -64,7 +64,7 @@ export function TeamVizQuarters({ rows, season }: { rows: TeamVizRow[]; season: 
 
   if (table.length < 8) {
     return (
-      <p className={cn(type.bodySm, "sports-card px-4 py-10 text-center text-muted-foreground")}>
+      <p className={cn(type.bodySm, "sports-card px-3 py-6 sm:px-4 sm:py-10 text-center text-muted-foreground")}>
         Not enough games with quarter scores in {season} yet.
       </p>
     );

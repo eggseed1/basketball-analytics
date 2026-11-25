@@ -40,7 +40,7 @@ export function HomeTopPerformersClient() {
   if (!data) {
     return (
       <div
-        className="sports-card flex h-72 flex-col gap-3 p-4"
+        className="sports-card flex h-56 flex-col sm:h-72 gap-3 p-3 sm:p-4"
         aria-busy="true"
         aria-live="polite"
         aria-label={initialLoadingPhrase("home")}

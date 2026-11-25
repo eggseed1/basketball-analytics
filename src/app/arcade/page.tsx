@@ -97,7 +97,7 @@ export default async function ArcadePage() {
   const more = resolveGames(MORE_GAMES, t);
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-8 py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <PageHeader title={t("hubTitle")} subtitle={t("hubSubtitle")} />
 

@@ -55,7 +55,7 @@ async function PlayerRaceTrackerBody({
       error: error instanceof Error ? error.message : String(error),
     });
     return (
-      <div className="sports-card px-4 py-10 text-center">
+      <div className="sports-card px-3 py-6 sm:px-4 sm:py-10 text-center">
         <p className={cn(type.bodySm, "text-muted-foreground")}>
           Player race tracker unavailable for {season}. Try another season or
           metric.

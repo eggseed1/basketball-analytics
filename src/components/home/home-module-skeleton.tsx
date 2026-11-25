@@ -82,7 +82,7 @@ export function HomeModuleSkeleton({ id, phase }: { id: HomeModuleId; phase?: Ho
       data-skeleton
       aria-hidden
       className={cn(
-        "sports-card flex flex-col gap-3 overflow-hidden p-4",
+        "sports-card flex flex-col gap-3 overflow-hidden p-3 sm:p-4",
         id === "moment" ? "h-44" : HEIGHT[id]
       )}
     >

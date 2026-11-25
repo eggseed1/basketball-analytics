@@ -398,7 +398,7 @@ export async function SeasonPulsePanel() {
   const share = pulse.gamesPlayed / REGULAR_SEASON_GAMES;
 
   return (
-    <section className="sports-card flex flex-col gap-5 p-4">
+    <section className="sports-card flex flex-col gap-5 p-3 sm:p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className={type.heading}>{complete ? `${season} in review` : `${season} so far`}</h2>
         <SectionLink href="/standings">Standings</SectionLink>

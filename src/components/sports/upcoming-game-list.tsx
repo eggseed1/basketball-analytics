@@ -79,7 +79,7 @@ function ListBoard({
         ? "The live scoreboard is temporarily unavailable. Try again in a moment."
         : "No upcoming tip-offs on the board yet. The next slate usually posts for October.";
     return (
-      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
+      <p className="rounded-md border border-dashed border-border px-3 py-5 sm:px-4 sm:py-8 text-center text-[14px] text-muted-foreground">
         {message}
       </p>
     );

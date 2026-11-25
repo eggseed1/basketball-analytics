@@ -136,7 +136,7 @@ export function FindingsArchiveView({ days }: { days: FindingsNight[] }) {
                 </span>
               ) : null}
             </h2>
-            <div className="sports-card sports-card-subtle p-4" style={subtleGlassStyle}>
+            <div className="sports-card sports-card-subtle p-3 sm:p-4" style={subtleGlassStyle}>
               <div data-motion-list className="grid min-w-0 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {orderByHeight(day.insights, 3).map((finding) => (
                   <InsightCard key={finding.id} insight={finding} asOf={null} />

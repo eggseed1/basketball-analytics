@@ -499,7 +499,7 @@ export function TopPerformersPanel({
               : "/explore/players?sort=darkoDpm";
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4">
+    <section className="sports-card flex flex-col gap-3 p-3 sm:p-4">
       <div className="flex flex-col gap-3">
         <div className="flex min-w-0 items-start justify-between gap-3">
           <h2 className="type-heading min-w-0 whitespace-nowrap">

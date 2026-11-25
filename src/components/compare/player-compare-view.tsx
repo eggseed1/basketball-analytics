@@ -1092,7 +1092,7 @@ function TopicPanel({
   return (
     <>
       {visuals.length ? (
-        <div className="grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-4 md:grid-cols-2">
+        <div className="grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-3 md:grid-cols-2">
           {visuals}
         </div>
       ) : null}
@@ -1293,7 +1293,7 @@ export function PlayerCompareView({
   const scatterTile = (preset: ScatterPreset, wide = true) =>
     scatterSides.some(Boolean) ? (
       <ComparePeerScatter
-        className={cn(FROST_TILE, "p-4", wide && "md:col-span-2")}
+        className={cn(FROST_TILE, "p-3 sm:p-4", wide && "md:col-span-2")}
         preset={preset}
         sides={scatterSides}
         a={{ name: aShort, color: aFill, values: context.a.scatterSelf }}
@@ -1465,12 +1465,12 @@ export function PlayerCompareView({
 
             <div
               className={cn(
-                "grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-4",
+                "grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-3",
                 showRadar && "md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
               )}
             >
               {showRadar ? (
-                <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+                <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
                   <PlayerCompareRadarLazy
                     axes={radarAxes}
                     dimensions={visibleDimensions}
@@ -1481,7 +1481,7 @@ export function PlayerCompareView({
                   />
                 </div>
               ) : null}
-              <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+              <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
                 <CategoryEdges
                   dimensions={edgeDimensions}
                   aName={aShort}
@@ -1512,7 +1512,7 @@ export function PlayerCompareView({
             aFill={aFill}
             bFill={bFill}
           >
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+            <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
               <ScoringMix
                 dims={dimsById}
                 aName={aShort}
@@ -1522,7 +1522,7 @@ export function PlayerCompareView({
                 basisPhrase={BASIS_PHRASE[basis]}
               />
             </div>
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+            <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
               <ShootingSplits
                 dims={dimsById}
                 aName={aShort}
@@ -1546,7 +1546,7 @@ export function PlayerCompareView({
             aFill={aFill}
             bFill={bFill}
           >
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+            <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
               <Playmaking
                 dims={dimsById}
                 aName={aShort}
@@ -1587,8 +1587,8 @@ export function PlayerCompareView({
         ) : null}
 
         {tab === "career" ? (
-          <div className="border-b border-border/60 p-3 sm:px-5 sm:py-4">
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+          <div className="border-b border-border/60 p-3 sm:px-5 sm:py-3">
+            <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
               {context.a.arc.length || context.b.arc.length ? (
                 <CompareCareerArc
                   a={{

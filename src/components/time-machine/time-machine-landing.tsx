@@ -305,7 +305,7 @@ export function TimeMachineLanding({
   );
 
   return (
-    <main data-motion-page className="site-shell flex flex-1 flex-col gap-12 py-8 sm:py-12">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-6 py-4 sm:gap-8 sm:py-8 md:gap-10 md:py-10">
       <MotionReveal />
       <section className="sports-card relative z-[2] mx-auto w-full max-w-4xl p-4 sm:p-5">
         <header>

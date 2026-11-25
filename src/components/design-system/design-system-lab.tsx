@@ -71,7 +71,7 @@ const SURFACES: Array<{ id: SurfaceStyle; label: string }> = [
 
 const TYPE_ROWS = [
   { name: "Display LG", className: type.displayLg, meta: "40–48 / 700", sample: "118.4" },
-  { name: "Title 1", className: type.title1, meta: "32 / 40 / 700", sample: "Luka Dončić" },
+  { name: "Title 1", className: type.title1, meta: "24 / 30 → 32 / 40 @sm · 700", sample: "Luka Dončić" },
   { name: "Display", className: type.display, meta: "32 / 40 / 700", sample: "Final score" },
   { name: "Title 2 / Page", className: type.title2, meta: "24 / 32 / 600", sample: "Upcoming Games" },
   { name: "Heading", className: type.heading, meta: "20 / 28 / 700", sample: "Offense" },

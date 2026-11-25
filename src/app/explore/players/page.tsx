@@ -166,7 +166,7 @@ async function ExplorePlayersBoard({ load }: { load: Promise<BoardLoad> }) {
     return (
       <div className="query-updating-content flex flex-col gap-3">
         <PlayerBoardHealthBanner health={view.health} />
-        <section className="sports-card px-4 py-8 text-center text-[14px] text-muted-foreground">
+        <section className="sports-card px-3 py-5 sm:px-4 sm:py-8 text-center text-[14px] text-muted-foreground">
           {emptyMessage}
         </section>
       </div>
@@ -211,7 +211,7 @@ export default async function ExplorePlayersPage({
   const load = loadBoard(params, defaultSeason);
 
   return (
-    <main data-motion-page className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <PageHeader
         title={t("title")}

@@ -57,7 +57,7 @@ export function HomeStandingsClient({
     const context = race ? "standings-viz" : "standings";
     return (
       <div
-        className="sports-card flex flex-col gap-3 p-4"
+        className="sports-card flex flex-col gap-3 p-3 sm:p-4"
         aria-busy="true"
         aria-live="polite"
         aria-label={initialLoadingPhrase(context)}

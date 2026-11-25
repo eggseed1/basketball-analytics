@@ -186,7 +186,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
   const nextSeason = adjacentSeason(season, 1, seasons);
 
   return (
-    <main data-motion-page className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-6 py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <HistoryClientShell>
         <header className="flex flex-col gap-4">

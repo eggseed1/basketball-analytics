@@ -64,7 +64,7 @@ export default async function AwardHistoryPage({
       : t("colWinner");
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <TransitionLink
         href="/awards"

@@ -477,17 +477,17 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           </Suspense>
 
           {!rankTeamId ? null : seasonsError ? (
-                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+                <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
                   {seasonsError}
                 </p>
               ) : loaded.error ? (
-                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+                <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
                   {loaded.error}
                 </p>
               ) : loaded.ranking ? (
                 <TeamRankWithEvidence ranking={loaded.ranking} />
               ) : (
-                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+                <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
                   {t("couldNotRank")}
                 </p>
               )}
@@ -548,13 +548,13 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         </Suspense>
 
         {!teamA || !teamB ? null : loaded.error ? (
-          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+          <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
             {loaded.error}
           </p>
         ) : loaded.comparison ? (
           <TeamCompareWithEvidence comparison={loaded.comparison} />
         ) : (
-          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+          <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
             {t("couldNotBuildTeam")}
           </p>
         )}
@@ -815,7 +815,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         <p
           className={cn(
             type.bodySm,
-            "rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground"
+            "rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-muted-foreground"
           )}
         >
           {t("couldNotLoad", {

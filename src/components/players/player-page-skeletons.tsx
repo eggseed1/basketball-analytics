@@ -89,7 +89,7 @@ export function PlayerPercentileSkeleton({
   return (
     <div
       data-skeleton
-      className="flex min-h-[28rem] flex-col gap-3"
+      className="flex min-h-0 flex-col gap-3 sm:min-h-[22rem] md:min-h-[28rem]"
       aria-busy="true"
       aria-live="polite"
     >

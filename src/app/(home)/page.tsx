@@ -356,7 +356,7 @@ export default async function HomePage() {
     <main
       data-motion-page
       data-home-stack
-      className="site-shell flex flex-col gap-5 py-5 sm:py-7"
+      className="site-shell flex flex-col gap-4 py-4 sm:gap-5 sm:py-6 md:py-7"
       data-season-phase={phase}
     >
       <JsonLd data={websiteJsonLd()} />

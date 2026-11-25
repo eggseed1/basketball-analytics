@@ -620,7 +620,7 @@ export function Gamefeed({
                 <MonthGrid monthKey={monthKey} games={monthGames} />
               </ScoreDelayScope>
               {monthGames.length === 0 ? (
-                <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
+                <p className="rounded-md border border-dashed border-border px-3 py-5 sm:px-4 sm:py-8 text-center text-[14px] text-muted-foreground">
                   {t("emptyMonthBefore", { month: monthLabel(monthKey, locale) })}
                   <TransitionLink
                     href={scoresHref({ view: "list" })}
@@ -647,7 +647,7 @@ export function Gamefeed({
                 <>
                   <WeekBoard weekStart={weekStart} games={games} />
                   {games.length === 0 ? (
-                    <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
+                    <p className="rounded-md border border-dashed border-border px-3 py-5 sm:px-4 sm:py-8 text-center text-[14px] text-muted-foreground">
                       {t("emptyWeekBefore")}
                       <TransitionLink
                         href={scoresHref({ view: "list" })}

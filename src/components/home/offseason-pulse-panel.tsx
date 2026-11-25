@@ -61,7 +61,7 @@ export async function OffseasonPulsePanel({
   return (
     <section
       aria-label={title}
-      className="sports-card flex flex-col gap-3 p-4"
+      className="sports-card flex flex-col gap-3 p-3 sm:p-4"
     >
       <div className="flex items-center justify-between gap-2">
         <h2 className={type.heading}>{title}</h2>

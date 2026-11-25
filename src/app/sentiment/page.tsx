@@ -57,7 +57,7 @@ export default async function SentimentPage({ searchParams }: PageProps) {
   }
 
   return (
-    <main data-motion-page className="site-shell py-6 sm:py-8">
+    <main data-motion-page className="site-shell py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <SentimentCenterView
         feed={feed}

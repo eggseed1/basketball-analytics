@@ -167,7 +167,7 @@ export function StandingsTrackerView({
 
   if (payload.teams.every((team) => team.points.length === 0)) {
     return (
-      <div className="sports-card px-4 py-10 text-center">
+      <div className="sports-card px-3 py-6 sm:px-4 sm:py-10 text-center">
         <p className={cn(type.bodySm, "text-muted-foreground")}>
           {payload.warning ??
             `No completed regular-season games for ${payload.requestedSeason} yet.`}

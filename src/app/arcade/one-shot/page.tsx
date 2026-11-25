@@ -16,7 +16,7 @@ export async function generateMetadata() {
 export default async function OneShotPage() {
   const t = await getTranslations("ArcadeOneShot");
   return (
-    <main data-motion-page className="flex flex-col gap-5 py-6 sm:py-8 [&:has([data-os-play])_[data-os-page-intro]]:sr-only">
+    <main data-motion-page className="flex flex-col gap-5 py-4 sm:py-6 md:py-8 [&:has([data-os-play])_[data-os-page-intro]]:sr-only">
       <MotionReveal />
       <div data-os-page-intro className="site-shell">
         <PageHeader

@@ -232,16 +232,16 @@ export async function TeamDestinationIdentity({
         backdropBlur={16}
         accentColor={wash?.colorA}
         accentColorB={wash?.colorB}
-        className="px-4 py-5 sm:px-5"
+        className="px-3 py-3 sm:px-5 sm:py-5"
       >
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex min-w-0 flex-1 basis-[18rem] flex-wrap items-center gap-4">
             {useHistoricalMark && historicalBrand ? (
-              <HistoricalTeamMark brand={historicalBrand} size="xl" priority />
+              <HistoricalTeamMark brand={historicalBrand} size="lg" priority />
             ) : (
               <TeamLogo
                 teamKey={team.abbreviation}
-                size="xl"
+                size="lg"
                 priority
                 logoUrl={historicalBrand?.logoUrl}
                 logoSource={historicalBrand?.source}
@@ -260,7 +260,7 @@ export async function TeamDestinationIdentity({
                 {team.conference ? ` · ${team.conference}` : ""}
                 {headerDivision ? ` · ${headerDivision}` : standing ? ` · #${standing.rank}` : null}
               </p>
-              <h1 className={cn(type.display, "mt-0.5")}>{displayName}</h1>
+              <h1 className={cn(type.title1, "mt-0.5")}>{displayName}</h1>
               {franchise ? (
                 <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
                   <span>
@@ -348,7 +348,7 @@ export async function TeamDestinationIdentity({
           />
         </div>
 
-        <dl data-hover-group className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+        <dl data-hover-group className="mt-3 grid grid-cols-2 gap-2 sm:mt-5 sm:grid-cols-3 lg:grid-cols-6">
           {cells.map((cell) => (
             <div
               key={`${cell.label}-${cell.value}`}

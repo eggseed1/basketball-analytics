@@ -144,7 +144,7 @@ export function WatchlistPanel({ compact = false }: { compact?: boolean }) {
           className={cn(
             type.bodySm,
             "flex items-center justify-center text-muted-foreground",
-            compact ? "min-h-10" : "min-h-[132px]"
+            compact ? "min-h-10" : "min-h-[96px] sm:min-h-[132px]"
           )}
         >
           Loading…

@@ -49,7 +49,7 @@ export function HomeHotColdClient() {
   if (!data) {
     return (
       <div
-        className="sports-card flex h-56 flex-col gap-3 p-4"
+        className="sports-card flex h-48 flex-col gap-3 p-3 sm:h-56 sm:p-4"
         aria-busy="true"
         aria-live="polite"
         aria-label={initialLoadingPhrase("explore-hot-cold")}
@@ -66,7 +66,7 @@ export function HomeHotColdClient() {
   }
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4">
+    <section className="sports-card flex flex-col gap-3 p-3 sm:p-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 className="type-title">Hot & Cold</h2>

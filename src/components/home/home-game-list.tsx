@@ -26,7 +26,7 @@ export function HomeGameList({
       </div>
 
       {games.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-4 py-8 text-sm text-muted-foreground">
+        <p className="rounded-lg border border-dashed border-border px-3 py-5 sm:px-4 sm:py-8 text-sm text-muted-foreground">
           {emptyLabel}
         </p>
       ) : (

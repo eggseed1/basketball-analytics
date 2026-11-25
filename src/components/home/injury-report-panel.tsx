@@ -109,7 +109,7 @@ export function InjuryReportPanel({ entries, today }: { entries: InjuryEntry[]; 
   const top = entries.slice(0, TOP);
 
   return (
-    <section aria-labelledby="injury-report-title" className="sports-card flex flex-col gap-2 p-4">
+    <section aria-labelledby="injury-report-title" className="sports-card flex flex-col gap-2 p-3 sm:p-4">
       <div>
         <div className="flex min-w-0 items-start justify-between gap-3">
           <h2 id="injury-report-title" className="type-heading min-w-0">Injury report</h2>
