@@ -51,6 +51,16 @@
 				"limit": 12,
 				"period": 60
 			}
+		},
+		{
+			// Cookie-less HTML shells (/scores, /explore/…). Bots rotate IPs, so this
+			// only caps each address; cloud-ASN refuse-origin is the hard stop.
+			"name": "HTML_SHELL_RATE_LIMITER",
+			"namespace_id": "1002",
+			"simple": {
+				"limit": 40,
+				"period": 60
+			}
 		}
 	],
 	"triggers": {
