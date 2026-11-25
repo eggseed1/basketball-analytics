@@ -550,7 +550,7 @@ async function servePage(
 
   if (refuseOrigin) {
     console.warn(JSON.stringify({ drbl_abuse: true, kind: "refuse-origin", path: entry.pathname }));
-    return botGuardResponse("fake-browser");
+    return botGuardResponse("cache-only");
   }
 
   const response = await originFetch(request, env);
@@ -723,7 +723,7 @@ const worker = {
 
     if (shouldRefuseOrigin(guardInput(request))) {
       console.warn(JSON.stringify({ drbl_abuse: true, kind: "refuse-origin", path: pathname }));
-      return botGuardResponse("fake-browser");
+      return botGuardResponse("cache-only");
     }
 
     const response = await originFetch(request, env);

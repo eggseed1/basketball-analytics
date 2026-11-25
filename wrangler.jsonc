@@ -58,7 +58,7 @@
 			"name": "HTML_SHELL_RATE_LIMITER",
 			"namespace_id": "1002",
 			"simple": {
-				"limit": 40,
+				"limit": 20,
 				"period": 60
 			}
 		}
