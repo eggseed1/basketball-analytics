@@ -98,68 +98,83 @@ const CATEGORY_META: Array<{
   icon: CATEGORY_ICONS[id],
 }));
 
-/** Fixed label + value columns so every Savant track shares the same start/end. */
-const RANK_GRID =
-  "grid grid-cols-[4.75rem_minmax(0,1fr)_2.75rem] items-center gap-x-1.5 sm:grid-cols-[6.75rem_minmax(0,1fr)_3.5rem] sm:gap-x-2";
+/**
+ * Desktop: fixed label + value columns so every Savant track shares geometry.
+ * Phone: label/value sit above a full-width track — a 3-col row leaves a stub
+ * of bar that reads short and thick.
+ */
+const RANK_GRID_DESKTOP =
+  "sm:grid sm:grid-cols-[6.75rem_minmax(0,1fr)_3.5rem] sm:items-center sm:gap-x-2";
 
-/** Track inset matches pip radius (12px) so 0 / 50 / 100 share one geometry. */
-const TRACK_INSET_PX = 12;
+/** Track inset matches pip radius so 0 / 50 / 100 share one geometry. */
+const TRACK_INSET_PX = 10;
+const TRACK_INSET_DESKTOP_PX = 12;
 
-/** 24px pip stays on the track (Savant). */
-function savantMarkLeft(pct: number) {
+/** Pip stays on the track (Savant). */
+function savantMarkLeft(pct: number, inset = TRACK_INSET_PX) {
   const t = Math.max(0, Math.min(100, pct)) / 100;
-  return `calc(${TRACK_INSET_PX}px + (100% - ${TRACK_INSET_PX * 2}px) * ${t})`;
+  return `calc(${inset}px + (100% - ${inset * 2}px) * ${t})`;
+}
+
+function ScaleLegendMarks({ showTicks }: { showTicks?: boolean }) {
+  return (
+    <>
+      {(
+        [
+          // Edge labels pin to track ends so Poor/Great never collide with Avg.
+          ["Poor", SAVANT_LEGEND.poor, 0, "0%"],
+          ["Avg", SAVANT_LEGEND.average, 50, "50%"],
+          ["Great", SAVANT_LEGEND.great, 100, "100%"],
+        ] as const
+      ).map(([label, color, pct, left]) => (
+        <span
+          key={label}
+          className="absolute bottom-0 flex flex-col items-center leading-none"
+          style={{
+            left,
+            color,
+            transform:
+              pct === 0
+                ? "translateX(0)"
+                : pct === 100
+                  ? "translateX(-100%)"
+                  : "translateX(-50%)",
+          }}
+        >
+          <span
+            className={cn(
+              type.micro,
+              "font-bold uppercase leading-none tracking-wide sm:text-[12px] sm:leading-4",
+              pct === 50 && "@max-[7.75rem]:hidden"
+            )}
+          >
+            {label}
+          </span>
+          {showTicks ? (
+            <svg width="8" height="6" viewBox="0 0 8 6" aria-hidden>
+              <polygon points="4,6 0,0 8,0" fill="currentColor" />
+            </svg>
+          ) : null}
+        </span>
+      ))}
+    </>
+  );
 }
 
 function ScaleLegend() {
   return (
-    <div className={cn(RANK_GRID, "px-1.5 sm:px-4")} aria-hidden>
-      <span />
-      <span className="@container relative h-[16px] w-full min-w-0 overflow-hidden sm:h-[22px]">
-        {(
-          [
-            // Edge labels pin to track ends so Poor/Great never collide with Avg.
-            ["Poor", SAVANT_LEGEND.poor, 0, "0%"],
-            ["Avg", SAVANT_LEGEND.average, 50, "50%"],
-            ["Great", SAVANT_LEGEND.great, 100, "100%"],
-          ] as const
-        ).map(([label, color, pct, left]) => (
-          <span
-            key={label}
-            className="absolute bottom-0 flex flex-col items-center leading-none"
-            style={{
-              left,
-              color,
-              transform:
-                pct === 0
-                  ? "translateX(0)"
-                  : pct === 100
-                    ? "translateX(-100%)"
-                    : "translateX(-50%)",
-            }}
-          >
-            <span
-              className={cn(
-                type.micro,
-                "font-bold uppercase leading-none tracking-wide sm:text-[12px] sm:leading-4",
-                pct === 50 && "@max-[7.75rem]:hidden"
-              )}
-            >
-              {label}
-            </span>
-            <svg
-              className="hidden sm:block"
-              width="8"
-              height="6"
-              viewBox="0 0 8 6"
-              aria-hidden
-            >
-              <polygon points="4,6 0,0 8,0" fill="currentColor" />
-            </svg>
-          </span>
-        ))}
-      </span>
-      <span />
+    <div className="px-1.5 sm:px-4" aria-hidden>
+      {/* Phone: legend spans the full track width under the stacked rows. */}
+      <div className="@container relative h-[14px] w-full min-w-0 overflow-hidden sm:hidden">
+        <ScaleLegendMarks />
+      </div>
+      <div className={cn("hidden", RANK_GRID_DESKTOP)}>
+        <span />
+        <span className="@container relative h-[22px] w-full min-w-0 overflow-hidden">
+          <ScaleLegendMarks showTicks />
+        </span>
+        <span />
+      </div>
     </div>
   );
 }
@@ -243,6 +258,128 @@ function MetricRow({
       ? `${metric.label}, ${Math.round(metric.percentile)}th percentile, ${metric.display}`
       : `${metric.label}, ${metric.display}`;
 
+  function Label() {
+    return (
+      <span
+        className={cn(
+          type.caption,
+          "min-w-0 truncate text-left font-semibold sm:text-[13px] sm:leading-5",
+          notQualified && "text-muted-foreground"
+        )}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <StatTooltip nestable stat={metric.id} className="whitespace-nowrap">
+          {metric.label}
+        </StatTooltip>
+      </span>
+    );
+  }
+
+  function Value() {
+    return (
+      <span
+        className={cn(
+          type.caption,
+          "shrink-0 text-right font-semibold tabular-nums sm:text-[13px] sm:leading-5",
+          notQualified && "text-muted-foreground"
+        )}
+      >
+        {metric.display}
+      </span>
+    );
+  }
+
+  function Track({
+    inset,
+    barClass,
+    pipClass,
+  }: {
+    inset: number;
+    barClass: string;
+    pipClass: string;
+  }) {
+    if (notQualified) {
+      return (
+        <>
+          <span
+            className={cn("absolute rounded-full bg-foreground/[0.06]", barClass)}
+            aria-hidden
+            style={{ left: inset, right: inset }}
+          />
+          <span
+            className={cn("absolute rounded-full", barClass)}
+            aria-hidden
+            style={{
+              left: inset,
+              right: inset,
+              ...NOT_QUALIFIED_HATCH,
+            }}
+          />
+          <span
+            className={cn(
+              type.micro,
+              "pointer-events-none absolute inset-0 z-[1] flex items-center justify-center font-bold uppercase tracking-[0.12em] text-muted-foreground sm:text-[12px]"
+            )}
+            aria-hidden
+          >
+            NQ
+          </span>
+        </>
+      );
+    }
+    if (!metric.showPercentile) {
+      return (
+        <span className={cn(type.caption, "text-muted-foreground")}>
+          {caption ?? "-"}
+        </span>
+      );
+    }
+    return (
+      <>
+        {([0, 50, 100] as const).map((mark) => (
+          <span
+            key={mark}
+            className="pointer-events-none absolute inset-y-0 w-px -translate-x-1/2 bg-foreground/25"
+            style={{ left: savantMarkLeft(mark, inset) }}
+            aria-hidden
+          />
+        ))}
+        <span
+          className={cn("absolute rounded-full bg-foreground/[0.08]", barClass)}
+          aria-hidden
+          style={{ left: inset, right: inset }}
+        />
+        <span
+          data-motion-bar="x"
+          className={cn("absolute rounded-full", barClass)}
+          aria-hidden
+          style={{
+            left: inset,
+            width: `calc((100% - ${inset * 2}px) * ${pct / 100})`,
+            backgroundColor: fill,
+          }}
+        />
+        <span
+          className={cn(
+            type.micro,
+            "absolute top-1/2 z-[1] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background font-bold tabular-nums text-foreground",
+            pipClass
+          )}
+          data-motion-mark
+          style={
+            {
+              left: savantMarkLeft(pct, inset),
+              "--mark-from": savantMarkLeft(0, inset),
+            } as CSSProperties
+          }
+          aria-hidden
+        >
+          {Math.round(metric.percentile)}
+        </span>
+      </>
+    );
+  }
+
   return (
     <button
       type="button"
@@ -256,102 +393,40 @@ function MetricRow({
           : baseLabel
       }
       className={cn(
-        RANK_GRID,
-        "w-full whitespace-nowrap px-1.5 py-1 text-left transition-colors sm:px-4 sm:py-1.5",
+        "w-full whitespace-nowrap px-1.5 py-1.5 text-left transition-colors sm:px-4 sm:py-1.5",
+        RANK_GRID_DESKTOP,
         selected ? "bg-foreground/8" : "hover:bg-foreground/5",
         notQualified && "opacity-90"
       )}
     >
-      <span
-        className={cn(
-          type.caption,
-          "min-w-0 truncate text-left font-semibold sm:text-[13px] sm:leading-5",
-          notQualified && "text-muted-foreground"
-        )}
-        onClick={(event) => event.stopPropagation()}
-      >
-        <StatTooltip nestable stat={metric.id} className="whitespace-nowrap">
-          {metric.label}
-        </StatTooltip>
+      {/* Phone: label + value on top, long thin track below. */}
+      <div className="flex flex-col gap-1 sm:hidden">
+        <div className="flex items-baseline justify-between gap-2">
+          <Label />
+          <Value />
+        </div>
+        <span className="relative flex h-4 w-full min-w-0 items-center overflow-visible">
+          <Track
+            inset={TRACK_INSET_PX}
+            barClass="inset-y-[5px]"
+            pipClass="size-4 text-[10px] leading-none"
+          />
+        </span>
+      </div>
+
+      {/* Desktop: single-row Savant grid. */}
+      <span className="hidden min-w-0 truncate sm:contents">
+        <Label />
       </span>
-      <span className="relative flex h-6 w-full min-w-0 items-center overflow-hidden sm:h-7">
-        {notQualified ? (
-          <>
-            <span
-              className="absolute inset-y-[7px] rounded-full bg-foreground/[0.06] sm:inset-y-[8px]"
-              aria-hidden
-              style={{ left: TRACK_INSET_PX, right: TRACK_INSET_PX }}
-            />
-            <span
-              className="absolute inset-y-[7px] rounded-full sm:inset-y-[8px]"
-              aria-hidden
-              style={{
-                left: TRACK_INSET_PX,
-                right: TRACK_INSET_PX,
-                ...NOT_QUALIFIED_HATCH,
-              }}
-            />
-            <span
-              className={cn(
-                type.micro,
-                "pointer-events-none absolute inset-0 z-[1] flex items-center justify-center font-bold uppercase tracking-[0.12em] text-muted-foreground sm:text-[12px]"
-              )}
-              aria-hidden
-            >
-              NQ
-            </span>
-          </>
-        ) : metric.showPercentile ? (
-          <>
-            {([0, 50, 100] as const).map((mark) => (
-              <span
-                key={mark}
-                className="pointer-events-none absolute inset-y-0 w-px -translate-x-1/2 bg-foreground/25"
-                style={{ left: savantMarkLeft(mark) }}
-                aria-hidden
-              />
-            ))}
-            <span
-              className="absolute inset-y-[7px] rounded-full bg-foreground/[0.08] sm:inset-y-[8px]"
-              aria-hidden
-              style={{ left: TRACK_INSET_PX, right: TRACK_INSET_PX }}
-            />
-            <span
-              data-motion-bar="x"
-              className="absolute inset-y-[7px] rounded-full sm:inset-y-[8px]"
-              aria-hidden
-              style={{
-                left: TRACK_INSET_PX,
-                width: `calc((100% - ${TRACK_INSET_PX * 2}px) * ${pct / 100})`,
-                backgroundColor: fill,
-              }}
-            />
-            <span
-              className={cn(
-                type.micro,
-                "absolute top-1/2 z-[1] flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background font-bold tabular-nums text-foreground sm:size-6 sm:text-[12px] sm:leading-4"
-              )}
-              data-motion-mark
-              style={{ left: savantMarkLeft(pct), "--mark-from": savantMarkLeft(0) } as CSSProperties}
-              aria-hidden
-            >
-              {Math.round(metric.percentile)}
-            </span>
-          </>
-        ) : (
-          <span className={cn(type.caption, "text-muted-foreground")}>
-            {caption ?? "-"}
-          </span>
-        )}
+      <span className="relative hidden h-7 w-full min-w-0 items-center overflow-hidden sm:flex">
+        <Track
+          inset={TRACK_INSET_DESKTOP_PX}
+          barClass="inset-y-[8px]"
+          pipClass="size-6 text-[12px] leading-4"
+        />
       </span>
-      <span
-        className={cn(
-          type.caption,
-          "shrink-0 text-right font-semibold tabular-nums sm:text-[13px] sm:leading-5",
-          notQualified && "text-muted-foreground"
-        )}
-      >
-        {metric.display}
+      <span className="hidden sm:contents">
+        <Value />
       </span>
     </button>
   );
