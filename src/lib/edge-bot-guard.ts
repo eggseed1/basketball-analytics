@@ -126,6 +126,8 @@ export function shouldRefuseOrigin(input: GuardRequest): boolean {
   if (verdict.block) return true;
 
   const ua = headers.get("user-agent") ?? "";
+  // Deploy / cron warmers intentionally cold-fill PAGE_CACHE from cloud IPs.
+  if (/^drbl-(?:deploy-cache-warm|keep-warm-cron)\b/i.test(ua)) return false;
   // Declared search crawlers may cold-fetch HTML (SEO); they already cannot `_rsc`.
   if (DECLARED_AGENT.test(ua)) return false;
 

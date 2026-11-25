@@ -120,6 +120,11 @@ assert.equal(
 );
 // Declared crawler on cloud ASN may still cold-fetch HTML for SEO.
 assert.equal(shouldRefuseOrigin(req("/", GOOGLEBOT, {}, { asn: 15169 })), false);
+// Deploy warmer on cloud ASN must still cold-fill PAGE_CACHE.
+assert.equal(
+  shouldRefuseOrigin(req("/games/1", "drbl-deploy-cache-warm", {}, { asn: 14061 })),
+  false
+);
 
 assert.equal(isHtmlShellPath("/explore/players"), true);
 assert.equal(isHtmlShellPath("/scores"), true);
