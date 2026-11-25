@@ -11,7 +11,14 @@ import {
   type PageHtmlCachePolicy,
 } from "./src/lib/page-html-cache-policy";
 import { decodePageHtmlKv, encodePageHtmlKv } from "./src/lib/page-html-kv-codec";
-import { botGuardMode, botGuardResponse, classifyEdgeRequest } from "./src/lib/edge-bot-guard";
+import {
+  botGuardMode,
+  botGuardResponse,
+  classifyEdgeRequest,
+  isHtmlShellPath,
+  shouldRefuseOrigin,
+  type BotGuardReason,
+} from "./src/lib/edge-bot-guard";
 
 type RateLimitBinding = {
   limit(options: { key: string }): Promise<{ success: boolean }>;
@@ -33,6 +40,8 @@ type OriginFetcher = {
 type WorkerEnv = Record<string, unknown> & {
   API_RATE_LIMITER?: RateLimitBinding;
   WRITE_API_RATE_LIMITER?: RateLimitBinding;
+  /** Anonymous HTML shells (/scores, /explore/…); keeps scraper IP storms off origin. */
+  HTML_SHELL_RATE_LIMITER?: RateLimitBinding;
   PAGE_CACHE?: PageCacheBinding;
   CF_VERSION_METADATA?: { id?: string };
   /** Fat OpenNext Worker — only used on MISS / uncached paths. */
@@ -47,6 +56,8 @@ type WorkerEnv = Record<string, unknown> & {
   /** "block" (default), "log" to only count, "off" to disable. See edge-bot-guard.ts. */
   DRBL_BOT_GUARD?: string;
 };
+
+type RequestCf = { asn?: number | string };
 
 type WorkerContext = { waitUntil(promise: Promise<unknown>): void };
 
@@ -483,16 +494,26 @@ async function matchEdgeCache(
   }
 }
 
+function guardInput(request: Request) {
+  return {
+    url: request.url,
+    headers: request.headers,
+    cf: (request as Request & { cf?: RequestCf }).cf ?? null,
+  };
+}
+
 async function servePage(
   request: Request,
   env: WorkerEnv,
   ctx: WorkerContext,
   entry: PageCacheEntry
 ): Promise<Response> {
+  const refuseOrigin = shouldRefuseOrigin(guardInput(request));
   const edgeHit = await matchEdgeCache(entry);
   if (edgeHit) {
     // Colo SWR: keep serving past fresh while one isolate re-renders.
-    if (edgeHit.stale) {
+    // Scrapers must not trigger that re-render — that was the Nov CPU bill.
+    if (edgeHit.stale && !refuseOrigin) {
       ctx.waitUntil(
         refreshPage(new Request(request), env, ctx, entry).catch(() => undefined)
       );
@@ -503,7 +524,7 @@ async function servePage(
   const raw = await env.PAGE_CACHE!.get(entry.key, "arrayBuffer").catch(() => null);
   const cached = raw ? await cachedResponse(raw, entry) : null;
   if (cached) {
-    if (cached.stale) {
+    if (cached.stale && !refuseOrigin) {
       ctx.waitUntil(refreshPage(new Request(request), env, ctx, entry).catch(() => undefined));
     }
     // Promote every KV HIT/STALE into colo Cache API so the next request skips
@@ -525,6 +546,11 @@ async function servePage(
       })()
     );
     return cached.response;
+  }
+
+  if (refuseOrigin) {
+    console.warn(JSON.stringify({ drbl_abuse: true, kind: "refuse-origin", path: entry.pathname }));
+    return botGuardResponse("fake-browser");
   }
 
   const response = await originFetch(request, env);
@@ -646,12 +672,16 @@ const worker = {
     const { pathname } = url;
     const guardMode = botGuardMode(env.DRBL_BOT_GUARD);
     if (guardMode !== "off") {
-      const verdict = classifyEdgeRequest(request.headers);
+      const verdict = classifyEdgeRequest(guardInput(request));
       if (verdict.block) {
         console.warn(
-          JSON.stringify({ drbl_abuse: true, kind: verdict.reason, mode: guardMode })
+          JSON.stringify({
+            drbl_abuse: true,
+            kind: verdict.reason as BotGuardReason,
+            mode: guardMode,
+          })
         );
-        if (guardMode === "block") return botGuardResponse();
+        if (guardMode === "block") return botGuardResponse(verdict.reason);
       }
     }
     // Internal subrequests (service binding, cache revalidation) carry no client IP.
@@ -661,6 +691,18 @@ const worker = {
         key: `write:${pathname}:${ip}`,
       });
       if (!success) return tooManyRequests("write-api");
+    }
+    if (
+      ip &&
+      request.method === "GET" &&
+      !request.headers.has("cookie") &&
+      isHtmlShellPath(pathname) &&
+      env.HTML_SHELL_RATE_LIMITER
+    ) {
+      const { success } = await env.HTML_SHELL_RATE_LIMITER.limit({
+        key: `shell:${ip}`,
+      });
+      if (!success) return tooManyRequests("html-shell");
     }
     if (ip && env.API_RATE_LIMITER) {
       // Ask deep-links (`?q=`) SSR the full query engine and were the top isolate
@@ -678,6 +720,11 @@ const worker = {
 
     const apiCached = await serveCachedApi(request, env, ctx);
     if (apiCached) return apiCached;
+
+    if (shouldRefuseOrigin(guardInput(request))) {
+      console.warn(JSON.stringify({ drbl_abuse: true, kind: "refuse-origin", path: pathname }));
+      return botGuardResponse("fake-browser");
+    }
 
     const response = await originFetch(request, env);
     // Surface why HTML skipped Worker PAGE_CACHE / Cache API (no set-cookie path).
