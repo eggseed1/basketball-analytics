@@ -205,8 +205,13 @@ jobs:
               # 3xx is fine (/explore/teams → /explore/teams/...); still warms KV via the hop.
               2??|3??) ;;
               *)
-                echo "::error title=PAGE_CACHE warm failed::${path} returned ${code} from ${BASE_URL}"
-                failed=1
+                # Live game shells are best-effort (ESPN ids rotate; edge may 403 briefly).
+                if [[ "$path" == /games/* ]]; then
+                  echo "::warning title=Optional game warm skipped::${path} returned ${code}"
+                else
+                  echo "::error title=PAGE_CACHE warm failed::${path} returned ${code} from ${BASE_URL}"
+                  failed=1
+                fi
                 ;;
             esac
           done
