@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-24",
+    "snapshotDate": "2026-11-25",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-24T20:56:49.228Z",
+    "builtAt": "2026-11-25T00:50:08.337Z",
     "rosterPlayerCount": 510,
-    "headlinesScanned": 17950,
-    "latestHeadlineAt": "2026-11-24T20:46:02.000Z",
-    "latestTransactionDate": "2026-11-23",
+    "headlinesScanned": 18008,
+    "latestHeadlineAt": "2026-11-25T00:44:09.000Z",
+    "latestTransactionDate": "2026-11-24",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -104,7 +104,7 @@
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:fred-katz": {
       "label": "Fred Katz (The Athletic)",
@@ -2380,12 +2380,13 @@
         "mv-3a025d5bf73f369d",
         "mv-68ead3354abb849f",
         "mv-f1484733e423e13b",
-        "mv-15567ee609caf351"
+        "mv-15567ee609caf351",
+        "mv-bde57462806c85d5"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-23T23:16:57.000Z",
+      "lastMeaningfulAt": "2026-11-24T22:16:12.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -14896,6 +14897,26 @@
       "isOriginal": false
     },
     {
+      "id": "mv-bde57462806c85d5",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "NBA rumors: What Warriors told Rich Paul when he came asking about Dejounte Murray trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-24T22:16:12.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/new-orleans-pelicans/nba-rumors-warriors-told-rich-paul-came-asking-dejounte-murray-trade",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -16316,7 +16337,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-24T20:56:49.228Z"
+      "resolvedAt": "2026-11-25T00:50:08.337Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
