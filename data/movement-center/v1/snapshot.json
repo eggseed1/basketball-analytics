@@ -5,11 +5,11 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-26",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-26T00:25:55.157Z",
-    "rosterPlayerCount": 510,
-    "headlinesScanned": 18370,
-    "latestHeadlineAt": "2026-11-26T00:18:12.000Z",
-    "latestTransactionDate": "2026-11-24",
+    "builtAt": "2026-11-26T19:52:50.170Z",
+    "rosterPlayerCount": 511,
+    "headlinesScanned": 18643,
+    "latestHeadlineAt": "2026-11-26T19:49:33.000Z",
+    "latestTransactionDate": "2026-11-25",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -252,6 +252,10 @@
     },
     "reporter:dan-woike": {
       "label": "Dan Woike (The Athletic)",
+      "credibility": 18
+    },
+    "reporter:marc-j-spears": {
+      "label": "Marc J. Spears (ESPN)",
       "credibility": 18
     },
     "ledger:nba-player-movement": {
@@ -744,12 +748,16 @@
         "mv-cd05e8f3bbb9ac3c",
         "mv-28afee1d75c8f452",
         "mv-d58f0fbabd454424",
-        "mv-05744f6b3852237a"
+        "mv-05744f6b3852237a",
+        "mv-47347385883ae6f8",
+        "mv-b7553f785cbcfb39",
+        "mv-246787039319f185",
+        "mv-93521b6185c4c2d8"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-11-25T19:25:05.000Z",
+      "lastMeaningfulAt": "2026-11-26T16:27:45.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -770,7 +778,8 @@
         "29",
         "26",
         "28",
-        "1"
+        "1",
+        "12"
       ]
     },
     {
@@ -919,12 +928,13 @@
         "mv-edf288a73d1a9f54",
         "mv-64462314d1dc5c99",
         "mv-1ced56ddd384b730",
-        "mv-9c8c85c55c408aa9"
+        "mv-9c8c85c55c408aa9",
+        "mv-63347e341ecbc327"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-11-23T20:32:16.000Z",
+      "lastMeaningfulAt": "2026-11-26T06:26:22.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774",
@@ -1513,20 +1523,37 @@
     },
     {
       "id": "mv-trade-2991043-20261016",
-      "headline": "Caris LeVert: trade talk",
-      "primaryClaimId": "mv-c54d4425baccb20e",
+      "headline": "Caris LeVert, Kevin Porter Jr. and others: trade talk",
+      "primaryClaimId": "mv-e9dee77bc13fd5fc",
       "claimIds": [
-        "mv-c54d4425baccb20e"
+        "mv-c54d4425baccb20e",
+        "mv-535bdbbdc6f806ab",
+        "mv-0395e0f5d34fda17",
+        "mv-161e285afa4d49e8",
+        "mv-3278fa84cedd1339",
+        "mv-14fc85fbce1eef46",
+        "mv-7f17f35d0a91e623",
+        "mv-ca8de219550f6ad9",
+        "mv-e9dee77bc13fd5fc",
+        "mv-1bbc88b0b914abb4"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-16T07:58:31.000Z",
-      "lastMeaningfulAt": "2026-10-16T07:58:31.000Z",
+      "lastMeaningfulAt": "2026-11-25T03:22:17.000Z",
       "linkedPlayerIds": [
-        "2991043"
+        "2991043",
+        "4397140",
+        "4431690"
       ],
       "linkedTeamIds": [
-        "15"
+        "15",
+        "7",
+        "23",
+        "14",
+        "22",
+        "19",
+        "5"
       ]
     },
     {
@@ -1774,27 +1801,6 @@
       "linkedTeamIds": [
         "9",
         "3"
-      ]
-    },
-    {
-      "id": "mv-trade-4431690-20261024",
-      "headline": "Zeke Nnaji: trade talk",
-      "primaryClaimId": "mv-1bbc88b0b914abb4",
-      "claimIds": [
-        "mv-535bdbbdc6f806ab",
-        "mv-1bbc88b0b914abb4"
-      ],
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "firstSeenAt": "2026-10-24T22:49:47.000Z",
-      "lastMeaningfulAt": "2026-11-25T03:22:17.000Z",
-      "linkedPlayerIds": [
-        "4431690"
-      ],
-      "linkedTeamIds": [
-        "7",
-        "15",
-        "5"
       ]
     },
     {
@@ -2271,6 +2277,31 @@
       }
     },
     {
+      "id": "mv-contract-4397140-20261109",
+      "headline": "Kevin Porter Jr.: free agency",
+      "primaryClaimId": "mv-6b299f67fb7411d9",
+      "claimIds": [
+        "mv-fab9a38377b408a9",
+        "mv-bf98e50d2b59b664",
+        "mv-6b299f67fb7411d9",
+        "mv-nba-tx-1aa4c46b4917fc0f"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-11-09T08:28:34.000Z",
+      "lastMeaningfulAt": "2026-11-25T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "4397140"
+      ],
+      "linkedTeamIds": [
+        "14",
+        "22",
+        "23",
+        "7",
+        "19"
+      ]
+    },
+    {
       "id": "mv-trade-4277956-20261110",
       "headline": "Jordan Poole: trade talk",
       "primaryClaimId": "mv-12c814d23d4c0601",
@@ -2355,7 +2386,7 @@
     {
       "id": "mv-trade-3907497-20261113",
       "headline": "Dejounte Murray, Jalen Green and others: trade talk",
-      "primaryClaimId": "mv-9b95bee46d5b6dac",
+      "primaryClaimId": "mv-cfc05e78cc442324",
       "claimIds": [
         "mv-465caecedfd1e76e",
         "mv-86bdca03ebff5bd2",
@@ -2399,12 +2430,14 @@
         "mv-15567ee609caf351",
         "mv-bde57462806c85d5",
         "mv-ba77db0b5c05fef5",
-        "mv-20974beded2d9986"
+        "mv-20974beded2d9986",
+        "mv-ca758b2ad19cf769",
+        "mv-cfc05e78cc442324"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-11-13T19:54:42.000Z",
-      "lastMeaningfulAt": "2026-11-25T09:17:10.000Z",
+      "lastMeaningfulAt": "2026-11-26T19:49:33.000Z",
       "linkedPlayerIds": [
         "3907497",
         "4437244",
@@ -7910,7 +7943,8 @@
       "reporterLabel": "Jake Fischer",
       "sourceUrl": "https://www.talkbasket.net/224891-bucks-weigh-trading-kevin-porter-jr-and-caris-levert",
       "playerIds": [
-        "2991043"
+        "2991043",
+        "4397140"
       ],
       "teamIds": [
         "15"
@@ -9276,7 +9310,7 @@
     },
     {
       "id": "mv-535bdbbdc6f806ab",
-      "clusterId": "mv-trade-4431690-20261024",
+      "clusterId": "mv-trade-2991043-20261016",
       "summary": "Nuggets, Bucks Talked Trade Of Zeke Nnaji For Kevin Porter Jr",
       "claimType": "trade_interest",
       "evidenceClass": "reported",
@@ -9287,7 +9321,30 @@
       "sourceLabel": "RealGM",
       "sourceUrl": "https://basketball.realgm.com/wiretap/287877/Nuggets-Bucks-Talked-Trade-Of-Zeke-Nnaji-For-Kevin-Porter-Jr",
       "playerIds": [
+        "4397140",
         "4431690"
+      ],
+      "teamIds": [
+        "7",
+        "15"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-0395e0f5d34fda17",
+      "clusterId": "mv-trade-2991043-20261016",
+      "summary": "Bucks Turned Down Potential Kevin Porter Jr. Trade With Nuggets",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-24T22:55:25.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Hoops Rumors, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/bucks-turned-down-potential-kevin-porter-jr-trade-with-nuggets.html",
+      "playerIds": [
+        "4397140"
       ],
       "teamIds": [
         "7",
@@ -9497,6 +9554,29 @@
         "2"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-161e285afa4d49e8",
+      "clusterId": "mv-trade-2991043-20261016",
+      "summary": "Kings, Nuggets Could Have Interest In Kevin Porter Jr.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T05:33:49.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "RealGM, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein, Jake Fischer",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287910/Kings-Nuggets-Could-Have-Interest-In-Kevin-Porter-Jr-",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "7",
+        "23"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
     },
     {
       "id": "mv-6accbe2e5f7eea1e",
@@ -11986,6 +12066,30 @@
       "isOriginal": false
     },
     {
+      "id": "mv-3278fa84cedd1339",
+      "clusterId": "mv-trade-2991043-20261016",
+      "summary": "Blazers, Heat, Nuggets, Kings Interested In Kevin Porter Jr",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-09T02:26:29.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288069/Blazers-Heat-Nuggets-Kings-Interested-In-Kevin-Porter-Jr",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "7",
+        "14",
+        "22",
+        "23"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-7179085e2f8b28fa",
       "clusterId": "mv-trade-4702384-20261108",
       "summary": "Stein’s Latest: Warriors, Clifford Trade, Vincent, Porter, Dillingham",
@@ -12027,6 +12131,29 @@
         "9"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-fab9a38377b408a9",
+      "clusterId": "mv-contract-4397140-20261109",
+      "summary": "Kevin Porter Jr. draws interest from Heat, Blazers and Kings",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-09T08:28:34.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/227116-kevin-porter-jr-draws-interest-from-heat-blazers-and-kings",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "14",
+        "22",
+        "23"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
     },
     {
       "id": "mv-ab1174c1ced27883",
@@ -12754,6 +12881,27 @@
         "9"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-bf98e50d2b59b664",
+      "clusterId": "mv-contract-4397140-20261109",
+      "summary": "Heat Reportedly Eyeing Kevin Porter Jr. In Free Agency",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-12T22:02:41.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/miami-heat/heat-reportedly-eyeing-kevin-porter-jr-in-free-agency/",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
     },
     {
       "id": "mv-86dc8f96d6522bdd",
@@ -14738,6 +14886,28 @@
       "negotiationSpecificity": "contact"
     },
     {
+      "id": "mv-14fc85fbce1eef46",
+      "clusterId": "mv-trade-2991043-20261016",
+      "summary": "Nuggets, Magic among teams interested in Kevin Porter Jr.",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-23T15:48:02.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/229803-nuggets-magic-among-teams-interested-in-kevin-porter-jr",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "7",
+        "19"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-f1484733e423e13b",
       "clusterId": "mv-trade-3907497-20261113",
       "summary": "“Absolutely Untrue”: Suns Insider Dismisses Dejounte Murray Update Amid Trade Rumor",
@@ -14758,6 +14928,29 @@
       "isOriginal": false
     },
     {
+      "id": "mv-7f17f35d0a91e623",
+      "clusterId": "mv-trade-2991043-20261016",
+      "summary": "Nuggets, Magic Among Teams With Interest In Kevin Porter Jr.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-23T17:00:19.000Z",
+      "sourceId": "reporter:michael-scotto",
+      "sourceLabel": "Hoops Rumors, citing Michael Scotto (HoopsHype)",
+      "reporterLabel": "Michael Scotto",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/11/nuggets-magic-among-teams-with-interest-in-kevin-porter-jr.html",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "7",
+        "19"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-f626a570dcf12fd1",
       "clusterId": "mv-trade-4395725-20261123",
       "summary": "Bucks Guard Tyler Herro Gets Bad News Amid Trade Rumors",
@@ -14776,6 +14969,28 @@
         "15"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-ca8de219550f6ad9",
+      "clusterId": "mv-trade-2991043-20261016",
+      "summary": "Orlando Magic, Denver Nuggets Show Interest In Kevin Porter Jr.",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-23T17:26:27.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/denver-nuggets/orlando-magic-denver-nuggets-kevin-porter-jr-interest",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "7",
+        "19"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
     },
     {
       "id": "mv-6fe313bbf284e806",
@@ -14820,6 +15035,28 @@
       "isOriginal": false
     },
     {
+      "id": "mv-6b299f67fb7411d9",
+      "clusterId": "mv-contract-4397140-20261109",
+      "summary": "Report: Nuggets, Magic showing interest in free agent Kevin Porter Jr.",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-23T19:45:56.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/report-nuggets-magic-showing-interest-194556388.html",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "7",
+        "19"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-9c8c85c55c408aa9",
       "clusterId": "mv-trade-3155942-20261005",
       "summary": "Bronny James Dealt Unfortunate News As Lakers Trade Rumors Confirmed",
@@ -14859,6 +15096,29 @@
         "26"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-e9dee77bc13fd5fc",
+      "clusterId": "mv-trade-2991043-20261016",
+      "summary": "Magic, Nuggets Interested In Kevin Porter Jr.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-24T06:38:29.000Z",
+      "sourceId": "reporter:michael-scotto",
+      "sourceLabel": "RealGM, citing Michael Scotto (HoopsHype)",
+      "reporterLabel": "Michael Scotto",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288230/Magic-Nuggets-Interested-In-Kevin-Porter-Jr",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "7",
+        "19"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
     },
     {
       "id": "mv-866338fd55006562",
@@ -15004,7 +15264,7 @@
     },
     {
       "id": "mv-1bbc88b0b914abb4",
-      "clusterId": "mv-trade-4431690-20261024",
+      "clusterId": "mv-trade-2991043-20261016",
       "summary": "Nuggets Seeking Zeke Nnaji Trade, Likely To Keep 2031 Cavaliers Pick",
       "claimType": "trade_interest",
       "evidenceClass": "reported",
@@ -15275,6 +15535,151 @@
         "1"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-47347385883ae6f8",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA trade rumors 2026-27: Will Anthony Davis get traded? Clippers as sellers.",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-26T01:00:16.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/nba/articles/nba-trade-rumors-2026-27-010016324.html",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "12"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b7553f785cbcfb39",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Insider Reveals Wizards’ Stance on Anthony Davis Trade Amid Warriors Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-26T03:11:59.000Z",
+      "sourceId": "reporter:marc-j-spears",
+      "sourceLabel": "Basketball News, citing Marc J. Spears (ESPN)",
+      "reporterLabel": "Marc J. Spears",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-insider-reveals-washington-wizards-stance-on-anthony-davis-trade-amid-golden-state-warriors-rumors/",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "9",
+        "27"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ca758b2ad19cf769",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Warriors Trade Rumor: NBA Insider Reveals GSW’s Stance on $100 Million Guard After Rejecting Dejounte Murray Approach",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-26T03:16:35.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Basketball News, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-golden-state-warriors-trade-rumor-nba-insider-reveals-gsws-stance-on-one-hundred-million-guard-after-rejecting-dejounte-murray-approach/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-63347e341ecbc327",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Bronny James Gets Surprising Mention in Lakers Trade Deadline Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-26T06:26:22.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-lakers-trade-deadline-report/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-246787039319f185",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Rich Paul Shuts Down Rumors Of Anthony Davis Returning To The Lakers At The Trade Deadline",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-26T15:15:15.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/rich-paul-shuts-down-rumors-of-anthony-davis-returning-to-the-lakers-at-the-trade-deadline",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-93521b6185c4c2d8",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Warriors open to Draymond Green trade talks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-26T16:27:45.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "TalkBasket, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://www.talkbasket.net/230340-warriors-open-to-draymond-green-trade-talks",
+      "playerIds": [
+        "6589"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-cfc05e78cc442324",
+      "clusterId": "mv-trade-3907497-20261113",
+      "summary": "Lakers Proposed to Land 6’10” Double-Double Gem in Dejounte Murray Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-26T19:49:33.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-dejounte-murray-trade-proposal/",
+      "playerIds": [
+        "3907497"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
@@ -15682,6 +16087,26 @@
       ],
       "teamIds": [
         "25"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-1aa4c46b4917fc0f",
+      "clusterId": "mv-contract-4397140-20261109",
+      "summary": "Signed guard Kevin Porter Jr. to a Rest-of-Season Contract.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-11-25T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "Player movement log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4397140"
+      ],
+      "teamIds": [
+        "19"
       ],
       "isOriginal": true
     },
@@ -16697,7 +17122,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-26T00:25:55.157Z"
+      "resolvedAt": "2026-11-26T19:52:50.170Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
@@ -16845,6 +17270,16 @@
       "resolvedAt": "2026-11-08T12:00:00.000Z",
       "transactionRef": "nba-tx-5c64a960de248a10",
       "suppressTradeSpeculation": true
+    },
+    {
+      "clusterId": "mv-contract-4397140-20261109",
+      "playerIds": [
+        "4397140"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-11-25T12:00:00.000Z",
+      "transactionRef": "nba-tx-1aa4c46b4917fc0f",
+      "suppressTradeSpeculation": false
     },
     {
       "clusterId": "mv-contract-2488653-20261111",
