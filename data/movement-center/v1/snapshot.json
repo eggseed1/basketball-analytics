@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-25",
+    "snapshotDate": "2026-11-26",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-25T20:14:10.671Z",
+    "builtAt": "2026-11-26T00:25:55.157Z",
     "rosterPlayerCount": 510,
-    "headlinesScanned": 18305,
-    "latestHeadlineAt": "2026-11-25T20:12:36.000Z",
+    "headlinesScanned": 18370,
+    "latestHeadlineAt": "2026-11-26T00:18:12.000Z",
     "latestTransactionDate": "2026-11-24",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -16697,7 +16697,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-25T20:14:10.671Z"
+      "resolvedAt": "2026-11-26T00:25:55.157Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
