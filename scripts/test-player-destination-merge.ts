@@ -126,4 +126,31 @@ const noR1 = mergePlayerSeasonStats(
 assert.equal(noR1!.r1Points, null);
 assert.equal(noR1!.r1WinEquivalents, null);
 
+// Never borrow a prior season's DRBL / WAR1 onto the current row.
+const priorPeer = base({
+  playerId: "3112335",
+  playerName: "Nikola Jokic",
+  season: "2023-24",
+  drbl100: 5.5,
+  rawAbilityRate: 6.0,
+  drblPossessions: 8000,
+  r1Points: 300,
+  r1WinEquivalents: 8.1,
+});
+const currentRaw = base({
+  playerId: "3112335",
+  playerName: "Nikola Jokic",
+  season: "2024-25",
+  drbl100: 0,
+  rawAbilityRate: 0,
+  drblPossessions: 0,
+  r1Points: null,
+  r1WinEquivalents: null,
+});
+const noCrossSeason = mergePlayerSeasonStats(currentRaw, null, priorPeer);
+assert.ok(noCrossSeason);
+assert.equal(noCrossSeason!.drbl100, 0);
+assert.equal(noCrossSeason!.r1WinEquivalents, null);
+assert.equal(noCrossSeason!.r1Points, null);
+
 console.log("test-player-destination-merge: ok");

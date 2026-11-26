@@ -90,6 +90,20 @@ export function primaryTeamForSeason(
   return primaryTeamForSeasonContext(career, season);
 }
 
+/** Peer/career overlays must match the season row — never borrow another year. */
+function sameSeasonAbility(
+  seasonRaw: PlayerSeason | null,
+  other: PlayerSeason | null | undefined
+): other is PlayerSeason {
+  return Boolean(
+    seasonRaw &&
+      other &&
+      seasonRaw.season &&
+      other.season &&
+      seasonRaw.season === other.season
+  );
+}
+
 /** Prefer peer (valid DRBL) then career when seasonRaw lacks a valid estimate. */
 function pickAbilitySource(
   seasonRaw: PlayerSeason | null,
@@ -97,9 +111,19 @@ function pickAbilitySource(
   careerSeason: PlayerSeason | null | undefined
 ): PlayerSeason | null {
   if (seasonRaw && hasValidDrblEstimate(seasonRaw)) return seasonRaw;
-  if (peerRow && hasValidDrblEstimate(peerRow)) return peerRow;
-  if (careerSeason && hasValidDrblEstimate(careerSeason)) return careerSeason;
-  return seasonRaw ?? peerRow ?? careerSeason ?? null;
+  if (
+    sameSeasonAbility(seasonRaw, peerRow) &&
+    hasValidDrblEstimate(peerRow)
+  ) {
+    return peerRow;
+  }
+  if (
+    sameSeasonAbility(seasonRaw, careerSeason) &&
+    hasValidDrblEstimate(careerSeason)
+  ) {
+    return careerSeason;
+  }
+  return seasonRaw ?? null;
 }
 
 /** Never invent zeros for R1* — keep null when all sources are missing. */
@@ -194,26 +218,40 @@ export function mergePlayerSeasonStats(
       shotMaking100: ability?.shotMaking100 ?? seasonRaw.shotMaking100,
       epvShootMean: ability?.epvShootMean ?? seasonRaw.epvShootMean,
       vContMean: ability?.vContMean ?? seasonRaw.vContMean,
-      // Realized value — never invent zeros.
+      // Realized value — never invent zeros, never pull another season's WAR1.
       r1Points: pickR1Number(
         seasonRaw.r1Points,
-        peerRow?.r1Points,
-        careerSeason?.r1Points
+        sameSeasonAbility(seasonRaw, peerRow) ? peerRow.r1Points : null,
+        sameSeasonAbility(seasonRaw, careerSeason)
+          ? careerSeason.r1Points
+          : null
       ),
       r1WinEquivalents: pickR1Number(
         seasonRaw.r1WinEquivalents,
-        peerRow?.r1WinEquivalents,
-        careerSeason?.r1WinEquivalents
+        sameSeasonAbility(seasonRaw, peerRow)
+          ? peerRow.r1WinEquivalents
+          : null,
+        sameSeasonAbility(seasonRaw, careerSeason)
+          ? careerSeason.r1WinEquivalents
+          : null
       ),
       r1PointValueVersion: pickR1Version(
         seasonRaw.r1PointValueVersion,
-        peerRow?.r1PointValueVersion,
-        careerSeason?.r1PointValueVersion
+        sameSeasonAbility(seasonRaw, peerRow)
+          ? peerRow.r1PointValueVersion
+          : null,
+        sameSeasonAbility(seasonRaw, careerSeason)
+          ? careerSeason.r1PointValueVersion
+          : null
       ),
       r1WinEquivalentVersion: pickR1Version(
         seasonRaw.r1WinEquivalentVersion,
-        peerRow?.r1WinEquivalentVersion,
-        careerSeason?.r1WinEquivalentVersion
+        sameSeasonAbility(seasonRaw, peerRow)
+          ? peerRow.r1WinEquivalentVersion
+          : null,
+        sameSeasonAbility(seasonRaw, careerSeason)
+          ? careerSeason.r1WinEquivalentVersion
+          : null
       ),
     };
   }

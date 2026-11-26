@@ -8,9 +8,11 @@ import { PlayerBoardHealthBanner } from "@/components/explore/player-board-healt
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
 import { PageHeader } from "@/components/layout/page-header";
 import {
+  isDrblBoardSortKey,
   parsePlayerSeasonSortKey,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
+import { isDrblSeason } from "@/data/drbl/season-registry";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
 import { teamsFromCanonicalIdentity } from "@/data/queries/teams-catalog";
 import { listCanonicalSeasons } from "@/data/providers/historical/season-range";
@@ -74,22 +76,32 @@ async function loadBoard(
           ? searchParams.season[0]
           : searchParams.season) ?? defaultSeason
       );
+  const sortKey = parsePlayerSeasonSortKey(searchParams.sort);
   const defaultMinutes =
     bakeKey?.season === seasonForMinutes && bakeKey.minimumMinutes != null
       ? bakeKey.minimumMinutes
       : defaultExploreMinimumMinutes(seasonForMinutes);
+  // WAR1/DRBL sorts (incl. default board, which prefers WAR1 when published):
+  // don't hide estimates behind the 500-min floor unless the user set minutes.
+  const preferDrblMinutes =
+    isDrblBoardSortKey(sortKey) ||
+    (sortKey == null && isDrblSeason(seasonForMinutes));
+  const resolvedMinutes =
+    searchParams.minimumMinutes != null
+      ? searchParams.minimumMinutes
+      : preferDrblMinutes
+        ? "0"
+        : String(defaultMinutes);
   const filters = filtersFromSearchParams({
     ...searchParams,
     season: isAllSeasonsParam(searchParams.season)
       ? "ALL"
       : searchParams.season ?? defaultSeason,
-    minimumMinutes:
-      searchParams.minimumMinutes ?? String(defaultMinutes),
+    minimumMinutes: resolvedMinutes,
   });
   const season = isAllSeasonsParam(filters.season)
     ? "ALL"
     : filters.season ?? defaultSeason;
-  const sortKey = parsePlayerSeasonSortKey(searchParams.sort);
   const rate = parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null);
   const boardViews = parsePlayerBoardViews(
     [searchParams.view].flat()[0] ?? null

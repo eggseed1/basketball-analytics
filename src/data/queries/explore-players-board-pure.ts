@@ -58,6 +58,9 @@ export type ExplorePlayerBoardRow = {
   bpm?: number;
   /** Unrounded validated DRBL/100 when overlay present; omit when missing. */
   drbl100?: number;
+  /** Possessions / raw rate kept on the wire so client hasValidDrblEstimate works. */
+  drblPossessions?: number;
+  rawAbilityRate?: number;
   /** null/omitted when DRBL overlay absent - never coerce missing to 0. */
   r1Points?: number | null;
   /** null/omitted when DRBL overlay absent - never coerce missing to 0. */
@@ -170,6 +173,16 @@ function addExploreColumnFields(
     case "relativeTrueShootingPct":
       keep.add("trueShootingPct");
       keep.add("relativeTrueShootingPct");
+      return;
+    case "drbl100":
+    case "drblO":
+    case "drblD":
+    case "r1Points":
+    case "r1WinEquivalents":
+      keep.add(key);
+      // Client hasValidDrblEstimate / hasRankedDrblEstimate need these.
+      keep.add("drblPossessions");
+      keep.add("rawAbilityRate");
       return;
     default:
       keep.add(key);
@@ -361,6 +374,12 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   }
   if (hasRankedDrblEstimate(p)) {
     row.drbl100 = p.drbl100;
+    if (Number.isFinite(p.drblPossessions) && p.drblPossessions > 0) {
+      row.drblPossessions = p.drblPossessions;
+    }
+    if (Number.isFinite(p.rawAbilityRate)) {
+      row.rawAbilityRate = p.rawAbilityRate;
+    }
     row.r1Points = p.r1Points ?? null;
     row.r1WinEquivalents = p.r1WinEquivalents ?? null;
     const drblO = getSheetStatValue(p, "drblO");
