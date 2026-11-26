@@ -58,7 +58,7 @@ export function TeamSurplusBoard({ rows, meta }: { rows: TeamSurplusRow[]; meta:
 
   if (!shown.length) {
     return (
-      <p className={cn(type.bodySm, "sports-card px-4 py-10 text-center text-muted-foreground")}>
+      <p className={cn(type.bodySm, "sports-card px-3 py-6 sm:px-4 sm:py-10 text-center text-muted-foreground")}>
         No contract estimates are available right now.
       </p>
     );

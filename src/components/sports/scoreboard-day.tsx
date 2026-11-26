@@ -254,7 +254,7 @@ export function ScoreboardDay({
                 {rest.length ? (
                   <TileGrid games={rest} />
                 ) : live.length ? null : (
-                  <div className="rounded-md border border-dashed border-border px-4 py-8 text-center">
+                  <div className="rounded-md border border-dashed border-border px-3 py-5 sm:px-4 sm:py-8 text-center">
                     <p className={cn(type.body, "text-muted-foreground")}>
                       {isToday
                         ? t("noGamesToday")

@@ -131,7 +131,7 @@ async function BracketBody({ season }: { season: string }) {
 
   if (!bracket) {
     return (
-      <div className="rounded-md border border-border bg-secondary/40 px-4 py-8 text-center text-[14px] text-muted-foreground">
+      <div className="rounded-md border border-border bg-secondary/40 px-3 py-5 sm:px-4 sm:py-8 text-center text-[14px] text-muted-foreground">
         {t("bracketUnavailable", { season })}
       </div>
     );
@@ -155,7 +155,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
   const conference = parseConference(one(sp, "conference"));
 
   return (
-    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <HashAnchorScroll />
       <Suspense fallback={null}>

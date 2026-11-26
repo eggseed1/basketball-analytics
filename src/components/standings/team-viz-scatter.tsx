@@ -184,7 +184,7 @@ export function TeamVizScatter({
 
   if (points.length < 8) {
     return (
-      <p className={cn(type.bodySm, "sports-card px-4 py-10 text-center text-muted-foreground")}>
+      <p className={cn(type.bodySm, "sports-card px-3 py-6 sm:px-4 sm:py-10 text-center text-muted-foreground")}>
         Not enough teams with data for {spec.title.toLowerCase()} in {season}.
       </p>
     );

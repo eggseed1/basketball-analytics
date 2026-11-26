@@ -19,7 +19,7 @@ export function ExplorePlayersClientShell({
 }) {
   return (
     <QueryNavProvider>
-      <div className="relative flex w-full min-w-0 max-w-full flex-col gap-5">
+      <div className="relative flex w-full min-w-0 max-w-full flex-col gap-3 sm:gap-5">
         <PlayerFilterToolbar
           seasons={seasons}
           teams={teams}

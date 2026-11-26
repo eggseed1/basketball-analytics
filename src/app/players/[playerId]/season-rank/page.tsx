@@ -102,17 +102,17 @@ export default async function PlayerSeasonRankPage({
       </Suspense>
 
       {loadError ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
           {loadError}
         </p>
       ) : loaded?.error ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
           {loaded.error}
         </p>
       ) : loaded?.ranking ? (
         <PlayerSeasonRankView result={loaded.ranking} />
       ) : (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
           {t("seasonRankCouldNot")}
         </p>
       )}

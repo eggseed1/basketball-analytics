@@ -94,7 +94,7 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
 
   if (phase === "draft-free-agency") {
     return (
-      <section aria-label="Offseason" className="sports-card flex flex-col gap-3 p-4">
+      <section aria-label="Offseason" className="sports-card flex flex-col gap-3 p-3 sm:p-4">
         <Eyebrow>Offseason · Draft and free agency</Eyebrow>
         {champion ? (
           <div className="flex items-center gap-3">
@@ -125,7 +125,7 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
 
   if (phase === "offseason") {
     return (
-      <section aria-label="Offseason" className="sports-card flex flex-col gap-3 p-4">
+      <section aria-label="Offseason" className="sports-card flex flex-col gap-3 p-3 sm:p-4">
         <Eyebrow>Offseason</Eyebrow>
         {marks.opener && daysToOpener != null ? (
           <>

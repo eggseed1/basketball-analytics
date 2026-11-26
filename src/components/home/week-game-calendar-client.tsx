@@ -96,7 +96,7 @@ export function WeekGameCalendarClient({
       </div>
 
       {initialGames.length === 0 ? (
-        <div className="type-body-sm rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground">
+        <div className="type-body-sm rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-muted-foreground">
           {t("noUpcomingGames")}
         </div>
       ) : (

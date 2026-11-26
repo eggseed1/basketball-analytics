@@ -86,7 +86,7 @@ export default async function SourcesPage() {
   ]);
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-8 py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <PageHeader
         title={t("sourcesTitle")}

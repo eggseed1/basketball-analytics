@@ -137,7 +137,7 @@ function EfficiencyCard({
   const canExpand = rows.length > EFFICIENCY_COLLAPSED;
 
   return (
-    <div className="sports-card flex flex-col gap-2 p-4">
+    <div className="sports-card flex flex-col gap-2 p-3 sm:p-4">
       <div className="flex items-baseline justify-between gap-2">
         <h3 className="text-[16px] font-bold">{title}</h3>
         <div className="flex items-center gap-2">

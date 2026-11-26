@@ -21,7 +21,7 @@ export function LeagueMovesPanel({ moves }: { moves: LeagueMove[] }) {
   const locale = useLocale();
   if (!moves.length) return null;
   return (
-    <section aria-labelledby="league-moves-title" className="sports-card flex flex-col gap-2 p-4">
+    <section aria-labelledby="league-moves-title" className="sports-card flex flex-col gap-2 p-3 sm:p-4">
       <h2 id="league-moves-title" className="type-heading">League & team moves</h2>
       <ul className="flex flex-col divide-y divide-border/40">
         {moves.map((m) => {

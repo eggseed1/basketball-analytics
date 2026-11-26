@@ -1,7 +1,13 @@
 "use client";
 
-import { useMemo, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
-import { Calendar, ChevronLeft, ChevronRight, Shirt } from "lucide-react";
+import {
+  useMemo,
+  useState,
+  type CSSProperties,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
+import { Calendar, ChevronDown, ChevronLeft, ChevronRight, Shirt } from "lucide-react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
@@ -89,6 +95,8 @@ export function PlayerFilterToolbar({
 }: PlayerFilterToolbarProps) {
   const { pending, replaceParams, searchParams } = useQueryNav();
   const { t, tCommon, tStandings, viewLabel, rateLabel } = usePlayerBoardI18n();
+  /** Phone: keep season + search + board chips; tuck the rest behind Filters. */
+  const [moreFiltersOpen, setMoreFiltersOpen] = useState(false);
 
   const minMinutesOptions = useMemo(
     () =>
@@ -309,164 +317,201 @@ export function PlayerFilterToolbar({
           </button>
         </ChipGroup>
 
-        <ChipGroup>
-          <button
-            type="button"
-            aria-label={t("olderDraftClass")}
-            disabled={!olderDraftClass}
-            onClick={() =>
-              olderDraftClass && updateParams({ draftClass: olderDraftClass })
-            }
-            className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-40"
-          >
-            <ChevronLeft className="size-4" aria-hidden />
-          </button>
-          <Select
-            value={draftClassValue}
-            onValueChange={(value) => {
-              if (value != null) updateParams({ draftClass: String(value) });
-            }}
-          >
-            <SelectTrigger
-              id="filter-draft-class"
-              className={cn(selectTriggerClass, "min-w-[6.5rem] gap-1.5")}
-              aria-label={t("draftClass")}
-            >
-              <Shirt
-                className="size-3.5 text-muted-foreground"
-                aria-hidden
-              />
-              <SelectValue>
-                {draftClassValue === "ALL"
-                  ? tCommon("all")
-                  : draftClassValue === "undrafted"
-                    ? t("udfa")
-                    : draftClassValue}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
-              <SelectItem value="ALL">{t("allClasses")}</SelectItem>
-              {draftClassDecades.map((group) => (
-                <SelectGroup key={group.decade}>
-                  <SelectLabel className={type.caption}>{`${group.decade}s`}</SelectLabel>
-                  {group.years.map((year) => (
-                    <SelectItem key={year} value={String(year)}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))}
-              <SelectItem value="undrafted">{t("undrafted")}</SelectItem>
-            </SelectContent>
-          </Select>
-          <button
-            type="button"
-            aria-label={t("newerDraftClass")}
-            disabled={!newerDraftClass}
-            onClick={() =>
-              newerDraftClass && updateParams({ draftClass: newerDraftClass })
-            }
-            className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-40"
-          >
-            <ChevronRight className="size-4" aria-hidden />
-          </button>
-        </ChipGroup>
+        <button
+          type="button"
+          className={cn(
+            "inline-flex h-7 items-center gap-1 rounded-md px-2.5 text-[12px] font-semibold sm:hidden",
+            moreFiltersOpen
+              ? "bg-foreground/10 text-foreground"
+              : "text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+          )}
+          aria-expanded={moreFiltersOpen}
+          onClick={() => setMoreFiltersOpen((open) => !open)}
+        >
+          Filters
+          <ChevronDown
+            className={cn(
+              "size-3.5 transition-transform",
+              moreFiltersOpen && "rotate-180"
+            )}
+            aria-hidden
+          />
+        </button>
 
-        <ChipGroup>
-          <Chip active>{t("regular")}</Chip>
-          <Chip disabled>{t("playoffs")}</Chip>
-        </ChipGroup>
-      </div>
-
-      <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
-        <ChipGroup aria-label={t("conferenceAria")}>
-          {(["East", "West"] as const).map((conf) => (
-            <Chip
-              key={conf}
-              active={conference === conf}
-              onClick={() => {
-                const next = conference === conf ? null : conf;
-                const patch: Record<string, string | null> = {
-                  conference: next,
-                };
-                if (
-                  next &&
-                  selectedTeam &&
-                  selectedTeam.conference !== next
-                ) {
-                  patch.team = null;
-                }
-                updateParams(patch);
-              }}
-            >
-              {conf === "East" ? t("east") : t("west")}
-            </Chip>
-          ))}
-        </ChipGroup>
-
-        <TeamSelect
-          id="filter-team"
-          value={team}
-          teams={teamChoices}
-          empty={{ value: "ALL", label: t("allTeams") }}
-          onChange={(value) => {
-            const patch: Record<string, string | null> = { team: value };
-            if (value !== "ALL" && conference) {
-              const picked = teams.find((t) => t.id === value || t.abbreviation === value);
-              if (picked && picked.conference !== conference) patch.conference = null;
-            }
-            updateParams(patch);
-          }}
-        />
-
-        <ChipGroup>
-          {POSITIONS.map((pos) => (
-            <Chip
-              key={pos}
-              active={position === pos}
-              onClick={() =>
-                updateParams({ position: position === pos ? "ALL" : pos })
-              }
-            >
-              {pos}
-            </Chip>
-          ))}
-        </ChipGroup>
-
-        <ChipGroup>
-          <Select
-            value={minimumMinutes}
-            onValueChange={(value) => {
-              if (value != null) updateParams({ minimumMinutes: String(value) });
-            }}
-          >
-            <SelectTrigger
-              id="filter-minutes"
-              className={cn(selectTriggerClass, "min-w-[7.25rem]")}
-              aria-label={t("minimumMinutes")}
-            >
-              <SelectValue placeholder={t("minutesPlaceholder")}>
-                {minMinutesOptions.find((o) => o.value === minimumMinutes)
-                  ?.label ?? t("anyMin")}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
-              {minMinutesOptions.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </ChipGroup>
-
-        <ChipGroup className="relative min-w-[12rem] w-full flex-1">
+        <ChipGroup className="relative min-w-0 flex-1 basis-[10rem]">
           <PlayerFilterSearch
             season={season}
             value={playerQuery}
             onCommit={(player) => updateParams({ player })}
           />
         </ChipGroup>
+      </div>
+
+      <div
+        className={cn(
+          "w-full min-w-0 flex-col gap-2",
+          moreFiltersOpen ? "flex" : "hidden",
+          "sm:flex"
+        )}
+      >
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
+          <ChipGroup>
+            <button
+              type="button"
+              aria-label={t("olderDraftClass")}
+              disabled={!olderDraftClass}
+              onClick={() =>
+                olderDraftClass && updateParams({ draftClass: olderDraftClass })
+              }
+              className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-40"
+            >
+              <ChevronLeft className="size-4" aria-hidden />
+            </button>
+            <Select
+              value={draftClassValue}
+              onValueChange={(value) => {
+                if (value != null) updateParams({ draftClass: String(value) });
+              }}
+            >
+              <SelectTrigger
+                id="filter-draft-class"
+                className={cn(selectTriggerClass, "min-w-[6.5rem] gap-1.5")}
+                aria-label={t("draftClass")}
+              >
+                <Shirt
+                  className="size-3.5 text-muted-foreground"
+                  aria-hidden
+                />
+                <SelectValue>
+                  {draftClassValue === "ALL"
+                    ? tCommon("all")
+                    : draftClassValue === "undrafted"
+                      ? t("udfa")
+                      : draftClassValue}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
+                <SelectItem value="ALL">{t("allClasses")}</SelectItem>
+                {draftClassDecades.map((group) => (
+                  <SelectGroup key={group.decade}>
+                    <SelectLabel className={type.caption}>{`${group.decade}s`}</SelectLabel>
+                    {group.years.map((year) => (
+                      <SelectItem key={year} value={String(year)}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                ))}
+                <SelectItem value="undrafted">{t("undrafted")}</SelectItem>
+              </SelectContent>
+            </Select>
+            <button
+              type="button"
+              aria-label={t("newerDraftClass")}
+              disabled={!newerDraftClass}
+              onClick={() =>
+                newerDraftClass && updateParams({ draftClass: newerDraftClass })
+              }
+              className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-40"
+            >
+              <ChevronRight className="size-4" aria-hidden />
+            </button>
+          </ChipGroup>
+
+          <ChipGroup>
+            <Chip active>{t("regular")}</Chip>
+            <Chip disabled>{t("playoffs")}</Chip>
+          </ChipGroup>
+        </div>
+
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
+          <ChipGroup aria-label={t("conferenceAria")}>
+            {(["East", "West"] as const).map((conf) => (
+              <Chip
+                key={conf}
+                active={conference === conf}
+                onClick={() => {
+                  const next = conference === conf ? null : conf;
+                  const patch: Record<string, string | null> = {
+                    conference: next,
+                  };
+                  if (
+                    next &&
+                    selectedTeam &&
+                    selectedTeam.conference !== next
+                  ) {
+                    patch.team = null;
+                  }
+                  updateParams(patch);
+                }}
+              >
+                {conf === "East" ? t("east") : t("west")}
+              </Chip>
+            ))}
+          </ChipGroup>
+
+          <TeamSelect
+            id="filter-team"
+            value={team}
+            teams={teamChoices}
+            empty={{ value: "ALL", label: t("allTeams") }}
+            onChange={(value) => {
+              const patch: Record<string, string | null> = { team: value };
+              if (value !== "ALL" && conference) {
+                const picked = teams.find(
+                  (row) => row.id === value || row.abbreviation === value
+                );
+                if (picked && picked.conference !== conference) {
+                  patch.conference = null;
+                }
+              }
+              updateParams(patch);
+            }}
+          />
+
+          <ChipGroup>
+            {POSITIONS.map((pos) => (
+              <Chip
+                key={pos}
+                active={position === pos}
+                onClick={() =>
+                  updateParams({ position: position === pos ? "ALL" : pos })
+                }
+              >
+                {pos}
+              </Chip>
+            ))}
+          </ChipGroup>
+
+          <ChipGroup>
+            <Select
+              value={minimumMinutes}
+              onValueChange={(value) => {
+                if (value != null) {
+                  updateParams({ minimumMinutes: String(value) });
+                }
+              }}
+            >
+              <SelectTrigger
+                id="filter-minutes"
+                className={cn(selectTriggerClass, "min-w-[7.25rem]")}
+                aria-label={t("minimumMinutes")}
+              >
+                <SelectValue placeholder={t("minutesPlaceholder")}>
+                  {minMinutesOptions.find((o) => o.value === minimumMinutes)
+                    ?.label ?? t("anyMin")}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
+                {minMinutesOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </ChipGroup>
+        </div>
       </div>
 
       <div className="flex w-full min-w-0 flex-col gap-2 border-t border-border/40 pt-2 sm:flex-row sm:items-center sm:justify-between">

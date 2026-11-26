@@ -371,7 +371,7 @@ export function TeamOnOffPanel({
   }, [pairPlayerIds, views.all.rows]);
 
   return (
-    <section id="onoff" data-viz className="scroll-mt-16 flex flex-col gap-8" aria-label="On/off">
+    <section id="onoff" data-viz className="scroll-mt-16 flex flex-col gap-5 sm:gap-6 md:gap-8" aria-label="On/off">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-[20px] font-bold tracking-tight">

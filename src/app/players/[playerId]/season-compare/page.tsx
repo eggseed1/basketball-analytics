@@ -87,21 +87,21 @@ export default async function PlayerSeasonComparePage({
       </Suspense>
 
       {!seasonA || !seasonB ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
           {t("seasonComparePick")}
         </p>
       ) : loadError ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
           {loadError}
         </p>
       ) : loaded?.error ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
           {loaded.error}
         </p>
       ) : loaded?.comparison ? (
         <PlayerSeasonCompareView result={loaded.comparison} />
       ) : (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-3 py-6 sm:px-4 sm:py-10 text-center text-[14px] text-muted-foreground">
           {t("seasonCompareCouldNot")}
         </p>
       )}

@@ -215,7 +215,7 @@ export default async function HistorySeasonPage({
   };
 
   return (
-    <main data-motion-page className="site-shell flex flex-1 flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-8 py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <div>
         <p className="text-[12px] text-muted-foreground">

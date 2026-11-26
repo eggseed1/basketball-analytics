@@ -567,7 +567,7 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "organization" ? (
-          <div data-motion-stack className="flex flex-col gap-8">
+          <div data-motion-stack className="flex flex-col gap-5 sm:gap-6 md:gap-8">
             <TeamLeadershipSection
               teamId={askTeamId}
               teamKey={identityTeam.abbreviation}

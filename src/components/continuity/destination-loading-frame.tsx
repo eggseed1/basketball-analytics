@@ -58,7 +58,7 @@ export function DestinationLoadingFrame({
   return (
     <main
       className={cn(
-        "site-shell relative flex flex-1 flex-col gap-5 py-6 sm:py-8",
+        "site-shell relative flex flex-1 flex-col gap-4 py-4 sm:gap-5 sm:py-6 md:py-8",
         className
       )}
       aria-busy="true"

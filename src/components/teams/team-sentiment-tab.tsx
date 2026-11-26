@@ -22,7 +22,7 @@ export async function TeamSentimentTab({ teamId }: { teamId: string }) {
     );
   }
   return (
-    <div data-motion-stack className="flex flex-col gap-8">
+    <div data-motion-stack className="flex flex-col gap-5 sm:gap-6 md:gap-8">
       <Suspense fallback={null}>
         <TeamSentimentIsland teamId={teamId} />
       </Suspense>

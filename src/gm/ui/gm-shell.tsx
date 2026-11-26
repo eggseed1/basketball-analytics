@@ -185,7 +185,7 @@ export function GmShell({
       <main
         data-gm
         data-motion-page
-        className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8"
+        className="site-shell flex flex-1 flex-col gap-4 py-4 sm:gap-5 sm:py-6 md:py-8"
       >
         <MotionReveal />
         <p className="gm-disclaimer">

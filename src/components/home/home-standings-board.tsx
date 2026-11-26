@@ -24,7 +24,7 @@ export function HomeStandingsBoard({
   const rows = conference === "west" ? west : east;
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4">
+    <section className="sports-card flex flex-col gap-3 p-3 sm:p-4">
       <div className="flex min-w-0 flex-col gap-3">
         <div>
           <h2 className="type-heading">

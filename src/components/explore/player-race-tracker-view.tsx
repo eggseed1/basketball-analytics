@@ -210,7 +210,7 @@ export function PlayerRaceTrackerView({
 
   if (payload.players.every((player) => player.points.length === 0)) {
     return (
-      <div className="sports-card px-4 py-10 text-center">
+      <div className="sports-card px-3 py-6 sm:px-4 sm:py-10 text-center">
         <p className={cn(type.bodySm, "text-muted-foreground")}>
           {payload.warning ??
             `No baked game logs for ${payload.metricLabel.toLowerCase()} leaders in ${payload.requestedSeason}.`}

@@ -75,7 +75,8 @@ export const space = {
   6: "gap-6",
   8: "gap-8",
   component: "gap-3",
-  section: "gap-8",
+  /** Matches `pageSectionStackClassName` — denser on phones. */
+  section: "gap-5 sm:gap-6 md:gap-8",
 } as const;
 
 export const radius = {

@@ -106,7 +106,7 @@ export default async function TeamMatchupPage({
 
   return (
     <TeamAtmosphere colorA={teamWash} colorB={oppWash}>
-      <main data-motion-page className="relative z-[1] site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <main data-motion-page className="relative z-[1] site-shell flex flex-1 flex-col gap-5 py-4 sm:py-6 md:py-8">
         <MotionReveal />
         <p>
           <Link

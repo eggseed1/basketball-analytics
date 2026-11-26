@@ -122,10 +122,11 @@ export function decideSectionSurface(input: {
 
 /** Outer section shell — open canvas, scroll target, vertical rhythm. */
 export const sectionShellClassName =
-  "scroll-mt-16 flex flex-col gap-3 sm:gap-4";
+  "scroll-mt-16 flex flex-col gap-2.5 sm:gap-3 md:gap-4";
 
 /** Gap between major page sections (overview stack, subtab stack). */
-export const pageSectionStackClassName = "flex flex-col gap-8";
+export const pageSectionStackClassName =
+  "flex flex-col gap-5 sm:gap-6 md:gap-8";
 
 /** Glass body under an outside header (Ask, compact boards). */
 export const sectionBodySurfaceClassName =

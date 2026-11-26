@@ -89,13 +89,13 @@ export function PlayerPercentileSkeleton({
   return (
     <div
       data-skeleton
-      className="flex min-h-[28rem] flex-col gap-3"
+      className="flex min-h-0 flex-col gap-2 p-2.5 sm:gap-3 sm:p-4"
       aria-busy="true"
       aria-live="polite"
     >
       {showBar ? <LoadingBarSignal /> : null}
       <SkeletonPhrase context={context} label={label} />
-      <Pulse className="min-h-[26rem] flex-1 rounded-md" />
+      <Pulse className="h-[18rem] rounded-md sm:min-h-[26rem] sm:h-auto sm:flex-1" />
     </div>
   );
 }

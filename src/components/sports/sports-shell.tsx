@@ -275,7 +275,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
         <SiteChrome>
           <div
             className={cn(
-              "site-shell flex min-w-0 flex-col gap-2 py-3",
+              "site-shell flex min-w-0 flex-col gap-1.5 py-2.5 sm:gap-2 sm:py-3",
               active?.subnav?.length && "pb-2.5"
             )}
           >

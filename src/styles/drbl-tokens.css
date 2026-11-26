@@ -22,9 +22,9 @@
   --space-20: 80px;
 
   --space-component-gap: var(--space-3);
-  --space-card-padding: var(--space-4);
-  --space-section: var(--space-8);
-  --space-page-y: var(--space-6);
+  --space-card-padding: var(--space-3);
+  --space-section: var(--space-5);
+  --space-page-y: var(--space-4);
   --space-page-gutter: var(--space-4);
 
   /* ── Radii ── */
@@ -220,13 +220,17 @@
 @media (min-width: 640px) {
   :root {
     --space-page-gutter: var(--page-gutter-tablet);
-    --space-page-y: var(--space-8);
+    --space-page-y: var(--space-6);
+    --space-section: var(--space-6);
+    --space-card-padding: var(--space-4);
   }
 }
 
 @media (min-width: 1024px) {
   :root {
     --space-page-gutter: var(--page-gutter-desktop);
+    --space-page-y: var(--space-8);
+    --space-section: var(--space-8);
     --space-card-padding: var(--space-5);
   }
 }
@@ -317,20 +321,31 @@ html:not([data-surface="glass"]) .material-elevated {
   text-transform: capitalize;
 }
 .type-title-1 {
-  font-size: 32px;
-  line-height: 40px;
+  font-size: 24px;
+  line-height: 30px;
   font-weight: 700;
   letter-spacing: -0.03em;
   text-transform: capitalize;
 }
 .type-display-lg {
-  font-size: 40px;
-  line-height: 48px;
+  font-size: 32px;
+  line-height: 38px;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
 @media (min-width: 640px) {
+  .type-title-1 {
+    font-size: 32px;
+    line-height: 40px;
+  }
+  .type-display-lg {
+    font-size: 40px;
+    line-height: 48px;
+  }
+}
+
+@media (min-width: 1024px) {
   .type-display-lg {
     font-size: 48px;
     line-height: 52px;

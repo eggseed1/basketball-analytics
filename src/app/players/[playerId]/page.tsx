@@ -622,7 +622,7 @@ export default async function PlayerPage({
             ) : (
               <Suspense
                 fallback={
-                  <div className="col-span-1 min-h-[28rem]">
+                  <div className="col-span-1 min-h-0">
                     <PlayerPercentileSkeleton />
                   </div>
                 }
@@ -860,12 +860,12 @@ export default async function PlayerPage({
   );
 
   const body = (
-    <DestinationClientShell className="site-shell flex flex-1 flex-col gap-4 pb-5 sm:gap-5 sm:pb-7">
+    <DestinationClientShell className="site-shell flex flex-1 flex-col gap-3 pb-4 sm:gap-5 sm:pb-7">
       <PageAtmosphere
         colorA={atmosphere?.colorA}
         colorB={atmosphere?.colorB}
       />
-      <main data-motion-page className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+      <main data-motion-page className="relative z-[1] flex flex-1 flex-col gap-3 sm:gap-5">
         {career.length === 0 ? <span hidden data-page-cache="skip" /> : null}
         <JsonLd
           data={{

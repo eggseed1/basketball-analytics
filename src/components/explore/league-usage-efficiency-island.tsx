@@ -75,7 +75,7 @@ export async function LeagueUsageEfficiencyIsland({
 
   if (points.length < 8 && !pinned.length) {
     return (
-      <div className="sports-card px-4 py-10 text-center">
+      <div className="sports-card px-3 py-6 sm:px-4 sm:py-10 text-center">
         <p className={cn(type.bodySm, "text-muted-foreground")}>
           Not enough qualified peers with usage and true shooting for {season}.
           Try another season or loosen Min MP / field size.

@@ -481,7 +481,7 @@ export function TimelineByMonth({
 }) {
   if (!byMonth.length) {
     return (
-      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
+      <p className="rounded-md border border-dashed border-border px-3 py-5 sm:px-4 sm:py-8 text-center text-[14px] text-muted-foreground">
         No transaction events for these filters.
       </p>
     );
@@ -509,7 +509,7 @@ export function TimelineFeedByMonth({
 }) {
   if (!byMonth.length) {
     return (
-      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
+      <p className="rounded-md border border-dashed border-border px-3 py-5 sm:px-4 sm:py-8 text-center text-[14px] text-muted-foreground">
         No transaction events for these filters.
       </p>
     );

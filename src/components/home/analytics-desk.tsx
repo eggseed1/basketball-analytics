@@ -146,7 +146,7 @@ export function AnalyticsDesk({
         ))}
       </div>
     ) : articles.length === 0 ? (
-      <div className="type-body-sm rounded-md border border-dashed border-border/40 px-4 py-8 text-center text-muted-foreground">
+      <div className="type-body-sm rounded-md border border-dashed border-border/40 px-3 py-5 sm:px-4 sm:py-8 text-center text-muted-foreground">
         No fresh headlines right now.
         {!isPending ? (
           <>
@@ -235,7 +235,7 @@ export function AnalyticsDesk({
 
   if (embedded) {
     return (
-      <section className="sports-card flex flex-col gap-3 overflow-hidden p-4">
+      <section className="sports-card flex flex-col gap-3 overflow-hidden p-3 sm:p-4">
         {body}
       </section>
     );

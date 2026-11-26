@@ -123,7 +123,7 @@ async function FindingDetail({ insight }: { insight: RecentInsight }) {
   const dateLabel = formatGameCalendarDate(insight.gameDate, locale, "fullDate") ?? insight.gameDate;
 
   return (
-    <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main className="site-shell flex flex-col gap-6 py-4 sm:py-6 md:py-8">
       <PageHeader
         title={insight.headline}
         subtitle={insight.description}

@@ -27,7 +27,7 @@ export default async function RecordBookPage({ searchParams }: PageProps) {
   const ready = Boolean(book.throughSeason && book.records.length);
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-4 sm:py-6 md:py-8">
       <MotionReveal />
       <PageHeader
         title={t("recordBookTitle")}

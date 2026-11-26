@@ -836,8 +836,8 @@ function FaceSide({
   return (
     <div
       className={cn(
-        "relative flex min-w-0 flex-1 flex-col items-center px-2 pb-5 pt-6",
-        align === "left" ? "pr-8" : "pl-8"
+        "relative flex min-w-0 flex-1 flex-col items-center px-1 pb-3 pt-3 sm:px-2 sm:pb-5 sm:pt-6",
+        align === "left" ? "pr-5 sm:pr-8" : "pl-5 sm:pl-8"
       )}
     >
       <PlayerIdentity
@@ -845,24 +845,31 @@ function FaceSide({
         name={name}
         season={linkSeason}
         className="flex min-w-0 max-w-full flex-col items-center"
-        nameClassName="flex max-w-full flex-col items-center gap-1.5 text-center no-underline hover:underline"
+        nameClassName="flex max-w-full flex-col items-center gap-1 text-center no-underline hover:underline sm:gap-1.5"
       >
         <span
-          className="flex shrink-0 rounded-full p-[3px] shadow-[0_8px_24px_rgb(0_0_0/0.12)]"
+          className="flex shrink-0 rounded-full p-[2px] shadow-[0_8px_24px_rgb(0_0_0/0.12)] sm:p-[3px]"
           style={{ background: color }}
         >
           <PlayerHeadshot
             playerId={playerId}
             name={name}
             portraitUrl={portraitUrl}
+            size="md"
+            className="ring-0 sm:hidden"
+          />
+          <PlayerHeadshot
+            playerId={playerId}
+            name={name}
+            portraitUrl={portraitUrl}
             size="lg"
-            className="ring-0"
+            className="hidden ring-0 sm:block"
           />
         </span>
         <span
           className={cn(
-            type.body,
-            "mt-1 max-w-full truncate font-bold tracking-tight"
+            type.bodySm,
+            "mt-1 max-w-full truncate font-bold tracking-tight sm:text-[15px] sm:leading-6"
           )}
         >
           {name}
@@ -877,13 +884,15 @@ function FaceSide({
             {season}
           </span>
         ) : null}
-        <TeamChipRow teamKeys={teamKeys} />
+        <div className="hidden sm:block">
+          <TeamChipRow teamKeys={teamKeys} />
+        </div>
       </PlayerIdentity>
       {line ? (
         <p
           className={cn(
             type.micro,
-            "mt-1.5 max-w-full text-center font-semibold tabular-nums text-muted-foreground"
+            "mt-1 hidden max-w-full text-center font-semibold tabular-nums text-muted-foreground sm:mt-1.5 sm:block"
           )}
         >
           {line}
@@ -1092,7 +1101,7 @@ function TopicPanel({
   return (
     <>
       {visuals.length ? (
-        <div className="grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-4 md:grid-cols-2">
+        <div className="grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-3 md:grid-cols-2">
           {visuals}
         </div>
       ) : null}
@@ -1293,7 +1302,7 @@ export function PlayerCompareView({
   const scatterTile = (preset: ScatterPreset, wide = true) =>
     scatterSides.some(Boolean) ? (
       <ComparePeerScatter
-        className={cn(FROST_TILE, "p-4", wide && "md:col-span-2")}
+        className={cn(FROST_TILE, "p-3 sm:p-4", wide && "md:col-span-2")}
         preset={preset}
         sides={scatterSides}
         a={{ name: aShort, color: aFill, values: context.a.scatterSelf }}
@@ -1355,7 +1364,7 @@ export function PlayerCompareView({
             <span
               className={cn(
                 type.caption,
-                "glass-pill glass-pill-active flex size-12 items-center justify-center rounded-full font-black uppercase tracking-wide shadow-[0_6px_18px_rgb(0_0_0/0.14)]"
+                "glass-pill glass-pill-active flex size-9 items-center justify-center rounded-full font-black uppercase tracking-wide shadow-[0_6px_18px_rgb(0_0_0/0.14)] sm:size-12"
               )}
             >
               vs
@@ -1377,8 +1386,15 @@ export function PlayerCompareView({
         </header>
         </div>
 
+        {/* Phone: key impact numbers before basis/metrics chrome. */}
+        <KeyNumbers
+          dimensions={result.dimensions}
+          aColor={aFill}
+          bColor={bFill}
+        />
+
         <div
-          className="flex min-w-0 flex-wrap items-end justify-between gap-3 border-y border-border/60 px-3 py-3 sm:px-5"
+          className="flex min-w-0 flex-wrap items-end justify-between gap-3 border-y border-border/60 px-3 py-2.5 sm:px-5 sm:py-3"
           data-capture-exclude=""
         >
           <div className="flex min-w-0 flex-wrap items-end gap-3">
@@ -1433,12 +1449,6 @@ export function PlayerCompareView({
           </div>
         ) : null}
 
-        <KeyNumbers
-          dimensions={result.dimensions}
-          aColor={aFill}
-          bColor={bFill}
-        />
-
         <div
           className="border-b border-border/60 px-3 py-3 sm:px-5"
           data-capture-exclude=""
@@ -1465,12 +1475,12 @@ export function PlayerCompareView({
 
             <div
               className={cn(
-                "grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-4",
+                "grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-3",
                 showRadar && "md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
               )}
             >
               {showRadar ? (
-                <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+                <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
                   <PlayerCompareRadarLazy
                     axes={radarAxes}
                     dimensions={visibleDimensions}
@@ -1481,7 +1491,7 @@ export function PlayerCompareView({
                   />
                 </div>
               ) : null}
-              <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+              <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
                 <CategoryEdges
                   dimensions={edgeDimensions}
                   aName={aShort}
@@ -1512,7 +1522,7 @@ export function PlayerCompareView({
             aFill={aFill}
             bFill={bFill}
           >
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+            <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
               <ScoringMix
                 dims={dimsById}
                 aName={aShort}
@@ -1522,7 +1532,7 @@ export function PlayerCompareView({
                 basisPhrase={BASIS_PHRASE[basis]}
               />
             </div>
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+            <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
               <ShootingSplits
                 dims={dimsById}
                 aName={aShort}
@@ -1546,7 +1556,7 @@ export function PlayerCompareView({
             aFill={aFill}
             bFill={bFill}
           >
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+            <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
               <Playmaking
                 dims={dimsById}
                 aName={aShort}
@@ -1587,8 +1597,8 @@ export function PlayerCompareView({
         ) : null}
 
         {tab === "career" ? (
-          <div className="border-b border-border/60 p-3 sm:px-5 sm:py-4">
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+          <div className="border-b border-border/60 p-3 sm:px-5 sm:py-3">
+            <div className={cn(FROST_TILE, "min-w-0 p-3 sm:p-4")}>
               {context.a.arc.length || context.b.arc.length ? (
                 <CompareCareerArc
                   a={{

@@ -131,13 +131,22 @@ function LineupSkeleton({
     </div>
   );
   return (
-    <section aria-label={heading} aria-busy className="flex flex-col gap-2 border-t border-border/50 pt-3">
-      <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
-        {heading}
-      </h2>
-      <span className="sr-only">Loading lineups</span>
-      <LineupGrid away={side(awayLabel)} home={side(homeLabel)} center={center} />
-    </section>
+    <>
+      {center ? (
+        <div className="border-t border-border/50 pt-3 sm:hidden">{center}</div>
+      ) : null}
+      <section
+        aria-label={heading}
+        aria-busy
+        className="hidden flex-col gap-2 border-t border-border/50 pt-3 sm:flex"
+      >
+        <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
+          {heading}
+        </h2>
+        <span className="sr-only">Loading lineups</span>
+        <LineupGrid away={side(awayLabel)} home={side(homeLabel)} center={center} />
+      </section>
+    </>
   );
 }
 
@@ -350,11 +359,18 @@ export function GameLineupsPanel({
     </>
   );
 
-  const panel = (
+  const lineupBody = (
+    <LineupGrid
+      away={renderSide("away", awayLabel, away, awayTeamKey)}
+      home={renderSide("home", homeLabel, home, homeTeamKey)}
+    />
+  );
+
+  const desktopPanel = (
     <section
       aria-label={heading}
       className={cn(
-        "flex flex-col gap-2 border-t border-border/50 pt-3",
+        "hidden flex-col gap-2 border-t border-border/50 pt-3 sm:flex",
         shouldExpand &&
           "animate-in fade-in zoom-in-95 fill-mode-both duration-500 ease-out motion-reduce:animate-none"
       )}
@@ -370,7 +386,41 @@ export function GameLineupsPanel({
     </section>
   );
 
-  return shouldExpand ? <LineupExpandIn>{panel}</LineupExpandIn> : panel;
+  const mobile = (
+    <div className="flex flex-col gap-2 border-t border-border/50 pt-3 sm:hidden">
+      {center}
+      <details className="group">
+        <summary
+          className={cn(
+            type.micro,
+            "flex cursor-pointer list-none items-center justify-between font-bold uppercase tracking-[0.1em] text-muted-foreground [&::-webkit-details-marker]:hidden"
+          )}
+        >
+          <span>{heading}</span>
+          <span className="font-semibold normal-case tracking-normal text-foreground/70 group-open:hidden">
+            Show
+          </span>
+          <span className="hidden font-semibold normal-case tracking-normal text-foreground/70 group-open:inline">
+            Hide
+          </span>
+        </summary>
+        <div className="mt-2">{lineupBody}</div>
+      </details>
+    </div>
+  );
+
+  const desktop = shouldExpand ? (
+    <LineupExpandIn>{desktopPanel}</LineupExpandIn>
+  ) : (
+    desktopPanel
+  );
+
+  return (
+    <>
+      {mobile}
+      {desktop}
+    </>
+  );
 }
 
 /** Grows the lineup block open so it pushes into the page instead of popping in. */

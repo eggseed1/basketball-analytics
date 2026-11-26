@@ -90,7 +90,7 @@ export async function SentimentMoversPanel() {
   const sample = board.risers[0] ?? board.fallers[0];
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4">
+    <section className="sports-card flex flex-col gap-3 p-3 sm:p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-2">

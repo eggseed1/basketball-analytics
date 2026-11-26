@@ -45,7 +45,7 @@ export function StyleGroupCard({
   return (
     <TextLink
       href={href}
-      className="flex min-h-[9.5rem] flex-col gap-2.5 rounded-md border border-border/50 px-3.5 py-3 no-underline transition-colors hover:border-border hover:bg-foreground/[0.03]"
+      className="flex min-h-0 flex-col gap-2 rounded-md border border-border/50 px-3 py-2.5 no-underline transition-colors hover:border-border hover:bg-foreground/[0.03] sm:min-h-[8.5rem] sm:gap-2.5 sm:px-3.5 sm:py-3"
     >
       <div className="flex items-baseline justify-between gap-2">
         <span className={cn(type.bodySm, "font-semibold text-foreground")}>

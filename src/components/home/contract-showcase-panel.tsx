@@ -34,7 +34,7 @@ export async function ContractShowcasePanel() {
     return (
       <section
         aria-label="Contract surplus"
-        className="sports-card flex flex-col gap-3 p-4"
+        className="sports-card flex flex-col gap-3 p-3 sm:p-4"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div className="flex min-w-0 flex-col gap-0.5">
@@ -74,7 +74,7 @@ export async function ContractShowcasePanel() {
   return (
     <section
       aria-label="Contract surplus"
-      className="sports-card flex flex-col gap-3 p-4"
+      className="sports-card flex flex-col gap-3 p-3 sm:p-4"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex min-w-0 flex-col gap-0.5">

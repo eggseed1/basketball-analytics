@@ -66,7 +66,11 @@ export function SectionFrame({
     <div
       data-slot="section-body-surface"
       data-density={density}
-      className={cn(sectionBodySurfaceClassName, "p-4 sm:p-5", bodyClassName)}
+      className={cn(
+        sectionBodySurfaceClassName,
+        "p-3 sm:p-4 md:p-5",
+        bodyClassName
+      )}
       style={sectionBodySurfaceStyle}
     >
       {children}
@@ -75,7 +79,7 @@ export function SectionFrame({
     <div
       data-slot="section-body"
       data-density={density}
-      className={cn("flex flex-col gap-3 sm:gap-4", bodyClassName)}
+      className={cn("flex flex-col gap-2.5 sm:gap-3 md:gap-4", bodyClassName)}
     >
       {children}
     </div>
