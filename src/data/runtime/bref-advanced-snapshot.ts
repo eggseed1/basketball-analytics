@@ -38,6 +38,8 @@ type SlimAdvanced = {
   n: string;
   t: string;
   e?: string;
+  /** NBA Stats player id. */
+  p?: number;
   gp: number;
   mp: number;
   per: number;
@@ -291,6 +293,42 @@ export async function getBundledBrefUsageRows(
     tovPct: r.tovPct,
     tm: r.tm,
   }));
+}
+
+const seasonFormRowsCache = new Map<
+  string,
+  Array<{
+    espnId?: string;
+    nbaId?: string;
+    gp: number;
+    mp: number;
+    bpm: number;
+    vorp: number;
+    per: number;
+    pts: number | null;
+  }>
+>();
+
+/** Season production keyed by ESPN and NBA ids, for joining onto other feeds. */
+export async function getBundledSeasonFormRows(canonicalSeason: string) {
+  await ensureSeasonTables();
+  const hit = seasonFormRowsCache.get(canonicalSeason);
+  if (hit) return hit;
+  const ptsByKey = new Map(
+    perGameForSeason(canonicalSeason).map((r) => [`${r.n.toLowerCase()}|${r.t}`, r.pts])
+  );
+  const rows = advancedForSeason(canonicalSeason).map((r) => ({
+    espnId: r.e,
+    nbaId: r.p != null ? String(r.p) : undefined,
+    gp: r.gp,
+    mp: r.mp,
+    bpm: r.bpm,
+    vorp: r.vorp,
+    per: r.per,
+    pts: ptsByKey.get(`${r.n.toLowerCase()}|${r.t}`) ?? null,
+  }));
+  seasonFormRowsCache.set(canonicalSeason, rows);
+  return rows;
 }
 
 /** Find one player in a season without materializing the full peer board. */

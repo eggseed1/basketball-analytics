@@ -20,6 +20,7 @@ import { SentimentStorylines } from "@/components/sentiment/sentiment-storylines
 import { SentimentTeamsBoard } from "@/components/sentiment/sentiment-teams-board";
 import { TrackedPlayersBoard } from "@/components/sentiment/tracked-players-board";
 import { computeSentimentMovers } from "@/sentiment/movers";
+import { formatBpm } from "@/sentiment/season-form";
 import type {
   LeagueSentimentFeed,
   SentimentMoverRow,
@@ -72,6 +73,7 @@ function MoverColumn({
                 <span className={cn(type.caption, "flex items-center gap-1 text-muted-foreground")}>
                   {row.teamKey ? <TeamLogo teamKey={row.teamKey} size="xs" /> : null}
                   {fanLabel(sentimentPct(row.fanScore))}
+                  {row.form ? <span>{`· BPM ${formatBpm(row.form.bpm)}`}</span> : null}
                 </span>
               </span>
               <span
@@ -100,6 +102,10 @@ async function SentimentWeekMovers({
   className?: string;
 }) {
   const t = await getTranslations("Sentiment");
+  // Rotation players only, once season tables are joined; volume floors apply either way.
+  const formById = new Map(
+    players.flatMap((row) => (row.form ? [[row.playerId, row.form] as const] : []))
+  );
   const { risers, fallers } = computeSentimentMovers(
     players
       .filter((row) => row.fan && row.series?.fan && row.series.fan.length >= 2)
@@ -111,7 +117,11 @@ async function SentimentWeekMovers({
         fan: row.fan,
         series: row.series,
       })),
-    { limit: 3, lookbackDays: 7 }
+    {
+      limit: 3,
+      lookbackDays: 7,
+      ...(formById.size ? { formFor: (p) => formById.get(p.playerIds[0]!) } : {}),
+    }
   );
   if (risers.length + fallers.length < 2) return null;
   const sample = risers[0] ?? fallers[0];

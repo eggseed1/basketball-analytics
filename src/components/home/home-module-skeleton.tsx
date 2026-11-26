@@ -42,7 +42,7 @@ const HEIGHT: Record<HomeModuleId, string> = {
   "hot-cold": "h-[412px]",
   transactions: "h-[266px] lg:h-[238px]",
   watchlist: "h-[120px] lg:h-[132px]",
-  sentiment: "h-[660px] lg:h-[368px]",
+  sentiment: "h-[920px] lg:h-[600px]",
   "season-glance": "h-[2315px] lg:h-[1320px]",
   news: "h-[715px] lg:h-[596px]",
   "contract-showcase": "h-[420px] lg:h-[400px]",

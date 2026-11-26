@@ -19,6 +19,7 @@ import {
 import { laneOriginLabel, sentimentPct } from "@/components/sentiment/sentiment-source";
 import { MoreInfo } from "@/components/ui/more-info";
 import type { SentimentLaneOrigin, TrackedPlayerSentimentRow } from "@/sentiment/curated-types";
+import { qualifiesForForm } from "@/sentiment/season-form";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +35,8 @@ const ORIGIN_COLOR: Record<SentimentLaneOrigin, string> = {
 type Point = {
   playerId: string;
   name: string;
-  drbl: number;
+  /** Production on the x axis: this season's BPM, or last season's DRBL/100. */
+  x: number;
   score: number;
   origin: SentimentLaneOrigin;
   volume: number;
@@ -44,14 +46,14 @@ type Point = {
 function pearson(points: Point[]): number | null {
   if (points.length < 8) return null;
   const n = points.length;
-  const mx = points.reduce((s, p) => s + p.drbl, 0) / n;
+  const mx = points.reduce((s, p) => s + p.x, 0) / n;
   const my = points.reduce((s, p) => s + p.score, 0) / n;
   let sxy = 0;
   let sxx = 0;
   let syy = 0;
   for (const p of points) {
-    sxy += (p.drbl - mx) * (p.score - my);
-    sxx += (p.drbl - mx) ** 2;
+    sxy += (p.x - mx) * (p.score - my);
+    sxx += (p.x - mx) ** 2;
     syy += (p.score - my) ** 2;
   }
   if (!sxx || !syy) return null;
@@ -61,24 +63,39 @@ function pearson(points: Point[]): number | null {
 export function SentimentPerformanceScatter({ rows }: { rows: TrackedPlayerSentimentRow[] }) {
   const [lane, setLane] = useState<Lane>("media");
 
+  // This season's BPM once enough players have a real sample; last season's DRBL/100 before that.
+  const useForm = useMemo(
+    () => rows.filter((row) => row[lane] && qualifiesForForm(row.form)).length >= 20,
+    [lane, rows]
+  );
+  const xLabel = useForm ? "BPM" : "DRBL/100";
+
   const points = useMemo(
     () =>
       rows.flatMap((row): Point[] => {
         const data = row[lane];
-        if (!data || !row.performance) return [];
+        if (!data) return [];
+        const production = useForm
+          ? qualifiesForForm(row.form)
+            ? { x: row.form.bpm, season: row.form.season }
+            : null
+          : row.performance
+            ? { x: row.performance.drbl100, season: row.performance.season }
+            : null;
+        if (!production) return [];
         return [
           {
             playerId: row.playerId,
             name: row.displayName,
-            drbl: row.performance.drbl100,
+            x: production.x,
             score: data.score,
             origin: data.origin ?? "curated",
             volume: data.mentionVolume,
-            season: row.performance.season,
+            season: production.season,
           },
         ];
       }),
-    [lane, rows]
+    [lane, rows, useForm]
   );
 
   const groups = useMemo(() => {
@@ -95,7 +112,7 @@ export function SentimentPerformanceScatter({ rows }: { rows: TrackedPlayerSenti
 
   const xDomain = useMemo((): [number, number] => {
     if (points.length === 0) return [-1, 1];
-    const xs = points.map((p) => p.drbl);
+    const xs = points.map((p) => p.x);
     return [Math.floor(Math.min(0, ...xs)), Math.ceil(Math.max(0, ...xs))];
   }, [points]);
 
@@ -105,13 +122,14 @@ export function SentimentPerformanceScatter({ rows }: { rows: TrackedPlayerSenti
         <div className="flex flex-col gap-0.5">
           <h2 className={cn(type.bodySm, "font-bold")}>Sentiment vs on-court value</h2>
           <p className={cn(type.caption, "max-w-2xl text-muted-foreground")}>
-            Each dot is a player: current {lane} tone against DRBL/100
+            Each dot is a player: current {lane} tone against {xLabel}
             {season ? ` from ${season}` : ""}. An association, not cause and effect.
           </p>
           <MoreInfo>
             <p>
-              Tone describes this week and DRBL describes last season. Colors mark the source,
-              and sources are never pooled into one correlation.
+              Tone describes this week and {xLabel} describes {useForm ? "this season" : "last season"}.
+              {useForm ? " BPM ranks players with 8+ games and 15+ minutes a game." : ""} Colors mark the
+              source, and sources are never pooled into one correlation.
             </p>
           </MoreInfo>
         </div>
@@ -137,7 +155,7 @@ export function SentimentPerformanceScatter({ rows }: { rows: TrackedPlayerSenti
       <div className="sports-card p-4">
         {points.length < 3 ? (
           <p className={cn(type.caption, "text-muted-foreground")}>
-            Too few players have both a {lane} lane and last season&apos;s DRBL/100 to plot.
+            Too few players have both a {lane} lane and a {xLabel} to plot.
           </p>
         ) : (
           <div key={lane} data-sentiment-scatter style={{ height: 300 }}>
@@ -146,12 +164,12 @@ export function SentimentPerformanceScatter({ rows }: { rows: TrackedPlayerSenti
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" strokeOpacity={0.45} />
                 <XAxis
                   type="number"
-                  dataKey="drbl"
-                  name="DRBL/100"
+                  dataKey="x"
+                  name={xLabel}
                   domain={xDomain}
                   allowDecimals={false}
                   tick={{ fontSize: 10 }}
-                  label={{ value: "DRBL/100", position: "insideBottomRight", offset: -4, fontSize: 10 }}
+                  label={{ value: xLabel, position: "insideBottomRight", offset: -4, fontSize: 10 }}
                 />
                 <YAxis
                   type="number"
@@ -176,8 +194,8 @@ export function SentimentPerformanceScatter({ rows }: { rows: TrackedPlayerSenti
                           {p.origin === "headlines" ? ` · ${p.volume} headlines` : ""}
                         </p>
                         <p className={cn(type.caption, "tabular-nums text-muted-foreground")}>
-                          DRBL/100 {p.drbl > 0 ? "+" : ""}
-                          {p.drbl.toFixed(1)} ({p.season})
+                          {xLabel} {p.x > 0 ? "+" : ""}
+                          {p.x.toFixed(1)} ({p.season})
                         </p>
                       </FrostRechartsTooltip>
                     );

@@ -1,10 +1,26 @@
 /**
- * Where talk about a player and last season's production disagree. Tone and
- * DRBL/100 are each ranked as a percentile among the same qualified players;
- * the gap is tone percentile minus production percentile. Pure.
+ * Where talk about a player and production disagree. Tone and production are
+ * each ranked as a percentile among the same qualified players; the gap is tone
+ * percentile minus production percentile. Production is this season's BPM when
+ * enough players have a real sample, and last season's DRBL/100 otherwise. Pure.
  */
 
 import type { TrackedPlayerSentimentRow } from "@/sentiment/curated-types";
+import { qualifiesForForm } from "@/sentiment/season-form";
+
+export type ToneGapMetric = "bpm" | "drbl100";
+
+export const TONE_GAP_METRIC_LABEL: Record<ToneGapMetric, string> = {
+  bpm: "BPM",
+  drbl100: "DRBL/100",
+};
+
+/** 1st, 2nd, 3rd, 11th, 21st. */
+export function formatOrdinal(n: number): string {
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  return `${n}${["th", "st", "nd", "rd"][n % 10] ?? "th"}`;
+}
 
 export type ToneGapRow = {
   playerId: string;
@@ -12,7 +28,8 @@ export type ToneGapRow = {
   teamKey?: string;
   score: number;
   mentionVolume: number;
-  drbl100: number;
+  /** Raw production value in the side's metric. */
+  production: number;
   tonePct: number;
   productionPct: number;
   gap: number;
@@ -22,6 +39,8 @@ export type ToneGapSide = {
   qualified: number;
   minVolume: number;
   season: string;
+  metric: ToneGapMetric;
+  metricLabel: string;
   talkedUp: ToneGapRow[];
   overlooked: ToneGapRow[];
 };
@@ -43,29 +62,69 @@ function percentiles(values: number[]): number[] {
   return out;
 }
 
+type Qualified = {
+  row: TrackedPlayerSentimentRow;
+  lane: NonNullable<TrackedPlayerSentimentRow["fan"]>;
+  production: number;
+  season: string;
+};
+
+function qualify(
+  rows: TrackedPlayerSentimentRow[],
+  side: "fan" | "media",
+  minVolume: number,
+  metric: ToneGapMetric
+): Qualified[] {
+  return rows.flatMap((row) => {
+    const lane = row[side];
+    if (!lane?.origin || lane.origin === "curated") return [];
+    if (lane.mentionVolume < minVolume) return [];
+    if (metric === "bpm") {
+      return qualifiesForForm(row.form)
+        ? [{ row, lane, production: row.form.bpm, season: row.form.season }]
+        : [];
+    }
+    return row.performance
+      ? [{ row, lane, production: row.performance.drbl100, season: row.performance.season }]
+      : [];
+  });
+}
+
 export function toneVsProduction(
   rows: TrackedPlayerSentimentRow[],
   side: "fan" | "media",
-  options: { minVolume: number; minPlayers?: number; minGap?: number; limit?: number }
+  options: {
+    minVolume: number;
+    minPlayers?: number;
+    minGap?: number;
+    limit?: number;
+    /** "auto" uses this season's BPM when enough players qualify. */
+    metric?: ToneGapMetric | "auto";
+  }
 ): ToneGapSide | null {
-  const { minVolume, minPlayers = 20, minGap = 25, limit = 6 } = options;
-  const qualified = rows.flatMap((row) => {
-    const lane = row[side];
-    if (!lane?.origin || lane.origin === "curated" || !row.performance) return [];
-    if (lane.mentionVolume < minVolume) return [];
-    return [{ row, lane, performance: row.performance }];
-  });
-  if (qualified.length < minPlayers) return null;
+  const { minVolume, minPlayers = 20, minGap = 25, limit = 6, metric = "auto" } = options;
+  const order: ToneGapMetric[] = metric === "auto" ? ["bpm", "drbl100"] : [metric];
+  let chosen: ToneGapMetric | null = null;
+  let qualified: Qualified[] = [];
+  for (const candidate of order) {
+    const pool = qualify(rows, side, minVolume, candidate);
+    if (pool.length >= minPlayers) {
+      chosen = candidate;
+      qualified = pool;
+      break;
+    }
+  }
+  if (!chosen) return null;
 
   const tone = percentiles(qualified.map((q) => q.lane.score));
-  const production = percentiles(qualified.map((q) => q.performance.drbl100));
+  const production = percentiles(qualified.map((q) => q.production));
   const scored: ToneGapRow[] = qualified.map((q, i) => ({
     playerId: q.row.playerId,
     displayName: q.row.displayName,
     ...(q.row.teamKey ? { teamKey: q.row.teamKey } : {}),
     score: q.lane.score,
     mentionVolume: q.lane.mentionVolume,
-    drbl100: q.performance.drbl100,
+    production: q.production,
     tonePct: Math.round(tone[i]),
     productionPct: Math.round(production[i]),
     gap: Math.round(tone[i] - production[i]),
@@ -75,7 +134,9 @@ export function toneVsProduction(
   return {
     qualified: scored.length,
     minVolume,
-    season: qualified[0].performance.season,
+    season: qualified[0].season,
+    metric: chosen,
+    metricLabel: TONE_GAP_METRIC_LABEL[chosen],
     talkedUp: byGap.filter((row) => row.gap >= minGap).slice(0, limit),
     overlooked: byGap
       .filter((row) => row.gap <= -minGap)

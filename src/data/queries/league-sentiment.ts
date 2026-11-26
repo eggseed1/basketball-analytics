@@ -14,11 +14,21 @@ import {
   listTrackedPlayerSentiment,
   loadSentimentSnapshot,
 } from "@/sentiment/load-curated";
+import { getSentimentSeasonForm } from "@/data/queries/sentiment-season-form";
 import type { TrackedPlayerSentimentRow } from "@/sentiment/curated-types";
+import { seasonFormFor } from "@/sentiment/season-form";
 
 export const getLeagueSentimentBoard = cache(async () => {
   const feed = await getLeagueSentimentFeed();
-  const players = await listRosterSentimentRows();
+  const listed = await listRosterSentimentRows();
+  // Production joins at read time so it tracks the nightly season tables.
+  const form = await getSentimentSeasonForm(
+    feed?.season ?? canonicalSeasonFromStartYear(currentNbaStartYear())
+  );
+  const players = listed.map((row): TrackedPlayerSentimentRow => {
+    const hit = seasonFormFor([row.playerId], form);
+    return hit ? { ...row, form: hit } : row;
+  });
   return { feed, players };
 });
 

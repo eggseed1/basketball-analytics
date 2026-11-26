@@ -1,3 +1,4 @@
+import type { SeasonForm } from "@/sentiment/season-form";
 import type {
   SentimentDirection,
   SentimentPolarity,
@@ -130,11 +131,22 @@ export type SentimentMoverRow = {
   playerId: string;
   displayName: string;
   teamKey?: string;
+  /** Fan tone over the current window. */
   fanScore: number;
+  /**
+   * Change in fan tone against the previous window, on the −2..2 score scale.
+   * Both windows are pulled toward the player's own average by how few posts
+   * back them, so thin samples cannot swing it.
+   */
   delta: number;
+  /** Fan posts in the current window. */
   mentionVolume: number;
+  /** Fan posts in the previous window. */
+  priorVolume?: number;
   origin?: SentimentLaneOrigin;
   asOf?: string;
+  /** This season's production, when the player is in the season tables. */
+  form?: SeasonForm;
 };
 
 export type SentimentSnapshotMeta = {
@@ -346,6 +358,8 @@ export type TrackedPlayerSentimentRow = {
   words?: PlayerSentimentProfile["words"];
   headlineCount?: number;
   performance?: PlayerSentimentProfile["performance"];
+  /** This season's production, joined at read time. */
+  form?: SeasonForm;
   hasProfile?: boolean;
   provenance?: SentimentProfileProvenance;
 };
