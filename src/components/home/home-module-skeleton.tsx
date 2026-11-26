@@ -47,7 +47,7 @@ const HEIGHT: Record<HomeModuleId, string> = {
   news: "h-[715px] lg:h-[596px]",
   "contract-showcase": "h-[420px] lg:h-[400px]",
   /* Matches the Rookie Race card: header, metric chips, five-row list. */
-  "rookie-tracker": "h-[400px] lg:h-[400px]",
+  "rookie-tracker": "h-[500px] lg:h-[400px]",
 };
 
 function Bar({ className }: { className?: string }) {

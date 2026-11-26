@@ -10,14 +10,11 @@ import {
   availableRookieTrackerSorts,
   boardRowsForRookieSort,
   defaultRookieTrackerSort,
-  rookieRaceLeaderValue,
-  rookieRaceShare,
   type RookieTrackerModel,
   type RookieTrackerRow,
   type RookieTrackerSort,
 } from "@/lib/home-rookie-tracker";
 import { type } from "@/lib/design-system";
-import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 const SORTS: { id: RookieTrackerSort; label: string }[] = [
@@ -46,29 +43,16 @@ function primaryValue(row: RookieTrackerRow, sort: RookieTrackerSort): string {
   return fmtInt(row.assists);
 }
 
-function teamPaint(teamAbbr: string): { primary: string; secondary: string } {
-  const brand = resolveTeamBrand(teamAbbr);
-  return {
-    primary: brand?.primary ?? "#64748b",
-    secondary: brand?.secondary ?? brand?.primary ?? "#94a3b8",
-  };
-}
-
 function RookieRow({
   row,
   sort,
   rank,
-  share,
 }: {
   row: RookieTrackerRow;
   sort: RookieTrackerSort;
   rank: number;
-  /** Share of the race leader (0–1). Null when the sort has no race value. */
-  share: number | null;
 }) {
   const primary = primaryValue(row, sort);
-  const paint = teamPaint(row.teamAbbr);
-  const widthPct = share == null ? 0 : Math.round(share * 1000) / 10;
   const secondary =
     sort === "pick"
       ? row.gp
@@ -82,8 +66,8 @@ function RookieRow({
     <>
       <span
         className={cn(
-          type.caption,
-          "w-3 shrink-0 text-center font-bold tabular-nums text-muted-foreground"
+          type.bodySm,
+          "w-4 shrink-0 text-center font-bold tabular-nums text-muted-foreground"
         )}
         aria-hidden
       >
@@ -94,36 +78,21 @@ function RookieRow({
         espnId={row.playerId}
         name={row.name}
         teamKey={row.teamAbbr}
-        size="sm"
-        className="shrink-0"
+        size="md"
+        className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
       />
       <div className="min-w-0 flex-1">
-        <p className={cn(type.bodySm, "truncate font-semibold")}>{row.name}</p>
-        <div className="flex items-center gap-1">
+        <p className={cn(type.body, "truncate font-semibold")}>{row.name}</p>
+        <div className="mt-0.5 flex items-center gap-1.5">
           <TeamLogo teamKey={row.teamAbbr} size="xs" />
           <span className={cn(type.caption, "truncate text-muted-foreground")}>
             {secondary}
           </span>
         </div>
-        {share != null ? (
-          <div
-            className="mt-1 h-1 overflow-hidden rounded-full bg-secondary/70"
-            aria-hidden
-          >
-            <span
-              data-motion-bar="x"
-              className="block h-full origin-left rounded-full"
-              style={{
-                width: `${widthPct}%`,
-                backgroundColor: paint.primary,
-              }}
-            />
-          </div>
-        ) : null}
       </div>
       <span
         className={cn(
-          type.bodySm,
+          type.body,
           "shrink-0 font-bold tabular-nums"
         )}
       >
@@ -133,7 +102,7 @@ function RookieRow({
   );
 
   const rowClass =
-    "flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors hover:bg-secondary/70";
+    "flex items-center gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-secondary/70";
 
   if (!row.href) {
     return (
@@ -173,10 +142,6 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
     () => boardRowsForRookieSort(model.rows, activeSort),
     [model.rows, activeSort]
   );
-  const leader = useMemo(
-    () => rookieRaceLeaderValue(rows, activeSort),
-    [rows, activeSort]
-  );
   const metric = SORTS.find((s) => s.id === activeSort)?.label ?? activeSort;
 
   return (
@@ -197,7 +162,7 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
           )
         )}
       </ChoiceTrack>
-      {/* One list: rank, player, and a bar scaled to the leader. */}
+      {/* One list: rank, player, and the value for the chosen metric. */}
       <ol
         data-motion-list
         aria-label={`Rookie race by ${metric}`}
@@ -209,7 +174,6 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
             row={row}
             sort={activeSort}
             rank={index + 1}
-            share={rookieRaceShare(row, activeSort, leader)}
           />
         ))}
       </ol>
