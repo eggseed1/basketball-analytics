@@ -55,6 +55,22 @@ const COMPARE_DIMS: Array<{
 
 /** Default-on metrics in the compare UI (player can enable the rest). */
 export const COMPARE_DEFAULT_METRIC_IDS: SheetStatId[] = [
+  // Impact first — DRBL is an advanced-stats product.
+  "drbl100",
+  "drblO",
+  "drblD",
+  "war1",
+  "darko",
+  "darkoOff",
+  "darkoDef",
+  "raptor",
+  "winsAdded",
+  "bpm",
+  "vorp",
+  "per",
+  "ws48",
+  "net",
+  // Counting + shooting still on by default.
   "mp",
   "pts",
   "trb",
@@ -85,18 +101,6 @@ export const COMPARE_DEFAULT_METRIC_IDS: SheetStatId[] = [
   "threePar",
   "ftr",
   "ortg",
-  "net",
-  "per",
-  "ws48",
-  "bpm",
-  "vorp",
-  "darko",
-  "raptor",
-  "winsAdded",
-  "war1",
-  "drbl100",
-  "drblO",
-  "drblD",
 ];
 
 const CATEGORY_ORDER: SheetStatCategory[] = [...SHEET_STAT_CATEGORY_ORDER];

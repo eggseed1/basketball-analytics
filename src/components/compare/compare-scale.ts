@@ -87,8 +87,9 @@ export function compareGap(d: ComparisonDimension): number | null {
 /**
  * 0–100 position for one side of a matchup dimension. Peer percentile when both
  * sides have one; otherwise the leader sits at 100 and the trailer is shortened
- * by the percent gap (lower-is-better stats included). Null when the row has no
- * honest shared scale, such as a zero-centered stat on career rows.
+ * by the percent gap (lower-is-better stats included). Falls back to the
+ * precomputed relative bar (incl. zero-centered impact) so mobile rows still
+ * paint a fill when career / missing-percentile pools blank the gap scale.
  */
 export function compareScore(
   d: ComparisonDimension,
@@ -99,9 +100,38 @@ export function compareScore(
     return Math.max(0, Math.min(100, pct));
   }
   const gap = compareGap(d);
-  if (gap == null) return null;
-  const leads = side === "a" ? gap >= 0 : gap <= 0;
-  return leads ? 100 : Math.max(0, 100 - Math.abs(gap));
+  if (gap != null) {
+    const leads = side === "a" ? gap >= 0 : gap <= 0;
+    return leads ? 100 : Math.max(0, 100 - Math.abs(gap));
+  }
+  const bar = side === "a" ? d.aBar : d.bBar;
+  if (bar != null && Number.isFinite(bar) && bar > 0) {
+    return Math.max(0, Math.min(100, bar));
+  }
+  return null;
+}
+
+/** Percentile points inside which two players read as even. */
+export const EVEN_PCT_POINTS = 3;
+/** Relative raw gap inside which two players read as even (no percentiles). */
+export const EVEN_RAW_SHARE = 0.02;
+
+export type CompareEdge = "a" | "b" | "even";
+
+/**
+ * Winner of one dimension for page + share. Same rules everywhere so a share
+ * card never highlights both sides or misses the leader the live page shows.
+ */
+export function compareEdge(d: ComparisonDimension): CompareEdge {
+  if (d.delta == null || !Number.isFinite(d.delta)) return "even";
+  if (hasPeerPercentiles(d)) {
+    if (Math.abs(d.delta) < EVEN_PCT_POINTS) return "even";
+    return d.delta > 0 ? "a" : "b";
+  }
+  const peak = Math.max(Math.abs(d.aValue ?? 0), Math.abs(d.bValue ?? 0));
+  if (peak > 0 && Math.abs(d.delta) / peak < EVEN_RAW_SHARE) return "even";
+  if (d.delta === 0) return "even";
+  return d.delta > 0 ? "a" : "b";
 }
 
 export const RADAR_MAX_AXES = 8;

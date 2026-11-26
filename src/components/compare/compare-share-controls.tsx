@@ -5,6 +5,7 @@ import { Share2 } from "lucide-react";
 
 import type { ComparisonDimension, PlayerComparisonResult } from "@/analytics";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { compareEdge } from "@/components/compare/compare-scale";
 import { SHARE_PALETTE, ShareCardFrame, type ShareAppearance } from "@/components/share/share-card";
 import { ShareSnapshotDialog } from "@/components/share/share-snapshot-dialog";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -20,22 +21,20 @@ type ShareLayout = "clean" | "bars";
 const SHARE_ROW_GRID =
   "grid grid-cols-[minmax(0,1fr)_5.75rem_minmax(0,1fr)] items-center gap-x-3";
 
-/** Sensible defaults for social graphics — trimmed if a metric is missing. */
+/** Social defaults — impact first, then a short counting/shooting set. */
 const DEFAULT_SHARE_METRIC_IDS = [
+  "drbl100",
+  "war1",
+  "darko",
+  "raptor",
+  "bpm",
+  "vorp",
+  "ts",
   "pts",
   "trb",
   "ast",
-  "stl",
-  "blk",
-  "tov",
-  "fgPct",
   "fg3Pct",
-  "ftPct",
-  "ts",
-  "darko",
-  "raptor",
-  "war1",
-  "drbl100",
+  "usg",
 ] as const;
 
 const FALLBACK_A = "#FDB927"; // Lakers-ish gold when brand missing
@@ -75,10 +74,14 @@ function seasonLabel(result: PlayerComparisonResult, side: "a" | "b") {
   return result.seasonB ?? result.season ?? "";
 }
 
-function sideWins(d: ComparisonDimension, side: "a" | "b") {
-  if (d.delta == null || !Number.isFinite(d.delta)) return false;
-  if (Math.abs(d.delta) < 0.05) return false;
-  return side === "a" ? d.delta > 0 : d.delta < 0;
+/** Opacity for a share-card side. Only the edge winner is fully lit. */
+function shareSideOpacity(
+  d: ComparisonDimension,
+  side: "a" | "b"
+): number {
+  const edge = compareEdge(d);
+  if (edge === "even") return 0.72;
+  return edge === side ? 1 : 0.5;
 }
 
 function shareSideColor(teamKey: string | undefined, fallback: string, appearance: ShareAppearance) {
@@ -167,10 +170,16 @@ function CompareShareGraphic({
 
       <div className="mt-8 flex flex-col">
         {metrics.map((d, i) => {
-          const aWin = sideWins(d, "a");
-          const bWin = sideWins(d, "b");
-          const aBar = Math.max(0, Math.min(100, d.aBar ?? 0));
-          const bBar = Math.max(0, Math.min(100, d.bBar ?? 0));
+          const aOpacity = shareSideOpacity(d, "a");
+          const bOpacity = shareSideOpacity(d, "b");
+          const aBar = Math.max(
+            0,
+            Math.min(100, d.aBar != null && d.aBar > 0 ? Math.max(d.aBar, 8) : 0)
+          );
+          const bBar = Math.max(
+            0,
+            Math.min(100, d.bBar != null && d.bBar > 0 ? Math.max(d.bBar, 8) : 0)
+          );
 
           return (
             <div
@@ -189,7 +198,7 @@ function CompareShareGraphic({
                       className="w-full text-right text-[20px] font-bold tabular-nums leading-none"
                       style={{
                         color: aColor,
-                        opacity: aWin || (!aWin && !bWin) ? 1 : 0.55,
+                        opacity: aOpacity,
                       }}
                     >
                       {d.aDisplay}
@@ -200,7 +209,7 @@ function CompareShareGraphic({
                         style={{
                           width: `${aBar}%`,
                           background: aColor,
-                          opacity: aWin || (!aWin && !bWin) ? 1 : 0.55,
+                          opacity: aOpacity,
                         }}
                       />
                     </div>
@@ -210,7 +219,7 @@ function CompareShareGraphic({
                     className="block w-full text-right text-[22px] font-bold tabular-nums leading-none"
                     style={{
                       color: aColor,
-                      opacity: aWin || (!aWin && !bWin) ? 1 : 0.55,
+                      opacity: aOpacity,
                     }}
                   >
                     {d.aDisplay}
@@ -234,7 +243,7 @@ function CompareShareGraphic({
                       className="w-full text-left text-[20px] font-bold tabular-nums leading-none"
                       style={{
                         color: bColor,
-                        opacity: bWin || (!aWin && !bWin) ? 1 : 0.55,
+                        opacity: bOpacity,
                       }}
                     >
                       {d.bDisplay}
@@ -245,7 +254,7 @@ function CompareShareGraphic({
                         style={{
                           width: `${bBar}%`,
                           background: bColor,
-                          opacity: bWin || (!aWin && !bWin) ? 1 : 0.55,
+                          opacity: bOpacity,
                         }}
                       />
                     </div>
@@ -255,7 +264,7 @@ function CompareShareGraphic({
                     className="block w-full text-left text-[22px] font-bold tabular-nums leading-none"
                     style={{
                       color: bColor,
-                      opacity: bWin || (!aWin && !bWin) ? 1 : 0.55,
+                      opacity: bOpacity,
                     }}
                   >
                     {d.bDisplay}
@@ -285,7 +294,7 @@ export function CompareShareControls({
   result: PlayerComparisonResult;
 }) {
   const [open, setOpen] = useState(false);
-  const [layout, setLayout] = useState<ShareLayout>("clean");
+  const [layout, setLayout] = useState<ShareLayout>("bars");
   const [selectedIds, setSelectedIds] = useState<string[]>(() => {
     const available = new Set(result.dimensions.map((d) => d.id));
     const defaults = DEFAULT_SHARE_METRIC_IDS.filter((id) => available.has(id));
@@ -293,8 +302,11 @@ export function CompareShareControls({
   });
 
   const selectedMetrics = useMemo(() => {
-    const set = new Set(selectedIds);
-    return result.dimensions.filter((d) => set.has(d.id));
+    const byId = new Map(result.dimensions.map((d) => [d.id, d]));
+    // Keep the picker order (impact-first defaults), not sheet category order.
+    return selectedIds
+      .map((id) => byId.get(id))
+      .filter((d): d is ComparisonDimension => d != null);
   }, [result.dimensions, selectedIds]);
 
   // Reset metric picks when the matchup changes.
@@ -304,7 +316,7 @@ export function CompareShareControls({
     setSelectedIds(
       defaults.length ? [...defaults] : result.dimensions.map((d) => d.id)
     );
-    setLayout("clean");
+    setLayout("bars");
   }, [result.aId, result.bId, result.seasonA, result.seasonB]);
 
   const close = useCallback(() => setOpen(false), []);
