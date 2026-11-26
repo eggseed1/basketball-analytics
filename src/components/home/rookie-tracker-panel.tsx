@@ -15,15 +15,13 @@ export async function RookieTrackerPanel() {
     return (
       <section
         aria-label="Rookie race"
-        className="sports-card flex flex-col gap-2 p-3.5"
+        className="sports-card flex flex-col gap-3 p-3 sm:p-4"
       >
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <div className="flex min-w-0 flex-col gap-0.5">
-            <h2 className={type.title}>Rookie race</h2>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              The {model.draftYear} draft class is not in the bake yet.
-            </p>
-          </div>
+        <div className="flex flex-col gap-0.5">
+          <h2 className={type.heading}>Rookie race</h2>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            The {model.draftYear} draft class is not in the bake yet.
+          </p>
         </div>
       </section>
     );
@@ -35,13 +33,10 @@ export async function RookieTrackerPanel() {
       : `${model.draftYear} class · ${model.season}. Lines show up after tip.`;
 
   return (
-    <section
-      aria-label="Rookie race"
-      className="sports-card flex flex-col gap-2 p-3.5"
-    >
+    <section aria-label="Rookie race" className="sports-card flex flex-col gap-3 p-3 sm:p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <h2 className={type.title}>Rookie race</h2>
+        <div className="flex flex-col gap-0.5">
+          <h2 className={type.heading}>Rookie race</h2>
           <p className={cn(type.caption, "text-muted-foreground")}>
             {description}
           </p>
