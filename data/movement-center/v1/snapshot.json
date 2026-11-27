@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-11-26",
+    "snapshotDate": "2026-11-27",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-26T19:52:50.170Z",
+    "builtAt": "2026-11-27T00:39:45.819Z",
     "rosterPlayerCount": 511,
-    "headlinesScanned": 18643,
-    "latestHeadlineAt": "2026-11-26T19:49:33.000Z",
+    "headlinesScanned": 18684,
+    "latestHeadlineAt": "2026-11-27T00:15:53.000Z",
     "latestTransactionDate": "2026-11-25",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -1388,12 +1388,13 @@
         "mv-1802a7f586a0242b",
         "mv-1f5ec9b412e7c63d",
         "mv-343d67c872f59777",
-        "mv-ced8dafb21f99fef"
+        "mv-ced8dafb21f99fef",
+        "mv-950c2977b62c16cd"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-11-24T20:17:39.000Z",
+      "lastMeaningfulAt": "2026-11-26T20:15:54.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
@@ -15682,6 +15683,26 @@
       "isOriginal": true
     },
     {
+      "id": "mv-950c2977b62c16cd",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Warriors Trade Rumor: $112 Million Star Emerges as Intriguing Option Amid Stephen Curry Injury",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-26T20:15:54.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-golden-state-warriors-trade-rumor-one-hundred-and-twelve-million-star-trey-murphy-iii-emerges-as-intriguing-option-amid-stephen-curry-injury/",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -17122,7 +17143,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-26T19:52:50.170Z"
+      "resolvedAt": "2026-11-27T00:39:45.819Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
