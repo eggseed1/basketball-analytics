@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-28",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-28T00:08:49.690Z",
-    "rosterPlayerCount": 512,
-    "headlinesScanned": 18921,
-    "latestHeadlineAt": "2026-11-28T00:01:20.000Z",
+    "builtAt": "2026-11-28T18:29:42.393Z",
+    "rosterPlayerCount": 513,
+    "headlinesScanned": 19170,
+    "latestHeadlineAt": "2026-11-28T18:24:53.000Z",
     "latestTransactionDate": "2026-11-27",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -2804,6 +2804,25 @@
         "7",
         "12",
         "5"
+      ]
+    },
+    {
+      "id": "mv-contract-4596528-20261127",
+      "headline": "Lawson Lovering: contract future with the Grizzlies",
+      "primaryClaimId": "mv-9a42c0c00b8c17ac",
+      "claimIds": [
+        "mv-9a42c0c00b8c17ac",
+        "mv-espn-tx-34434d2b83759180"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-11-27T14:59:44.000Z",
+      "lastMeaningfulAt": "2026-11-27T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "4596528"
+      ],
+      "linkedTeamIds": [
+        "29"
       ]
     },
     {
@@ -15753,6 +15772,26 @@
       "isOriginal": false
     },
     {
+      "id": "mv-9a42c0c00b8c17ac",
+      "clusterId": "mv-contract-4596528-20261127",
+      "summary": "Lawson Lovering, Grizzlies Signing 10 Day Hardship Contract",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-11-27T14:59:44.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/288262/Lawson-Lovering-Grizzlies-Signing-10-Day-Hardship-Contract",
+      "playerIds": [
+        "4596528"
+      ],
+      "teamIds": [
+        "29"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-e2e9babe6a8e24a1",
       "clusterId": "mv-trade-4397688-20261030",
       "summary": "Knicks Proposed to Land 6’11” Young Rising Star in Major Miles McBride Trade",
@@ -16342,6 +16381,26 @@
       ],
       "teamIds": [
         "5"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-espn-tx-34434d2b83759180",
+      "clusterId": "mv-contract-4596528-20261127",
+      "summary": "Signed C Lawson Lovering to a 10-day contract.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-11-27T12:00:00.000Z",
+      "sourceId": "ledger:espn-transactions",
+      "sourceLabel": "Transaction log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4596528"
+      ],
+      "teamIds": [
+        "29"
       ],
       "isOriginal": true
     },
@@ -17297,7 +17356,7 @@
         "4433247"
       ],
       "outcome": "expired",
-      "resolvedAt": "2026-11-28T00:08:49.690Z"
+      "resolvedAt": "2026-11-28T18:29:42.393Z"
     },
     {
       "clusterId": "mv-trade-2990984-20260922",
@@ -17484,6 +17543,16 @@
       "outcome": "materialized",
       "resolvedAt": "2026-11-15T12:00:00.000Z",
       "transactionRef": "espn-tx-d719e183bfe07da6",
+      "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-contract-4596528-20261127",
+      "playerIds": [
+        "4596528"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-11-27T12:00:00.000Z",
+      "transactionRef": "espn-tx-34434d2b83759180",
       "suppressTradeSpeculation": false
     },
     {
