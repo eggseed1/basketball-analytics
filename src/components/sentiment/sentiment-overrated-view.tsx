@@ -9,17 +9,16 @@ import type {
   SentimentRatingTalk,
   TrackedPlayerSentimentRow,
 } from "@/sentiment/curated-types";
-import { toneVsProduction, type ToneGapRow, type ToneGapSide } from "@/sentiment/tone-vs-production";
+import {
+  formatOrdinal as ordinal,
+  toneVsProduction,
+  type ToneGapRow,
+  type ToneGapSide,
+} from "@/sentiment/tone-vs-production";
 import { type, textLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 const PRODUCTION_COLOR = "rgb(16 185 129)";
-
-function ordinal(n: number): string {
-  const mod100 = n % 100;
-  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
-  return `${n}${["th", "st", "nd", "rd"][n % 10] ?? "th"}`;
-}
 
 /** Tone percentile and production percentile on one 0–100 track. */
 function GapTrack({ row, toneColor, index }: { row: ToneGapRow; toneColor: string; index: number }) {
@@ -53,12 +52,14 @@ function GapList({
   rows,
   toneColor,
   unit,
+  metricLabel,
   empty,
 }: {
   title: string;
   rows: ToneGapRow[];
   toneColor: string;
   unit: string;
+  metricLabel: string;
   empty: string;
 }) {
   return (
@@ -75,7 +76,7 @@ function GapList({
                 data-hover-item
                 className="flex flex-col gap-1 rounded-lg px-2 py-1.5 transition-colors hover:bg-foreground/[0.04]"
                 data-tip={`Tone ${sentimentPct(row.score)} from ${row.mentionVolume} ${unit}, ${ordinal(row.tonePct)} percentile`}
-                data-tip-sub={`DRBL/100 ${row.drbl100.toFixed(2)}, ${ordinal(row.productionPct)} percentile`}
+                data-tip-sub={`${metricLabel} ${row.production > 0 ? "+" : ""}${row.production.toFixed(1)}, ${ordinal(row.productionPct)} percentile`}
               >
                 <span className="flex min-w-0 items-baseline justify-between gap-2">
                   <span className={cn(type.bodySm, "inline-flex min-w-0 items-center gap-1.5 font-semibold")}>
@@ -83,7 +84,7 @@ function GapList({
                     <span className="truncate">{row.displayName}</span>
                   </span>
                   <span className={cn(type.caption, "shrink-0 tabular-nums text-muted-foreground")}>
-                    Tone {ordinal(row.tonePct)} · DRBL {ordinal(row.productionPct)}
+                    Tone {ordinal(row.tonePct)} · {metricLabel} {ordinal(row.productionPct)}
                   </span>
                 </span>
                 <GapTrack row={row} toneColor={toneColor} index={index} />
@@ -121,8 +122,8 @@ function GapSideCard({
         <h3 className={cn(type.bodySm, "font-bold")}>{label}</h3>
         <p className={cn(type.caption, "text-muted-foreground")}>
           {side
-            ? `${side.qualified} players with ${side.minVolume}+ ${unit} this week and ${side.season} DRBL/100.`
-            : `Fewer than 20 players have enough ${unit} and a DRBL/100 yet, so this side is left blank.`}
+            ? `${side.qualified} players with ${side.minVolume}+ ${unit} this week and a ${side.season} ${side.metricLabel}.`
+            : `Fewer than 20 players have enough ${unit} and a production number yet, so this side is left blank.`}
         </p>
       </header>
       {side ? (
@@ -132,6 +133,7 @@ function GapSideCard({
             rows={side.talkedUp}
             toneColor={toneColor}
             unit={unit}
+            metricLabel={side.metricLabel}
             empty="No player's tone runs 25+ points ahead of their production."
           />
           <GapList
@@ -139,6 +141,7 @@ function GapSideCard({
             rows={side.overlooked}
             toneColor={toneColor}
             unit={unit}
+            metricLabel={side.metricLabel}
             empty="No player's tone trails their production by 25+ points."
           />
         </>
@@ -194,6 +197,8 @@ export function SentimentOverratedView({
 }) {
   const fan = toneVsProduction(players, "fan", { minVolume: 10 });
   const media = toneVsProduction(players, "media", { minVolume: 5 });
+  const metricLabel = fan?.metricLabel ?? media?.metricLabel ?? "BPM";
+  const metricWhen = (fan ?? media)?.metric === "drbl100" ? "last season" : "this season";
 
   return (
     <div className="flex flex-col gap-5">
@@ -202,9 +207,12 @@ export function SentimentOverratedView({
           <h2 className={type.heading}>Tone vs production</h2>
           <p className={cn(type.bodySm, "max-w-3xl text-muted-foreground")}>
             Each player&apos;s tone this week is ranked against other qualified players, then set
-            next to where their DRBL/100 ranked last season. &ldquo;Talked up&rdquo; means the tone
+            next to where their {metricLabel} ranks {metricWhen}. &ldquo;Talked up&rdquo; means the tone
             ranks well above the production; &ldquo;overlooked&rdquo; means well below. It shows
             where talk and the box score disagree. It is not a ruling on who is overrated.
+            {metricLabel === "BPM"
+              ? " BPM is box plus/minus, and only players with 8+ games and 15+ minutes a game are ranked."
+              : ""}
           </p>
           <p
             className={cn(type.caption, "flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground")}
@@ -223,7 +231,7 @@ export function SentimentOverratedView({
                 className="size-2.5 rounded-full"
                 style={{ backgroundColor: PRODUCTION_COLOR }}
               />
-              DRBL/100 percentile
+              {metricLabel} percentile
             </span>
           </p>
         </div>
