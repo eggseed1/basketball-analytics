@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-27T19:42:39.776Z",
-  "apiCount": 446,
+  "fetchedAt": "2026-11-28T00:07:45.536Z",
+  "apiCount": 447,
   "rows": [
+    {
+      "date": "2026-11-27T08:00Z",
+      "description": "Signed C Lawson Lovering to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
     {
       "date": "2026-11-24T08:00Z",
       "description": "Waived C Orlando Robinson.",
